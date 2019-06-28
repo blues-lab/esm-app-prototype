@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, TextInput, Alert} from 'react-native';
 
 
+import ServiceMenuScreen from './servicemenu'
+
 export default class SurveyStartScreen extends React.Component {
 
   constructor(props) {
@@ -13,7 +15,9 @@ export default class SurveyStartScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        
         <Text>What were you talking about?</Text>
+        
         <TextInput 
         multiline={true}
         numberOfLines={4}
@@ -23,16 +27,11 @@ export default class SurveyStartScreen extends React.Component {
 
         }
         value={this.state.conversationTopic}
-      />
+        />
 
-      <Button
+        <Button
           title="Prefer not to answer"
-          onPress={() => 
-            //this.props.navigation.navigate('StartSurvey')
-            Alert.alert(
-              'Alert',
-              'You entered:'+this.state.conversationTopic)
-          }
+          onPress={() => this.props.navigation.navigate('ServiceMenu')}
         />
       </View>
     );
