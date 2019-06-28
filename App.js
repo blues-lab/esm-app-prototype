@@ -13,15 +13,18 @@ import { createStackNavigator, createAppContainer } from 'react-navigation';
 
 
 //Import UI files
-import SurveyStartScreen from './UI/startsurvey'
 import HomeScreen from './UI/home'
+import SurveyStartScreen from './UI/startsurvey'
+import ServiceMenuScreen from './UI/servicemenu'
+
 
 
 //The main navigation controller
 const AppNavigator = createStackNavigator(
   {
     Home: HomeScreen,
-    StartSurvey: SurveyStartScreen
+    StartSurvey: SurveyStartScreen,
+    ServiceMenu: ServiceMenuScreen
   },
   {
     initialRouteName: "Home"
