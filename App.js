@@ -7,51 +7,44 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button} from 'react-native';
 //import * as RNFS from 'react-native-fs';
-import wifi from 'react-native-android-wifi';
+import { createStackNavigator, createAppContainer } from 'react-navigation';
+
+
+//Import UI files
+import SurveyStartScreen from './UI/startsurvey'
+import HomeScreen from './UI/home'
+
+
+//The main navigation controller
+const AppNavigator = createStackNavigator(
+  {
+    Home: HomeScreen,
+    StartSurvey: SurveyStartScreen
+  },
+  {
+    initialRouteName: "Home"
+  }
+);
+
+
+const AppContainer = createAppContainer(AppNavigator);
+
 
 export default class App extends Component<Props> 
 {
 
-  state = {msg: "Not tried yet"};
 
-  UpdateWifiState()
-  {
-    wifi.isEnabled((isEnabled) => {
-    if (isEnabled)
-      {
-        wifi.connectionStatus((isConnected) => {
-          if (isConnected) {
-              wifi.getSSID((ssid) => {
-                this.setState({msg: "Connected: "+ssid});
-              });
-            } else {
-              this.setState({msg: "Not connected!"});
-          }
-        });
-
-        this.setState({msg: "Wifi is enabled!"});
-      }
-      else
-      {
-        this.setState({msg: "Wifi not enabled!"});
-      }
-    });
-  }
 
   componentDidMount()
   {
-    this.UpdateWifiState();
-    this.interval = setInterval(()=> this.UpdateWifiState(), 1000)
+    
   }
 
   render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>{this.state.msg}</Text>
-      </View>
-    );
+
+    return <AppContainer />;
   }
 }
 
