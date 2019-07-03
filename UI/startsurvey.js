@@ -6,6 +6,10 @@ import ServiceMenuScreen from './servicemenu'
 
 export default class SurveyStartScreen extends React.Component {
 
+  static navigationOptions = {
+    title: 'Start survey',
+  };
+
   constructor(props) {
     super(props);
     this.state = { conversationTopic: '' };

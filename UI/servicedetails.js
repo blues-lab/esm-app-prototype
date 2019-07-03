@@ -10,14 +10,14 @@ const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
 
 
-export default class ServiceMenuScreen extends React.Component {
+export default class ServiceDetailsScreen extends React.Component {
 
   static navigationOptions = {
-    title: 'Service categories',
+    title: 'Services',
   };
 
   state = {
-    services: "No services found", serviceCategoryNames: [],
+    services:'.',serviceCategory: "..", serviceNames: [],
     isDialogVisible:false
   };
 
@@ -32,10 +32,7 @@ export default class ServiceMenuScreen extends React.Component {
   GetItem(item) 
   {
     //Function for click on an item
-    this.props.navigation.navigate('ServiceDetails', 
-      {
-        serviceCategory: item.value
-      });
+    //Alert.alert(item);
   }
 
   readServiceFile()
@@ -47,25 +44,33 @@ export default class ServiceMenuScreen extends React.Component {
     .then((res) => {
 
       serviceCategories = JSON.parse(res).serviceCategories;
-      serviceCategoryNames=[];
+      serviceNames=[];
       for(var i=0; i<serviceCategories.length; i++)
       {
-        serviceCategoryNames.push
-        (
-          {id: serviceCategories[i].categoryName, 
-            value: serviceCategories[i].categoryName }
-        );
-      }
+        if (this.state.serviceCategory==serviceCategories[i].categoryName)
+        {
+          //Alert.alert('found1:',this.state.serviceCategory);
+          services = serviceCategories[i].services;
+          for(var j=0; j< services.length; j++)
+          {
+            serviceNames.push
+            (
+              {id: services[j].serviceName, 
+                value: services[j].serviceName }
+            );
+          }
+        }
+      }      
       
       this.setState
       (
         {
-          services: JSON.parse(res), 
-          serviceCategoryNames: serviceCategoryNames
+          services: res, 
+          serviceNames: serviceNames
         }
       );
 
-      
+      //Alert.alert('found:',":"+serviceNames.length);
 
     })  
     .catch((err) => {
@@ -77,12 +82,16 @@ export default class ServiceMenuScreen extends React.Component {
   constructor(props) 
   {
     super(props);
+    //Alert.alert('props:',props.itemId);
   }
 
   componentDidMount()
   {
+    const { navigation } = this.props;
+    const serviceCategory = navigation.getParam('serviceCategory', 'NO-SERVICE');
+    this.setState({serviceCategory: serviceCategory});
+
     this.readServiceFile();
-    //Alert.alert("Services", "abc: "+this.state.serviceCategoryNames.length);
   }
 
   render() {
@@ -94,23 +103,16 @@ export default class ServiceMenuScreen extends React.Component {
           justifyContent: 'flex-start',
           alignItems: 'stretch',
         }}>
-        <Text style={styles.longtextstyle}>
-          Imagine an always-listening voice assistant called Mimi 
-          recorded an audio when you were talking. Please select all 
-          services that are relevant to this 
-          audio recording that could provide to you. 
-          You can also add new services without list. 
-        </Text>
         
         <View style={styles.MainContainer}>
           <FlatList
-            data={this.state.serviceCategoryNames}
+            data={this.state.serviceNames}
             ItemSeparatorComponent={this.FlatListItemSeparator}
             renderItem={({ item }) => (
               <View>
                 <Text
                   style={styles.item}
-                  onPress={this.GetItem.bind(this, item)}>
+                  onPress={this.GetItem.bind(this, 'Id : '+item.id+' Value : '+item.value)}>
                   {item.value}
                 </Text>
               </View>
@@ -124,19 +126,19 @@ export default class ServiceMenuScreen extends React.Component {
         />
 
         <DialogInput isDialogVisible={this.state.isDialogVisible}
-            title={"Enter new service catetory"}
+            title={"Enter new service"}
             message={""}
             hintInput ={""}
             submitInput={ (inputText) => 
               {
-                serviceCategoryNames = this.state.serviceCategoryNames;
-                serviceCategoryNames.push
+                serviceNames = this.state.serviceNames;
+                serviceNames.push
                 (
                   {id: inputText,
                     value: inputText }
                 );
 
-                this.setState({serviceCategoryNames:serviceCategoryNames, isDialogVisible:false});
+                this.setState({serviceNames:serviceNames, isDialogVisible:false});
               }
             }
             closeDialog={ () => {this.setState({isDialogVisible:false})}}>
