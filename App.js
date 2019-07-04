@@ -19,8 +19,6 @@ import ServiceMenuScreen from './UI/servicemenu'
 import ServiceDetailsScreen from './UI/servicedetails'
 import ServicePermissionScreen from './UI/servicePermission'
 import ContextualQuestionScreen from './UI/contextualQuestion'
-import TestScreen from './UI/test'
-
 
 
 //The main navigation controller
@@ -31,8 +29,7 @@ const AppNavigator = createStackNavigator(
     ServiceMenu: ServiceMenuScreen,
     ServiceDetails: ServiceDetailsScreen,
     ServicePermission: ServicePermissionScreen,
-    ContextualQuestion: ContextualQuestionScreen,
-    Test: TestScreen
+    ContextualQuestion: ContextualQuestionScreen
   },
   {
     initialRouteName: "Home"
