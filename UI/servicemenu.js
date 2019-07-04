@@ -1,12 +1,21 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, 
-  TextInput, Alert, FlatList} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, ScrollView, Image,
+ TextInput, Alert, FlatList, TouchableHighlight, TouchableOpacity,
+ Modal} from 'react-native';
 import * as RNFS from 'react-native-fs';
 
+
+import ElevatedView from 'react-native-elevated-view';
+import Dialog from 'react-native-dialog';
 import DialogInput from 'react-native-dialog-input';
+
+
+import ServicePermissionScreen from './servicePermission'
 
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
+
+
 
 
 
@@ -18,7 +27,11 @@ export default class ServiceMenuScreen extends React.Component {
 
   state = {
     services: "No services found", serviceCategoryNames: [],
-    isDialogVisible:false
+    newCategoryDialogVisible:false,
+    noRelevantDialogVisible:false,
+    saveButtonEnabled:true,
+    modalVisible:false,
+    activeServiceName:"service"
   };
 
   FlatListItemSeparator = () => 
@@ -38,6 +51,25 @@ export default class ServiceMenuScreen extends React.Component {
       });
   }
 
+
+  handleCancel = () => {
+    this.setState({ noRelevantDialogVisible: false });
+  };
+
+  handleSave= () => {
+  //Alert.alert("hi");
+    this.setState({ noRelevantDialogVisible: false });
+  };
+
+  openModal= ()=> {
+  //Alert.alert("hel");
+    this.setState({modalVisible:true});
+  };
+
+  closeModal= ()=> {
+    this.setState({modalVisible:false});
+  }
+
   readServiceFile()
   {
     serviceCategoryNames = [];
@@ -52,8 +84,9 @@ export default class ServiceMenuScreen extends React.Component {
       {
         serviceCategoryNames.push
         (
-          {id: serviceCategories[i].categoryName, 
-            value: serviceCategories[i].categoryName }
+          { id: serviceCategories[i].categoryName, 
+            value: serviceCategories[i].categoryName,
+            selectedServices: [] }
         );
       }
       
@@ -79,6 +112,8 @@ export default class ServiceMenuScreen extends React.Component {
     super(props);
   }
 
+
+
   componentDidMount()
   {
     this.readServiceFile();
@@ -87,21 +122,27 @@ export default class ServiceMenuScreen extends React.Component {
 
   render() {
     return (
-      //<View style={{ flex: 1, alignItems: 'top', justifyContent: 'center' }}>
+    <ScrollView>
+
       <View style={{
           flex: 1,
           flexDirection: 'column',
-          justifyContent: 'flex-start',
+          justifyContent: 'space-around',
           alignItems: 'stretch',
+          backgroundColor:'lavender'
         }}>
-        <Text style={styles.longtextstyle}>
-          Imagine an always-listening voice assistant called Mimi 
-          recorded an audio when you were talking. Please select all 
-          services that are relevant to this 
-          audio recording that could provide to you. 
-          You can also add new services without list. 
-        </Text>
-        
+
+        <View style={styles.longTextView}>
+            <Text style={styles.longtextstyle}>
+              Imagine an always-listening voice assistant called Mimi
+              recorded an audio when you were talking. Please select all
+              services that are <Text style={{fontWeight: "bold"}}>relevant</Text> to this
+              audio recording that could provide to you.
+              You can also add new services.
+            </Text>
+        </View>
+
+
         <View style={styles.MainContainer}>
           <FlatList
             data={this.state.serviceCategoryNames}
@@ -119,61 +160,156 @@ export default class ServiceMenuScreen extends React.Component {
           />
         </View>
 
-        <Button title="Add new"
-        onPress={() => this.setState({isDialogVisible:true})}
-        />
 
-        <DialogInput isDialogVisible={this.state.isDialogVisible}
-            title={"Enter new service catetory"}
+        <View style={{
+                flex: 1,
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                alignItems: 'stretch',
+                marginTop:2,
+                                          marginBottom:2
+              }}>
+
+                <View style={{
+                  flex: 1,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginTop:2,
+                  marginBottom:2
+                  }}>
+
+                  <TouchableHighlight style ={{
+                        height: 40,
+                        width:160,
+                        borderRadius:10,
+                        marginLeft:5,
+                        marginRight:5,
+                        marginTop:2,
+                        marginBottom:2
+                      }}>
+                        <Button title="Add new"
+                            color="#20B2AA"
+                            onPress={() => this.setState({newCategoryDialogVisible:true})}
+                        />
+                  </TouchableHighlight>
+
+                  <TouchableHighlight style ={{
+                          height: 40,
+                          width:160,
+                          borderRadius:10,
+                          marginLeft:5,
+                          marginRight:5,
+                          marginTop:2,
+                          marginBottom:2
+                        }}>
+                      <Button disabled = {!this.state.saveButtonEnabled}
+                        onPress={() => this.props.navigation.navigate('ServicePermission',
+                                            {serviceName:this.state.activeServiceName})}
+                        title="Save"
+                        color="#20B2AA"
+                        accessibilityLabel="Save"
+                      />
+                    </TouchableHighlight>
+                </View>
+
+            <Button
+              title="No relevant service"
+              color="#D8BFD8"
+              onPress={() => this.setState({noRelevantDialogVisible:true})}
+            />
+        </View>
+
+        <DialogInput isDialogVisible={this.state.newCategoryDialogVisible}
+            title={"Add new service category"}
             message={""}
             hintInput ={""}
+            multiline={true}
+            numberOfLines={4}
             submitInput={ (inputText) => 
               {
                 serviceCategoryNames = this.state.serviceCategoryNames;
                 serviceCategoryNames.push
                 (
-                  {id: inputText,
+                  { id: inputText,
                     value: inputText }
                 );
 
-                this.setState({serviceCategoryNames:serviceCategoryNames, isDialogVisible:false});
+                this.setState({serviceCategoryNames:serviceCategoryNames, newCategoryDialogVisible:false});
               }
             }
-            closeDialog={ () => {this.setState({isDialogVisible:false})}}>
+            closeDialog={ () => {this.setState({newCategoryDialogVisible:false})}}>
         </DialogInput>
-        
+
       </View>
+
+      <Dialog.Container visible={this.state.noRelevantDialogVisible}>
+                <Dialog.Title>Please explain why no service would be relevant in this situation.</Dialog.Title>
+                <Dialog.Input
+                    multiline={true}
+                    numberOfLines={4}
+                    style={{height: 300, borderColor: 'lightgray', borderWidth: 1}}
+                    />
+                <Dialog.Button label="Cancel" onPress={this.handleCancel}/>
+                <Dialog.Button label="Save" onPress={this.handleSave} />
+      </Dialog.Container>
+
+
+
+      </ScrollView>
 
 
     );
   }
 }
 
+
 const styles = StyleSheet.create({
+
+  longTextView:{
+  elevation: 10,
+  backgroundColor:'#a7f1e9',
+  marginLeft: 15,
+      marginRight: 15,
+      marginBottom:5,
+      marginTop:10,
+  },
   longtextstyle: {
-    color: 'black',
+    //color: 'black',
     fontFamily:'Times New Roman',
-    //fontWeight: 'bold',
-    fontSize: 16,
+    backgroundColor:'#a7f1e9',
+    fontSize: 20,
     borderColor: 'black',
-    paddingRight:30,
-    paddingLeft:30,
-    paddingTop:20
+    paddingRight:20,
+    paddingLeft:20,
+    paddingTop:5,
+    paddingBottom:5,
+    marginLeft: 15,
+    marginRight: 15,
+    marginBottom:5,
+    marginTop:10,
+
     //paddingBottom:
-    //borderWidth: 1
+    // borderWidth: 1
   },
  MainContainer: {
+ //elevation: 30,
     justifyContent: 'center',
     flex: 1,
-    marginLeft: 10,
-    marginRight: 10,
-    marginBottom: 10,
-    marginTop: 30,
+    marginLeft: 15,
+    marginRight: 15,
+    marginBottom: 1,
+    marginTop: 5,
+    //borderWidth:1,
+    backgroundColor:"lightcyan",
+    paddingBottom:2,
+    paddingTop:2,
   },
  
   item: {
     padding: 10,
     fontSize: 18,
     height: 44,
-  },
+  }
+
 });
