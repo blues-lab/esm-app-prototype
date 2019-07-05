@@ -8,22 +8,22 @@ import DialogInput from 'react-native-dialog-input';
 //import SelectMultiple from 'react-native-select-multiple';
 import NumericInput from 'react-native-numeric-input';
 
+import { CheckBox } from 'react-native-elements'
+
+//import CheckBoxes from 'react-native-group-checkbox'
+
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
+import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 
+import RelationGroup from './relationGroup'
 
-const fruits = ['Apples', 'Oranges', 'Pears']
-// --- OR ---
-// const fruits = [
-//   { label: 'Apples', value: 'appls' },
-//   { label: 'Oranges', value: 'orngs' },
-//   { label: 'Pears', value: 'pears' }
-// ]
 
 
 export default class ContextualQuestionScreen extends React.Component {
 
-  state={ value:0, numOfPeople:0, relations: [], ages:[], locations:[] }
+  state={ value:0, numOfPeople:0, relations: [], ages:[], locations:[],
+           familySelected:false, friendSelected:false, selectedItems:[],selectedRelations: new Set([])}
 
 
 
@@ -33,18 +33,19 @@ export default class ContextualQuestionScreen extends React.Component {
     super(props);
   }
 
-  numOfPeopleSelectionChanged = (value) => {
-     //this.setState({numOfPeople: value});
-    //Alert.alert("hi  :"+this.state.numOfPeople+","+value);
-    //this.setState({numOfPeople: value});
-    }
 
 
-   relationSelectionsChange = (selectedOptions) => {
-      // selectedFruits is array of { label, value }
-      //this.setState({ relations:[], ages:[], numOfPeople:0 })
-
-      //Alert.alert('selected: '+selectedOptions[0].value);
+   relationSelectionsChange = (selectedRelation, checked) => {
+      if (checked)
+      {
+        this.setState({ selectedRelations: this.state.selectedRelations.add(selectedRelation) });
+      }
+      else
+      {
+        var updatedRelation = this.state.selectedRelations;
+        updatedRelation.delete(selectedRelation);
+        this.setState({ selectedRelations: updatedRelation });
+      }
     }
 
 
@@ -54,11 +55,22 @@ export default class ContextualQuestionScreen extends React.Component {
 
   }
 
+onSelectedItemsChange = (selectedItems) => {
+    this.setState({ selectedItems });
+  };
 
 
   render() {
     return (
-    <View>
+    <View style={{
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        alignItems: 'stretch',
+        marginRight:10,
+        marginLeft:10,
+        backgroundColor:'lightcyan',
+        }}>
     <ScrollView>
       <View style={{
           flex: 1,
@@ -70,59 +82,59 @@ export default class ContextualQuestionScreen extends React.Component {
           backgroundColor:'lightcyan',
           }}>
 
-            <Text style={styles.questionStyle}>
-                How many other people (excluding you) were talking?
-            </Text>
+                <Text style={styles.questionStyle}>
+                    How many other people (excluding you) were talking?
+                </Text>
 
-            <NumericInput
-               value={this.state.value}
-               onChange={value => this.setState({value})}
-               onLimitReached={(isMax,msg) => console.log(isMax,msg)}
-               totalWidth={260}
-               totalHeight={50}
-               iconSize={25}
-               step={1}
-               valueType='integer'
-               rounded
-               textColor='#B0228C'
-               iconStyle={{ color: 'white' }}
-               rightButtonBackgroundColor='#66c1e5'
-               leftButtonBackgroundColor='#92d3ed'
-            />
-            
+                <NumericInput
+                   value={this.state.value}
+                   onChange={value => this.setState({value})}
+                   onLimitReached={(isMax,msg) => console.log(isMax,msg)}
+                   totalWidth={200}
+                   totalHeight={40}
+                   minValue={0}
+                   maxValue={100}
+                   iconSize={25}
+                   step={1}
+                   valueType='integer'
+                   rounded
+                   textColor='#B0228C'
+                   iconStyle={{ color: 'white' }}
+                   rightButtonBackgroundColor='#66c1e5'
+                   leftButtonBackgroundColor='#92d3ed'
+                />
 
-      </View>
+                <RelationGroup callback={this.relationSelectionsChange.bind(this)} />
 
-      <View style={{
-                    flex: 1,
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginRight:10,
-                    marginLeft:10,
-                    backgroundColor:'lightcyan',
-                    }}>
-          <TouchableHighlight style ={{
-                                height: 40,
-                                width:160,
-                                borderRadius:10,
-                                marginLeft:5,
-                                marginRight:5,
-                                marginTop:10,
-                                marginBottom:10
-                              }}>
-            <Button
-              onPress={() => Alert.alert("value:"+this.state.value)}
-              title="Save"
-              color="#20B2AA"
-              accessibilityLabel="Save"
-            />
-          </TouchableHighlight>
-      </View>
+           </View>
 
+          <View style={{
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'space-around',
+                marginRight:10,
+                marginLeft:10,
+                backgroundColor:'lightcyan',
+                }}>
+              <TouchableHighlight style ={{
+                                    height: 40,
+                                    width:160,
+                                    borderRadius:10,
+                                    marginLeft:5,
+                                    marginRight:5,
+                                    marginTop:10,
+                                    marginBottom:10
+                                  }}>
+                <Button
+                  onPress={() => Alert.alert("relations:"+Array.from(this.state.selectedRelations).toString())}
+                  title="Save"
+                  color="#20B2AA"
+                  accessibilityLabel="Save"
+                />
+              </TouchableHighlight>
+          </View>
       </ScrollView>
-
-
 </View>
 
     );
