@@ -16,20 +16,10 @@ const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
 
-
-const fruits = ['Apples', 'Oranges', 'Pears']
-// --- OR ---
-// const fruits = [
-//   { label: 'Apples', value: 'appls' },
-//   { label: 'Oranges', value: 'orngs' },
-//   { label: 'Pears', value: 'pears' }
-// ]
-
-
-
 export default class RelationGroup extends React.Component {
 
-  state={familySelected:false, friendSelected:false, selectedRelations:[]}
+  state={familySelected:false, friendSelected:false, acquaintanceSelected:false, colleaguesSelected:false,
+         roommatesSelected:false, workerSelected:false, unknownSelected:false, selectedRelations:[]}
 
   constructor(props) 
   {
@@ -68,39 +58,81 @@ export default class RelationGroup extends React.Component {
                  }}>
 
             <CheckBox
-              center
               title='Family members'
-              iconType='material'
-              checkedIcon='clear'
-              uncheckedIcon='add'
-              checkedColor='red'
+              checkedIcon='dot-circle-o'
+              uncheckedIcon='circle-o'
               checked={this.state.familySelected}
               onPress={()=>{
-
-                //if(this.state.familySelected ==false )
-                  //  this.setState({ selectedRelations: [...this.state.selectedRelations, 'Family'] });
                 this.props.callback("Family",!this.state.familySelected);
-//Alert.alert("fam:"+this.state.familySelected);
                 this.setState({familySelected: !this.state.familySelected});
-
               }}
             />
-
             <CheckBox
-              center
               title='Friends'
               checkedIcon='dot-circle-o'
               uncheckedIcon='circle-o'
 
               checked={this.state.friendSelected}
               onPress={()=>{
-//                  if(!this.state.friendSelected)
-//                    this.setState({ selectedRelations: [...this.state.selectedRelations, 'Friends'] });
-//                    this.props.callback(this.state.selectedRelations);
                   this.props.callback("Friends",!this.state.friendSelected);
                   this.setState({friendSelected: !this.state.friendSelected});
               }}
             />
+
+             <CheckBox
+                  title='Acquaintance'
+                  checkedIcon='dot-circle-o'
+                  uncheckedIcon='circle-o'
+                  checked={this.state.acquaintanceSelected}
+                  onPress={()=>{
+                    this.props.callback("Acquaintance",!this.state.acquaintanceSelected);
+                    this.setState({acquaintanceSelected: !this.state.acquaintanceSelected});
+                  }}
+                />
+                <CheckBox
+                  title='Colleagues'
+                  checkedIcon='dot-circle-o'
+                  uncheckedIcon='circle-o'
+
+                  checked={this.state.colleaguesSelected}
+                  onPress={()=>{
+                      this.props.callback("Colleagues",!this.state.colleaguesSelected);
+                      this.setState({colleaguesSelected: !this.state.colleaguesSelected});
+                  }}
+                />
+                 <CheckBox
+                      title='Roommates'
+                      checkedIcon='dot-circle-o'
+                      uncheckedIcon='circle-o'
+                      checked={this.state.roommatesSelected}
+                      onPress={()=>{
+                        this.props.callback("Roommates",!this.state.roommatesSelected);
+                        this.setState({roommatesSelected: !this.state.roommatesSelected});
+                      }}
+                    />
+                    <CheckBox
+                      title='Worker'
+                      checkedIcon='dot-circle-o'
+                      uncheckedIcon='circle-o'
+
+                      checked={this.state.workerSelected}
+                      onPress={()=>{
+                          this.props.callback("Worker",!this.state.workerSelected);
+                          this.setState({workerSelected: !this.state.workerSelected});
+                      }}
+                    />
+                    <CheckBox
+                      title='Unknown'
+                      checkedIcon='dot-circle-o'
+                      uncheckedIcon='circle-o'
+
+                      checked={this.state.unknownSelected}
+                      onPress={()=>{
+                          this.props.callback("Unknown",!this.state.unknownSelected);
+                          this.setState({unknownSelected: !this.state.unknownSelected});
+                      }}
+                    />
+
         </View>
 
 

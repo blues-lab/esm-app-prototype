@@ -22,8 +22,9 @@ import RelationGroup from './relationGroup'
 
 export default class ContextualQuestionScreen extends React.Component {
 
-  state={ value:0, numOfPeople:0, relations: [], ages:[], locations:[],
-           familySelected:false, friendSelected:false, selectedItems:[],selectedRelations: new Set([])}
+  state={  numOfPeople:0, relations: [], ages:[], locations:[],
+           familySelected:false, friendSelected:false, selectedItems:[],
+           selectedRelations: new Set([])}
 
 
 
@@ -52,7 +53,6 @@ export default class ContextualQuestionScreen extends React.Component {
   componentDidMount()
   {
     const { navigation } = this.props;
-
   }
 
 onSelectedItemsChange = (selectedItems) => {
@@ -72,23 +72,19 @@ onSelectedItemsChange = (selectedItems) => {
         backgroundColor:'lightcyan',
         }}>
     <ScrollView>
-      <View style={{
-          flex: 1,
-          flexDirection: 'column',
-          justifyContent: 'space-around',
-          alignItems: 'center',
-          marginRight:10,
-          marginLeft:10,
-          backgroundColor:'lightcyan',
-          }}>
+      <View style={styles.verticalViewStyle}>
 
                 <Text style={styles.questionStyle}>
                     How many other people (excluding you) were talking?
                 </Text>
-
                 <NumericInput
-                   value={this.state.value}
-                   onChange={value => this.setState({value})}
+                   value={this.state.numOfPeople}
+                   //onChange={value => this.setState({value})}
+                   onChange={(value)=>{
+                    this.setState({numOfPeople: value});
+                    if(value==0)
+                        this.setState({selectedRelations: new Set([])})
+                   }}
                    onLimitReached={(isMax,msg) => console.log(isMax,msg)}
                    totalWidth={200}
                    totalHeight={40}
@@ -104,9 +100,18 @@ onSelectedItemsChange = (selectedItems) => {
                    leftButtonBackgroundColor='#92d3ed'
                 />
 
-                <RelationGroup callback={this.relationSelectionsChange.bind(this)} />
 
-           </View>
+                {   this.state.numOfPeople>0 &&
+                    <View style={styles.verticalViewStyle}>
+                    <Text style={styles.questionStyle}>
+                        How do you relate to them (select all that apply)?
+                    </Text>
+
+                    <RelationGroup callback={this.relationSelectionsChange.bind(this)} />
+                    </View>
+                }
+
+      </View>
 
           <View style={{
                 flex: 1,
@@ -127,7 +132,7 @@ onSelectedItemsChange = (selectedItems) => {
                                     marginBottom:10
                                   }}>
                 <Button
-                  onPress={() => Alert.alert("relations:"+Array.from(this.state.selectedRelations).toString())}
+                  onPress={() => Alert.alert("people:"+this.state.numOfPeople+",,"+Array.from(this.state.selectedRelations).toString())}
                   title="Save"
                   color="#20B2AA"
                   accessibilityLabel="Save"
@@ -177,5 +182,16 @@ const styles = StyleSheet.create({
     paddingTop:10,
     paddingBottom:10,
     marginTop:5,
+  },
+
+  verticalViewStyle:{
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginRight:10,
+    marginLeft:10,
+    backgroundColor:'lightcyan',
   }
+
 });
