@@ -48,7 +48,7 @@ export default class HomeScreen extends React.Component {
         <Text>{this.state.msg}</Text>
         <Button
           title="Start new survey"
-          onPress={() => this.props.navigation.navigate('ServiceMenu')}
+          onPress={() => this.props.navigation.navigate('StartSurvey')}
         />
       </View>
     );

@@ -45,10 +45,21 @@ export default class ServiceMenuScreen extends React.Component {
   GetItem(item) 
   {
     //Function for click on an item
-    this.props.navigation.navigate('ServiceDetails', 
+    this.props.navigation.navigate('ServiceDetails',
       {
         serviceCategory: item.value
       });
+
+      serviceCategoryNames = this.state.serviceCategoryNames;
+      for(i=0; i<serviceCategoryNames.length; i++)
+      {
+          if (item.value==serviceCategoryNames[i].value)
+          {
+              serviceCategoryNames[i].selectedServices.push("selected");
+              serviceCategoryNames[i].renderStyle=styles.selectedItemStyle;
+          }
+      }
+      this.setState({serviceCategoryNames: serviceCategoryNames});
   }
 
 
@@ -86,7 +97,9 @@ export default class ServiceMenuScreen extends React.Component {
         (
           { id: serviceCategories[i].categoryName, 
             value: serviceCategories[i].categoryName,
-            selectedServices: [] }
+            selectedServices: [],
+            renderStyle: styles.itemStyle
+          }
         );
       }
       
@@ -148,15 +161,18 @@ export default class ServiceMenuScreen extends React.Component {
             data={this.state.serviceCategoryNames}
             ItemSeparatorComponent={this.FlatListItemSeparator}
             renderItem={({ item }) => (
-              <View>
-                <Text
-                  style={styles.item}
-                  onPress={this.GetItem.bind(this, item)}>
+              <TouchableHighlight onPress={this.GetItem.bind(this, item)}>
+              <View style={item.renderStyle}>
+                <Text style={{fontSize:20}}>
                   {item.value}
                 </Text>
+                <Text style={{fontSize:12, fontStyle:'italic', paddingBottom:10, marginBottom:20}}>{item.selectedServices.toString()} </Text>
               </View>
+              </TouchableHighlight>
+
             )}
             keyExtractor={(item, index) => index.toString()}
+            extraData={this.state}
           />
         </View>
 
@@ -305,10 +321,14 @@ const styles = StyleSheet.create({
     paddingTop:2,
   },
  
-  item: {
+  itemStyle: {
     padding: 10,
-    fontSize: 18,
-    height: 44,
+    height: 60,
+  },
+  selectedItemStyle: {
+      backgroundColor: "#9dd7fb",
+      padding: 10,
+      height: 60,
   }
 
 });
