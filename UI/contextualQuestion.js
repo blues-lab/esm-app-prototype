@@ -17,14 +17,14 @@ const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 
 import RelationGroup from './relationGroup'
-
+import LocationGroup from './locationGroup'
 
 
 export default class ContextualQuestionScreen extends React.Component {
 
   state={  numOfPeople:0, relations: [], ages:[], locations:[],
            familySelected:false, friendSelected:false, selectedItems:[],
-           selectedRelations: new Set([])}
+           selectedRelations: new Set([]), numOfPeopleCanHear:0 }
 
 
 
@@ -40,6 +40,10 @@ export default class ContextualQuestionScreen extends React.Component {
       if (checked)
       {
         this.setState({ selectedRelations: this.state.selectedRelations.add(selectedRelation) });
+        if(this.selectedRelation == "Other")
+        {
+        }
+
       }
       else
       {
@@ -79,7 +83,6 @@ onSelectedItemsChange = (selectedItems) => {
                 </Text>
                 <NumericInput
                    value={this.state.numOfPeople}
-                   //onChange={value => this.setState({value})}
                    onChange={(value)=>{
                     this.setState({numOfPeople: value});
                     if(value==0)
@@ -103,13 +106,70 @@ onSelectedItemsChange = (selectedItems) => {
 
                 {   this.state.numOfPeople>0 &&
                     <View style={styles.verticalViewStyle}>
-                    <Text style={styles.questionStyle}>
-                        How do you relate to them (select all that apply)?
-                    </Text>
+                        <Text style={styles.questionStyle}>
+                            How do you relate to them (select all that apply)?
+                        </Text>
+                        <RelationGroup callback={this.relationSelectionsChange.bind(this)} />
 
-                    <RelationGroup callback={this.relationSelectionsChange.bind(this)} />
+                        {false &&
+                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'flex-start'}}>
+                            <Text style={{color: 'black', fontFamily:'Times New Roman', fontSize: 18}}>
+                                Other:
+                            </Text>
+
+                            <TextInput
+                                 multiline={false}
+                                 style={{height: 50, width: 100, borderColor: 'gray', borderWidth: 1}}
+                                 onChangeText={(text) =>
+                                   this.setState({ conversationTopic: text })
+
+                                 }
+                                 value={"hasaflj"}
+                            />
+                        </View>
+                        }
+                        <Text style={styles.questionStyle}>
+                            Among people who were talking, were there:
+                            TODO: add options
+                        </Text>
                     </View>
                 }
+
+                <Text style={styles.questionStyle}>
+                    Where were you talking (select all that apply)?
+                </Text>
+                <LocationGroup callback={this.relationSelectionsChange.bind(this)} />
+
+                <Text style={styles.questionStyle}>
+                    Were all the people who were talking at your home (as opposed to someone calling in
+                    or connecting to a video chat)? -- What should be the input type?
+                </Text>
+
+                <View style={styles.insideVerticalViewStyle}>
+                    <Text style={styles.questionStyle}>
+                        How many people, who did not participate in the conversation, could hear it?
+                    </Text>
+                    <NumericInput style={{marginTop:100, marginBottom:30, paddingTop:10, paddingBottom:30}}
+                       value={this.state.numOfPeopleCanHear}
+                       onChange={(value)=>{
+                        this.setState({numOfPeopleCanHear: value});
+                       }}
+                       onLimitReached={(isMax,msg) => console.log(isMax,msg)}
+                       totalWidth={200}
+                       totalHeight={40}
+                       minValue={0}
+                       maxValue={100}
+                       iconSize={25}
+                       step={1}
+                       valueType='integer'
+                       rounded
+                       textColor='#B0228C'
+                       iconStyle={{ color: 'white' }}
+                       rightButtonBackgroundColor='#66c1e5'
+                       leftButtonBackgroundColor='#92d3ed'
+                    />
+                </View>
+
 
       </View>
 
@@ -132,7 +192,7 @@ onSelectedItemsChange = (selectedItems) => {
                                     marginBottom:10
                                   }}>
                 <Button
-                  onPress={() => Alert.alert("people:"+this.state.numOfPeople+",,"+Array.from(this.state.selectedRelations).toString())}
+                  onPress={() => Alert.alert("Saved!")}
                   title="Save"
                   color="#20B2AA"
                   accessibilityLabel="Save"
@@ -148,7 +208,7 @@ onSelectedItemsChange = (selectedItems) => {
 
 const styles = StyleSheet.create({
   questionStyle: {
-    color: 'black',
+    //color: 'black',
     fontFamily:'Times New Roman',
     //fontWeight: 'bold',
     fontSize: 18,
@@ -158,7 +218,7 @@ const styles = StyleSheet.create({
     paddingTop:10,
     paddingBottom:10,
     marginTop:5,
-    backgroundColor:'#a7f1e9',
+    backgroundColor:'#b3ffff',
   },
  radioFrameStyle: {
     //justifyContent: 'center',
@@ -192,6 +252,24 @@ const styles = StyleSheet.create({
     marginRight:10,
     marginLeft:10,
     backgroundColor:'lightcyan',
+  },
+
+  insideVerticalViewStyle:{
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      //backgroundColor:'#a7f1e9'
+    },
+
+  horizontalViewStyle:{
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      marginRight:10,
+      marginLeft:10,
+      backgroundColor:'lightcyan',
   }
 
 });

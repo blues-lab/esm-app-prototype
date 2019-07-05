@@ -56,7 +56,7 @@ export default class ServiceMenuScreen extends React.Component {
     this.setState({ noRelevantDialogVisible: false });
   };
 
-  handleSave= () => {
+  saveNoRelevantServiceReason= () => {
   //Alert.alert("hi");
     this.setState({ noRelevantDialogVisible: false });
   };
@@ -208,7 +208,7 @@ export default class ServiceMenuScreen extends React.Component {
                                             {serviceName:this.state.activeServiceName})}
                         title="Save"
                         color="#20B2AA"
-                        accessibilityLabel="Save"
+                        accessibilityLabel="Next"
                       />
                     </TouchableHighlight>
                 </View>
@@ -251,9 +251,8 @@ export default class ServiceMenuScreen extends React.Component {
                     style={{height: 300, borderColor: 'lightgray', borderWidth: 1}}
                     />
                 <Dialog.Button label="Cancel" onPress={this.handleCancel}/>
-                <Dialog.Button label="Save" onPress={this.handleSave} />
+                <Dialog.Button label="Save" onPress={this.saveNoRelevantServiceReason} />
       </Dialog.Container>
-
 
 
       </ScrollView>

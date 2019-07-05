@@ -141,10 +141,10 @@ export default class ServicePermissionScreen extends React.Component {
                                 marginBottom:10
                               }}>
             <Button
-              onPress={() => Alert.alert("saved")}
-              title="Save"
+              onPress={() => this.props.navigation.navigate('ContextualQuestion')}
+              title="Next"
               color="#20B2AA"
-              accessibilityLabel="Save"
+              accessibilityLabel="Next"
             />
           </TouchableHighlight>
       </View>

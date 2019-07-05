@@ -16,7 +16,7 @@ const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
 
-export default class RelationGroup extends React.Component {
+export default class LocationGroup extends React.Component {
 
   state={familySelected:false, friendSelected:false, acquaintanceSelected:false, colleaguesSelected:false,
          roommatesSelected:false, workerSelected:false, unknownSelected:false, selectedRelations:[]}
@@ -32,6 +32,8 @@ export default class RelationGroup extends React.Component {
     this.setState({familySelected:false, friendSelected:false, selectedRelations:[]});
   }
 
+
+
   render() {
     return (
 
@@ -46,7 +48,7 @@ export default class RelationGroup extends React.Component {
                  }}>
 
             <CheckBox
-              title='Family members'
+              title='Bedroom'
               checkedIcon='dot-circle-o'
               uncheckedIcon='circle-o'
               checked={this.state.familySelected}
@@ -56,7 +58,7 @@ export default class RelationGroup extends React.Component {
               }}
             />
             <CheckBox
-              title='Friends'
+              title='Living room'
               checkedIcon='dot-circle-o'
               uncheckedIcon='circle-o'
 
@@ -68,7 +70,7 @@ export default class RelationGroup extends React.Component {
             />
 
              <CheckBox
-                  title='Acquaintance'
+                  title='Kitchen'
                   checkedIcon='dot-circle-o'
                   uncheckedIcon='circle-o'
                   checked={this.state.acquaintanceSelected}
@@ -78,7 +80,7 @@ export default class RelationGroup extends React.Component {
                   }}
                 />
                 <CheckBox
-                  title='Colleagues'
+                  title='Garage'
                   checkedIcon='dot-circle-o'
                   uncheckedIcon='circle-o'
 
@@ -89,7 +91,7 @@ export default class RelationGroup extends React.Component {
                   }}
                 />
                  <CheckBox
-                      title='Roommates'
+                      title='Patio/balcony/terrace'
                       checkedIcon='dot-circle-o'
                       uncheckedIcon='circle-o'
                       checked={this.state.roommatesSelected}
@@ -99,7 +101,7 @@ export default class RelationGroup extends React.Component {
                       }}
                     />
                     <CheckBox
-                      title='Worker'
+                      title='Garden'
                       checkedIcon='dot-circle-o'
                       uncheckedIcon='circle-o'
 
@@ -107,17 +109,6 @@ export default class RelationGroup extends React.Component {
                       onPress={()=>{
                           this.props.callback("Worker",!this.state.workerSelected);
                           this.setState({workerSelected: !this.state.workerSelected});
-                      }}
-                    />
-                    <CheckBox
-                      title='Unknown'
-                      checkedIcon='dot-circle-o'
-                      uncheckedIcon='circle-o'
-
-                      checked={this.state.unknownSelected}
-                      onPress={()=>{
-                          this.props.callback("Unknown",!this.state.unknownSelected);
-                          this.setState({unknownSelected: !this.state.unknownSelected});
                       }}
                     />
 
