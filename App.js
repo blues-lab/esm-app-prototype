@@ -6,6 +6,8 @@
  * @flow
  */
 
+//might be useful to show status https://www.npmjs.com/package/react-native-flash-message
+
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert} from 'react-native';
 import * as RNFS from 'react-native-fs';
