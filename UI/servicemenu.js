@@ -96,11 +96,26 @@ export default class ServiceMenuScreen extends React.Component {
     this.ReadServiceFile();
   }
 
-  FlatListItemSeparator = () =>
+  flatListItemSeparator = () =>
   {
       return (
         <View style={{height: 0.5, width: '100%', backgroundColor: '#C8C8C8'}}/>
       );
+  }
+
+  renderListItem = ({item}) => {
+    return (
+        <TouchableHighlight onPress={this.OpenServiceDetailsPage.bind(this, item.value)}>
+          <View style={item.renderStyle}>
+            <Text style={{fontSize:20}}>
+              {item.value}
+            </Text>
+            <Text style={{fontSize:12, fontStyle:'italic', paddingBottom:10, marginBottom:20}}>
+                {item.selectedServices.toString()}
+            </Text>
+          </View>
+        </TouchableHighlight>
+    )
   }
 
   render() {
@@ -129,18 +144,8 @@ export default class ServiceMenuScreen extends React.Component {
         <View style={commonStyles.listContainerStyle}>
           <FlatList
             data={this.state.serviceCategories}
-            ItemSeparatorComponent={this.FlatListItemSeparator}
-            renderItem={({ item }) => (
-              <TouchableHighlight onPress={this.OpenServiceDetailsPage.bind(this, item.value)}>
-              <View style={item.renderStyle}>
-                <Text style={{fontSize:20}}>
-                  {item.value}
-                </Text>
-                <Text style={{fontSize:12, fontStyle:'italic', paddingBottom:10, marginBottom:20}}>{item.selectedServices.toString()} </Text>
-              </View>
-              </TouchableHighlight>
-
-            )}
+            ItemSeparatorComponent={this.flatListItemSeparator}
+            renderItem={this.renderListItem}
             keyExtractor={(item, index) => index.toString()}
             extraData={this.state}
           />

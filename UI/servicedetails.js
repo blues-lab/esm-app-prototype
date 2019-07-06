@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, 
-  TextInput, Alert, FlatList, ScrollView} from 'react-native';
+  TextInput, Alert, FlatList, ScrollView, TouchableHighlight} from 'react-native';
 import * as RNFS from 'react-native-fs';
 import DialogInput from 'react-native-dialog-input';
 
@@ -9,6 +9,7 @@ const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
 
+const selectionText = "Selected (tap again to remove)";
 
 export default class ServiceDetailsScreen extends React.Component {
 
@@ -41,7 +42,7 @@ export default class ServiceDetailsScreen extends React.Component {
     super(props);
   }
 
-  loadServiceNames(servicesJS)
+  parseServiceNames(servicesJS)
   {
     // load service names in array from JSON object passed by parent
     _serviceNames = []
@@ -50,8 +51,9 @@ export default class ServiceDetailsScreen extends React.Component {
         _serviceNames.push
         (
           { id: servicesJS[i].serviceName,
-            value: servicesJS[i].serviceName,
-            selected: false,
+            name: servicesJS[i].serviceName,
+            selected: servicesJS[i].selected,
+            description: servicesJS[i].selected ? this.selectionText : "",
             renderStyle: commonStyles.listItemStyle
           }
         );
@@ -66,9 +68,50 @@ export default class ServiceDetailsScreen extends React.Component {
     const _serviceCategoryJS = navigation.getParam('serviceCategory', 'NO-SERVICE');
     this.setState({serviceCategoryJS: _serviceCategoryJS,
                    serviceCategoryName: _serviceCategoryJS.categoryName,
-                   serviceNames: this.loadServiceNames(_serviceCategoryJS.services)
+                   serviceNames: this.parseServiceNames(_serviceCategoryJS.services)
                  });
   }
+
+  handleServiceSelection = (selectedServiceName) => {
+    _serviceNames = this.state.serviceNames;
+    for(var i=0; i< _serviceNames.length; i++)
+    {
+        if(_serviceNames[i].name == selectedServiceName )
+        {
+            _serviceNames[i].selected = !_serviceNames[i].selected;
+
+            if (_serviceNames[i].selected)
+            {
+                _serviceNames[i].description = selectionText;
+                _serviceNames[i].renderStyle = styles.selectedItemStyle;
+            }
+            else
+            {
+                _serviceNames[i].description = "";
+                _serviceNames[i].renderStyle = commonStyles.listItemStyle;
+            }
+            break;
+        }
+    }
+
+    this.setState({serviceNames: _serviceNames});
+  }
+
+  renderListItem = ({item}) => {
+      return (
+          <TouchableHighlight onPress={this.handleServiceSelection.bind(this, item.name)}>
+            <View style={item.renderStyle}>
+              <Text style={{fontSize:20}}>
+                {item.name}
+              </Text>
+              <Text style={{fontSize:12, fontStyle:'italic', paddingBottom:10, marginBottom:20}}>
+                {item.description}
+              </Text>
+
+            </View>
+          </TouchableHighlight>
+      )
+    }
 
   render() {
     return (
@@ -84,16 +127,9 @@ export default class ServiceDetailsScreen extends React.Component {
               <FlatList
                 data={this.state.serviceNames}
                 ItemSeparatorComponent={this.FlatListItemSeparator}
-                renderItem={({ item }) => (
-                  <View>
-                    <Text
-                      style={commonStyles.listItemStyle}
-                      onPress={this.GetItem.bind(this, 'Id : '+item.id+' Value : '+item.value)}>
-                      {item.value}
-                    </Text>
-                  </View>
-                )}
+                renderItem={this.renderListItem}
                 keyExtractor={(item, index) => index.toString()}
+                extraData={this.state}
               />
             </View>
 
@@ -130,6 +166,13 @@ export default class ServiceDetailsScreen extends React.Component {
   }
 }
 
+
 const styles = StyleSheet.create({
+
+  selectedItemStyle: {
+      backgroundColor: "#9dd7fb",
+      padding: 10,
+      height: 60,
+  }
 
 });
