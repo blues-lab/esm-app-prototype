@@ -28,28 +28,43 @@ export default class ServiceMenuScreen extends React.Component {
     noRelevantDialogVisible:false,
     saveButtonEnabled:true,
     modalVisible:false,
-    activeServiceName: ""           //name of the currently selected service category
+    activeServiceName: "",           //Name of the currently selected service category
+    surveyResponseJS:{},             //Hold participants responses
   };
 
 
-  OpenServiceDetailsPage(item) //Function for click on a service category item
+  OpenServiceDetailsPage(selectedServiceCategoryName) //Function for click on a service category item
   {
-
-    this.props.navigation.navigate('ServiceDetails',
+      _serviceCategoriesJS = this.state.serviceCategoriesJS;
+      for(var i=0; i< _serviceCategoriesJS.length; i++)
       {
-        serviceCategory: item.value
-      });
-
-      _serviceCategories = this.state.serviceCategories;
-      for(i=0; i< _serviceCategories.length; i++)
-      {
-          if (item.value== _serviceCategories[i].value)
-          {
-              _serviceCategories[i].selectedServices.push("selected");
-              _serviceCategories[i].renderStyle=styles.selectedItemStyle;
-          }
+        if(_serviceCategoriesJS[i].categoryName == selectedServiceCategoryName)
+        {
+            this.props.navigation.navigate('ServiceDetails',
+            {
+                serviceCategory: _serviceCategoriesJS[i]
+            });
+            break;
+        }
       }
-      this.setState({serviceCategories: _serviceCategories});
+
+//    this.props.navigation.navigate('ServiceDetails',
+//    {
+//        serviceCategory: item.value
+//    });
+
+
+
+//      _serviceCategories = this.state.serviceCategories;
+//      for(i=0; i< _serviceCategories.length; i++)
+//      {
+//          if (item.value== _serviceCategories[i].value)
+//          {
+//              _serviceCategories[i].selectedServices.push("selected");
+//              _serviceCategories[i].renderStyle=styles.selectedItemStyle;
+//          }
+//      }
+//      this.setState({serviceCategories: _serviceCategories});
   }
 
 
@@ -133,7 +148,7 @@ export default class ServiceMenuScreen extends React.Component {
             data={this.state.serviceCategories}
             ItemSeparatorComponent={this.FlatListItemSeparator}
             renderItem={({ item }) => (
-              <TouchableHighlight onPress={this.OpenServiceDetailsPage.bind(this, item)}>
+              <TouchableHighlight onPress={this.OpenServiceDetailsPage.bind(this, item.value)}>
               <View style={item.renderStyle}>
                 <Text style={{fontSize:20}}>
                   {item.value}
