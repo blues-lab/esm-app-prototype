@@ -90,11 +90,16 @@ export default class ServiceDetailsScreen extends React.Component {
                 _serviceNames[i].description = "";
                 _serviceNames[i].renderStyle = commonStyles.listItemStyle;
             }
+
+            //call parent component to update service selections
+            this.props.navigation.state.params.serviceSelectionHandler(_serviceNames[i]);
+
             break;
         }
     }
 
     this.setState({serviceNames: _serviceNames});
+
   }
 
   renderListItem = ({item}) => {

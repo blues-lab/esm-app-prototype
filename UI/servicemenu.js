@@ -42,7 +42,8 @@ export default class ServiceMenuScreen extends React.Component {
         {
             this.props.navigation.navigate('ServiceDetails',
             {
-                serviceCategory: _serviceCategoriesJS[i]
+                serviceCategory: _serviceCategoriesJS[i],
+                serviceSelectionHandler: this.handleServiceSelectionChange.bind(this)
             });
             break;
         }
@@ -101,6 +102,12 @@ export default class ServiceMenuScreen extends React.Component {
       return (
         <View style={{height: 0.5, width: '100%', backgroundColor: '#C8C8C8'}}/>
       );
+  }
+
+  handleServiceSelectionChange = (service) =>
+  {
+    //Callback function to be invoked by service details when a service is (de) selected
+    Alert.alert("from child:"+service.name);
   }
 
   renderListItem = ({item}) => {
