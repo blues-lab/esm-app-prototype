@@ -48,23 +48,6 @@ export default class ServiceMenuScreen extends React.Component {
         }
       }
 
-//    this.props.navigation.navigate('ServiceDetails',
-//    {
-//        serviceCategory: item.value
-//    });
-
-
-
-//      _serviceCategories = this.state.serviceCategories;
-//      for(i=0; i< _serviceCategories.length; i++)
-//      {
-//          if (item.value== _serviceCategories[i].value)
-//          {
-//              _serviceCategories[i].selectedServices.push("selected");
-//              _serviceCategories[i].renderStyle=styles.selectedItemStyle;
-//          }
-//      }
-//      this.setState({serviceCategories: _serviceCategories});
   }
 
 
