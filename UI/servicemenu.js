@@ -16,7 +16,7 @@ const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
 
-
+import commonStyles from './Style'
 
 
 export default class ServiceMenuScreen extends React.Component {
@@ -146,7 +146,7 @@ export default class ServiceMenuScreen extends React.Component {
         }}>
 
         <View style={styles.longTextView}>
-            <Text style={styles.longtextstyle}>
+            <Text style={commonStyles.longtextstyle}>
               Imagine an always-listening voice assistant called Mimi
               recorded an audio when you were talking. Please select all
               services that are <Text style={{fontWeight: "bold"}}>relevant</Text> to this
@@ -288,24 +288,6 @@ const styles = StyleSheet.create({
       marginRight: 15,
       marginBottom:5,
       marginTop:10,
-  },
-  longtextstyle: {
-    //color: 'black',
-    fontFamily:'Times New Roman',
-    backgroundColor:'#a7f1e9',
-    fontSize: 20,
-    borderColor: 'black',
-    paddingRight:20,
-    paddingLeft:20,
-    paddingTop:5,
-    paddingBottom:5,
-    marginLeft: 15,
-    marginRight: 15,
-    marginBottom:5,
-    marginTop:10,
-
-    //paddingBottom:
-    // borderWidth: 1
   },
  MainContainer: {
  //elevation: 30,
