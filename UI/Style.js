@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
 
-  longtextstyle: {
+   longtextStyle: {
     //color: 'black',
     fontFamily:'Times New Roman',
     backgroundColor:'#a7f1e9',
@@ -16,8 +16,39 @@ export default StyleSheet.create({
     marginRight: 15,
     marginBottom:5,
     marginTop:10,
-
-    //paddingBottom:
-    // borderWidth: 1
-  }
+   },
+   listContainerStyle: {
+      //elevation: 30,
+      justifyContent: 'center',
+      flex: 1,
+      marginLeft: 15,
+      marginRight: 15,
+      marginBottom: 1,
+      marginTop: 5,
+      //borderWidth:1,
+      backgroundColor:"lightcyan",
+      paddingBottom:2,
+      paddingTop:2,
+    },
+    listItemStyle: {
+        padding: 10,
+        height: 60,
+    },
+    buttonTouchHLStyle: {
+        height: 40,
+        width:160,
+        borderRadius:10,
+        marginLeft:5,
+        marginRight:5,
+        marginTop:2,
+        marginBottom:2
+    },
+    longTextView: {
+      elevation: 10,
+      backgroundColor:'#a7f1e9',
+      marginLeft: 15,
+      marginRight: 15,
+      marginBottom:5,
+      marginTop:10,
+    },
 });

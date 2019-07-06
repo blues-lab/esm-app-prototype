@@ -2,21 +2,17 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, ScrollView, Image,
  TextInput, Alert, FlatList, TouchableHighlight, TouchableOpacity,
  Modal} from 'react-native';
+
 import * as RNFS from 'react-native-fs';
-
-
 import ElevatedView from 'react-native-elevated-view';
 import Dialog from 'react-native-dialog';
 import DialogInput from 'react-native-dialog-input';
 
 
 import ServicePermissionScreen from './servicePermission'
-
+import commonStyles from './Style'
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
-
-
-import commonStyles from './Style'
 
 
 export default class ServiceMenuScreen extends React.Component {
@@ -26,96 +22,68 @@ export default class ServiceMenuScreen extends React.Component {
   };
 
   state = {
-    services: "No services found", serviceCategoryNames: [],
+    serviceCategoriesJS: '',        //JSON object loaded from file and then parsed
+    serviceCategories: [],          //Parsed service categories in an array
     newCategoryDialogVisible:false,
     noRelevantDialogVisible:false,
     saveButtonEnabled:true,
     modalVisible:false,
-    activeServiceName:"service"
+    activeServiceName: ""           //name of the currently selected service category
   };
 
-  FlatListItemSeparator = () => 
-  {
-    return (
-      //Item Separator
-      <View style={{height: 0.5, width: '100%', backgroundColor: '#C8C8C8'}}/>
-    );
-  }
 
-  GetItem(item) 
+  OpenServiceDetailsPage(item) //Function for click on a service category item
   {
-    //Function for click on an item
+
     this.props.navigation.navigate('ServiceDetails',
       {
         serviceCategory: item.value
       });
 
-      serviceCategoryNames = this.state.serviceCategoryNames;
-      for(i=0; i<serviceCategoryNames.length; i++)
+      _serviceCategories = this.state.serviceCategories;
+      for(i=0; i< _serviceCategories.length; i++)
       {
-          if (item.value==serviceCategoryNames[i].value)
+          if (item.value== _serviceCategories[i].value)
           {
-              serviceCategoryNames[i].selectedServices.push("selected");
-              serviceCategoryNames[i].renderStyle=styles.selectedItemStyle;
+              _serviceCategories[i].selectedServices.push("selected");
+              _serviceCategories[i].renderStyle=styles.selectedItemStyle;
           }
       }
-      this.setState({serviceCategoryNames: serviceCategoryNames});
+      this.setState({serviceCategories: _serviceCategories});
   }
 
 
-  handleCancel = () => {
-    this.setState({ noRelevantDialogVisible: false });
-  };
-
-  saveNoRelevantServiceReason= () => {
-  //Alert.alert("hi");
-    this.setState({ noRelevantDialogVisible: false });
-  };
-
-  openModal= ()=> {
-  //Alert.alert("hel");
-    this.setState({modalVisible:true});
-  };
-
-  closeModal= ()=> {
-    this.setState({modalVisible:false});
-  }
-
-  readServiceFile()
+  ReadServiceFile()
   {
-    serviceCategoryNames = [];
-    
-
     RNFS.readFile(serviceFileLocal)
-    .then((res) => {
+    .then((_fileContent) => {
 
-      serviceCategories = JSON.parse(res).serviceCategories;
-      serviceCategoryNames=[];
-      for(var i=0; i<serviceCategories.length; i++)
+      _serviceCategoriesJS = JSON.parse(_fileContent).serviceCategories;
+      _serviceCategories=[];
+      for(var i=0; i< _serviceCategoriesJS.length; i++)
       {
-        serviceCategoryNames.push
+        _serviceCategories.push
         (
-          { id: serviceCategories[i].categoryName, 
-            value: serviceCategories[i].categoryName,
+          { id: _serviceCategoriesJS[i].categoryName,
+            value: _serviceCategoriesJS[i].categoryName,
             selectedServices: [],
-            renderStyle: styles.itemStyle
+            renderStyle: commonStyles.listItemStyle
           }
         );
       }
-      
+
       this.setState
       (
         {
-          services: JSON.parse(res), 
-          serviceCategoryNames: serviceCategoryNames
+          serviceCategoriesJS: _serviceCategoriesJS,
+          serviceCategories: _serviceCategories
         }
       );
-
-      
 
     })  
     .catch((err) => {
       Alert.alert("Error: "+err.code,err.message);
+      //TODO: handle error
     })
 
   }
@@ -125,12 +93,16 @@ export default class ServiceMenuScreen extends React.Component {
     super(props);
   }
 
-
-
   componentDidMount()
   {
-    this.readServiceFile();
-    //Alert.alert("Services", "abc: "+this.state.serviceCategoryNames.length);
+    this.ReadServiceFile();
+  }
+
+  FlatListItemSeparator = () =>
+  {
+      return (
+        <View style={{height: 0.5, width: '100%', backgroundColor: '#C8C8C8'}}/>
+      );
   }
 
   render() {
@@ -145,8 +117,8 @@ export default class ServiceMenuScreen extends React.Component {
           backgroundColor:'lavender'
         }}>
 
-        <View style={styles.longTextView}>
-            <Text style={commonStyles.longtextstyle}>
+        <View style={commonStyles.longTextView}>
+            <Text style={commonStyles.longtextStyle}>
               Imagine an always-listening voice assistant called Mimi
               recorded an audio when you were talking. Please select all
               services that are <Text style={{fontWeight: "bold"}}>relevant</Text> to this
@@ -156,12 +128,12 @@ export default class ServiceMenuScreen extends React.Component {
         </View>
 
 
-        <View style={styles.MainContainer}>
+        <View style={commonStyles.listContainerStyle}>
           <FlatList
-            data={this.state.serviceCategoryNames}
+            data={this.state.serviceCategories}
             ItemSeparatorComponent={this.FlatListItemSeparator}
             renderItem={({ item }) => (
-              <TouchableHighlight onPress={this.GetItem.bind(this, item)}>
+              <TouchableHighlight onPress={this.OpenServiceDetailsPage.bind(this, item)}>
               <View style={item.renderStyle}>
                 <Text style={{fontSize:20}}>
                   {item.value}
@@ -178,56 +150,39 @@ export default class ServiceMenuScreen extends React.Component {
 
 
         <View style={{
-                flex: 1,
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
-                alignItems: 'stretch',
-                marginTop:2,
-                                          marginBottom:2
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'stretch',
+            marginTop:2,
+            marginBottom:2
+        }}>
+
+            <View style={{
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop:2,
+              marginBottom:2
               }}>
-
-                <View style={{
-                  flex: 1,
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginTop:2,
-                  marginBottom:2
-                  }}>
-
-                  <TouchableHighlight style ={{
-                        height: 40,
-                        width:160,
-                        borderRadius:10,
-                        marginLeft:5,
-                        marginRight:5,
-                        marginTop:2,
-                        marginBottom:2
-                      }}>
+                  <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
                         <Button title="Add new"
                             color="#20B2AA"
                             onPress={() => this.setState({newCategoryDialogVisible:true})}
                         />
                   </TouchableHighlight>
 
-                  <TouchableHighlight style ={{
-                          height: 40,
-                          width:160,
-                          borderRadius:10,
-                          marginLeft:5,
-                          marginRight:5,
-                          marginTop:2,
-                          marginBottom:2
-                        }}>
+                  <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
                       <Button disabled = {!this.state.saveButtonEnabled}
                         onPress={() => this.props.navigation.navigate('ServicePermission',
                                             {serviceName:this.state.activeServiceName})}
-                        title="Save"
+                        title="Next"
                         color="#20B2AA"
                         accessibilityLabel="Next"
                       />
-                    </TouchableHighlight>
-                </View>
+                  </TouchableHighlight>
+            </View>
 
             <Button
               title="No relevant service"
@@ -236,43 +191,47 @@ export default class ServiceMenuScreen extends React.Component {
             />
         </View>
 
-        <DialogInput isDialogVisible={this.state.newCategoryDialogVisible}
-            title={"Add new service category"}
-            message={""}
-            hintInput ={""}
-            multiline={true}
-            numberOfLines={4}
-            submitInput={ (inputText) => 
-              {
-                serviceCategoryNames = this.state.serviceCategoryNames;
-                serviceCategoryNames.push
-                (
-                  { id: inputText,
-                    value: inputText }
-                );
-
-                this.setState({serviceCategoryNames:serviceCategoryNames, newCategoryDialogVisible:false});
-              }
-            }
-            closeDialog={ () => {this.setState({newCategoryDialogVisible:false})}}>
-        </DialogInput>
-
       </View>
 
+      <DialogInput isDialogVisible={this.state.newCategoryDialogVisible}
+          title={"Add new service category"}
+          message={""}
+          hintInput ={""}
+          multiline={true}
+          numberOfLines={4}
+          submitInput={ (inputText) =>
+            {
+              _serviceCategories= this.state.serviceCategories;
+              _serviceCategories.push
+              (
+                { id: inputText,
+                  value: inputText }
+              );
+
+              this.setState({serviceCategories: _serviceCategories, newCategoryDialogVisible:false});
+            }
+          }
+          closeDialog={ () => {this.setState({newCategoryDialogVisible:false})}}>
+      </DialogInput>
+
       <Dialog.Container visible={this.state.noRelevantDialogVisible}>
-                <Dialog.Title>Please explain why no service would be relevant in this situation.</Dialog.Title>
-                <Dialog.Input
-                    multiline={true}
-                    numberOfLines={4}
-                    style={{height: 300, borderColor: 'lightgray', borderWidth: 1}}
-                    />
-                <Dialog.Button label="Cancel" onPress={this.handleCancel}/>
-                <Dialog.Button label="Save" onPress={this.saveNoRelevantServiceReason} />
+        <Dialog.Title>Please explain why no service would be relevant in this situation.</Dialog.Title>
+        <Dialog.Input
+            multiline={true}
+            numberOfLines={4}
+            style={{height: 300, borderColor: 'lightgray', borderWidth: 1}}
+        />
+        <Dialog.Button label="Cancel" onPress={ () => {
+            this.setState({ noRelevantDialogVisible: false })
+            }}
+        />
+        <Dialog.Button label="Save" onPress={() => {
+            this.setState({ noRelevantDialogVisible: false })
+            }}
+        />
       </Dialog.Container>
 
-
       </ScrollView>
-
 
     );
   }
@@ -281,32 +240,6 @@ export default class ServiceMenuScreen extends React.Component {
 
 const styles = StyleSheet.create({
 
-  longTextView:{
-  elevation: 10,
-  backgroundColor:'#a7f1e9',
-  marginLeft: 15,
-      marginRight: 15,
-      marginBottom:5,
-      marginTop:10,
-  },
- MainContainer: {
- //elevation: 30,
-    justifyContent: 'center',
-    flex: 1,
-    marginLeft: 15,
-    marginRight: 15,
-    marginBottom: 1,
-    marginTop: 5,
-    //borderWidth:1,
-    backgroundColor:"lightcyan",
-    paddingBottom:2,
-    paddingTop:2,
-  },
- 
-  itemStyle: {
-    padding: 10,
-    height: 60,
-  },
   selectedItemStyle: {
       backgroundColor: "#9dd7fb",
       padding: 10,
