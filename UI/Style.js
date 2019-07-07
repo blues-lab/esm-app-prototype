@@ -87,4 +87,12 @@ export default StyleSheet.create({
         paddingBottom:10,
         marginTop:5,
       },
+    buttonViewStyle: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop:2,
+      marginBottom:2
+    }
 });

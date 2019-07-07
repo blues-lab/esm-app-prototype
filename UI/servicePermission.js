@@ -109,24 +109,8 @@ export default class ServicePermissionScreen extends React.Component {
           }
       </View>
 
-      <View style={{
-                    flex: 1,
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginRight:10,
-                    marginLeft:10,
-                    backgroundColor:'lightcyan',
-                    }}>
-          <TouchableHighlight style ={{
-                                height: 40,
-                                width:160,
-                                borderRadius:10,
-                                marginLeft:5,
-                                marginRight:5,
-                                marginTop:10,
-                                marginBottom:10
-                              }}>
+      <View style={commonStyle.buttonViewStyle}>
+          <TouchableHighlight style ={commonStyle.buttonTouchHLStyle}>
             <Button
               onPress={() => this.props.navigation.navigate('ContextualQuestion')}
               title="Next"
