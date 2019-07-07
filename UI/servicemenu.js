@@ -245,14 +245,7 @@ export default class ServiceMenuScreen extends React.Component {
             marginBottom:2
         }}>
 
-            <View style={{
-              flex: 1,
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop:2,
-              marginBottom:2
-              }}>
+            <View style={commonStyles.buttonViewStyle}>
                   <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
                         <Button title="Add new"
                             color="#20B2AA"
