@@ -9,6 +9,8 @@ import DialogInput from 'react-native-dialog-input';
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
+import commonStyle from './Style'
+
 
  var radioOptions = [
     {label: 'Yes, I will allow access to any relevant parts of the conversation', value: 0 },
@@ -52,7 +54,7 @@ export default class ServicePermissionScreen extends React.Component {
 
   render() {
     return (
-    <View>
+
     <ScrollView>
       <View style={{
           flex: 1,
@@ -64,11 +66,11 @@ export default class ServicePermissionScreen extends React.Component {
           backgroundColor:'lightcyan',
           }}>
 
-          <Text style={styles.questionStyle}>
+          <Text style={commonStyle.questionStyle}>
             Would you allow MiMi to access the relevant parts of
             the conversation to provide you the service {this.state.serviceName}?
           </Text>
-          <RadioForm style={styles.radioFrameStyle}
+          <RadioForm style={commonStyle.radioFrameStyle}
               radio_props={radioOptions}
               initial={0}
               onPress={(value) => this.selectionChanged(value)}
@@ -76,50 +78,35 @@ export default class ServicePermissionScreen extends React.Component {
 
           { this.state.partsSelected &&
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={styles.questionStyle}>What parts would you not allow the device to access?</Text>
-                <TextInput
-                    multiline={true}
-                    numberOfLines={4}
-                    style={styles.inputStyle}
-                    onChangeText={(text) =>
-                      this.setState({ conversationTopic: text })
-
-                    }
+                <Text style={commonStyle.questionStyle}>
+                    What parts would you not allow the device to access?
+                </Text>
+                <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
+                    onChangeText={(text) => this.setState({ conversationTopic: text })}
                     value={this.state.conversationTopic}
                 />
 
-                <Text style={styles.questionStyle}>Why would you not allow the device to access these parts?</Text>
-                <TextInput
-                    multiline={true}
-                    numberOfLines={4}
-                    style={styles.inputStyle}
-                    onChangeText={(text) =>
-                      this.setState({ conversationTopic: text })
-
-                    }
+                <Text style={commonStyle.questionStyle}>
+                    Why would you not allow the device to access these parts?
+                </Text>
+                 <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
+                    onChangeText={(text) => this.setState({ conversationTopic: text })}
                     value={this.state.conversationTopic}
                 />
-
             </View>
           }
 
           { this.state.notAtAllSelected &&
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={styles.questionStyle}>Why would you not allow to access the relevant conversation? </Text>
-                <TextInput
-                    multiline={true}
-                    numberOfLines={4}
-                    style={styles.inputStyle}
-                    onChangeText={(text) =>
-                      this.setState({ conversationTopic: text })
-
-                    }
+                <Text style={commonStyle.questionStyle}>
+                    Why would you not allow to access the relevant conversation?
+                </Text>
+                <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
+                    onChangeText={(text) => this.setState({ conversationTopic: text })}
                     value={this.state.conversationTopic}
                 />
             </View>
           }
-
-
       </View>
 
       <View style={{
@@ -149,50 +136,12 @@ export default class ServicePermissionScreen extends React.Component {
           </TouchableHighlight>
       </View>
 
-      </ScrollView>
-
-
-</View>
+    </ScrollView>
 
     );
   }
 }
 
 const styles = StyleSheet.create({
-  questionStyle: {
-    color: 'black',
-    fontFamily:'Times New Roman',
-    //fontWeight: 'bold',
-    fontSize: 18,
-    borderColor: 'black',
-    paddingRight:20,
-    paddingLeft:20,
-    paddingTop:10,
-    paddingBottom:10,
-    marginTop:5,
-    backgroundColor:'#a7f1e9',
-  },
- radioFrameStyle: {
-    //justifyContent: 'center',
-    //flex: 1,
-    marginLeft: 10,
-    marginRight: 10,
-    marginBottom: 10,
-    marginTop: 15,
-    paddingLeft:30,
-    paddingRight:40,
-  },
 
-  inputStyle:{
-    height: 100,
-    width: 300,
-    alignItems: 'center',
-    borderColor: 'gray',
-    borderWidth: 1,
-    paddingRight:20,
-    paddingLeft:20,
-    paddingTop:10,
-    paddingBottom:10,
-    marginTop:5,
-  }
 });

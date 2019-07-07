@@ -5,12 +5,11 @@ import * as RNFS from 'react-native-fs';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
 import DialogInput from 'react-native-dialog-input';
-//import SelectMultiple from 'react-native-select-multiple';
 import NumericInput from 'react-native-numeric-input';
 
 import { CheckBox } from 'react-native-elements'
 
-//import CheckBoxes from 'react-native-group-checkbox'
+import commonStyle from './Style'
 
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
@@ -26,17 +25,13 @@ export default class ContextualQuestionScreen extends React.Component {
            familySelected:false, friendSelected:false, selectedItems:[],
            selectedRelations: new Set([]), numOfPeopleCanHear:0 }
 
-
-
-
-  constructor(props) 
+  constructor(props)
   {
     super(props);
   }
 
-
-
-   relationSelectionsChange = (selectedRelation, checked) => {
+   relationSelectionsChange = (selectedRelation, checked) =>
+   {
       if (checked)
       {
         this.setState({ selectedRelations: this.state.selectedRelations.add(selectedRelation) });
@@ -59,116 +54,109 @@ export default class ContextualQuestionScreen extends React.Component {
     const { navigation } = this.props;
   }
 
-onSelectedItemsChange = (selectedItems) => {
+  onSelectedItemsChange = (selectedItems) =>
+  {
     this.setState({ selectedItems });
   };
 
 
   render() {
     return (
-    <View style={{
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        alignItems: 'stretch',
-        marginRight:10,
-        marginLeft:10,
-        backgroundColor:'lightcyan',
-        }}>
+
     <ScrollView>
       <View style={styles.verticalViewStyle}>
 
-                <Text style={styles.questionStyle}>
-                    How many other people (excluding you) were talking?
+        <Text style={commonStyle.questionStyle}>
+            How many other people (excluding you) were talking?
+        </Text>
+        <NumericInput
+           value={this.state.numOfPeople}
+           onChange={(value)=>{
+            this.setState({numOfPeople: value});
+            if(value==0)
+                this.setState({selectedRelations: new Set([])})
+           }}
+           onLimitReached={(isMax,msg) => console.log(isMax,msg)}
+           totalWidth={200}
+           totalHeight={40}
+           minValue={0}
+           maxValue={100}
+           iconSize={25}
+           step={1}
+           valueType='integer'
+           rounded
+           textColor='#B0228C'
+           iconStyle={{ color: 'white' }}
+           rightButtonBackgroundColor='#66c1e5'
+           leftButtonBackgroundColor='#92d3ed'
+        />
+
+
+        {   this.state.numOfPeople>0 &&
+            <View style={styles.verticalViewStyle}>
+                <Text style={commonStyle.questionStyle}>
+                    How do you relate to them (select all that apply)?
                 </Text>
-                <NumericInput
-                   value={this.state.numOfPeople}
-                   onChange={(value)=>{
-                    this.setState({numOfPeople: value});
-                    if(value==0)
-                        this.setState({selectedRelations: new Set([])})
-                   }}
-                   onLimitReached={(isMax,msg) => console.log(isMax,msg)}
-                   totalWidth={200}
-                   totalHeight={40}
-                   minValue={0}
-                   maxValue={100}
-                   iconSize={25}
-                   step={1}
-                   valueType='integer'
-                   rounded
-                   textColor='#B0228C'
-                   iconStyle={{ color: 'white' }}
-                   rightButtonBackgroundColor='#66c1e5'
-                   leftButtonBackgroundColor='#92d3ed'
-                />
+                <RelationGroup callback={this.relationSelectionsChange.bind(this)} />
 
-
-                {   this.state.numOfPeople>0 &&
-                    <View style={styles.verticalViewStyle}>
-                        <Text style={styles.questionStyle}>
-                            How do you relate to them (select all that apply)?
+                {   false &&
+                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'flex-start'}}>
+                        <Text style={{color: 'black', fontFamily:'Times New Roman', fontSize: 18}}>
+                            Other:
                         </Text>
-                        <RelationGroup callback={this.relationSelectionsChange.bind(this)} />
 
-                        {false &&
-                        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'flex-start'}}>
-                            <Text style={{color: 'black', fontFamily:'Times New Roman', fontSize: 18}}>
-                                Other:
-                            </Text>
+                        <TextInput
+                             multiline={false}
+                             style={{height: 50, width: 100, borderColor: 'gray', borderWidth: 1}}
+                             onChangeText={(text) =>
+                               this.setState({ conversationTopic: text })
 
-                            <TextInput
-                                 multiline={false}
-                                 style={{height: 50, width: 100, borderColor: 'gray', borderWidth: 1}}
-                                 onChangeText={(text) =>
-                                   this.setState({ conversationTopic: text })
-
-                                 }
-                                 value={"hasaflj"}
-                            />
-                        </View>
-                        }
-                        <Text style={styles.questionStyle}>
-                            Among people who were talking, were there:
-                            TODO: add options
-                        </Text>
+                             }
+                             value={"hasaflj"}
+                        />
                     </View>
                 }
-
-                <Text style={styles.questionStyle}>
-                    Where were you talking (select all that apply)?
+                <Text style={commonStyle.questionStyle}>
+                    Among people who were talking, were there:
+                    TODO: add options
                 </Text>
-                <LocationGroup callback={this.relationSelectionsChange.bind(this)} />
+            </View>
+        }
 
-                <Text style={styles.questionStyle}>
-                    Were all the people who were talking at your home (as opposed to someone calling in
-                    or connecting to a video chat)? -- What should be the input type?
-                </Text>
+        <Text style={commonStyle.questionStyle}>
+            Where were you talking (select all that apply)?
+        </Text>
+        <LocationGroup callback={this.relationSelectionsChange.bind(this)} />
 
-                <View style={styles.insideVerticalViewStyle}>
-                    <Text style={styles.questionStyle}>
-                        How many people, who did not participate in the conversation, could hear it?
-                    </Text>
-                    <NumericInput style={{marginTop:100, marginBottom:30, paddingTop:10, paddingBottom:30}}
-                       value={this.state.numOfPeopleCanHear}
-                       onChange={(value)=>{
-                        this.setState({numOfPeopleCanHear: value});
-                       }}
-                       onLimitReached={(isMax,msg) => console.log(isMax,msg)}
-                       totalWidth={200}
-                       totalHeight={40}
-                       minValue={0}
-                       maxValue={100}
-                       iconSize={25}
-                       step={1}
-                       valueType='integer'
-                       rounded
-                       textColor='#B0228C'
-                       iconStyle={{ color: 'white' }}
-                       rightButtonBackgroundColor='#66c1e5'
-                       leftButtonBackgroundColor='#92d3ed'
-                    />
-                </View>
+        <Text style={commonStyle.questionStyle}>
+            Were all the people who were talking at your home (as opposed to someone calling in
+            or connecting to a video chat)? -- What should be the input type?
+        </Text>
+
+        <View style={styles.insideVerticalViewStyle}>
+            <Text style={commonStyle.questionStyle}>
+                How many people, who did not participate in the conversation, could hear it?
+            </Text>
+            <NumericInput style={{marginTop:100, marginBottom:30, paddingTop:10, paddingBottom:30}}
+               value={this.state.numOfPeopleCanHear}
+               onChange={(value)=>{
+                this.setState({numOfPeopleCanHear: value});
+               }}
+               onLimitReached={(isMax,msg) => console.log(isMax,msg)}
+               totalWidth={200}
+               totalHeight={40}
+               minValue={0}
+               maxValue={100}
+               iconSize={25}
+               step={1}
+               valueType='integer'
+               rounded
+               textColor='#B0228C'
+               iconStyle={{ color: 'white' }}
+               rightButtonBackgroundColor='#66c1e5'
+               leftButtonBackgroundColor='#92d3ed'
+            />
+        </View>
 
 
       </View>
@@ -200,49 +188,15 @@ onSelectedItemsChange = (selectedItems) => {
               </TouchableHighlight>
           </View>
       </ScrollView>
-</View>
 
     );
   }
 }
 
 const styles = StyleSheet.create({
-  questionStyle: {
-    //color: 'black',
-    fontFamily:'Times New Roman',
-    //fontWeight: 'bold',
-    fontSize: 18,
-    borderColor: 'black',
-    paddingRight:20,
-    paddingLeft:20,
-    paddingTop:10,
-    paddingBottom:10,
-    marginTop:5,
-    backgroundColor:'#b3ffff',
-  },
- radioFrameStyle: {
-    //justifyContent: 'center',
-    //flex: 1,
-    marginLeft: 10,
-    marginRight: 10,
-    marginBottom: 10,
-    marginTop: 15,
-    paddingLeft:30,
-    paddingRight:40,
-  },
 
-  inputStyle:{
-    height: 100,
-    width: 300,
-    alignItems: 'center',
-    borderColor: 'gray',
-    borderWidth: 1,
-    paddingRight:20,
-    paddingLeft:20,
-    paddingTop:10,
-    paddingBottom:10,
-    marginTop:5,
-  },
+
+
 
   verticalViewStyle:{
     flex: 1,
