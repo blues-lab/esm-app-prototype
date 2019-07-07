@@ -29,6 +29,7 @@ export default class ServiceMenuScreen extends React.Component {
     saveButtonEnabled:true,
     modalVisible:false,
     activeServiceName: "",           //Name of the currently selected service category
+    noRelevantServiceReason: '',
     surveyResponseJS:{},             //Hold participants responses
   };
 
@@ -49,6 +50,23 @@ export default class ServiceMenuScreen extends React.Component {
         }
       }
 
+  }
+
+  getSelectedServices()
+  {
+    //Convert selected services in JSON format
+    _selectedServicesJS = []
+    _serviceCategories = this.state.serviceCategories;
+    for(var i=0; i< _serviceCategories.length; i++)
+    {
+       if(_serviceCategories[i].selectedServiceNames.size>0)
+        {
+            _selectedServicesJS.push({
+                "category": _serviceCategories[i].name,
+                'services': Array.from(_serviceCategories[i].selectedServiceNames)}
+            );
+        }
+    }
   }
 
 
@@ -140,6 +158,35 @@ export default class ServiceMenuScreen extends React.Component {
       this.setState({serviceCategories: _serviceCategories})
   }
 
+  enableDisableNextButton()
+  {
+    //enable the next button if
+    // --at least one selected service OR
+    // --entered reason for no relevant service
+
+
+    _serviceCategories = this.state.serviceCategories;
+    for(var i=0; i<_serviceCategories.length; i++)
+    {
+        _services= _serviceCategories[i].services;
+        for(var j=0; j< _services.length; i++)
+        {
+            if(_services[j].selected)
+            {
+                this.setState({saveButtonEnabled: true});
+                return;
+            }
+        }
+    }
+    if(this.state.surveyResponseJS.noRelevantServiceReason.length>0)
+    {
+        this.setState({saveButtonEnabled: true});
+        return;
+    }
+
+    this.setState({saveButtonEnabled: true});
+  }
+
   renderListItem = ({item}) => {
     return (
         <TouchableHighlight onPress={this.OpenServiceDetailsPage.bind(this, item.name)}>
@@ -216,7 +263,7 @@ export default class ServiceMenuScreen extends React.Component {
                   <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
                       <Button disabled = {!this.state.saveButtonEnabled}
                         onPress={() => this.props.navigation.navigate('ServicePermission',
-                                            {serviceName:this.state.activeServiceName})}
+                                       {serviceName:this.state.activeServiceName})}
                         title="Next"
                         color="#20B2AA"
                         accessibilityLabel="Next"
@@ -260,13 +307,23 @@ export default class ServiceMenuScreen extends React.Component {
             multiline={true}
             numberOfLines={4}
             style={{height: 300, borderColor: 'lightgray', borderWidth: 1}}
+            value={this.state.noRelevantServiceReason}
+            onChangeText={(text) => {
+                  this.setState({ noRelevantServiceReason: text});
+                }}
         />
         <Dialog.Button label="Cancel" onPress={ () => {
-            this.setState({ noRelevantDialogVisible: false })
+                this.setState({noRelevantDialogVisible: false,
+                    noRelevantServiceReason: this.state.surveyResponseJS.noRelevantServiceReason
+                });
             }}
         />
         <Dialog.Button label="Save" onPress={() => {
-            this.setState({ noRelevantDialogVisible: false })
+                _surveyResponseJS = this.state.surveyResponseJS;
+                _surveyResponseJS.noRelevantServiceReason = this.state.noRelevantServiceReason;
+                this.setState({noRelevantDialogVisible: false, surveyResponseJS: _surveyResponseJS});
+
+                this.enableDisableNextButton();
             }}
         />
       </Dialog.Container>
