@@ -18,8 +18,9 @@ export default class ServiceDetailsScreen extends React.Component {
   };
 
   state = {
-    serviceCategoryJS: {},
-    serviceNames: [],
+    serviceCategory: {}, //contains the whole category object passed by parent
+    serviceCategoryName: '', //contains the category name
+    serviceNames: [], //contains parsed services
     isAddServiceDialogVisible:false,
   };
 
@@ -42,33 +43,34 @@ export default class ServiceDetailsScreen extends React.Component {
     super(props);
   }
 
-  parseServiceNames(servicesJS)
+  parseServiceNames(serviceCategory)
   {
-    // load service names in array from JSON object passed by parent
-    _serviceNames = []
-    for (var i=0; i< servicesJS.length; i++)
+    // load service names in array from service category object passed by parent
+    _serviceNames = [];
+    _services = serviceCategory.services;
+    for (var i=0; i< _services.length; i++)
     {
         _serviceNames.push
         (
-          { id: servicesJS[i].serviceName,
-            name: servicesJS[i].serviceName,
-            selected: servicesJS[i].selected,
-            description: servicesJS[i].selected ? this.selectionText : "",
+          { id: _services[i].name,
+            name: _services[i].name,
+            selected: _services[i].selected,
+            description: _services[i].selected ? this.selectionText : "",
             renderStyle: commonStyles.listItemStyle
           }
         );
     }
 
-    return _serviceNames;
+    return _services;
   }
 
   componentDidMount()
   {
     const { navigation } = this.props;
-    const _serviceCategoryJS = navigation.getParam('serviceCategory', 'NO-SERVICE');
-    this.setState({serviceCategoryJS: _serviceCategoryJS,
-                   serviceCategoryName: _serviceCategoryJS.categoryName,
-                   serviceNames: this.parseServiceNames(_serviceCategoryJS.services)
+    const _serviceCategory = navigation.getParam('serviceCategory', 'NO-SERVICE');
+    this.setState({serviceCategory: _serviceCategory,
+                   serviceCategoryName: _serviceCategory.name,
+                   serviceNames: this.parseServiceNames(_serviceCategory)
                  });
   }
 
@@ -92,7 +94,8 @@ export default class ServiceDetailsScreen extends React.Component {
             }
 
             //call parent component to update service selections
-            this.props.navigation.state.params.serviceSelectionHandler(_serviceNames[i]);
+            this.props.navigation.state.params.serviceSelectionHandler(
+                        this.state.serviceCategoryName, _serviceNames[i]);
 
             break;
         }

@@ -35,14 +35,14 @@ export default class ServiceMenuScreen extends React.Component {
 
   OpenServiceDetailsPage(selectedServiceCategoryName) //Function for click on a service category item
   {
-      _serviceCategoriesJS = this.state.serviceCategoriesJS;
-      for(var i=0; i< _serviceCategoriesJS.length; i++)
+      _serviceCategories = this.state.serviceCategories;
+      for(var i=0; i< _serviceCategories.length; i++)
       {
-        if(_serviceCategoriesJS[i].categoryName == selectedServiceCategoryName)
+        if(_serviceCategories[i].name == selectedServiceCategoryName)
         {
             this.props.navigation.navigate('ServiceDetails',
             {
-                serviceCategory: _serviceCategoriesJS[i],
+                serviceCategory: _serviceCategories[i],
                 serviceSelectionHandler: this.handleServiceSelectionChange.bind(this)
             });
             break;
@@ -61,12 +61,27 @@ export default class ServiceMenuScreen extends React.Component {
       _serviceCategories=[];
       for(var i=0; i< _serviceCategoriesJS.length; i++)
       {
+        _servicesJS = _serviceCategoriesJS[i].services;
+        _services = [];
+        for(var j=0; j< _servicesJS.length; j++)
+        {
+            _services.push
+            (
+                {
+                    id: _servicesJS[j].serviceName,
+                    name: _servicesJS[j].serviceName,
+                    selected: false
+                }
+            );
+        }
         _serviceCategories.push
         (
-          { id: _serviceCategoriesJS[i].categoryName,
-            value: _serviceCategoriesJS[i].categoryName,
-            selectedServices: [],
-            renderStyle: commonStyles.listItemStyle
+          {
+            id: _serviceCategoriesJS[i].categoryName,
+            name: _serviceCategoriesJS[i].categoryName,
+            selectedServiceNames: new Set([]),
+            renderStyle: commonStyles.listItemStyle,
+            services: _services
           }
         );
       }
@@ -104,21 +119,36 @@ export default class ServiceMenuScreen extends React.Component {
       );
   }
 
-  handleServiceSelectionChange = (service) =>
+  handleServiceSelectionChange = (categoryName, service) =>
   {
-    //Callback function to be invoked by service details when a service is (de) selected
-    Alert.alert("from child:"+service.name);
+      _serviceCategories = this.state.serviceCategories;
+      for(var i=0; i< _serviceCategories.length; i++)
+      {
+        if(_serviceCategories[i].name == categoryName)
+        {
+            if (service.selected)
+            {
+                _serviceCategories[i].selectedServiceNames.add(service.name)
+            }
+            else
+            {
+                _serviceCategories[i].selectedServiceNames.delete(service.name);
+            }
+        }
+      }
+
+      this.setState({serviceCategories: _serviceCategories})
   }
 
   renderListItem = ({item}) => {
     return (
-        <TouchableHighlight onPress={this.OpenServiceDetailsPage.bind(this, item.value)}>
+        <TouchableHighlight onPress={this.OpenServiceDetailsPage.bind(this, item.name)}>
           <View style={item.renderStyle}>
             <Text style={{fontSize:20}}>
-              {item.value}
+              {item.name}
             </Text>
             <Text style={{fontSize:12, fontStyle:'italic', paddingBottom:10, marginBottom:20}}>
-                {item.selectedServices.toString()}
+                {Array.from(item.selectedServiceNames).toString()}
             </Text>
           </View>
         </TouchableHighlight>
