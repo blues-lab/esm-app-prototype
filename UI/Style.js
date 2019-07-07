@@ -94,5 +94,13 @@ export default StyleSheet.create({
       alignItems: 'center',
       marginTop:2,
       marginBottom:2
-    }
+    },
+    multiLineTextStyle: {
+        backgroundColor:'white',
+        height: 100,
+        width: 200,
+        borderColor: 'gray',
+        borderWidth: 1
+    },
+
 });
