@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, 
-  TextInput, Alert, FlatList, Modal, ScrollView, TouchableHighlight} from 'react-native';
+  TextInput, Alert, FlatList, Modal, ScrollView,
+  TouchableHighlight, Switch} from 'react-native';
 import * as RNFS from 'react-native-fs';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
 import DialogInput from 'react-native-dialog-input';
-import NumericInput from 'react-native-numeric-input';
+
+import CustomNumericInput from './customNumericInput';
 
 import { CheckBox } from 'react-native-elements'
 
@@ -21,9 +23,11 @@ import LocationGroup from './locationGroup'
 
 export default class ContextualQuestionScreen extends React.Component {
 
-  state={  numOfPeople:0, relations: [], ages:[], locations:[],
-           familySelected:false, friendSelected:false, selectedItems:[],
-           selectedRelations: new Set([]), numOfPeopleCanHear:0 }
+  state={  numOfPeople:0, relations: [], locations:[],
+           familySelected:false, friendSelected:false,
+           selectedRelations: new Set([]), numOfPeopleCanHear:0,
+           childrenPresent: false, adolescentPresent: false,
+           contextResponseJS: {}}
 
   constructor(props)
   {
@@ -46,7 +50,20 @@ export default class ContextualQuestionScreen extends React.Component {
         updatedRelation.delete(selectedRelation);
         this.setState({ selectedRelations: updatedRelation });
       }
-    }
+   }
+
+   saveResponse()
+   {
+     _contextResponseJS={
+        "NumOfPeopleAround": this.state.numOfPeople,
+        "NumOfPeopleCanHear": this.state.numOfPeopleCanHear,
+        "ChildrenPresent": this.state.childrenPresent,
+        "AdolescentPresent": this.state.adolescentPresent,
+        "Relations": Array.from(this.state.selectedRelations).toString(),
+        "Locations": this.state.locations.toString(),
+     }
+     Alert.alert(JSON.stringify(_contextResponseJS));
+   }
 
 
   componentDidMount()
@@ -54,42 +71,28 @@ export default class ContextualQuestionScreen extends React.Component {
     const { navigation } = this.props;
   }
 
-  onSelectedItemsChange = (selectedItems) =>
+  numPeopleAroundChangeHandler(value)
   {
-    this.setState({ selectedItems });
-  };
+    this.setState({numOfPeople: value});
+  }
+  numPeopleCanHearChangeHandler(value)
+  {
+    this.setState({numOfPeopleCanHear:value});
+  }
 
 
   render() {
     return (
 
     <ScrollView>
+
+      <View style={{margin:10}}>
       <View style={styles.verticalViewStyle}>
 
         <Text style={commonStyle.questionStyle}>
             How many other people (excluding you) were talking?
         </Text>
-        <NumericInput
-           value={this.state.numOfPeople}
-           onChange={(value)=>{
-            this.setState({numOfPeople: value});
-            if(value==0)
-                this.setState({selectedRelations: new Set([])})
-           }}
-           onLimitReached={(isMax,msg) => console.log(isMax,msg)}
-           totalWidth={200}
-           totalHeight={40}
-           minValue={0}
-           maxValue={100}
-           iconSize={25}
-           step={1}
-           valueType='integer'
-           rounded
-           textColor='#B0228C'
-           iconStyle={{ color: 'white' }}
-           rightButtonBackgroundColor='#66c1e5'
-           leftButtonBackgroundColor='#92d3ed'
-        />
+        <CustomNumericInput valueChangeCallback={this.numPeopleAroundChangeHandler.bind(this)}/>
 
 
         {   this.state.numOfPeople>0 &&
@@ -118,8 +121,22 @@ export default class ContextualQuestionScreen extends React.Component {
                 }
                 <Text style={commonStyle.questionStyle}>
                     Among people who were talking, were there:
-                    TODO: add options
                 </Text>
+                <View style= {styles.horizontalViewStyle}>
+                    <Text style={{fontSize:16}}> Children (0-12 years old):</Text>
+                    <Switch style={{marginLeft:10}}
+                      value={this.state.childrenPresent}
+                      onValueChange={(val) => this.setState({childrenPresent: val})}
+                    />
+                </View>
+                <View style= {styles.horizontalViewStyle}>
+                    <Text style={{fontSize:16}}> Adolescent (13-17 years old):</Text>
+                    <Switch style={{marginLeft:10}}
+                      value={this.state.adolescentPresent}
+                      onValueChange={(val) => this.setState({adolescentPresent: val})}
+                    />
+                </View>
+
             </View>
         }
 
@@ -137,25 +154,7 @@ export default class ContextualQuestionScreen extends React.Component {
             <Text style={commonStyle.questionStyle}>
                 How many people, who did not participate in the conversation, could hear it?
             </Text>
-            <NumericInput style={{marginTop:100, marginBottom:30, paddingTop:10, paddingBottom:30}}
-               value={this.state.numOfPeopleCanHear}
-               onChange={(value)=>{
-                this.setState({numOfPeopleCanHear: value});
-               }}
-               onLimitReached={(isMax,msg) => console.log(isMax,msg)}
-               totalWidth={200}
-               totalHeight={40}
-               minValue={0}
-               maxValue={100}
-               iconSize={25}
-               step={1}
-               valueType='integer'
-               rounded
-               textColor='#B0228C'
-               iconStyle={{ color: 'white' }}
-               rightButtonBackgroundColor='#66c1e5'
-               leftButtonBackgroundColor='#92d3ed'
-            />
+            <CustomNumericInput valueChangeCallback={this.numPeopleCanHearChangeHandler.bind(this)}/>
         </View>
 
 
@@ -164,13 +163,15 @@ export default class ContextualQuestionScreen extends React.Component {
           <View style={commonStyle.buttonViewStyle}>
               <TouchableHighlight style ={commonStyle.buttonTouchHLStyle}>
                 <Button
-                  onPress={() => Alert.alert("Saved!")}
+                  onPress={() => this.saveResponse()}
                   title="Save"
                   color="#20B2AA"
                   accessibilityLabel="Save"
                 />
               </TouchableHighlight>
           </View>
+
+      </View>
       </ScrollView>
 
     );
@@ -187,8 +188,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-around',
     alignItems: 'center',
-    marginRight:10,
-    marginLeft:10,
+//    marginRight:10,
+//    marginLeft:10,
     backgroundColor:'lightcyan',
   },
 
@@ -203,10 +204,10 @@ const styles = StyleSheet.create({
   horizontalViewStyle:{
       flex: 1,
       flexDirection: 'row',
-      justifyContent: 'space-around',
+      justifyContent: 'center',
       alignItems: 'center',
-      marginRight:10,
-      marginLeft:10,
+//      marginRight:10,
+//      marginLeft:10,
       backgroundColor:'lightcyan',
   }
 

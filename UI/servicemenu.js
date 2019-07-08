@@ -178,11 +178,6 @@ export default class ServiceMenuScreen extends React.Component {
             }
         }
     }
-    if(this.state.surveyResponseJS.noRelevantServiceReason.length>0)
-    {
-        this.setState({saveButtonEnabled: true});
-        return;
-    }
 
     this.setState({saveButtonEnabled: true});
   }
@@ -316,7 +311,10 @@ export default class ServiceMenuScreen extends React.Component {
                 _surveyResponseJS.noRelevantServiceReason = this.state.noRelevantServiceReason;
                 this.setState({noRelevantDialogVisible: false, surveyResponseJS: _surveyResponseJS});
 
-                this.enableDisableNextButton();
+                if(this.state.surveyResponseJS.noRelevantServiceReason.length>0)
+                {
+                    this.props.navigation.navigate('ContextualQuestion')
+                }
             }}
         />
       </Dialog.Container>
