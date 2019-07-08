@@ -33,7 +33,6 @@ export default class SurveyStartScreen extends React.Component {
   }
 
   onBackButtonPressAndroid = () => {
-    //Alert.alert("-->Back<--");
     return false; //make it true to prevent going back
   };
 

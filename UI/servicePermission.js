@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, 
-  TextInput, Alert, FlatList, Modal, ScrollView, TouchableHighlight} from 'react-native';
+import { Platform, StyleSheet, Text, View, Button,
+        TextInput, Alert, FlatList, Modal, ScrollView,
+        TouchableHighlight, BackHandler} from 'react-native';
 import * as RNFS from 'react-native-fs';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
@@ -24,6 +25,7 @@ const noShare = 2;
 
 export default class ServicePermissionScreen extends React.Component {
 
+
   state= {  serviceName:"NO-SERVICE",
             sharingDecision:fullShare,
             whyNoShare: '',
@@ -39,9 +41,7 @@ export default class ServicePermissionScreen extends React.Component {
 
   componentDidMount()
   {
-    const { navigation } = this.props;
-    const serviceName = navigation.getParam('serviceName', 'NO-SERVICE');
-    this.setState({serviceName: serviceName});
+    this.setState({serviceName: this.props.serviceName});
   }
 
 
@@ -53,7 +53,8 @@ export default class ServicePermissionScreen extends React.Component {
           "WhyPartShare": this.state.whyPartShare,
           "WhyNoShare": this.state.whyNoShare,
        }
-       Alert.alert(JSON.stringify(_permissionResponse));
+       //Alert.alert(JSON.stringify(_permissionResponse));
+       this.props.callBack(_permissionResponse);
   }
 
   render() {
@@ -121,7 +122,7 @@ export default class ServicePermissionScreen extends React.Component {
             <Button
               onPress={() => {
                     this.saveResponse();
-                    this.props.navigation.navigate('ContextualQuestion');
+                    //this.props.navigation.goBack();
                 }
               }
               title="Next"

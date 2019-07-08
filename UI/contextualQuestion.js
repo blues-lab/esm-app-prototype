@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, 
   TextInput, Alert, FlatList, Modal, ScrollView,
-  TouchableHighlight, Switch} from 'react-native';
+  TouchableHighlight, Switch, BackHandler} from 'react-native';
 import * as RNFS from 'react-native-fs';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
@@ -23,16 +23,40 @@ import LocationGroup from './locationGroup'
 
 export default class ContextualQuestionScreen extends React.Component {
 
+  static navigationOptions = {
+    title: 'Contextual questions',
+    headerLeft: null
+  };
+
   state={  numOfPeople:0, relations: [], locations:[],
            familySelected:false, friendSelected:false,
            selectedRelations: new Set([]), numOfPeopleCanHear:0,
            childrenPresent: false, adolescentPresent: false,
            contextResponseJS: {}}
 
-  constructor(props)
-  {
+  constructor(props) {
     super(props);
+
+    this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
+          BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+        );
   }
+
+  componentDidMount() {
+    this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
+      BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+    );
+  }
+
+  onBackButtonPressAndroid = () => {
+    return true; //make it false to enable going back
+  };
+
+  componentWillUnmount() {
+    this._didFocusSubscription && this._didFocusSubscription.remove();
+    this._willBlurSubscription && this._willBlurSubscription.remove();
+  }
+
 
    relationSelectionsChange = (selectedRelation, checked) =>
    {

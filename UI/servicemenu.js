@@ -27,8 +27,9 @@ export default class ServiceMenuScreen extends React.Component {
     newCategoryDialogVisible:false,
     noRelevantDialogVisible:false,
     saveButtonEnabled:true,
-    modalVisible:false,
-    activeServiceName: "",           //Name of the currently selected service category
+    permissionModalVisible:false,
+    permissionPages: [], //used to navigate to the permission page
+    permissionPageIdx: -1,
     noRelevantServiceReason: '',
     surveyResponseJS:{},             //Hold participants responses
   };
@@ -182,6 +183,63 @@ export default class ServiceMenuScreen extends React.Component {
     this.setState({saveButtonEnabled: true});
   }
 
+
+  savePermissionResponse(response)
+  {
+    //Alert.alert(this.state.permissionPageIdx.toString(), this.state.permissionPages.length.toString());
+     //if more services to ask permission, (+1 is required since state is updated async)
+     if(this.state.permissionPageIdx+1 < this.state.permissionPages.length)
+     {
+        this.setState({permissionModalVisible: false}, ()=>
+                this.showPermissionPage());
+     }
+     else //otherwise, go to the contextual question page
+     {
+        this.setState({permissionModalVisible: false}, ()=>
+            this.props.navigation.navigate('ContextualQuestion'));
+     }
+  }
+
+  showPermissionPage()
+  {
+
+     _permissionPages = this.state.permissionPages;
+
+    if(this.state.permissionPageIdx == -1)
+    {
+        for(var i=0; i< this.state.serviceCategories.length; i++)
+        {
+            _services = Array.from(this.state.serviceCategories[i].selectedServiceNames);
+            for(var j=0; j< _services.length; j++)
+            {
+                _permissionPages.push
+                (
+                    {
+                        categoryName: this.state.serviceCategories[i].name,
+                        serviceName: _services[j]
+                    }
+                );
+            }
+        }
+        this.setState({permissionPages: _permissionPages});
+    }
+
+    if(_permissionPages.length==0)
+    {
+        Alert.alert("Please select some services to continue.");
+        return;
+    }
+
+    _permissionPageIdx = this.state.permissionPageIdx+1;
+
+    if(_permissionPageIdx < _permissionPages.length)
+    {
+        this.setState({permissionPageIdx: _permissionPageIdx,
+                       activeServiceName: _permissionPages[_permissionPageIdx].serviceName,
+                       permissionModalVisible: true});
+    }
+  }
+
   renderListItem = ({item}) => {
     return (
         <TouchableHighlight onPress={this.OpenServiceDetailsPage.bind(this, item.name)}>
@@ -250,8 +308,7 @@ export default class ServiceMenuScreen extends React.Component {
 
                   <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
                       <Button disabled = {!this.state.saveButtonEnabled}
-                        onPress={() => this.props.navigation.navigate('ServicePermission',
-                                       {serviceName:this.state.activeServiceName})}
+                        onPress={this.showPermissionPage.bind(this)}
                         title="Next"
                         color="#20B2AA"
                         accessibilityLabel="Next"
@@ -318,6 +375,14 @@ export default class ServiceMenuScreen extends React.Component {
             }}
         />
       </Dialog.Container>
+
+      <Modal visible = {this.state.permissionModalVisible}>
+        <ServicePermissionScreen
+            serviceName = {this.state.activeServiceName}
+            callBack = {this.savePermissionResponse.bind(this)}
+            extraData= {this.state}
+        />
+      </Modal>
 
       </ScrollView>
 
