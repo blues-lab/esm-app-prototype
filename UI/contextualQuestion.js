@@ -9,9 +9,9 @@ import DialogInput from 'react-native-dialog-input';
 
 import CustomNumericInput from './customNumericInput';
 
-import { CheckBox } from 'react-native-elements'
+import { CheckBox } from 'react-native-elements';
 
-import commonStyle from './Style'
+import commonStyle from './Style';
 
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
@@ -19,6 +19,9 @@ import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 
 import RelationGroup from './relationGroup'
 import LocationGroup from './locationGroup'
+import Locations from './locations'
+
+import Relations from './relations'
 
 
 export default class ContextualQuestionScreen extends React.Component {
@@ -124,7 +127,7 @@ export default class ContextualQuestionScreen extends React.Component {
                 <Text style={commonStyle.questionStyle}>
                     How do you relate to them (select all that apply)?
                 </Text>
-                <RelationGroup callback={this.relationSelectionsChange.bind(this)} />
+                <Relations/>
 
                 {   false &&
                     <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'flex-start'}}>
@@ -167,7 +170,7 @@ export default class ContextualQuestionScreen extends React.Component {
         <Text style={commonStyle.questionStyle}>
             Where were you talking (select all that apply)?
         </Text>
-        <LocationGroup callback={this.relationSelectionsChange.bind(this)} />
+        <Locations callback={this.relationSelectionsChange.bind(this)} />
 
         <Text style={commonStyle.questionStyle}>
             Were all the people who were talking at your home (as opposed to someone calling in
@@ -187,7 +190,11 @@ export default class ContextualQuestionScreen extends React.Component {
           <View style={commonStyle.buttonViewStyle}>
               <TouchableHighlight style ={commonStyle.buttonTouchHLStyle}>
                 <Button
-                  onPress={() => this.saveResponse()}
+                  onPress={() => {
+                        //this.saveResponse()
+                        Alert.alert('Thank you!')
+                    }
+                  }
                   title="Save"
                   color="#20B2AA"
                   accessibilityLabel="Save"
