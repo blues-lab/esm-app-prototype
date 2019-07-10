@@ -14,6 +14,9 @@ import * as RNFS from 'react-native-fs';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 
 
+import logger from './controllers/logger';
+logger.setup();
+
 //Import UI files
 import HomeScreen from './UI/home'
 import SurveyStartScreen from './UI/startsurvey'

@@ -4909,6 +4909,11 @@ punycode@^2.1.0, punycode@^2.1.1:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
+qs@^6.5.1:
+  version "6.7.0"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.7.0.tgz#41dc1a015e3d581f1621776be31afb2876a9b1bc"
+  integrity sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ==
+
 qs@~6.5.2:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
@@ -5018,6 +5023,13 @@ react-native-elevated-view@^0.0.6:
   resolved "https://registry.yarnpkg.com/react-native-elevated-view/-/react-native-elevated-view-0.0.6.tgz#560cc9ab16cfd5cb5ea821521558fc711e57e231"
   integrity sha512-4Yna9tmdvzE7Ffl7IWut8/a2MBkb1s9S9jK0qfQZXMR9ZCeVQb0fZbzyYX9Sfaj1/3k+u7AlkEnl2ptCnQ/PbQ==
 
+react-native-email@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-email/-/react-native-email-1.0.2.tgz#1d64f3ed00ca4aa855c289df5328a5b11e56c1a2"
+  integrity sha512-tszkiFWbXzsymhb2AKvHE/hI/8Aqa31TmWqUHoW9KW7aGfpPKb8sZC2h1jSg4pJex1MyEjU1RZ3hKAF4+UwdwQ==
+  dependencies:
+    qs "^6.5.1"
+
 react-native-fs@^2.13.3:
   version "2.13.3"
   resolved "https://registry.yarnpkg.com/react-native-fs/-/react-native-fs-2.13.3.tgz#a422f0ecd8a093a7e99d8d51ff51440e090a18a8"
@@ -5097,6 +5109,11 @@ react-native-simple-radio-button@^2.7.3:
   version "2.7.3"
   resolved "https://registry.yarnpkg.com/react-native-simple-radio-button/-/react-native-simple-radio-button-2.7.3.tgz#c7227c0f963d6bbcfa245255d18a5a8b98fde41f"
   integrity sha512-kiYRarFj7PXzV9fbQwMBiYwS4YnhrR4NZGT68atlFIoNFxZLrt5OMCDqXZqu6R6bUWKLndzPpO/nhXc6/OU1Mg==
+
+react-native-smtp-mailer@^1.1.10:
+  version "1.1.10"
+  resolved "https://registry.yarnpkg.com/react-native-smtp-mailer/-/react-native-smtp-mailer-1.1.10.tgz#95df0c6e7d3e215109b1acb97461599051026396"
+  integrity sha512-oyw2eAckjIx1OX3YEaQ0K3yi9YQ71/8qFcBFinZ9r4jzi12a2cgaWT3c8c2UgkZMhP/Awa3kT08nHCN/Xrmobw==
 
 react-native-status-bar-height@^2.2.0:
   version "2.3.1"

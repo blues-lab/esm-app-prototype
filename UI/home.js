@@ -6,6 +6,8 @@ var PushNotification = require('react-native-push-notification');
 import PushNotificationAndroid from 'react-native-push-notification';
 import { PushNotificationIOS } from 'react-native';
 
+import logger from '../controllers/logger';
+
 //Import UIs
 import SurveyStartScreen from './startsurvey'
 
@@ -17,7 +19,6 @@ export default class HomeScreen extends React.Component {
   {
     this.UpdateWifiState();
     this.interval = setInterval(()=> this.UpdateWifiState(), 5000)
-
     this.configureNotification();
   }
 
@@ -80,7 +81,12 @@ export default class HomeScreen extends React.Component {
         <Text>{this.state.msg}</Text>
         <Button
           title="Start new survey"
-          onPress={() => this.props.navigation.navigate('StartSurvey')}
+          onPress={() =>
+              {
+                logger.info("HomeScreen", "render", "Navigating to StartSurvey");
+                this.props.navigation.navigate('StartSurvey')
+              }
+          }
         />
       </View>
     );
