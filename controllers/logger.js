@@ -2,9 +2,6 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert} from 'react-native';
 import * as RNFS from 'react-native-fs';
 
-import email from 'react-native-email'
-import RNSmtpMailer from "react-native-smtp-mailer";
-
 const logFilePath= RNFS.DocumentDirectoryPath+'/log.csv';
 
 class Logger extends Component
