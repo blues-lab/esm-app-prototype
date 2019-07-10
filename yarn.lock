@@ -1898,6 +1898,11 @@ destroy@~1.0.4:
   resolved "https://registry.yarnpkg.com/destroy/-/destroy-1.0.4.tgz#978857442c44749e4206613e37946205826abd80"
   integrity sha1-l4hXRCxEdJ5CBmE+N5RiBYJqvYA=
 
+detect-element-overflow@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/detect-element-overflow/-/detect-element-overflow-1.1.1.tgz#771c50ec9d69f487477fef9728db0766a8f6962d"
+  integrity sha512-07f/EWuaPHU2JqPLg1JPuNaf47h+A5dt70EHO+X+U1zzSuAsgmI5qAU3kP1bCMICYmuvMrcqEZOIxiLB9d8zdg==
+
 detect-libc@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-1.0.3.tgz#fa137c4bd698edf55cd5cd02ac559f91a4c4ba9b"
@@ -2485,6 +2490,13 @@ get-stream@^4.0.0:
   integrity sha512-GMat4EJ5161kIy2HevLlr4luNjBgvmj413KaQA7jt4V8B4RDsfpHk7WQ9GVqfYyyx8OS/L66Kox+rJRNklLK7w==
   dependencies:
     pump "^3.0.0"
+
+get-user-locale@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/get-user-locale/-/get-user-locale-1.1.1.tgz#edff0a8bbd6aa3ed0ca30cc441e1acd111543b7f"
+  integrity sha512-KuA+vMhsY+rSPK8hrmOvf7xXIMTs+L06RkgZ83jawZHSEqPLafZtQ63d3waXW3r8z6EQ49I/trraNncWM+s/2g==
+  dependencies:
+    lodash.once "^4.1.1"
 
 get-value@^2.0.3, get-value@^2.0.6:
   version "2.0.6"
@@ -3676,6 +3688,11 @@ locate-path@^3.0.0:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
 
+lodash.once@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
+  integrity sha1-DdOXEhPHxW34gJd9UEyI+0cal6w=
+
 lodash.pad@^4.1.0:
   version "4.5.1"
   resolved "https://registry.yarnpkg.com/lodash.pad/-/lodash.pad-4.5.1.tgz#4330949a833a7c8da22cc20f6a26c4d59debba70"
@@ -3729,6 +3746,11 @@ make-dir@^2.0.0, make-dir@^2.1.0:
     pify "^4.0.1"
     semver "^5.6.0"
 
+make-event-props@^1.1.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/make-event-props/-/make-event-props-1.2.0.tgz#96b87d88919533b8f8934b58b4c3d5679459a0cf"
+  integrity sha512-BmWFkm/jZzVH9A0tEBdkjAARUz/eha+5IRyfOndeSMKRadkgR5DawoBHoRwLxkYmjJOI5bHkXKpaZocxj+dKgg==
+
 makeerror@1.0.x:
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/makeerror/-/makeerror-1.0.11.tgz#e01a5c9109f2af79660e4e8b9587790184f5a96c"
@@ -3775,6 +3797,11 @@ mem@^4.0.0:
     map-age-cleaner "^0.1.1"
     mimic-fn "^2.0.0"
     p-is-promise "^2.0.0"
+
+merge-class-names@^1.1.1:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/merge-class-names/-/merge-class-names-1.2.0.tgz#cb30ecfc3bdbd96b6f76d0a98777907e5fbb3462"
+  integrity sha512-ifHxhC8DojHT1rG3PHCaJYInUqPd0WO+PxsaYDMkgy7RzfyOFtnlpr/hbhki+m/3R/ujIRVnZkD/AHjgjb5uhg==
 
 merge-stream@^1.0.1:
   version "1.0.1"
@@ -4909,11 +4936,6 @@ punycode@^2.1.0, punycode@^2.1.1:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
-qs@^6.5.1:
-  version "6.7.0"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-6.7.0.tgz#41dc1a015e3d581f1621776be31afb2876a9b1bc"
-  integrity sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ==
-
 qs@~6.5.2:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
@@ -4952,6 +4974,14 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+react-clock@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-clock/-/react-clock-2.3.0.tgz#de5c328c7bdcec58348da5c2ccd8d8ca4fc10b76"
+  integrity sha1-3lwyjHvc7Fg0jaXCzNjYyk/BC3Y=
+  dependencies:
+    merge-class-names "^1.1.1"
+    prop-types "^15.6.0"
+
 react-clone-referenced-element@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-clone-referenced-element/-/react-clone-referenced-element-1.1.0.tgz#9cdda7f2aeb54fea791f3ab8c6ab96c7a77d0158"
@@ -4969,6 +4999,14 @@ react-devtools-core@^3.6.0:
   dependencies:
     shell-quote "^1.6.1"
     ws "^3.3.1"
+
+react-fit@^1.0.3:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/react-fit/-/react-fit-1.0.5.tgz#971490a2e15613712596d9fdad549293d3d30684"
+  integrity sha512-TTR/nfFi0d+pJ1ukoKXjd22a9dVbAXFf7IVjny3RIzoI7gt4y26jHds8GHY8jWRy3kDNpQyrC70JOVnkmxoebw==
+  dependencies:
+    detect-element-overflow "^1.1.1"
+    prop-types "^15.6.0"
 
 react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.3, react-is@^16.8.4, react-is@^16.8.6:
   version "16.8.6"
@@ -4991,6 +5029,11 @@ react-native-animatable@^1.2.4:
   integrity sha512-rmah3KQ63ft8DxkzFUwJSuZeq+oSYwldoGF4DTOR5WM2WR5wiWLgBAtrAHlI3Di3by323uOR21s+MlqPcHz2Kw==
   dependencies:
     prop-types "^15.5.10"
+
+react-native-background-job@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-background-job/-/react-native-background-job-2.3.0.tgz#260d05052573dd448fda4d9d6dc7017ac48a1397"
+  integrity sha512-am85HJV5Res8o4KrwzAPeQ7g+1AWNq1eqpdXsyAPtNKOISX+BWEtaTiJfdvcJRzph36hHkKDCz+i62+15YBu2Q==
 
 react-native-dialog-input@^1.0.7:
   version "1.0.7"
@@ -5022,13 +5065,6 @@ react-native-elevated-view@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/react-native-elevated-view/-/react-native-elevated-view-0.0.6.tgz#560cc9ab16cfd5cb5ea821521558fc711e57e231"
   integrity sha512-4Yna9tmdvzE7Ffl7IWut8/a2MBkb1s9S9jK0qfQZXMR9ZCeVQb0fZbzyYX9Sfaj1/3k+u7AlkEnl2ptCnQ/PbQ==
-
-react-native-email@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/react-native-email/-/react-native-email-1.0.2.tgz#1d64f3ed00ca4aa855c289df5328a5b11e56c1a2"
-  integrity sha512-tszkiFWbXzsymhb2AKvHE/hI/8Aqa31TmWqUHoW9KW7aGfpPKb8sZC2h1jSg4pJex1MyEjU1RZ3hKAF4+UwdwQ==
-  dependencies:
-    qs "^6.5.1"
 
 react-native-fs@^2.13.3:
   version "2.13.3"
@@ -5109,11 +5145,6 @@ react-native-simple-radio-button@^2.7.3:
   version "2.7.3"
   resolved "https://registry.yarnpkg.com/react-native-simple-radio-button/-/react-native-simple-radio-button-2.7.3.tgz#c7227c0f963d6bbcfa245255d18a5a8b98fde41f"
   integrity sha512-kiYRarFj7PXzV9fbQwMBiYwS4YnhrR4NZGT68atlFIoNFxZLrt5OMCDqXZqu6R6bUWKLndzPpO/nhXc6/OU1Mg==
-
-react-native-smtp-mailer@^1.1.10:
-  version "1.1.10"
-  resolved "https://registry.yarnpkg.com/react-native-smtp-mailer/-/react-native-smtp-mailer-1.1.10.tgz#95df0c6e7d3e215109b1acb97461599051026396"
-  integrity sha512-oyw2eAckjIx1OX3YEaQ0K3yi9YQ71/8qFcBFinZ9r4jzi12a2cgaWT3c8c2UgkZMhP/Awa3kT08nHCN/Xrmobw==
 
 react-native-status-bar-height@^2.2.0:
   version "2.3.1"
@@ -5242,6 +5273,19 @@ react-test-renderer@16.8.3:
     prop-types "^15.6.2"
     react-is "^16.8.3"
     scheduler "^0.13.3"
+
+react-time-picker@^3.5.2:
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/react-time-picker/-/react-time-picker-3.5.2.tgz#130a6f7033a5692b8f586fd073421ecea0734ce0"
+  integrity sha512-UIajQVfEGLjXLqTPUZCd1nxRiM0ED5MaoK2jNCX0MsHVHYnjXPsluvd0YU2YMiCgyj+oqYE5bVOULckqb+PgwQ==
+  dependencies:
+    get-user-locale "^1.1.1"
+    make-event-props "^1.1.0"
+    merge-class-names "^1.1.1"
+    prop-types "^15.6.0"
+    react-clock "^2.3.0"
+    react-fit "^1.0.3"
+    react-lifecycles-compat "^3.0.4"
 
 react-transform-hmr@^1.0.4:
   version "1.0.4"

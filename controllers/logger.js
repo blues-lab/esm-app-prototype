@@ -17,7 +17,7 @@ class Logger extends Component
                 }
                 else
                 {
-                    RNFS.writeFile(logFilePath,'Type,ClassName,FunctionName,Message,Time\n')
+                    RNFS.writeFile(logFilePath,'Type,File,Function,Message,Time\n')
                         .then((success) =>
                         {
                            // Alert.alert("Setup log file","created log file:"+logFilePath)

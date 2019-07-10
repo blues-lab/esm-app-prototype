@@ -24,7 +24,29 @@ import ServiceMenuScreen from './UI/servicemenu'
 import ServiceDetailsScreen from './UI/servicedetails'
 import ServicePermissionScreen from './UI/servicePermission'
 import ContextualQuestionScreen from './UI/contextualQuestion'
+import UserSettingsScreen from './UI/userSettings'
 
+import BackgroundJob from 'react-native-background-job';
+
+import backgroundJobs from './controllers/backgroundJobs';
+import notificationController from './controllers/notificationController';
+
+const backgroundJob = {
+ jobKey: "showNotification",
+ job: () => {
+        notificationController.showNotification();
+    }
+};
+
+BackgroundJob.register(backgroundJob);
+
+var notificationSchedule = {
+ jobKey: "showNotification",
+}
+
+BackgroundJob.schedule(notificationSchedule)
+  .then(() => logger.info("App",'Global',"Successfully scheduled background job"))
+  .catch(err => logger.error("App",'Global',"Error in scheduling job:"+err.message));
 
 //The main navigation controller
 const AppNavigator = createStackNavigator(
@@ -34,7 +56,8 @@ const AppNavigator = createStackNavigator(
     ServiceMenu: ServiceMenuScreen,
     ServiceDetails: ServiceDetailsScreen,
     ServicePermission: ServicePermissionScreen,
-    ContextualQuestion: ContextualQuestionScreen
+    ContextualQuestion: ContextualQuestionScreen,
+    UserSettings:UserSettingsScreen
   },
   {
     initialRouteName: "Home"
@@ -46,36 +69,36 @@ const AppContainer = createAppContainer(AppNavigator);
 
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
+const appStatusFileAsset= 'appStatus.js';
+const appStatusFileLocal = RNFS.DocumentDirectoryPath+'/appStatus.js';
 
 
 export default class App extends Component<Props> 
 {
 
-  state = {services: "No services found", newService: null};
+  state = {};
 
 
-  generateInitialFiles()
+  generateInitialFiles(assetFile, localFile)
   {
-    RNFS.readFileAssets(serviceFileAsset)
-        .then((res) => {
-              xx=JSON.parse(res);
-              RNFS.writeFile(serviceFileLocal,JSON.stringify(xx))
+    RNFS.readFileAssets(assetFile)
+        .then((res) =>
+        {
+              RNFS.writeFile(localFile, res)
               .then((success) => 
               {
-               //Alert.alert('surccess writing ', JSON.stringify(xx));
+                logger.info('App', 'generateInitialFiles', 'Writing '+localFile);
               })
               .catch((err) => 
               {
-                Alert.alert
-                (
-                  'Error',
-                  err.message+', '+err.code
-                );
+                logger.error('App', 'generateInitialFiles'
+                  ,'Failed to write '+localFile+'. Error code:'+err.code+', Error: '+err.message);
+
               })
         })  
         .catch((err) => {
-          //Alert.alert("Error: "+err.code,err.message);
-          this.setState({services: err.message+', '+err.code});
+          logger.error('App', 'generateInitialFiles'
+                 ,'Failed to read '+assetFile+'. Error code:'+err.code+', Error: '+err.message);
         })
   }
 
@@ -83,7 +106,7 @@ export default class App extends Component<Props>
   componentDidMount()
   {
 
-    this.generateInitialFiles();
+    this.generateInitialFiles(serviceFileAsset, serviceFileLocal);
 
   }
 

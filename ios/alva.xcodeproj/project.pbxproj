@@ -60,6 +60,7 @@
 		A60F26F43CD94DA5ADDA5CAA /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3A67DEFB682C477D82CFA6B0 /* SimpleLineIcons.ttf */; };
 		CD04347106A5486B8BBA692A /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 76F1B1C93A854D8C88FC5F4A /* Zocial.ttf */; };
 		8B0A8157052D46118002F2EC /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A49F31C0E7ED4432910ED712 /* libRNFS.a */; };
+		E155CF3BC40047C5871F4AD7 /* libRNBackgroundJob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 33911265D602436C93E124F9 /* libRNBackgroundJob.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -391,6 +392,8 @@
 		76F1B1C93A854D8C88FC5F4A /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		94575BAFD5094F9794C814DC /* RNFS.xcodeproj */ = {isa = PBXFileReference; name = "RNFS.xcodeproj"; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		A49F31C0E7ED4432910ED712 /* libRNFS.a */ = {isa = PBXFileReference; name = "libRNFS.a"; path = "libRNFS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		EE9CBD7204BA49BD84DCBA59 /* RNBackgroundJob.xcodeproj */ = {isa = PBXFileReference; name = "RNBackgroundJob.xcodeproj"; path = "../node_modules/react-native-background-job/ios/RNBackgroundJob.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		33911265D602436C93E124F9 /* libRNBackgroundJob.a */ = {isa = PBXFileReference; name = "libRNBackgroundJob.a"; path = "libRNBackgroundJob.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -422,6 +425,7 @@
 				F097458C7D4E47468335B8D9 /* libRNGestureHandler.a in Frameworks */,
 				3B86B075F36246A2BA64AE48 /* libRNVectorIcons.a in Frameworks */,
 				8B0A8157052D46118002F2EC /* libRNFS.a in Frameworks */,
+				E155CF3BC40047C5871F4AD7 /* libRNBackgroundJob.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -616,6 +620,7 @@
 				B7A6575AA3B84A37B62F8A94 /* RNGestureHandler.xcodeproj */,
 				7F5A030413974821AFA2D2AA /* RNVectorIcons.xcodeproj */,
 				94575BAFD5094F9794C814DC /* RNFS.xcodeproj */,
+				EE9CBD7204BA49BD84DCBA59 /* RNBackgroundJob.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1284,12 +1289,14 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/alva.app/alva";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-background-job/ios",
 				);
 			};
 			name = Debug;
@@ -1311,12 +1318,14 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/alva.app/alva";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-background-job/ios",
 				);
 			};
 			name = Release;
@@ -1342,6 +1351,7 @@
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-background-job/ios",
 				);
 			};
 			name = Debug;
@@ -1366,6 +1376,7 @@
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-background-job/ios",
 				);
 			};
 			name = Release;
@@ -1395,12 +1406,14 @@
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-background-job/ios",
 				);
 			};
 			name = Debug;
@@ -1430,12 +1443,14 @@
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-background-job/ios",
 				);
 			};
 			name = Release;
@@ -1464,12 +1479,14 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-background-job/ios",
 				);
 			};
 			name = Debug;
@@ -1498,12 +1515,14 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-background-job/ios",
 				);
 			};
 			name = Release;
