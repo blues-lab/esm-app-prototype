@@ -8,6 +8,8 @@ var PushNotification = require('react-native-push-notification');
 
 import logger from './logger';
 
+const codeFileName='notificationController.js'
+
 class NotificationController
 {
 
@@ -27,8 +29,8 @@ getNextNotificationTime()
           autoCancel: true, // (optional) default: true
           largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
           smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
-          bigText: "big text ", // (optional) default: "message" prop
-          subText: "subText", // (optional) default: none
+          //bigText: "big text ", // (optional) default: "message" prop
+          //subText: "subText", // (optional) default: none
           color: "red", // (optional) default: system default
           vibrate: true, // (optional) default: true
           vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
@@ -45,86 +47,60 @@ getNextNotificationTime()
     //      userInfo: // (optional) default: null (object containing additional notification data)
 
           /* iOS and Android properties */
-          title: "Background notification", // (optional)
-          message: "Background notification", // (required)
-          playSound: false, // (optional) default: true
+          //title: "Tap here if you have been in a conversation recently notification", // (optional)
+          message: "Tap here if you have been in a conversation recently", // (required)
+          playSound: true, // (optional) default: true
           soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
           number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
           repeatType: 'day', // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
-          actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
+          //actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
       });
   }
 
     configureNotification()
     {
-        PushNotification.configure({
+        PushNotification.configure(
+        {
 
-      // (optional) Called when Token is generated (iOS and Android)
-      onRegister: function(token) {
-          console.log( 'TOKEN:', token );
-      },
+          // (optional) Called when Token is generated (iOS and Android)
+          onRegister: function(token) {
+              console.log( 'TOKEN:', token );
+          },
 
-      // (required) Called when a remote or local notification is opened or received
-      onNotification: function(notification) {
-          console.log( 'NOTIFICATION:', notification );
+          // (required) Called when a remote or local notification is opened or received
+          onNotification: function(notification) {
+              logger.info(`${codeFileName}`,'onNotification','App opened from notification.');
 
-          // process the notification
+              // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
+              if (Platform.OS === 'ios')
+              {
+                notification.finish(PushNotificationIOS.FetchResult.NoData);
+              }
 
-          // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
-          if (Platform.OS === 'ios')
-          {
-            notification.finish(PushNotificationIOS.FetchResult.NoData);
-          }
-          else
-          {
-          }
-         //Alert.alert(" "+JSON.stringify(notification));
-      },
+          },
 
-      // ANDROID ONLY: GCM or FCM Sender ID (product_number) (optional - not required for local notifications, but is need to receive remote push notifications)
-      senderID: "YOUR GCM (OR FCM) SENDER ID",
+          // ANDROID ONLY: GCM or FCM Sender ID (product_number) (optional - not required for local notifications, but is need to receive remote push notifications)
+          senderID: "YOUR GCM (OR FCM) SENDER ID",
 
-      // IOS ONLY (optional): default: all - Permissions to register.
-      permissions: {
-          alert: true,
-          badge: true,
-          sound: true
-      },
+          // IOS ONLY (optional): default: all - Permissions to register.
+          permissions: {
+              alert: true,
+              badge: true,
+              sound: true
+          },
 
-      // Should the initial notification be popped automatically
-      // default: true
-      popInitialNotification: true,
+          // Should the initial notification be popped automatically
+          // default: true
+          popInitialNotification: true,
 
-      /**
-        * (optional) default: true
-        * - Specified if permissions (ios) and token (android and ios) will requested or not,
-        * - if not, you must call PushNotificationsHandler.requestPermissions() later
-        */
-      requestPermissions: true,
-  });
+          /**
+            * (optional) default: true
+            * - Specified if permissions (ios) and token (android and ios) will requested or not,
+            * - if not, you must call PushNotificationsHandler.requestPermissions() later
+            */
+          requestPermissions: true,
+        });
     }
-
-    //  registerNotificationHandlers() {
-    //    // Register all the valid actions for notifications here and add the action handler for each action
-    //    PushNotificationAndroid.registerNotificationActions(['Accept','Reject','Yes','No']);
-    //    DeviceEventEmitter.addListener('notificationActionReceived', function(action){
-    //          const info = JSON.parse(action.dataJSON);
-    //          if (info.action == 'Accept') {
-    //            Alert.alert('Action: '+info);
-    //          }
-    //          if (info.action == 'Reject') {
-    //            Alert.alert('Action: '+info);
-    //          }
-    //          if (info.action == 'Yes') {
-    //                      Alert.alert('Action: '+info);
-    //                    }
-    //                    if (info.action == 'No') {
-    //                                Alert.alert('Action: '+info);
-    //                              }
-    //          // Add all the required actions handlers
-    //          Alert.alert('Action: '+info);
-    //    });
-    //  }
 
 }
 const notificationController = new NotificationController();

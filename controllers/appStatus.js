@@ -12,9 +12,9 @@ class AppStatus
 {
     appStatusFilePath = RNFS.DocumentDirectoryPath+'/appStatus.js';
     status = {
-                 NumberOfTimesNotificationShownToday: "0",
+                 NotificationCountToday: "0",
                  SurveyStatusToday: "NotStarted",
-                 LastNotificationTime:"",
+                 LastNotificationTime: new Date().toString(),
                  MaxNumberNotification: "5"
              }
 
@@ -91,9 +91,25 @@ class AppStatus
 
     setMaxNumberNotification(value)
     {
-        _status = this.state.status;
-        _status.MaxNumberNotification = value;
-        this.setState({status: _status});
+        logger.info(`${codeFileName}`, 'incrementNotificationCount',
+            'Setting max notification number to '+value);
+        this.status.MaxNumberNotification = value;
+        this.saveState();
+    }
+
+    incrementNotificationCount()
+    {
+        logger.info(`${codeFileName}`, 'incrementNotificationCount',
+            'Incrementing notification count to '+this.status.incrementNotificationCount+1)
+        this.status.NotificationCountToday +=1;
+        this.saveState();
+    }
+
+    setLastNotificationTime(value)
+    {
+        logger.info(`${codeFileName}`, 'setLastNotificationTime',
+                    'Setting last notification time to '+value.toString());
+        this.status.setLastNotificationTime = value;
         this.saveState();
     }
 }

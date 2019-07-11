@@ -66,10 +66,8 @@ export default class HomeScreen extends React.Component {
           onPress={() =>
               {
                 //logger.info("HomeScreen", "render", "Navigating to StartSurvey");
-                //logger.showLog();
+                logger.showLog();
                 //this.props.navigation.navigate('StartSurvey')
-
-               Alert.alert('HI',JSON.stringify(appStatus));
 
                // Notification.send({ message: 'Message', action: 'ACTION_NAME',
                  //payload: { data: 'Anything' } });

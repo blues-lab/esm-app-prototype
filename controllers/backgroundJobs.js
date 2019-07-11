@@ -8,7 +8,7 @@ import notificationController from './notificationController';
 
 const codeFileName = 'backgroundJobs.js'
 
-
+import appStatus from '../controllers/appStatus';
 
 class BackgroundJobs
 {
@@ -36,25 +36,22 @@ class BackgroundJobs
     {
         logger.info("BackgroundJobs","showPrompt", "Getting wifi name");
         _wifiName = this.getWifiName();
-        if(this.getWifiName() == "ICSI")
+        _appStatus = appStatus.getStatus();
+
+        if(this.getWifiName() == "ICSI") //TODO: change to userSettings
         {
-            RNFS.readFile(appStatusFilePath)
-                .then( (_fileContent) => {
-                    _appStatus = JSON.parse(_fileContent);
+            _lastNotificationDate = Date.parse(_appStatus.LastNotificationTime).setHours(0,0,0,0);
+            logger.info(`${codeFileName}`,"showPrompt", "Last notification date:"+_lastNotificationDate.toString());
 
-                    if(_appStatus.NumberOfTimesNotificationShownToday< _appStatus.MaxNumberNotification &&
-                        _appStatus.SurveyStatusToday=="NotStarted") //TODO: check other conditions, e.g., if inside 'no-disturb' time
-                    {
-                        notificationController.configureNotification();
-                        notificationController.showNotification();
 
-                        logger.info("BackgroundJobs","showPrompt", "Scheduling prompt done.");
-                    }
-
-                })
-                .catch( (error) => {
-                  logger.error("BackgroundJobs","showPrompt", "Reading appStatus file failed.");
-                })
+            if( (_lastNotificationDate < new Date()) ||
+                (_appStatus.SurveyStatusToday == "NotStarted" &&
+                _appStatus.NotificationCountToday < _appStatus.MaxNumberNotification))
+            {
+                notificationController.showNotification();
+                logger.info(`${codeFileName}`,"showPrompt", "Scheduling prompt done.");
+                appStatus.setLastNotificationTime(new Date());
+            }
         }
     }
 }

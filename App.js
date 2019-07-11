@@ -31,6 +31,8 @@ import BackgroundJob from 'react-native-background-job';
 import backgroundJobs from './controllers/backgroundJobs';
 import notificationController from './controllers/notificationController';
 
+const codeFileName="App.js";
+
 const backgroundJob = {
  jobKey: "showNotification",
  job: () => {
@@ -46,8 +48,8 @@ var notificationSchedule = {
 }
 
 BackgroundJob.schedule(notificationSchedule)
-  .then(() => logger.info("App",'Global',"Successfully scheduled background job"))
-  .catch(err => logger.error("App",'Global',"Error in scheduling job:"+err.message));
+  .then(() => logger.info(`${codeFileName}`,'Global',"Successfully scheduled background job"))
+  .catch(err => logger.error(`${codeFileName}`,'Global',"Error in scheduling job:"+err.message));
 
 //The main navigation controller
 const AppNavigator = createStackNavigator(
@@ -88,18 +90,18 @@ export default class App extends Component<Props>
               RNFS.writeFile(localFile, res)
               .then((success) => 
               {
-                logger.info('App', 'generateInitialFiles', 'Writing '+localFile);
+                logger.info(`${codeFileName}`, 'generateInitialFiles', 'Writing '+localFile);
               })
               .catch((err) => 
               {
-                logger.error('App', 'generateInitialFiles'
+                logger.error(`${codeFileName}`, 'generateInitialFiles'
                   ,'Failed to write '+localFile+'. Error code:'+err.code+', Error: '+err.message);
 
               })
         })  
         .catch((err) => {
-          logger.error('App', 'generateInitialFiles'
-                 ,'Failed to read '+assetFile+'. Error code:'+err.code+', Error: '+err.message);
+          logger.error(`${codeFileName}`, 'generateInitialFiles'
+                 ,'Failed to read '+assetFile+'. Error: '+err.message);
         })
   }
 
@@ -107,8 +109,6 @@ export default class App extends Component<Props>
   componentWillMount()
   {
     this.generateInitialFiles(serviceFileAsset, serviceFileLocal);
-    this.generateInitialFiles(appStatusFileAsset, appStatusFileLocal);
-    appStatus.loadStatus();//call it here after the files have been copied
   }
 
   render() {
