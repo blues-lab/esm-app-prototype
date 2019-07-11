@@ -10,7 +10,9 @@ import logger from '../controllers/logger';
 import appStatus from '../controllers/appStatus';
 
 //Import UIs
-import SurveyStartScreen from './startsurvey'
+import SurveyStartScreen from './startsurvey';
+
+const codeFileName='home.js';
 
 export default class HomeScreen extends React.Component {
 
@@ -65,7 +67,8 @@ export default class HomeScreen extends React.Component {
           title="Start new survey"
           onPress={() =>
               {
-                //logger.info("HomeScreen", "render", "Navigating to StartSurvey");
+                logger.info(`${codeFileName}`, "Start new survey button press", "Navigating to StartSurvey");
+                appStatus.setSurveyStatus("Started");
                 logger.showLog();
                 //this.props.navigation.navigate('StartSurvey')
 

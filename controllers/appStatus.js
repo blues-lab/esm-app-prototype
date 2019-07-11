@@ -13,7 +13,7 @@ class AppStatus
     appStatusFilePath = RNFS.DocumentDirectoryPath+'/appStatus.js';
     status = {
                  NotificationCountToday: "0",
-                 SurveyStatusToday: "NotStarted",
+                 SurveyStatus: "NotStarted",
                  LastNotificationTime: new Date().toString(),
                  MaxNumberNotification: "5"
              }
@@ -110,6 +110,14 @@ class AppStatus
         logger.info(`${codeFileName}`, 'setLastNotificationTime',
                     'Setting last notification time to '+value.toString());
         this.status.setLastNotificationTime = value;
+        this.saveState();
+    }
+
+    setSurveyStatus(value)
+    {
+        logger.info(`${codeFileName}`, 'setSurveyStatus',
+                    'Setting Survey Status to '+value.toString());
+        this.status.SurveyStatus = value;
         this.saveState();
     }
 }
