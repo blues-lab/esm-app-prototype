@@ -15,6 +15,9 @@ const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
 
+import logger from '../controllers/logger';
+
+
 export default class ServiceMenuScreen extends React.Component {
 
   static navigationOptions = {
@@ -37,11 +40,13 @@ export default class ServiceMenuScreen extends React.Component {
 
   OpenServiceDetailsPage(selectedServiceCategoryName) //Function for click on a service category item
   {
+      logger.info("ServiceMenu","OpenServiceDetailsPage", 'Opening service category:'+selectedServiceCategoryName);
       _serviceCategories = this.state.serviceCategories;
       for(var i=0; i< _serviceCategories.length; i++)
       {
         if(_serviceCategories[i].name == selectedServiceCategoryName)
         {
+            logger.info("ServiceMenu","OpenServiceDetailsPage", 'Navigating to service details for:'+selectedServiceCategoryName);
             this.props.navigation.navigate('ServiceDetails',
             {
                 serviceCategory: _serviceCategories[i],
@@ -76,6 +81,8 @@ export default class ServiceMenuScreen extends React.Component {
     RNFS.readFile(serviceFileLocal)
     .then((_fileContent) => {
 
+    logger.info("ServiceMenu","ReadServiceFile", 'Successfully read:'+serviceFileLocal);
+
       _serviceCategoriesJS = JSON.parse(_fileContent).serviceCategories;
       _serviceCategories=[];
       for(var i=0; i< _serviceCategoriesJS.length; i++)
@@ -105,6 +112,8 @@ export default class ServiceMenuScreen extends React.Component {
         );
       }
 
+      logger.info("ServiceMenu","ReadServiceFile", 'Number of categories found:'+_serviceCategories.length);
+
       this.setState
       (
         {
@@ -115,8 +124,7 @@ export default class ServiceMenuScreen extends React.Component {
 
     })  
     .catch((err) => {
-      Alert.alert("Error: "+err.code,err.message);
-      //TODO: handle error
+      logger.info("ServiceMenu","ReadServiceFile", 'Failed to read:'+serviceFileLocal+". Err:"+err.message);
     })
 
   }
@@ -140,6 +148,9 @@ export default class ServiceMenuScreen extends React.Component {
 
   handleServiceSelectionChange = (categoryName, service) =>
   {
+
+    logger.info("ServiceMenu","handleServiceSelectionChange",
+            'Selected category:'+categoryName+', service:'+service.name);
       _serviceCategories = this.state.serviceCategories;
       for(var i=0; i< _serviceCategories.length; i++)
       {
@@ -226,7 +237,7 @@ export default class ServiceMenuScreen extends React.Component {
 
     if(_permissionPages.length==0)
     {
-        Alert.alert("Please select some services to continue.");
+        Alert.alert("Please select at least one service to continue.");
         return;
     }
 
@@ -340,6 +351,8 @@ export default class ServiceMenuScreen extends React.Component {
                   value: inputText }
               );
 
+              logger.info("ServiceMenu","DialogInput.Submit", "Adding new service category: "+inputText);
+
               this.setState({serviceCategories: _serviceCategories, newCategoryDialogVisible:false});
             }
           }
@@ -353,8 +366,9 @@ export default class ServiceMenuScreen extends React.Component {
             numberOfLines={4}
             style={{height: 300, borderColor: 'lightgray', borderWidth: 1}}
             value={this.state.noRelevantServiceReason}
-            onChangeText={(text) => {
-                  this.setState({ noRelevantServiceReason: text});
+            onChangeText={(reason) => {
+                  this.setState({ noRelevantServiceReason: reason});
+                  logger.info("ServiceMenu","DialogInput.Submit", "No relevant service: "+reason);
                 }}
         />
         <Dialog.Button label="Cancel" onPress={ () => {
@@ -370,7 +384,8 @@ export default class ServiceMenuScreen extends React.Component {
 
                 if(this.state.surveyResponseJS.noRelevantServiceReason.length>0)
                 {
-                    this.props.navigation.navigate('ContextualQuestion')
+                    logger.info("ServiceMenu","SaveButton.onPress", "Navigating to contextual question page.");
+                    this.props.navigation.navigate('ContextualQuestion');
                 }
             }}
         />

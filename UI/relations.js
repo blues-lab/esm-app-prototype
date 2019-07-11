@@ -15,6 +15,8 @@ import { CheckBox } from 'react-native-elements'
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
+import logger from '../controllers/logger';
+const codeFileName = "relations.js"
 
 export default class Relations extends React.Component {
 
@@ -62,6 +64,8 @@ export default class Relations extends React.Component {
         _relationNames[index].renderStyle = styles.unselectedStyle;
     }
 
+    logger.info(`${codeFileName}`,'handleSelectionChange',
+        `relation: ${_relationNames[index].name}, selected: ${_relationNames[index].selected}`)
     this.setState({relationNames: _relationNames});
   }
 

@@ -16,6 +16,10 @@ const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
 
+import logger from '../controllers/logger';
+const codeFileName = "locations.js"
+
+
 export default class Locations extends React.Component {
 
   state={familySelected:false, friendSelected:false, acquaintanceSelected:false, colleaguesSelected:false,
@@ -63,6 +67,8 @@ export default class Locations extends React.Component {
         _locationNames[index].renderStyle = styles.unselectedStyle;
     }
 
+    logger.info(`${codeFileName}`,'handleSelectionChange',
+            `relation: ${_relationNames[index].name}, selected: ${_relationNames[index].selected}`)
     this.setState({locationNames: _locationNames});
   }
 

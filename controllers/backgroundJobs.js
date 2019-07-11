@@ -6,7 +6,9 @@ import wifi from 'react-native-android-wifi';
 import logger from './logger';
 import notificationController from './notificationController';
 
-const appStatusFileLocal = RNFS.DocumentDirectoryPath+'/appStatus.js';
+const codeFileName = 'backgroundJobs.js'
+
+
 
 class BackgroundJobs
 {
@@ -45,6 +47,7 @@ class BackgroundJobs
                     {
                         notificationController.configureNotification();
                         notificationController.showNotification();
+
                         logger.info("BackgroundJobs","showPrompt", "Scheduling prompt done.");
                     }
 

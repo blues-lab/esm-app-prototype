@@ -7,6 +7,9 @@ import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-
 
 import DialogInput from 'react-native-dialog-input';
 
+import logger from '../controllers/logger';
+
+const codeFileName="servicePermission.js";
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
@@ -53,7 +56,7 @@ export default class ServicePermissionScreen extends React.Component {
           "WhyPartShare": this.state.whyPartShare,
           "WhyNoShare": this.state.whyNoShare,
        }
-       //Alert.alert(JSON.stringify(_permissionResponse));
+       logger.info(`${codeFileName}`,'saveResponse',"Response: "+JSON.stringify(_permissionResponse));
        this.props.callBack(_permissionResponse);
   }
 
@@ -78,7 +81,9 @@ export default class ServicePermissionScreen extends React.Component {
           <RadioForm style={commonStyle.radioFrameStyle}
               radio_props={radioOptions}
               initial={0}
-              onPress={(value) => {
+              onPress={(value) =>
+                {
+                    logger.info(`${codeFileName}`,'RadioForm',"Selected sharing decision: "+value);
                     this.setState({sharingDecision:value});
                 }
               }

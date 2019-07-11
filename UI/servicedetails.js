@@ -4,12 +4,15 @@ import {Platform, StyleSheet, Text, View, Button,
 import * as RNFS from 'react-native-fs';
 import DialogInput from 'react-native-dialog-input';
 
+import logger from '../controllers/logger';
+
 import commonStyles from './Style'
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
 
 const selectionText = "Selected (tap again to remove)";
+const codeFileName = "serviceDetails.js"
 
 export default class ServiceDetailsScreen extends React.Component {
 
@@ -101,6 +104,9 @@ export default class ServiceDetailsScreen extends React.Component {
         }
     }
 
+    logger.info(`${codeFileName}`,"handleServiceSelection",
+        `Parameter:${selectedServiceName}.Services:${JSON.stringify(_serviceNames)}`);
+
     this.setState({serviceNames: _serviceNames});
 
   }
@@ -140,12 +146,14 @@ export default class ServiceDetailsScreen extends React.Component {
                 extraData={this.state}
               />
             </View>
-
             <Button title="Add new"
-                onPress={() => this.setState({isAddServiceDialogVisible:true})}
+                onPress={() => {
+                                    logger.info(`${codeFileName}`,"AddNewServiceButton.onPress",
+                                        'Opening dialog to add new service' );
+                                    this.setState({isAddServiceDialogVisible:true});
+                               }
+                        }
             />
-
-
 
             <DialogInput isDialogVisible={this.state.isAddServiceDialogVisible}
                 title={"Enter new service"}
@@ -160,10 +168,15 @@ export default class ServiceDetailsScreen extends React.Component {
                         value: inputText }
                     );
 
+                    logger.info(`${codeFileName}`,"DialogInput.NewService",
+                            `Newly added service name:${inputText}`);
                     this.setState({serviceNames:serviceNames, isAddServiceDialogVisible:false});
                   }
                 }
-                closeDialog={ () => {this.setState({isAddServiceDialogVisible:false})}}>
+                closeDialog={ () => {
+                        logger.info(`${codeFileName}`,"DialogInput.NewService.Close",'Canceled' )
+                        this.setState({isAddServiceDialogVisible:false});
+                    }}>
             </DialogInput>
 
           </View>

@@ -1,8 +1,13 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert, DeviceEventEmitter} from 'react-native';
 import wifi from 'react-native-android-wifi';
+import Notification from 'react-native-android-local-notification';
+
+import PushNotificationAndroid from 'react-native-push-notification';
 
 import logger from '../controllers/logger';
+
+import appStatus from '../controllers/appStatus';
 
 //Import UIs
 import SurveyStartScreen from './startsurvey'
@@ -19,6 +24,10 @@ export default class HomeScreen extends React.Component {
 
   componentWillMount()
   {
+    PushNotificationAndroid.registerNotificationActions(['Accept','Reject','Yes','No']);
+      DeviceEventEmitter.addListener('notificationActionReceived', function(action){
+        Alert.alert('Notification action received: ' + action);
+      });
   }
 
 
@@ -57,8 +66,14 @@ export default class HomeScreen extends React.Component {
           onPress={() =>
               {
                 //logger.info("HomeScreen", "render", "Navigating to StartSurvey");
-                logger.showLog();
-                this.props.navigation.navigate('StartSurvey')
+                //logger.showLog();
+                //this.props.navigation.navigate('StartSurvey')
+
+               Alert.alert('HI',JSON.stringify(appStatus));
+
+               // Notification.send({ message: 'Message', action: 'ACTION_NAME',
+                 //payload: { data: 'Anything' } });
+
               }
           }
         />
@@ -67,7 +82,8 @@ export default class HomeScreen extends React.Component {
           title="Change settings"
           onPress={() =>
               {
-                this.props.navigation.navigate('UserSettings')
+                //this.props.navigation.navigate('UserSettings')
+
               }
           }
          />

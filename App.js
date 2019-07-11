@@ -13,7 +13,7 @@ import {Platform, StyleSheet, Text, View, Button, Alert} from 'react-native';
 import * as RNFS from 'react-native-fs';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 
-
+import appStatus from './controllers/appStatus'
 import logger from './controllers/logger';
 logger.setup();
 
@@ -42,6 +42,7 @@ BackgroundJob.register(backgroundJob);
 
 var notificationSchedule = {
  jobKey: "showNotification",
+ period: 30*60*1000
 }
 
 BackgroundJob.schedule(notificationSchedule)
@@ -103,11 +104,11 @@ export default class App extends Component<Props>
   }
 
 
-  componentDidMount()
+  componentWillMount()
   {
-
     this.generateInitialFiles(serviceFileAsset, serviceFileLocal);
-
+    this.generateInitialFiles(appStatusFileAsset, appStatusFileLocal);
+    appStatus.loadStatus();//call it here after the files have been copied
   }
 
   render() {
