@@ -17,12 +17,20 @@ const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 
-import RelationGroup from './relationGroup'
-import LocationGroup from './locationGroup'
-import Locations from './locations'
+import logger from '../controllers/logger';
 
-import Relations from './relations'
+import appStatus from '../controllers/appStatus';
 
+
+import RelationGroup from './relationGroup';
+import LocationGroup from './locationGroup';
+import Locations from './locations';
+
+import Relations from './relations';
+
+
+const codeFileName='contextualQuestion.js';
+const surveyResponseFilePath= RNFS.DocumentDirectoryPath+'/Responses.js';
 
 export default class ContextualQuestionScreen extends React.Component {
 
@@ -35,10 +43,15 @@ export default class ContextualQuestionScreen extends React.Component {
            familySelected:false, friendSelected:false,
            selectedRelations: new Set([]), numOfPeopleCanHear:0,
            childrenPresent: false, adolescentPresent: false,
-           contextResponseJS: {}}
+           contextResponseJS: {}, //holds responses to the contextual questions
+           surveyResponseJS: {}, //whole survey response passed by parent
+        }
 
   constructor(props) {
     super(props);
+
+//Alert.alert("Found:",JSON.stringify(props.surveyResponseJS));
+//    this.setState({surveyResponseJS: props.surveyResponseJS});
 
     this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
           BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
@@ -46,9 +59,31 @@ export default class ContextualQuestionScreen extends React.Component {
   }
 
   componentDidMount() {
+    const { navigation } = this.props;
+    const _surveyResponseJS = navigation.getParam('surveyResponseJS', 'NO-SERVICE');
+    Alert.alert("Found: :: ",JSON.stringify(_surveyResponseJS));
+    this.setState({surveyResponseJS: _surveyResponseJS});
+
+
     this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
       BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
     );
+
+    //create the response file
+    RNFS.exists(surveyResponseFilePath)
+        .then( (exists) => {})
+        .else
+         {
+          RNFS.writeFile(surveyResponseFilePath, JSON.stringify({Responses:[]}))
+              .then((success) =>
+              {
+                 logger.info(`${codeFileName}`,'componentDidMount','Created response file');
+              })
+              .catch((error) =>
+              {
+                  logger.error(`${codeFileName}`,'componentDidMount','Failed to create response file:'+error.message);
+              })
+         }
   }
 
   onBackButtonPressAndroid = () => {
@@ -81,6 +116,8 @@ export default class ContextualQuestionScreen extends React.Component {
 
    saveResponse()
    {
+
+
      _contextResponseJS={
         "NumOfPeopleAround": this.state.numOfPeople,
         "NumOfPeopleCanHear": this.state.numOfPeopleCanHear,
@@ -89,7 +126,38 @@ export default class ContextualQuestionScreen extends React.Component {
         "Relations": Array.from(this.state.selectedRelations).toString(),
         "Locations": this.state.locations.toString(),
      }
-     Alert.alert(JSON.stringify(_contextResponseJS));
+
+     Alert.alert("surveyResponse:", JSON.stringify(this.state._contextResponseJS));
+
+     logger.info(`${codeFileName}`, 'saveResponse', 'Response: '+JSON.stringify(_contextResponseJS));
+
+     _surveyResponseJS = this.state.surveyResponseJS;
+     _surveyResponseJS.ContextualQuestionResponses = _contextResponseJS;
+
+     //Now save all responses
+     RNFS.readFile(surveyResponseFilePath)
+         .then((_fileContent)=>
+         {
+            responses = JSON.parse(_fileContent);
+            responses.push(_surveyResponseJS);
+            RNFS.writeFile(surveyResponseFilePath,JSON.stringify(responses))
+                .then((success) =>
+                {
+                    logger.info(`${codeFileName}`, 'saveResponse', 'Saved full survey response');
+                    appStatus.setSurveyStatus("Done");
+                    //Alert.alert("Thank you!","All data have been saved.");
+                    logger.showLog();
+                })
+                .catch((error) =>
+                {
+                    logger.error(`${codeFileName}`, 'saveResponse', 'Failed to save survey response:'+error.message);
+                })
+
+         })
+         .catch((error)=>{
+            logger.error(`${codeFileName}`, 'saveResponse', 'Failed to read survey response file:'+error.message);
+            }
+         )
    }
 
 
@@ -191,8 +259,8 @@ export default class ContextualQuestionScreen extends React.Component {
               <TouchableHighlight style ={commonStyle.buttonTouchHLStyle}>
                 <Button
                   onPress={() => {
-                        //this.saveResponse()
-                        Alert.alert('Thank you!')
+                        this.saveResponse()
+                        //Alert.alert('Thank you!')
                     }
                   }
                   title="Save"

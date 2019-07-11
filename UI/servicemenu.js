@@ -31,10 +31,13 @@ export default class ServiceMenuScreen extends React.Component {
     noRelevantDialogVisible:false,
     saveButtonEnabled:true,
     permissionModalVisible:false,
+    permissionResponses: [],    //array to hold permission responses for each of the selected services
     permissionPages: [], //used to navigate to the permission page
     permissionPageIdx: -1,
     noRelevantServiceReason: '',
     surveyResponseJS:{},             //Hold participants responses
+    activeServiceCategoryName:null,
+    activeServiceName:null,
   };
 
 
@@ -197,7 +200,9 @@ export default class ServiceMenuScreen extends React.Component {
 
   savePermissionResponse(response)
   {
-    //Alert.alert(this.state.permissionPageIdx.toString(), this.state.permissionPages.length.toString());
+     _permissionResponses = this.state.permissionResponses;
+     _permissionResponses.push(response);
+     this.setState({permissionResponses: _permissionResponses});
      //if more services to ask permission, (+1 is required since state is updated async)
      if(this.state.permissionPageIdx+1 < this.state.permissionPages.length)
      {
@@ -206,8 +211,16 @@ export default class ServiceMenuScreen extends React.Component {
      }
      else //otherwise, go to the contextual question page
      {
+        //add permission responses to the survey response
+        _surveyResponseJS = this.state.surveyResponseJS;
+        _surveyResponseJS.PermissionResponses = _permissionResponses;
+
+        this.setState({_surveyResponseJS: _surveyResponseJS});
+        //Alert.alert("sernding", JSON.stringify(this.state.surveyResponseJS));
+
         this.setState({permissionModalVisible: false}, ()=>
-            this.props.navigation.navigate('ContextualQuestion'));
+            this.props.navigation.navigate('ContextualQuestion',
+                {surveyResponseJS: this.state.surveyResponseJS}));
      }
   }
 
@@ -246,6 +259,7 @@ export default class ServiceMenuScreen extends React.Component {
     if(_permissionPageIdx < _permissionPages.length)
     {
         this.setState({permissionPageIdx: _permissionPageIdx,
+                       activeServiceCategoryName: _permissionPages[_permissionPageIdx].categoryName,
                        activeServiceName: _permissionPages[_permissionPageIdx].serviceName,
                        permissionModalVisible: true});
     }
@@ -394,6 +408,7 @@ export default class ServiceMenuScreen extends React.Component {
       <Modal visible = {this.state.permissionModalVisible}>
         <ServicePermissionScreen
             serviceName = {this.state.activeServiceName}
+            serviceCategoryName= {this.state.activeServiceCategoryName}
             callBack = {this.savePermissionResponse.bind(this)}
             extraData= {this.state}
         />

@@ -47,10 +47,11 @@ export default class ServicePermissionScreen extends React.Component {
     this.setState({serviceName: this.props.serviceName});
   }
 
-
   saveResponse()
   {
        _permissionResponse= {
+          "ServiceCategory": this.state.serviceCategory,
+          "ServiceName": this.state.serviceName,
           "Sharing": this.state.sharingDecision,
           "PartsToRedact": this.state.partsToRedact,
           "WhyPartShare": this.state.whyPartShare,
