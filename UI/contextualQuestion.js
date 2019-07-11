@@ -50,9 +50,6 @@ export default class ContextualQuestionScreen extends React.Component {
   constructor(props) {
     super(props);
 
-//Alert.alert("Found:",JSON.stringify(props.surveyResponseJS));
-//    this.setState({surveyResponseJS: props.surveyResponseJS});
-
     this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
           BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
         );
@@ -60,8 +57,7 @@ export default class ContextualQuestionScreen extends React.Component {
 
   componentDidMount() {
     const { navigation } = this.props;
-    const _surveyResponseJS = navigation.getParam('surveyResponseJS', 'NO-SERVICE');
-    Alert.alert("Found: :: ",JSON.stringify(_surveyResponseJS));
+    const _surveyResponseJS = navigation.getParam('surveyResponseJS', null);
     this.setState({surveyResponseJS: _surveyResponseJS});
 
 
@@ -162,11 +158,6 @@ export default class ContextualQuestionScreen extends React.Component {
    }
 
 
-  componentDidMount()
-  {
-    const { navigation } = this.props;
-  }
-
   numPeopleAroundChangeHandler(value)
   {
     this.setState({numOfPeople: value});
@@ -253,7 +244,8 @@ export default class ContextualQuestionScreen extends React.Component {
                 <Button
                   onPress={() => {
                         //this.saveResponse()
-                        Alert.alert('Thank you!')
+                        Alert.alert(JSON.stringify(this.state.surveyResponseJS));
+                        //Alert.alert('Thank you!')
                     }
                   }
                   title="Save"

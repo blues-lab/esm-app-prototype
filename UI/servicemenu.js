@@ -215,10 +215,7 @@ export default class ServiceMenuScreen extends React.Component {
         _surveyResponseJS = this.state.surveyResponseJS;
         _surveyResponseJS.PermissionResponses = _permissionResponses;
 
-        this.setState({_surveyResponseJS: _surveyResponseJS});
-        //Alert.alert("sernding", JSON.stringify(this.state.surveyResponseJS));
-
-        this.setState({permissionModalVisible: false}, ()=>
+        this.setState({permissionModalVisible: false, _surveyResponseJS: _surveyResponseJS}, ()=>
             this.props.navigation.navigate('ContextualQuestion',
                 {surveyResponseJS: this.state.surveyResponseJS}));
      }
@@ -399,7 +396,8 @@ export default class ServiceMenuScreen extends React.Component {
                 if(this.state.surveyResponseJS.noRelevantServiceReason.length>0)
                 {
                     logger.info("ServiceMenu","SaveButton.onPress", "Navigating to contextual question page.");
-                    this.props.navigation.navigate('ContextualQuestion');
+                    this.props.navigation.navigate('ContextualQuestion',
+                                                    {surveyResponseJS: this.state.surveyResponseJS});
                 }
             }}
         />
