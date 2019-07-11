@@ -42,7 +42,7 @@ export default class ContextualQuestionScreen extends React.Component {
   state={  numOfPeople:0, relations: [], locations:[],
            familySelected:false, friendSelected:false,
            selectedRelations: new Set([]), numOfPeopleCanHear:0,
-           childrenPresent: false, adolescentPresent: false,
+           childrenPresent: false, adolescentPresent: false, remoteConversation:false,
            contextResponseJS: {}, //holds responses to the contextual questions
            surveyResponseJS: {}, //whole survey response passed by parent
         }
@@ -123,6 +123,7 @@ export default class ContextualQuestionScreen extends React.Component {
         "NumOfPeopleCanHear": this.state.numOfPeopleCanHear,
         "ChildrenPresent": this.state.childrenPresent,
         "AdolescentPresent": this.state.adolescentPresent,
+        "RemoveConversation":this.state.remoteConversation,
         "Relations": Array.from(this.state.selectedRelations).toString(),
         "Locations": this.state.locations.toString(),
      }
@@ -197,23 +198,6 @@ export default class ContextualQuestionScreen extends React.Component {
                 </Text>
                 <Relations/>
 
-                {   false &&
-                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'flex-start'}}>
-                        <Text style={{color: 'black', fontFamily:'Times New Roman', fontSize: 18}}>
-                            Other:
-                        </Text>
-
-                        <TextInput
-                             multiline={false}
-                             style={{height: 50, width: 100, borderColor: 'gray', borderWidth: 1}}
-                             onChangeText={(text) =>
-                               this.setState({ conversationTopic: text })
-
-                             }
-                             value={"hasaflj"}
-                        />
-                    </View>
-                }
                 <Text style={commonStyle.questionStyle}>
                     Among people who were talking, were there:
                 </Text>
@@ -224,12 +208,25 @@ export default class ContextualQuestionScreen extends React.Component {
                       onValueChange={(val) => this.setState({childrenPresent: val})}
                     />
                 </View>
-                <View style= {styles.horizontalViewStyle}>
+                 <View style= {styles.horizontalViewStyle}>
                     <Text style={{fontSize:16}}> Adolescent (13-17 years old):</Text>
                     <Switch style={{marginLeft:10}}
                       value={this.state.adolescentPresent}
                       onValueChange={(val) => this.setState({adolescentPresent: val})}
                     />
+                </View>
+
+                <Text style={commonStyle.questionStyle}>
+                    Did any of the people who were talking call in or connect to a video chat (as
+                        opposed to being physically present in the room)?
+                </Text>
+                <View style= {styles.horizontalViewStyle}>
+                    <Text>No</Text>
+                    <Switch style={{marginLeft:10}}
+                      value={this.state.remoteConversation}
+                      onValueChange={(val) => this.setState({remoteConversation: val})}
+                    />
+                    <Text>Yes</Text>
                 </View>
 
             </View>
@@ -240,10 +237,6 @@ export default class ContextualQuestionScreen extends React.Component {
         </Text>
         <Locations callback={this.relationSelectionsChange.bind(this)} />
 
-        <Text style={commonStyle.questionStyle}>
-            Were all the people who were talking at your home (as opposed to someone calling in
-            or connecting to a video chat)? -- What should be the input type?
-        </Text>
 
         <View style={styles.insideVerticalViewStyle}>
             <Text style={commonStyle.questionStyle}>
@@ -259,8 +252,8 @@ export default class ContextualQuestionScreen extends React.Component {
               <TouchableHighlight style ={commonStyle.buttonTouchHLStyle}>
                 <Button
                   onPress={() => {
-                        this.saveResponse()
-                        //Alert.alert('Thank you!')
+                        //this.saveResponse()
+                        Alert.alert('Thank you!')
                     }
                   }
                   title="Save"
