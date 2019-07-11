@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, Alert, DeviceEventEmitter} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, Alert,
+DeviceEventEmitter, Image, TouchableHighlight} from 'react-native';
 import wifi from 'react-native-android-wifi';
 import Notification from 'react-native-android-local-notification';
 
@@ -11,10 +12,15 @@ import appStatus from '../controllers/appStatus';
 
 //Import UIs
 import SurveyStartScreen from './startsurvey';
+import commonStyles from './Style'
 
 const codeFileName='home.js';
 
 export default class HomeScreen extends React.Component {
+
+  static navigationOptions = {
+    title: 'Welcome',
+  };
 
   state = {msg: "Initial state"};
 
@@ -60,34 +66,45 @@ export default class HomeScreen extends React.Component {
   render() {
 
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text>Home Screen</Text>
-        <Text>{this.state.msg}</Text>
-        <Button
-          title="Start new survey"
-          onPress={() =>
-              {
-                logger.info(`${codeFileName}`, "Start new survey button press", "Navigating to StartSurvey");
-                appStatus.setSurveyStatus("Started");
-                logger.showLog();
-                //this.props.navigation.navigate('StartSurvey')
+      <View style={{
+                      flex: 1,
+                      flexDirection: 'column',
+                      justifyContent: 'space-around',
+                      alignItems: 'stretch',
+                      backgroundColor:'lavender',
+                      margin:5
+                  }}>
+          <Image
+            style={{width: '85%', height:250, resizeMode : 'contain' , margin:20}}
+            source={require('../res/logo.png')}
+          />
 
-               // Notification.send({ message: 'Message', action: 'ACTION_NAME',
-                 //payload: { data: 'Anything' } });
+           <View style={{
+                                       flex: 1,
+                                       flexDirection: 'column',
+                                       justifyContent: 'center',
+                                       alignItems: 'center'
+                                   }}>
+             <TouchableHighlight style ={[commonStyles.buttonTouchHLStyle]}>
+                 <Button title="Start new survey"
+                     color="#20B2AA"
+                     onPress={() => {
+                         logger.info(`${codeFileName}`, "Start new survey button press", "Navigating to StartSurvey");
+                                         appStatus.setSurveyStatus("Started");
+                                         //logger.showLog();
+                                         this.props.navigation.navigate('StartSurvey')
 
-              }
-          }
-        />
+                     }}
+                 />
+             </TouchableHighlight>
+           </View>
 
-        <Button
-          title="Change settings"
-          onPress={() =>
-              {
-                //this.props.navigation.navigate('UserSettings')
+           <Button
+             title="Change settings"
+             color="#D8BFD8"
+             onPress={() => this.props.navigation.navigate('UserSettings')}
+           />
 
-              }
-          }
-         />
       </View>
     );
   }
