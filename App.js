@@ -9,7 +9,7 @@
 //might be useful to show status https://www.npmjs.com/package/react-native-flash-message
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, Alert} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, AppState, Alert} from 'react-native';
 import * as RNFS from 'react-native-fs';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 
@@ -79,7 +79,22 @@ const appStatusFileLocal = RNFS.DocumentDirectoryPath+'/appStatus.js';
 export default class App extends Component<Props> 
 {
 
-  state = {};
+    state = {};
+
+    componentDidMount()
+    {
+      AppState.addEventListener('change', this.handleAppStateChange);
+    }
+
+    componentWillUnmount()
+    {
+      AppState.removeEventListener('change', this.handleAppStateChange);
+    }
+
+    handleAppStateChange = (currentState) =>
+    {
+        logger.info(`${codeFileName}`, "handleAppStateChange", "Current app state: "+currentState);
+    }
 
 
   generateInitialFiles(assetFile, localFile)
