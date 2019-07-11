@@ -146,14 +146,20 @@ export default class ServiceDetailsScreen extends React.Component {
                 extraData={this.state}
               />
             </View>
-            <Button title="Add new"
-                onPress={() => {
-                                    logger.info(`${codeFileName}`,"AddNewServiceButton.onPress",
+
+              <View style={commonStyles.buttonViewStyle}>
+                  <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
+                        <Button title="Add new"
+                            color="#20B2AA"
+                            onPress={() => {
+                                        logger.info(`${codeFileName}`,"AddNewServiceButton.onPress",
                                         'Opening dialog to add new service' );
                                     this.setState({isAddServiceDialogVisible:true});
-                               }
-                        }
-            />
+                                }}
+                  />
+                  </TouchableHighlight>
+              </View>
+
 
             <DialogInput isDialogVisible={this.state.isAddServiceDialogVisible}
                 title={"Enter new service"}

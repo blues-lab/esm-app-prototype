@@ -68,7 +68,7 @@ export default class Locations extends React.Component {
     }
 
     logger.info(`${codeFileName}`,'handleSelectionChange',
-            `relation: ${_relationNames[index].name}, selected: ${_relationNames[index].selected}`)
+            `relation: ${_locationNames[index].name}, selected: ${_locationNames[index].selected}`)
     this.setState({locationNames: _locationNames});
   }
 
