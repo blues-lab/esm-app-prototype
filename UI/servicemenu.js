@@ -359,7 +359,11 @@ export default class ServiceMenuScreen extends React.Component {
               _serviceCategories.push
               (
                 { id: inputText,
-                  value: inputText }
+                  name: inputText,
+                  selectedServiceNames: new Set([]),
+                  renderStyle: commonStyles.listItemStyle,
+                  services: []
+                }
               );
 
               logger.info("ServiceMenu","DialogInput.Submit", "Adding new service category: "+inputText);

@@ -75,6 +75,12 @@ export default class ServiceDetailsScreen extends React.Component {
                    serviceCategoryName: _serviceCategory.name,
                    serviceNames: this.parseServiceNames(_serviceCategory)
                  });
+
+    this.setState({ serviceCategory: _serviceCategory,
+                 serviceCategoryName: _serviceCategory.name,
+                 serviceNames: this.parseServiceNames(_serviceCategory)}, ()=>
+                    this.setState({isAddServiceDialogVisible: this.state.serviceNames.length==0}));
+
   }
 
   handleServiceSelection = (selectedServiceName) => {
@@ -177,16 +183,21 @@ export default class ServiceDetailsScreen extends React.Component {
                   hintInput ={""}
                   submitInput={ (inputText) =>
                     {
-                      serviceNames = this.state.serviceNames;
-                      serviceNames.push
+                      _serviceNames = this.state.serviceNames;
+                      _serviceNames.push
                       (
-                        {id: inputText,
-                          value: inputText }
+                        {   id: inputText,
+                            name: inputText,
+                            selected: false,
+                            description: '',
+                            renderStyle: commonStyles.listItemStyle
+                        }
                       );
 
                       logger.info(`${codeFileName}`,"DialogInput.NewService",
                               `Newly added service name:${inputText}`);
-                      this.setState({serviceNames:serviceNames, isAddServiceDialogVisible:false});
+
+                      this.setState({serviceNames: _serviceNames, isAddServiceDialogVisible:false});
                     }
                   }
                   closeDialog={ () => {
