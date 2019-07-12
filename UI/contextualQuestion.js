@@ -41,7 +41,8 @@ export default class ContextualQuestionScreen extends React.Component {
 
   state={  numOfPeople:0, relations: [], locations:[],
            familySelected:false, friendSelected:false,
-           selectedRelations: new Set([]), numOfPeopleCanHear:0,
+           selectedRelations: new Set([]), selectedLocations: new Set([]),
+           numOfPeopleCanHear:0,
            childrenPresent: false, adolescentPresent: false, remoteConversation:false,
            contextResponseJS: {}, //holds responses to the contextual questions
            surveyResponseJS: {}, //whole survey response passed by parent
@@ -58,7 +59,12 @@ export default class ContextualQuestionScreen extends React.Component {
   componentDidMount() {
     const { navigation } = this.props;
     const _surveyResponseJS = navigation.getParam('surveyResponseJS', null);
+
     this.setState({surveyResponseJS: _surveyResponseJS});
+
+//    this.setState({surveyResponseJS: _surveyResponseJS}, ()=>
+//                    Alert.alert("surveyResponseJS", JSON.stringify(this.state.surveyResponseJS)));
+
 
 
     this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
@@ -92,44 +98,54 @@ export default class ContextualQuestionScreen extends React.Component {
   }
 
 
-   relationSelectionsChange = (selectedRelation, checked) =>
+   relationSelectionHandler(selectedRelation, checked)
    {
       if (checked)
       {
         this.setState({ selectedRelations: this.state.selectedRelations.add(selectedRelation) });
-        if(this.selectedRelation == "Other")
-        {
-        }
-
       }
       else
       {
-        var updatedRelation = this.state.selectedRelations;
-        updatedRelation.delete(selectedRelation);
-        this.setState({ selectedRelations: updatedRelation });
+        _selectedRelations = this.state.selectedRelations;
+        _selectedRelations.delete(selectedRelation);
+        this.setState({ selectedRelations: _selectedRelations});
       }
    }
 
+  locationSelectionHandler(selectedLocation, checked)
+  {
+     if (checked)
+     {
+       this.setState({ selectedLocations: this.state.selectedLocations.add(selectedLocation) });
+     }
+     else
+     {
+       _selectedLocations = this.state.selectedLocations;
+       _selectedLocations.delete(selectedLocation);
+       this.setState({selectedLocations: _selectedLocations});
+     }
+  }
+
    saveResponse()
    {
-
 
      _contextResponseJS={
         "NumOfPeopleAround": this.state.numOfPeople,
         "NumOfPeopleCanHear": this.state.numOfPeopleCanHear,
         "ChildrenPresent": this.state.childrenPresent,
         "AdolescentPresent": this.state.adolescentPresent,
-        "RemoveConversation":this.state.remoteConversation,
+        "RemoteConversation":this.state.remoteConversation,
         "Relations": Array.from(this.state.selectedRelations).toString(),
-        "Locations": this.state.locations.toString(),
+        "Locations": Array.from(this.state.selectedLocations).toString(),
      }
 
-     Alert.alert("surveyResponse:", JSON.stringify(this.state._contextResponseJS));
+
 
      logger.info(`${codeFileName}`, 'saveResponse', 'Response: '+JSON.stringify(_contextResponseJS));
 
      _surveyResponseJS = this.state.surveyResponseJS;
      _surveyResponseJS.ContextualQuestionResponses = _contextResponseJS;
+     Alert.alert("Saved:", JSON.stringify(_surveyResponseJS));
 
      //Now save all responses
      RNFS.readFile(surveyResponseFilePath)
@@ -187,7 +203,7 @@ export default class ContextualQuestionScreen extends React.Component {
                 <Text style={commonStyle.questionStyle}>
                     How do you relate to them (select all that apply)?
                 </Text>
-                <Relations/>
+                <Relations relationSelectionHandler ={this.relationSelectionHandler.bind(this)}/>
 
                 <Text style={commonStyle.questionStyle}>
                     Among people who were talking, were there:
@@ -226,7 +242,7 @@ export default class ContextualQuestionScreen extends React.Component {
         <Text style={commonStyle.questionStyle}>
             Where were you talking (select all that apply)?
         </Text>
-        <Locations callback={this.relationSelectionsChange.bind(this)} />
+        <Locations locationSelectionHandler={this.locationSelectionHandler.bind(this)} />
 
 
         <View style={styles.insideVerticalViewStyle}>
@@ -243,9 +259,7 @@ export default class ContextualQuestionScreen extends React.Component {
               <TouchableHighlight style ={commonStyle.buttonTouchHLStyle}>
                 <Button
                   onPress={() => {
-                        //this.saveResponse()
-                        Alert.alert(JSON.stringify(this.state.surveyResponseJS));
-                        //Alert.alert('Thank you!')
+                        this.saveResponse()
                     }
                   }
                   title="Save"

@@ -5,12 +5,8 @@ import * as RNFS from 'react-native-fs';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
 import DialogInput from 'react-native-dialog-input';
-//import SelectMultiple from 'react-native-select-multiple';
 import NumericInput from 'react-native-numeric-input';
-
-import { CheckBox } from 'react-native-elements'
-
-//import CheckBoxes from 'react-native-group-checkbox'
+import { CheckBox } from 'react-native-elements';
 
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
@@ -52,7 +48,11 @@ export default class Locations extends React.Component {
   {
     _locationNames = this.state.locationNames;
     _locationNames[index].selected = !_locationNames[index].selected
-    if(_locationNames[index].selected)
+
+    _name = _locationNames[index].name;
+    _selected = _locationNames[index].selected;
+
+    if(_selected)
     {
         _locationNames[index].renderStyle = styles.selectedStyle;
 
@@ -70,6 +70,15 @@ export default class Locations extends React.Component {
     logger.info(`${codeFileName}`,'handleSelectionChange',
             `relation: ${_locationNames[index].name}, selected: ${_locationNames[index].selected}`)
     this.setState({locationNames: _locationNames});
+
+    if(_name != 'Other')
+    {
+        this.props.locationSelectionHandler(_name, _selected);
+    }
+    else
+    {
+        this.props.locationSelectionHandler(this.state.otherLocationName, _selected);
+    }
   }
 
 
@@ -157,6 +166,7 @@ export default class Locations extends React.Component {
                   multiline={true}
                   numberOfLines={4}
                   submitInput={ (inputText) => {
+                        this.props.locationSelectionHandler(inputText,true);
                         this.setState({otherLocationName: inputText, otherDialogVisible: false});
                     }
                   }

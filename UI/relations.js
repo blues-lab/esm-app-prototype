@@ -22,7 +22,7 @@ export default class Relations extends React.Component {
 
   state={familySelected:false, friendSelected:false, acquaintanceSelected:false, colleaguesSelected:false,
          roommatesSelected:false, workerSelected:false, unknownSelected:false, selectedRelations:[],
-         otherDialogVisible: false,
+         otherDialogVisible: false, otherRelationName:'',
          relationNames : [
                  {name: "Family members", renderStyle: styles.unselectedStyle, selected: false},
                  {name: "Friends", renderStyle: styles.unselectedStyle, selected: false},
@@ -49,8 +49,10 @@ export default class Relations extends React.Component {
   handleSelectionChange(index)
   {
     _relationNames = this.state.relationNames;
-    _relationNames[index].selected = !_relationNames[index].selected
-    if(_relationNames[index].selected)
+    _relationNames[index].selected = !_relationNames[index].selected;
+    _name = _relationNames[index].name;
+    _selected = _relationNames[index].selected;
+    if(_selected)
     {
         _relationNames[index].renderStyle = styles.selectedStyle;
         //check if 'other' was selected
@@ -65,8 +67,19 @@ export default class Relations extends React.Component {
     }
 
     logger.info(`${codeFileName}`,'handleSelectionChange',
-        `relation: ${_relationNames[index].name}, selected: ${_relationNames[index].selected}`)
+        `relation: ${_relationNames[index].name}, selected: ${_relationNames[index].selected}`);
+
     this.setState({relationNames: _relationNames});
+
+    if(_name != 'Other')
+    {
+        this.props.relationSelectionHandler(_name, _selected);
+    }
+    else
+    {
+        this.props.relationSelectionHandler(this.state.otherRelationName, _selected);
+    }
+
   }
 
 
@@ -159,7 +172,8 @@ export default class Relations extends React.Component {
                   multiline={true}
                   numberOfLines={4}
                   submitInput={ (inputText) => {
-                        this.setState({otherLocationName: inputText, otherDialogVisible: false});
+                        this.props.relationSelectionHandler(inputText,true);
+                        this.setState({otherRelationName: inputText, otherDialogVisible: false});
                     }
                   }
                   closeDialog={ () => {this.setState({otherDialogVisible:false})}}>
