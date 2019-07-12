@@ -158,34 +158,42 @@ export default class ServiceDetailsScreen extends React.Component {
                                 }}
                   />
                   </TouchableHighlight>
+
+                  <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
+                    <Button
+                      onPress= {()=>{this.props.navigation.goBack(null)}}
+                      title="Next"
+                      color="#20B2AA"
+                      accessibilityLabel="Next"
+                    />
+                  </TouchableHighlight>
               </View>
 
+          </View>
 
             <DialogInput isDialogVisible={this.state.isAddServiceDialogVisible}
-                title={"Enter new service"}
-                message={""}
-                hintInput ={""}
-                submitInput={ (inputText) =>
-                  {
-                    serviceNames = this.state.serviceNames;
-                    serviceNames.push
-                    (
-                      {id: inputText,
-                        value: inputText }
-                    );
+                  title={"Enter new service"}
+                  message={""}
+                  hintInput ={""}
+                  submitInput={ (inputText) =>
+                    {
+                      serviceNames = this.state.serviceNames;
+                      serviceNames.push
+                      (
+                        {id: inputText,
+                          value: inputText }
+                      );
 
-                    logger.info(`${codeFileName}`,"DialogInput.NewService",
-                            `Newly added service name:${inputText}`);
-                    this.setState({serviceNames:serviceNames, isAddServiceDialogVisible:false});
+                      logger.info(`${codeFileName}`,"DialogInput.NewService",
+                              `Newly added service name:${inputText}`);
+                      this.setState({serviceNames:serviceNames, isAddServiceDialogVisible:false});
+                    }
                   }
-                }
-                closeDialog={ () => {
-                        logger.info(`${codeFileName}`,"DialogInput.NewService.Close",'Canceled' )
-                        this.setState({isAddServiceDialogVisible:false});
-                    }}>
-            </DialogInput>
-
-          </View>
+                  closeDialog={ () => {
+                          logger.info(`${codeFileName}`,"DialogInput.NewService.Close",'Canceled' )
+                          this.setState({isAddServiceDialogVisible:false});
+                      }}>
+              </DialogInput>
 
       </ScrollView>
 
