@@ -79,7 +79,7 @@ export default class ServiceMenuScreen extends React.Component {
   }
 
 
-  ReadServiceFile()
+  loadServices()
   {
     RNFS.readFile(serviceFileLocal)
     .then((_fileContent) => {
@@ -117,6 +117,16 @@ export default class ServiceMenuScreen extends React.Component {
 
       logger.info("ServiceMenu","ReadServiceFile", 'Number of categories found:'+_serviceCategories.length);
 
+      _serviceCategories.push //Add 'Other' category
+      (
+        {
+          id: 'Other',
+          name: 'Other',
+          selectedServiceNames: new Set([]),
+          renderStyle: commonStyles.listItemStyle,
+          services: []
+        }
+      );
       this.setState
       (
         {
@@ -139,7 +149,7 @@ export default class ServiceMenuScreen extends React.Component {
 
   componentDidMount()
   {
-    this.ReadServiceFile();
+    this.loadServices();
   }
 
   flatListItemSeparator = () =>
@@ -151,7 +161,6 @@ export default class ServiceMenuScreen extends React.Component {
 
   handleServiceSelectionChange = (categoryName, service) =>
   {
-
     logger.info("ServiceMenu","handleServiceSelectionChange",
             'Selected category:'+categoryName+', service:'+service.name);
       _serviceCategories = this.state.serviceCategories;
