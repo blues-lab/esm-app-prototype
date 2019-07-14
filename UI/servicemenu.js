@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, ScrollView, Image,
  TextInput, Alert, FlatList, TouchableHighlight, TouchableOpacity,
- Modal} from 'react-native';
+ Modal, CheckBox} from 'react-native';
 
 import * as RNFS from 'react-native-fs';
 import ElevatedView from 'react-native-elevated-view';
@@ -263,13 +263,26 @@ export default class ServiceMenuScreen extends React.Component {
   }
 
   renderListItem = ({item}) => {
+    img= require('../res/unchecked.png');
+    selected=false;
+    if(item.selectedServiceNames.size>0)
+    {
+        img= require('../res/checked.png');
+        selected=true;
+    }
     return (
         <TouchableHighlight onPress={this.OpenServiceDetailsPage.bind(this, item.name)}>
-          <View style={item.renderStyle}>
-            <Text style={{fontSize:20}}>
-              {item.name}
-            </Text>
-            <Text style={{fontSize:12, fontStyle:'italic', paddingBottom:10, marginBottom:20}}>
+          <View style={{flex: 1, flexDirection: 'column'}}>
+            <View style={{flex: 1, flexDirection: 'row'}}>
+                <Image
+                    style={{width: 30, height:30, resizeMode : 'contain' , margin:1}}
+                    source={img}
+                />
+                <Text style={{fontSize:20}}>
+                    {item.name}
+                </Text>
+            </View>
+            <Text style={{fontSize:12, fontStyle:'italic', marginLeft:10}}>
                 {Array.from(item.selectedServiceNames).toString()}
             </Text>
           </View>
