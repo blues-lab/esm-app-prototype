@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, 
-  TextInput, Alert, FlatList, Modal, ScrollView, TouchableHighlight} from 'react-native';
+  TextInput, Alert, FlatList, Modal, ScrollView, TouchableHighlight, Image} from 'react-native';
 import * as RNFS from 'react-native-fs';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
@@ -15,6 +15,8 @@ const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 import logger from '../controllers/logger';
 const codeFileName = "locations.js"
 
+const checkBoxWidth=25;
+const checkBoxHeight=25;
 
 export default class Locations extends React.Component {
 
@@ -54,7 +56,7 @@ export default class Locations extends React.Component {
 
     if(_selected)
     {
-        _locationNames[index].renderStyle = styles.selectedStyle;
+        //_locationNames[index].renderStyle = styles.selectedStyle;
 
         //check if 'other' was selected
         if(_locationNames[index].name=='Other')
@@ -62,10 +64,10 @@ export default class Locations extends React.Component {
             this.setState({otherDialogVisible: true});
         }
     }
-    else
-    {
-        _locationNames[index].renderStyle = styles.unselectedStyle;
-    }
+//    else
+//    {
+//        _locationNames[index].renderStyle = styles.unselectedStyle;
+//    }
 
     logger.info(`${codeFileName}`,'handleSelectionChange',
             `relation: ${_locationNames[index].name}, selected: ${_locationNames[index].selected}`)
@@ -98,24 +100,42 @@ export default class Locations extends React.Component {
             <View style={styles.rowView}>
 
                 <TouchableHighlight style={this.state.locationNames[0].renderStyle}
-                    onPress={
+                      onPress={
                           this.handleSelectionChange.bind(this, 0)
-                    }>
-                  <Text style={styles.itemTextStyle}>{this.state.locationNames[0].name}</Text>
+                      }>
+                      <View style={styles.rowView}>
+                      <Image
+                          style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                          source={this.state.locationNames[0].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                      />
+                      <Text style={styles.itemTextStyle}>{this.state.locationNames[0].name}</Text>
+                      </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight style={this.state.locationNames[1].renderStyle}
                     onPress={
                           this.handleSelectionChange.bind(this, 1)
                     }>
-                  <Text style={styles.itemTextStyle}>{this.state.locationNames[1].name}</Text>
+                  <View style={styles.rowView}>
+                    <Image
+                        style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                        source={this.state.locationNames[1].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                    />
+                    <Text style={styles.itemTextStyle}>{this.state.locationNames[1].name}</Text>
+                  </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight style={this.state.locationNames[2].renderStyle}
                     onPress={
                           this.handleSelectionChange.bind(this, 2)
                     }>
-                  <Text style={styles.itemTextStyle}>{this.state.locationNames[2].name}</Text>
+                  <View style={styles.rowView}>
+                    <Image
+                        style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                        source={this.state.locationNames[2].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                    />
+                    <Text style={styles.itemTextStyle}>{this.state.locationNames[2].name}</Text>
+                    </View>
                 </TouchableHighlight>
             </View>
 
@@ -124,21 +144,39 @@ export default class Locations extends React.Component {
                     onPress={
                           this.handleSelectionChange.bind(this, 3)
                     }>
-                  <Text style={styles.itemTextStyle}>{this.state.locationNames[3].name}</Text>
+                    <View style={styles.rowView}>
+                     <Image
+                         style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                         source={this.state.locationNames[3].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                     />
+                     <Text style={styles.itemTextStyle}>{this.state.locationNames[3].name}</Text>
+                     </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight style={this.state.locationNames[4].renderStyle}
                         onPress={
                               this.handleSelectionChange.bind(this, 4)
                         }>
-                      <Text style={styles.itemTextStyle}>{this.state.locationNames[4].name}</Text>
+                      <View style={styles.rowView}>
+                        <Image
+                            style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                            source={this.state.locationNames[4].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                        />
+                        <Text style={styles.itemTextStyle}>{this.state.locationNames[4].name}</Text>
+                        </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight style={this.state.locationNames[5].renderStyle}
                     onPress={
                           this.handleSelectionChange.bind(this, 5)
                     }>
-                  <Text style={styles.itemTextStyle}>{this.state.locationNames[5].name}</Text>
+                  <View style={styles.rowView}>
+                                        <Image
+                                            style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                                            source={this.state.locationNames[5].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                                        />
+                                        <Text style={styles.itemTextStyle}>{this.state.locationNames[5].name}</Text>
+                                        </View>
                 </TouchableHighlight>
             </View>
 
@@ -148,14 +186,26 @@ export default class Locations extends React.Component {
                     onPress={
                           this.handleSelectionChange.bind(this,6)
                     }>
-                  <Text style={styles.itemTextStyle}>{this.state.locationNames[6].name}</Text>
+                  <View style={styles.rowView}>
+                                        <Image
+                                            style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                                            source={this.state.locationNames[6].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                                        />
+                                        <Text style={styles.itemTextStyle}>{this.state.locationNames[6].name}</Text>
+                                        </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight style={this.state.locationNames[7].renderStyle}
                         onPress={
                               this.handleSelectionChange.bind(this, 7)
                         }>
-                      <Text style={styles.itemTextStyle}>{this.state.locationNames[7].name}</Text>
+                      <View style={styles.rowView}>
+                                            <Image
+                                                style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                                                source={this.state.locationNames[7].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                                            />
+                                            <Text style={styles.itemTextStyle}>{this.state.locationNames[7].name}</Text>
+                                            </View>
                 </TouchableHighlight>
             </View>
 
@@ -182,7 +232,8 @@ const styles = StyleSheet.create({
           backgroundColor: "white",
           padding: 2,
           margin:2,
-          borderWidth:.5
+          borderWidth:1,
+          padding:1
   },
   selectedStyle: {
         backgroundColor: "springgreen",
@@ -198,7 +249,7 @@ const styles = StyleSheet.create({
      alignItems: 'stretch',
   },
   itemTextStyle: {
-    fontSize:20,
+    fontSize:18,
   },
 
 });
