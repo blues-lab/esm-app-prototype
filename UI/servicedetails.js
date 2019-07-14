@@ -188,22 +188,23 @@ export default class ServiceDetailsScreen extends React.Component {
                   hintInput ={""}
                   submitInput={ (inputText) =>
                     {
+                      _newService = {   id: inputText,
+                                        name: inputText,
+                                        selected: true,
+                                        description: '',
+                                        renderStyle: commonStyles.listItemStyle,
+                                        imgSrc : require('../res/checked.png')
+                                    }
                       _serviceNames = this.state.serviceNames;
-                      _serviceNames.push
-                      (
-                        {   id: inputText,
-                            name: inputText,
-                            selected: false,
-                            description: '',
-                            renderStyle: commonStyles.listItemStyle,
-                            imgSrc : require('../res/checked.png')
-                        }
-                      );
+                      _serviceNames.push(_newService);
 
                       logger.info(`${codeFileName}`,"DialogInput.NewService",
                               `Newly added service name:${inputText}`);
 
                       this.setState({serviceNames: _serviceNames, isAddServiceDialogVisible:false});
+
+                      this.props.navigation.state.params.serviceSelectionHandler(
+                                              this.state.serviceCategoryName, _newService);
                     }
                   }
                   closeDialog={ () => {
