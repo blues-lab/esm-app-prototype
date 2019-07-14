@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, 
-  TextInput, Alert, FlatList, ScrollView, TouchableHighlight} from 'react-native';
+  TextInput, Alert, FlatList, ScrollView, TouchableHighlight, Image} from 'react-native';
 import * as RNFS from 'react-native-fs';
 import DialogInput from 'react-native-dialog-input';
 
@@ -59,7 +59,8 @@ export default class ServiceDetailsScreen extends React.Component {
             name: _services[i].name,
             selected: _services[i].selected,
             description: _services[i].selected ? this.selectionText : "",
-            renderStyle: commonStyles.listItemStyle
+            renderStyle: commonStyles.listItemStyle,
+            imgSrc : require('../res/unchecked.png')
           }
         );
     }
@@ -95,11 +96,13 @@ export default class ServiceDetailsScreen extends React.Component {
             {
                 _serviceNames[i].description = selectionText;
                 _serviceNames[i].renderStyle = styles.selectedItemStyle;
+                _serviceNames[i].imgSrc = require('../res/checked.png');
             }
             else
             {
                 _serviceNames[i].description = "";
                 _serviceNames[i].renderStyle = commonStyles.listItemStyle;
+                _serviceNames[i].imgSrc = require('../res/unchecked.png');
             }
 
             //call parent component to update service selections
@@ -118,19 +121,21 @@ export default class ServiceDetailsScreen extends React.Component {
   }
 
   renderListItem = ({item}) => {
+
       return (
           <TouchableHighlight onPress={this.handleServiceSelection.bind(this, item.name)}>
-            <View style={item.renderStyle}>
-              <Text style={{fontSize:20}}>
-                {item.name}
-              </Text>
-              <Text style={{fontSize:12, fontStyle:'italic', paddingBottom:10, marginBottom:20}}>
-                {item.description}
-              </Text>
-
-            </View>
+              <View style={{flex: 1, flexDirection: 'row'}}>
+                  <Image
+                      style={{width: 30, height:30, resizeMode : 'contain' , margin:1}}
+                      source={item.selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                  />
+                  <Text style={{fontSize:20}}>
+                      {item.name}
+                  </Text>
+              </View>
           </TouchableHighlight>
       )
+
     }
 
   render() {
@@ -190,7 +195,8 @@ export default class ServiceDetailsScreen extends React.Component {
                             name: inputText,
                             selected: false,
                             description: '',
-                            renderStyle: commonStyles.listItemStyle
+                            renderStyle: commonStyles.listItemStyle,
+                            imgSrc : require('../res/checked.png')
                         }
                       );
 
