@@ -18,6 +18,9 @@ const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 import logger from '../controllers/logger';
 const codeFileName = "relations.js"
 
+const checkBoxWidth=25;
+const checkBoxHeight=25;
+
 export default class Relations extends React.Component {
 
   state={familySelected:false, friendSelected:false, acquaintanceSelected:false, colleaguesSelected:false,
@@ -102,14 +105,26 @@ export default class Relations extends React.Component {
                     onPress={
                           this.handleSelectionChange.bind(this, 0)
                     }>
-                  <Text style={styles.itemTextStyle}>{this.state.relationNames[0].name}</Text>
+                  <View style={styles.rowView}>
+                                        <Image
+                                            style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                                            source={this.state.relationNames[0].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                                        />
+                                        <Text style={styles.itemTextStyle}>{this.state.relationNames[0].name}</Text>
+                                        </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight style={this.state.relationNames[1].renderStyle}
                     onPress={
                           this.handleSelectionChange.bind(this, 1)
                     }>
-                  <Text style={styles.itemTextStyle}>{this.state.relationNames[1].name}</Text>
+                  <View style={styles.rowView}>
+                                                          <Image
+                                                              style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                                                              source={this.state.relationNames[1].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                                                          />
+                                                          <Text style={styles.itemTextStyle}>{this.state.relationNames[1].name}</Text>
+                                                          </View>
                 </TouchableHighlight>
 
             </View>
@@ -119,14 +134,26 @@ export default class Relations extends React.Component {
                     onPress={
                           this.handleSelectionChange.bind(this, 2)
                     }>
-                  <Text style={styles.itemTextStyle}>{this.state.relationNames[2].name}</Text>
+                  <View style={styles.rowView}>
+                                                          <Image
+                                                              style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                                                              source={this.state.relationNames[2].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                                                          />
+                                                          <Text style={styles.itemTextStyle}>{this.state.relationNames[2].name}</Text>
+                                                          </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight style={this.state.relationNames[3].renderStyle}
                     onPress={
                           this.handleSelectionChange.bind(this, 3)
                     }>
-                  <Text style={styles.itemTextStyle}>{this.state.relationNames[3].name}</Text>
+                  <View style={styles.rowView}>
+                                                          <Image
+                                                              style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                                                              source={this.state.relationNames[3].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                                                          />
+                                                          <Text style={styles.itemTextStyle}>{this.state.relationNames[3].name}</Text>
+                                                          </View>
                 </TouchableHighlight>
             </View>
 
@@ -136,7 +163,13 @@ export default class Relations extends React.Component {
                         onPress={
                               this.handleSelectionChange.bind(this, 4)
                         }>
-                      <Text style={styles.itemTextStyle}>{this.state.relationNames[4].name}</Text>
+                     <View style={styles.rowView}>
+                         <Image
+                             style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                             source={this.state.relationNames[4].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                         />
+                         <Text style={styles.itemTextStyle}>{this.state.relationNames[4].name}</Text>
+                     </View>
                 </TouchableHighlight>
 
             </View>
@@ -145,7 +178,13 @@ export default class Relations extends React.Component {
                     onPress={
                           this.handleSelectionChange.bind(this, 5)
                     }>
-                  <Text style={styles.itemTextStyle}>{this.state.relationNames[5].name}</Text>
+                  <View style={styles.rowView}>
+                       <Image
+                           style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                           source={this.state.relationNames[5].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                       />
+                       <Text style={styles.itemTextStyle}>{this.state.relationNames[5].name}</Text>
+                  </View>
                 </TouchableHighlight>
             </View>
 
@@ -154,14 +193,26 @@ export default class Relations extends React.Component {
                         onPress={
                               this.handleSelectionChange.bind(this,6)
                         }>
-                <Text style={styles.itemTextStyle}>{this.state.relationNames[6].name}</Text>
+                <View style={styles.rowView}>
+                                         <Image
+                                             style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                                             source={this.state.relationNames[6].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                                         />
+                                         <Text style={styles.itemTextStyle}>{this.state.relationNames[6].name}</Text>
+                                     </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight style={this.state.relationNames[7].renderStyle}
                             onPress={
                                   this.handleSelectionChange.bind(this, 7)
                             }>
-                <Text style={styles.itemTextStyle}>{this.state.relationNames[7].name}</Text>
+                <View style={styles.rowView}>
+                                         <Image
+                                             style={{width: checkBoxWidth, height: checkBoxHeight,  resizeMode : 'contain' , margin:1}}
+                                             source={this.state.relationNames[7].selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                                         />
+                                         <Text style={styles.itemTextStyle}>{this.state.relationNames[7].name}</Text>
+                                     </View>
                 </TouchableHighlight>
             </View>
 
