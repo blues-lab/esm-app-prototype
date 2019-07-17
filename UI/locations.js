@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
           padding:1
   },
   selectedStyle: {
-        backgroundColor: "springgreen",
+        backgroundColor: "#bfd9bf",
         padding: 2,
         margin:2,
         borderWidth:.5
