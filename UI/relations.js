@@ -85,6 +85,16 @@ export default class Relations extends React.Component {
 
   }
 
+    unselectOther()
+    {
+      //When other is selected but nothing entered, un-select the option
+      _relationNames = this.state.relationNames;
+      _relationNames[_relationNames.length-1].selected=false;
+      _relationNames[_relationNames.length-1].renderStyle=styles.unselectedStyle;
+      this.setState({relationNames: _relationNames})
+    }
+
+
 
 
   render() {
@@ -223,11 +233,21 @@ export default class Relations extends React.Component {
                   multiline={true}
                   numberOfLines={4}
                   submitInput={ (inputText) => {
-                        this.props.relationSelectionHandler(inputText,true);
+                        if(inputText.length>0)
+                        {
+                            this.props.relationSelectionHandler(inputText,true);
+                        }
+                        else
+                        {
+                            this.unselectOther();
+                        }
                         this.setState({otherRelationName: inputText, otherDialogVisible: false});
                     }
                   }
-                  closeDialog={ () => {this.setState({otherDialogVisible:false})}}>
+                  closeDialog={ () => {
+                        this.unselectOther();
+                        this.setState({otherDialogVisible:false});
+                    }}>
             </DialogInput>
 
         </View>

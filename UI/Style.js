@@ -102,5 +102,34 @@ export default StyleSheet.create({
         borderColor: 'gray',
         borderWidth: 1
     },
+      verticalViewStyle:{
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        backgroundColor:'lightcyan',
+      },
+
+      insideVerticalViewStyle:{
+          flex: 1,
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        },
+
+      horizontalViewStyle:{
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor:'lightcyan',
+      },
+
+      pageHeaderStyle: {
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+      }
 
 });
