@@ -84,14 +84,18 @@ export default class SurveyStartScreen extends React.Component {
                         value={this.state.conversationTopic}
                     />
 
+                    <Text style={{fontSize:12, fontStyle:'italic', margin:10}}>
+                        Enter 'Prefer not to answer' to skip
+                    </Text>
+
                     <View style={commonStyles.buttonViewStyle}>
                         <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
-                            <Button title="Save"
+                            <Button title="Next"
                                 color="#20B2AA"
                                 onPress={() => {
                                     if(this.state.conversationTopic.length==0)
                                     {
-                                        Alert.alert("Please insert conversation topic to contnue.")
+                                        Alert.alert("Please insert conversation topic to continue.")
                                     }
                                     else
                                     {
@@ -100,12 +104,8 @@ export default class SurveyStartScreen extends React.Component {
                                 }
                             />
                         </TouchableHighlight>
+
                     </View>
-                    <Button
-                          title="Prefer not to answer"
-                          color="#D8BFD8"
-                          onPress={() => this.props.navigation.navigate('ServiceMenu')}
-                    />
           </View>
 
       </View>
