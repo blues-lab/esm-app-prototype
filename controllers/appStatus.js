@@ -12,10 +12,13 @@ class AppStatus
 {
     appStatusFilePath = RNFS.DocumentDirectoryPath+'/appStatus.js';
     status = {
-                 NotificationCountToday: "0",
+                 NotificationCountToday: 0,
                  SurveyStatus: "NotStarted",
-                 LastNotificationTime: new Date().toString(),
-                 MaxNumberNotification: "5"
+                 LastNotificationTime: new Date(),
+                 MaxNumberNotification: 5,
+                 PromptDuration:60,
+                 CompletedSurveys:0,
+                 SurveyProgress:0,
              }
 
     loadStatus()
