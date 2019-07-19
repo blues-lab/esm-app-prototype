@@ -283,6 +283,9 @@ export default class ServiceMenuScreen extends React.Component {
                 );
             }
         }
+        //randomly select 3 permission pages
+        this.shuffle(_permissionPages);
+        _permissionPages = _permissionPages.slice(0,3);
         this.setState({permissionPages: _permissionPages});
     }
 
@@ -291,10 +294,6 @@ export default class ServiceMenuScreen extends React.Component {
         Alert.alert("Please select at least one service to continue.");
         return;
     }
-
-    //randomly select 3 permission pages
-//    this.shuffle(_permissionPages);
-//    _permissionPages = _permissionPages.slice(0,2);
 
     _permissionPageIdx = this.state.permissionPageIdx+1;
 
