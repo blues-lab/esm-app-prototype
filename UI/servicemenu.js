@@ -41,15 +41,25 @@ export default class ServiceMenuScreen extends React.Component {
   };
 
 
-  OpenServiceDetailsPage(selectedServiceCategoryName) //Function for click on a service category item
+  OpenServiceDetailsPage(selectedServiceCategory)
   {
-      logger.info("ServiceMenu","OpenServiceDetailsPage", 'Opening service category:'+selectedServiceCategoryName);
+  //When clicked on a service category item, show the service-details page with the services
+  // unless "No relevant service"/"None" was selected
+
+      logger.info("ServiceMenu","OpenServiceDetailsPage", 'Opening service category:'+selectedServiceCategory.name);
+
+      if (selectedServiceCategory.id == "None")
+      {
+        this.setState({noRelevantDialogVisible:true});
+        return;
+      }
+
       _serviceCategories = this.state.serviceCategories;
       for(var i=0; i< _serviceCategories.length; i++)
       {
-        if(_serviceCategories[i].name == selectedServiceCategoryName)
+        if(_serviceCategories[i].name == selectedServiceCategory.name)
         {
-            logger.info("ServiceMenu","OpenServiceDetailsPage", 'Navigating to service details for:'+selectedServiceCategoryName);
+            logger.info("ServiceMenu","OpenServiceDetailsPage", 'Navigating to service details for:'+selectedServiceCategory.name);
             this.props.navigation.navigate('ServiceDetails',
             {
                 serviceCategory: _serviceCategories[i],
@@ -127,6 +137,17 @@ export default class ServiceMenuScreen extends React.Component {
           services: []
         }
       );
+      _serviceCategories.push //Add 'No relevant service'
+        (
+          {
+            id: 'None',
+            name: 'No relevant service',
+            selectedServiceNames: new Set([]),
+            renderStyle: commonStyles.listItemStyle,
+            services: []
+          }
+        );
+
       this.setState
       (
         {
@@ -161,6 +182,7 @@ export default class ServiceMenuScreen extends React.Component {
 
   handleServiceSelectionChange = (categoryName, service) =>
   {
+  //Callback function sent to the service details page, and called when a service is selected.
     logger.info("ServiceMenu","handleServiceSelectionChange",
             'Selected category:'+categoryName+', service:'+service.name);
       _serviceCategories = this.state.serviceCategories;
@@ -230,8 +252,18 @@ export default class ServiceMenuScreen extends React.Component {
      }
   }
 
+  shuffle(a)
+  {
+      for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+  }
+
   showPermissionPage()
   {
+  //After service selection is done, show permission page for at most 3 selected services
 
      _permissionPages = this.state.permissionPages;
 
@@ -260,6 +292,10 @@ export default class ServiceMenuScreen extends React.Component {
         return;
     }
 
+    //randomly select 3 permission pages
+//    this.shuffle(_permissionPages);
+//    _permissionPages = _permissionPages.slice(0,2);
+
     _permissionPageIdx = this.state.permissionPageIdx+1;
 
     if(_permissionPageIdx < _permissionPages.length)
@@ -279,8 +315,21 @@ export default class ServiceMenuScreen extends React.Component {
         img= require('../res/checked.png');
         selected=true;
     }
+    else if(item.id=="None")
+    {
+//        return(
+//            <TouchableHighlight onPress={this.setState({noRelevantDialogVisible:true})}>
+//              <View style={{flex: 1, flexDirection: 'row', alignItems:'center'}}>
+//                <Text style={{fontSize:20}}>
+//                    {item.name}
+//                </Text>
+//              </View>
+//            </TouchableHighlight>
+//        );
+img=null;
+    }
     return (
-        <TouchableHighlight onPress={this.OpenServiceDetailsPage.bind(this, item.name)}>
+        <TouchableHighlight onPress={this.OpenServiceDetailsPage.bind(this, item)}>
           <View style={{flex: 1, flexDirection: 'column'}}>
             <View style={{flex: 1, flexDirection: 'row'}}>
                 <Image
@@ -313,11 +362,7 @@ export default class ServiceMenuScreen extends React.Component {
 
         <View style={commonStyles.longTextView}>
             <Text style={commonStyles.longtextStyle}>
-              Imagine an always-listening voice assistant called Mimi
-              recorded an audio when you were talking. Please select all
-              services that are <Text style={{fontWeight: "bold"}}>relevant</Text> to this
-              audio recording that could provide to you.
-              You can also add new services.
+              What services could mimi offer based on your conversation?
             </Text>
         </View>
 
@@ -343,34 +388,23 @@ export default class ServiceMenuScreen extends React.Component {
         }}>
 
             <View style={commonStyles.buttonViewStyle}>
-                  <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
-                        <Button title="Add new"
-                            color="#20B2AA"
-                            onPress={() => this.setState({newCategoryDialogVisible:true})}
-                        />
-                  </TouchableHighlight>
-
-                  <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
+                <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
                       <Button disabled = {!this.state.saveButtonEnabled}
                         onPress={this.showPermissionPage.bind(this)}
                         title="Next"
                         color="#20B2AA"
                         accessibilityLabel="Next"
                       />
-                  </TouchableHighlight>
+                </TouchableHighlight>
             </View>
 
-            <Button
-              title="No relevant service"
-              color="#D8BFD8"
-              onPress={() => this.setState({noRelevantDialogVisible:true})}
-            />
+
         </View>
 
       </View>
 
       <DialogInput isDialogVisible={this.state.newCategoryDialogVisible}
-          title={"Add new service category"}
+          title={"What other service?"}
           message={""}
           hintInput ={""}
           multiline={true}
@@ -414,7 +448,7 @@ export default class ServiceMenuScreen extends React.Component {
                 });
             }}
         />
-        <Dialog.Button label="Save" onPress={() => {
+        <Dialog.Button label="Next" onPress={() => {
                 _surveyResponseJS = this.state.surveyResponseJS;
                 _surveyResponseJS.noRelevantServiceReason = this.state.noRelevantServiceReason;
                 this.setState({noRelevantDialogVisible: false, surveyResponseJS: _surveyResponseJS});
