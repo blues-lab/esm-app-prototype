@@ -53,6 +53,11 @@ export default class ServiceMenuScreen extends React.Component {
         this.setState({noRelevantDialogVisible:true});
         return;
       }
+      else if (selectedServiceCategory.id == "Next")
+      {
+        this.showPermissionPage();
+        return;
+      }
 
       _serviceCategories = this.state.serviceCategories;
       for(var i=0; i< _serviceCategories.length; i++)
@@ -142,6 +147,17 @@ export default class ServiceMenuScreen extends React.Component {
           {
             id: 'None',
             name: 'No relevant service',
+            selectedServiceNames: new Set([]),
+            renderStyle: commonStyles.listItemStyle,
+            services: []
+          }
+        );
+
+         _serviceCategories.push //Add 'Next' button
+        (
+          {
+            id: 'Next',
+            name: 'Next',
             selectedServiceNames: new Set([]),
             renderStyle: commonStyles.listItemStyle,
             services: []
@@ -314,18 +330,9 @@ export default class ServiceMenuScreen extends React.Component {
         img= require('../res/checked.png');
         selected=true;
     }
-    else if(item.id=="None")
+    else if(item.id=="None" || item.id=="Next")
     {
-//        return(
-//            <TouchableHighlight onPress={this.setState({noRelevantDialogVisible:true})}>
-//              <View style={{flex: 1, flexDirection: 'row', alignItems:'center'}}>
-//                <Text style={{fontSize:20}}>
-//                    {item.name}
-//                </Text>
-//              </View>
-//            </TouchableHighlight>
-//        );
-img=null;
+        img=null;
     }
     return (
         <TouchableHighlight onPress={this.OpenServiceDetailsPage.bind(this, item)}>

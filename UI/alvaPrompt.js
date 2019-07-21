@@ -67,13 +67,7 @@ export default class AlvaPromptScreen extends React.Component {
                             <Button title="Next"
                                 color="#20B2AA"
                                 onPress={() => {
-                                    if(this.state.conversationTopic.length==0)
-                                    {
-                                        Alert.alert("Please insert conversation topic to continue.")
-                                    }
-                                    else
-                                    {
-                                        this.props.navigation.navigate('ServiceMenu')}
+                                        this.props.navigation.navigate('ServiceMenu');
                                     }
                                 }
                             />
