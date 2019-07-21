@@ -32,14 +32,14 @@ getNextNotificationTime()
           //bigText: "big text ", // (optional) default: "message" prop
           //subText: "subText", // (optional) default: none
           color: "red", // (optional) default: system default
-          vibrate: true, // (optional) default: true
+          vibrate: false, // (optional) default: true
           vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
           tag: 'some_tag', // (optional) add tag to message
           group: "group", // (optional) add group to message
           ongoing: false, // (optional) set whether this is an "ongoing" notification
-          priority: "high", // (optional) set notification priority, default: high
+          //priority: "high", // (optional) set notification priority, default: high
           visibility: "private", // (optional) set notification visibility, default: private
-          importance: "high", // (optional) set notification importance, default: high
+          //importance: "high", // (optional) set notification importance, default: high
 
           /* iOS only properties */
     //      alertAction: // (optional) default: view
@@ -49,7 +49,7 @@ getNextNotificationTime()
           /* iOS and Android properties */
           //title: "Tap here if you have been in a conversation recently notification", // (optional)
           message: "Tap here if you have been in a conversation recently", // (required)
-          playSound: true, // (optional) default: true
+          playSound: false, // (optional) default: true
           soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
           number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
           repeatType: 'day', // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
