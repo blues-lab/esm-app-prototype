@@ -42,7 +42,7 @@ export default class SurveyStartScreen extends React.Component {
       {
             Alert.alert(
               'New survey!',
-              'Were you talking recently?',
+              'Have you had a conversation recently?',
               [
                 {text: 'Yes', onPress: () => {
                   logger.info(`${codeFileName}`, "'Yes' to recent conversation", "Navigating to StartSurvey");
