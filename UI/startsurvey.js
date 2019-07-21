@@ -1,33 +1,68 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, TextInput, Alert,
-    BackHandler, TouchableHighlight, Dimensions} from 'react-native';
+    BackHandler, TouchableHighlight, Dimensions, Modal} from 'react-native';
 
+import logger from '../controllers/logger';
+import ServiceMenuScreen from './servicemenu';
+import commonStyles from './Style';
 
-import ServiceMenuScreen from './servicemenu'
-import commonStyles from './Style'
+const codeFileName = 'startsurvey.js';
+import ToolBar from './toolbar'
+
 
 export default class SurveyStartScreen extends React.Component {
 
   _didFocusSubscription;
   _willBlurSubscription;
 
-
   static navigationOptions = {
     title: 'Start survey',
-    headerLeft: null
+    headerLeft: null,
+    headerTitle: <ToolBar/>
   };
 
   constructor(props) {
     super(props);
-    this.state = { conversationTopic: '' };
+    this.state = { conversationTopic: '', noSurveyDialogVisible: false };
 
     this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
           BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
         );
   }
 
+   startNewSurvey = () => //Will be called if participants indicate recent conversation
+   {
+     //this.props.navigation.navigate('StartSurvey');
+   }
+
+
   componentDidMount() {
-    this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
+
+      if(true)//check if survey is available from app settings
+      {
+            Alert.alert(
+              'New survey!',
+              'Were you talking recently?',
+              [
+                {text: 'Yes', onPress: () => {
+                  logger.info(`${codeFileName}`, "'Yes' to recent conversation", "Navigating to StartSurvey");
+                  appStatus.setSurveyStatus("Started");
+                  this.props.navigation.navigate('StartSurvey');
+                  }},
+                {text: 'No', onPress: () => {
+                      logger.info(`${codeFileName}`, "'No' to recent conversation", "Showing NoSurvey dialog.");
+                      this.setState({noSurveyDialogVisible: true});
+                }}
+              ],
+              {cancelable: true},
+            );
+      }
+      else
+      {
+          this.setState({noSurveyDialogVisible: true});
+      }
+
+        this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
       BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
     );
   }
@@ -99,13 +134,37 @@ export default class SurveyStartScreen extends React.Component {
                                     }
                                     else
                                     {
-                                        this.props.navigation.navigate('ServiceMenu')}
+                                        this.props.navigation.navigate('AlvaPrompt')}
                                     }
                                 }
                             />
                         </TouchableHighlight>
 
                     </View>
+
+                     <Modal visible = {this.state.noSurveyDialogVisible}>
+                                <View style={{  flex: 1,
+                                                flexDirection: 'column',
+                                                justifyContent: 'center',
+                                                alignItems: 'stretch',
+                                                backgroundColor:'lavender',
+                                                margin:5}}>
+                                    <Text style={{margin:15, fontSize:20, borderBottomColor:'black', borderBottomWidth: StyleSheet.hairlineWidth, padding:5}}>
+                                        No survey available now.
+                                    </Text>
+                                    <Text style={{fontSize:16, margin:10, marginTop:10}}>
+                                        Advertisement/reminder for MIMI and suggestion to come back later.
+                                    </Text>
+                                       <TouchableHighlight style ={[commonStyles.buttonTouchHLStyle]}>
+                                          <Button title="I will come back later!"
+                                              color="#20B2AA"
+                                            onPress={() => {
+                                              logger.info(`${codeFileName}`, "No survey modal", "Closing app");
+                                              this.setState({noSurveyDialogVisible: false});
+                                          }}/>
+                                    </TouchableHighlight>
+                                </View>
+                               </Modal>
           </View>
 
       </View>
