@@ -39,17 +39,22 @@ export default class ContextualQuestionScreen extends React.Component {
     headerLeft: null
   };
 
-  state={  numOfPeople:0, relations: [], locations:[],
-           familySelected:false, friendSelected:false,
-           selectedRelations: new Set([]), selectedLocations: new Set([]),
-           numOfPeopleCanHear:0,
-           childrenPresent: false, adolescentPresent: false, remoteConversation:false,
-           contextResponseJS: {}, //holds responses to the contextual questions
-           surveyResponseJS: {}, //whole survey response passed by parent
-        }
+
+
+
 
   constructor(props) {
     super(props);
+
+    this.state = {  numOfPeople:0, relations: [], locations:[],
+                           familySelected:false, friendSelected:false,
+                           selectedRelations: new Set([]), selectedLocations: new Set([]),
+                           numOfPeopleCanHear:0,
+                           childrenPresent: false, adolescentPresent: false, remoteConversation:false,
+                           contextResponseJS: {}, //holds responses to the contextual questions
+                           surveyResponseJS: {}, //whole survey response passed by parent
+                           surrounding:true, //Questions about surrounding people VS participating people
+                        };
 
     this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
           BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
@@ -192,65 +197,76 @@ export default class ContextualQuestionScreen extends React.Component {
       <View style={{margin:10}}>
       <View style={styles.verticalViewStyle}>
 
-        <Text style={commonStyle.questionStyle}>
-            How many other people (excluding you) were talking?
-        </Text>
-        <CustomNumericInput valueChangeCallback={this.numPeopleAroundChangeHandler.bind(this)}/>
-
-
-        {   this.state.numOfPeople>0 &&
+        {
+            this.state.surrounding &&
             <View style={styles.verticalViewStyle}>
-                <Text style={commonStyle.questionStyle}>
-                    How do you relate to them (select all that apply)?
-                </Text>
-                <Relations relationSelectionHandler ={this.relationSelectionHandler.bind(this)}/>
+            <Text style={commonStyle.questionStyle}>
+                Where were you talking (select all that apply)?
+            </Text>
+            <Locations locationSelectionHandler={this.locationSelectionHandler.bind(this)} />
 
-                <Text style={commonStyle.questionStyle}>
-                    Among people who were talking, were there:
-                </Text>
-                <View style= {styles.horizontalViewStyle}>
-                    <Text style={{fontSize:16}}> Children (0-12 years old):</Text>
-                    <Switch style={{marginLeft:10}}
-                      value={this.state.childrenPresent}
-                      onValueChange={(val) => this.setState({childrenPresent: val})}
-                    />
-                </View>
-                 <View style= {styles.horizontalViewStyle}>
-                    <Text style={{fontSize:16}}> Adolescent (13-17 years old):</Text>
-                    <Switch style={{marginLeft:10}}
-                      value={this.state.adolescentPresent}
-                      onValueChange={(val) => this.setState({adolescentPresent: val})}
-                    />
-                </View>
 
+            <View style={styles.insideVerticalViewStyle}>
                 <Text style={commonStyle.questionStyle}>
-                    Did any of the people who were talking call in or connect to a video chat (as
-                        opposed to being physically present in the room)?
+                    How many people, who did not participate in the conversation, could hear it?
                 </Text>
-                <View style= {styles.horizontalViewStyle}>
-                    <Text>No</Text>
-                    <Switch style={{marginLeft:10}}
-                      value={this.state.remoteConversation}
-                      onValueChange={(val) => this.setState({remoteConversation: val})}
-                    />
-                    <Text>Yes</Text>
+                <CustomNumericInput valueChangeCallback={this.numPeopleCanHearChangeHandler.bind(this)}/>
+            </View>
+            </View>
+
+        }
+
+        {   !this.state.surrounding &&
+
+            <View style={styles.verticalViewStyle}>
+            <Text style={commonStyle.questionStyle}>
+                How many other people (excluding you) were talking?
+            </Text>
+            <CustomNumericInput valueChangeCallback={this.numPeopleAroundChangeHandler.bind(this)}/>
+
+            {   this.state.numOfPeople>0 &&
+                <View style={styles.verticalViewStyle}>
+                    <Text style={commonStyle.questionStyle}>
+                        How do you relate to them (select all that apply)?
+                    </Text>
+                    <Relations relationSelectionHandler ={this.relationSelectionHandler.bind(this)}/>
+
+                    <Text style={commonStyle.questionStyle}>
+                        Among people who were talking, were there:
+                    </Text>
+                    <View style= {styles.horizontalViewStyle}>
+                        <Text style={{fontSize:16}}> Children (0-12 years old):</Text>
+                        <Switch style={{marginLeft:10}}
+                          value={this.state.childrenPresent}
+                          onValueChange={(val) => this.setState({childrenPresent: val})}
+                        />
+                    </View>
+                     <View style= {styles.horizontalViewStyle}>
+                        <Text style={{fontSize:16}}> Adolescent (13-17 years old):</Text>
+                        <Switch style={{marginLeft:10}}
+                          value={this.state.adolescentPresent}
+                          onValueChange={(val) => this.setState({adolescentPresent: val})}
+                        />
+                    </View>
+
+                    <Text style={commonStyle.questionStyle}>
+                        Did any of the people who were talking call in or connect to a video chat (as
+                            opposed to being physically present in the room)?
+                    </Text>
+                    <View style= {styles.horizontalViewStyle}>
+                        <Text>No</Text>
+                        <Switch style={{marginLeft:10}}
+                          value={this.state.remoteConversation}
+                          onValueChange={(val) => this.setState({remoteConversation: val})}
+                        />
+                        <Text>Yes</Text>
+                    </View>
+
                 </View>
+            }
 
             </View>
         }
-
-        <Text style={commonStyle.questionStyle}>
-            Where were you talking (select all that apply)?
-        </Text>
-        <Locations locationSelectionHandler={this.locationSelectionHandler.bind(this)} />
-
-
-        <View style={styles.insideVerticalViewStyle}>
-            <Text style={commonStyle.questionStyle}>
-                How many people, who did not participate in the conversation, could hear it?
-            </Text>
-            <CustomNumericInput valueChangeCallback={this.numPeopleCanHearChangeHandler.bind(this)}/>
-        </View>
 
 
       </View>
@@ -258,11 +274,19 @@ export default class ContextualQuestionScreen extends React.Component {
           <View style={commonStyle.buttonViewStyle}>
               <TouchableHighlight style ={commonStyle.buttonTouchHLStyle}>
                 <Button
-                  onPress={() => {
-                        this.saveResponse()
+                  onPress={() =>
+                    {
+                        if(this.state.surrounding)
+                        {
+                            this.setState({surrounding:false})
+                        }
+                        else
+                        {
+                            this.saveResponse();
+                        }
                     }
                   }
-                  title="Save"
+                  title="Next"
                   color="#20B2AA"
                   accessibilityLabel="Save"
                 />
