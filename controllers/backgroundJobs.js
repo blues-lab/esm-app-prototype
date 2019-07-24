@@ -30,7 +30,7 @@ class BackgroundJobs
                 (_appStatus.SurveyStatusToday == "NotStarted" &&
                 _appStatus.NotificationCountToday < _appStatus.MaxNumberNotification))
             {
-                notificationController.showNotification();
+                notificationController.showNotification("New survey available! Complete it within 60 minutes and get $0.2!!!");
                 logger.info(`${codeFileName}`,"showPrompt", "Scheduling prompt done.");
                 appStatus.setLastNotificationTime(new Date());
             }

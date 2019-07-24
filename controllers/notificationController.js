@@ -18,7 +18,7 @@ getNextNotificationTime()
     var currentDate = new Date();
     return new Date(currentDate.getTime() + (2 * 1000));
 }
-    showNotification()
+    showNotification(message)
     {
         PushNotification.localNotification({
 
@@ -29,8 +29,8 @@ getNextNotificationTime()
           autoCancel: true, // (optional) default: true
           largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
           smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
-          //bigText: "big text ", // (optional) default: "message" prop
-          //subText: "subText", // (optional) default: none
+          bigText: "big text ", // (optional) default: "message" prop
+          subText: "subText", // (optional) default: none
           color: "red", // (optional) default: system default
           vibrate: false, // (optional) default: true
           vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
@@ -48,7 +48,7 @@ getNextNotificationTime()
 
           /* iOS and Android properties */
           //title: "Tap here if you have been in a conversation recently notification", // (optional)
-          message: "New survey available!", // (required)
+          message: message, // (required)
           playSound: false, // (optional) default: true
           soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
           number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
