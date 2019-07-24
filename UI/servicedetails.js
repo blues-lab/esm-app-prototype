@@ -9,15 +9,15 @@ import logger from '../controllers/logger';
 import commonStyles from './Style'
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
-
+import ToolBar from './toolbar'
 
 const selectionText = "Selected (tap again to remove)";
 const codeFileName = "serviceDetails.js"
 
 export default class ServiceDetailsScreen extends React.Component {
 
-  static navigationOptions = {
-    title: 'Services',
+static navigationOptions = {
+    headerTitle: <ToolBar title="Services" progress={40}/>
   };
 
   state = {
@@ -65,17 +65,40 @@ export default class ServiceDetailsScreen extends React.Component {
         );
     }
 
-    return _services;
+    if(serviceCategory.name != "Other")
+    {
+    _serviceNames.push //Add 'Other'
+      (
+        {
+          id: 'Other',
+          name: 'Other',
+          selected: false,
+          description: "",
+          renderStyle: commonStyles.listItemStyle,
+          imgSrc : require('../res/unchecked.png')
+        }
+      );
+
+
+         _serviceNames.push //Add 'Next' button
+        (
+          {
+            id: 'Next',
+            name: 'Next',
+            description: "",
+            renderStyle: commonStyles.listItemStyle,
+            imgSrc : require('../res/unchecked.png')
+          }
+        );
+
+    }
+    return _serviceNames;
   }
 
   componentDidMount()
   {
     const { navigation } = this.props;
     const _serviceCategory = navigation.getParam('serviceCategory', 'NO-SERVICE');
-    this.setState({serviceCategory: _serviceCategory,
-                   serviceCategoryName: _serviceCategory.name,
-                   serviceNames: this.parseServiceNames(_serviceCategory)
-                 });
 
     this.setState({ serviceCategory: _serviceCategory,
                  serviceCategoryName: _serviceCategory.name,
@@ -122,12 +145,24 @@ export default class ServiceDetailsScreen extends React.Component {
 
   renderListItem = ({item}) => {
 
+    if (item.id=="Next" || item.id=="Other")
+    {
+        img = null;
+    }
+    else if(item.selected)
+    {
+        img = require('../res/checked.png')
+    }
+    else
+    {
+        img = require('../res/unchecked.png')
+    }
       return (
           <TouchableHighlight onPress={this.handleServiceSelection.bind(this, item.name)}>
               <View style={{flex: 1, flexDirection: 'row'}}>
                   <Image
                       style={{width: 30, height:30, resizeMode : 'contain' , margin:1}}
-                      source={item.selected?require('../res/checked.png'):require('../res/unchecked.png')}
+                      source={img}
                   />
                   <Text style={{fontSize:20}}>
                       {item.name}
@@ -158,32 +193,11 @@ export default class ServiceDetailsScreen extends React.Component {
               />
             </View>
 
-              <View style={commonStyles.buttonViewStyle}>
-                  <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
-                        <Button title="Add new"
-                            color="#20B2AA"
-                            onPress={() => {
-                                        logger.info(`${codeFileName}`,"AddNewServiceButton.onPress",
-                                        'Opening dialog to add new service' );
-                                    this.setState({isAddServiceDialogVisible:true});
-                                }}
-                  />
-                  </TouchableHighlight>
-
-                  <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
-                    <Button
-                      onPress= {()=>{this.props.navigation.goBack(null)}}
-                      title="Next"
-                      color="#20B2AA"
-                      accessibilityLabel="Next"
-                    />
-                  </TouchableHighlight>
-              </View>
 
           </View>
 
             <DialogInput isDialogVisible={this.state.isAddServiceDialogVisible}
-                  title={"Enter new service"}
+                  title={"What other service?"}
                   message={""}
                   hintInput ={""}
                   submitInput={ (inputText) =>

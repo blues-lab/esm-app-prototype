@@ -28,16 +28,18 @@ import Locations from './locations';
 
 import Relations from './relations';
 
-
+import ToolBar from './toolbar'
 const codeFileName='contextualQuestion.js';
 const surveyResponseFilePath= RNFS.DocumentDirectoryPath+'/Responses.js';
 
 export default class ContextualQuestionScreen extends React.Component {
 
+
   static navigationOptions = {
-    title: 'Contextual questions',
-    headerLeft: null
-  };
+      headerTitle: <ToolBar title="Contextual questions" progress={90}/>,
+      headerLeft: null
+    };
+
 
 
 
@@ -271,6 +273,7 @@ export default class ContextualQuestionScreen extends React.Component {
 
       </View>
 
+        { this.state.surrounding &&
           <View style={commonStyle.buttonViewStyle}>
               <TouchableHighlight style ={commonStyle.buttonTouchHLStyle}>
                 <Button
@@ -292,6 +295,31 @@ export default class ContextualQuestionScreen extends React.Component {
                 />
               </TouchableHighlight>
           </View>
+        }
+
+           { !this.state.surrounding &&
+                  <View style={commonStyle.buttonViewStyle}>
+                      <TouchableHighlight style ={commonStyle.buttonTouchHLStyle}>
+                        <Button
+                          onPress={() =>
+                            {
+                                if(this.state.surrounding)
+                                {
+                                    this.setState({surrounding:false})
+                                }
+                                else
+                                {
+                                    this.saveResponse();
+                                }
+                            }
+                          }
+                          title="Done!"
+                          color="#20B2AA"
+                          accessibilityLabel="Save"
+                        />
+                      </TouchableHighlight>
+                  </View>
+                }
 
       </View>
       </ScrollView>

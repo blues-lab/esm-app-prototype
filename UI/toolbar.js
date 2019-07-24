@@ -11,45 +11,54 @@ import commonStyles from './Style'
 
 class ToolBar extends React.Component {
 
+
+
   //var { navigate } = this.props.navigation;
   componentDidMount()
   {
+  }
+
+  constructor(props)
+  {
+    super(props);
+
+
   }
 
   render() {
 
     return (
         <View style={commonStyles.pageHeaderStyle}>
-             <View style={{flex:1, flexDirection:'row', justifyContent: 'flex-start'}}>
-                 <Text style={{marginLeft:15, marginRight:10, fontWeight: 'bold',fontSize: 20}}>
-                    Home
+
+                 <Text style={{margin:10, fontWeight: 'bold',fontSize: 20}}>
+                    {this.props.title}
                  </Text>
                  <AnimatedProgressWheel
-                     progress={20}
+                     progress={this.props.progress}
                      animateFromValue={0}
                      duration={2000}
                      color={'green'}
                      backgroundColor={'#ffd280'}
-                     size={30}
+                     size={25}
                      width={5}
                  />
-            </View>
 
-            <TouchableHighlight style={{flex:1, flexDirection:'column',
-                                        justifyContent:'center',
-                                        height: 40, width:160,
+
+            <TouchableHighlight style={{flex:1, flexDirection:'row',
+                                        justifyContent:'flex-end',
+                                        height: 20, width:20,
                                         marginLeft:5, marginRight:1,
                                         }}
                 onPress={() => this.props.navigation.navigate('UserSettings')}>
-            <View>
 
                 <Image
-                                     style={{width: '100%',
-                                            height:20, resizeMode : 'contain' , margin:1}}
-                                     source={require('../res/settings-icon.png')}
-                                 />
-                                 </View>
+                 style={{width: '100%',
+                        height:20, resizeMode : 'contain' , margin:1}}
+                 source={require('../res/settings-icon.png')}
+                />
              </TouchableHighlight>
+             <Text style={{marginRight:5}}>2.00$</Text>
+
         </View>
     );
   }

@@ -13,16 +13,18 @@ import ServicePermissionScreen from './servicePermission'
 import commonStyles from './Style'
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
-
+import ToolBar from './toolbar'
 
 import logger from '../controllers/logger';
 
 
 export default class ServiceMenuScreen extends React.Component {
 
+
   static navigationOptions = {
-    title: 'Service categories',
-  };
+      headerLeft: null,
+      headerTitle: <ToolBar title="Service categories" progress={20}/>
+    };
 
   state = {
     serviceCategoriesJS: '',        //JSON object loaded from file and then parsed
@@ -318,7 +320,11 @@ export default class ServiceMenuScreen extends React.Component {
         this.setState({permissionPageIdx: _permissionPageIdx,
                        activeServiceCategoryName: _permissionPages[_permissionPageIdx].categoryName,
                        activeServiceName: _permissionPages[_permissionPageIdx].serviceName,
-                       permissionModalVisible: true});
+                       permissionModalVisible: false});
+        this.props.navigation.navigate('ServicePermission',
+                    {serviceName : this.state.activeServiceName,
+                    serviceCategoryName: this.state.activeServiceCategoryName,
+                    callBack : this.savePermissionResponse.bind(this)});
     }
   }
 
@@ -392,18 +398,6 @@ export default class ServiceMenuScreen extends React.Component {
             marginTop:2,
             marginBottom:2
         }}>
-
-            <View style={commonStyles.buttonViewStyle}>
-                <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
-                      <Button disabled = {!this.state.saveButtonEnabled}
-                        onPress={this.showPermissionPage.bind(this)}
-                        title="Next"
-                        color="#20B2AA"
-                        accessibilityLabel="Next"
-                      />
-                </TouchableHighlight>
-            </View>
-
 
         </View>
 

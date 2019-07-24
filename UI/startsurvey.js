@@ -16,9 +16,8 @@ export default class SurveyStartScreen extends React.Component {
   _willBlurSubscription;
 
   static navigationOptions = {
-    title: 'Start survey',
     headerLeft: null,
-    headerTitle: <ToolBar/>
+    headerTitle: <ToolBar title="Conversation topic" progress={0}/>
   };
 
   constructor(props) {
@@ -145,14 +144,14 @@ export default class SurveyStartScreen extends React.Component {
                      <Modal visible = {this.state.noSurveyDialogVisible}>
                                 <View style={{  flex: 1,
                                                 flexDirection: 'column',
-                                                justifyContent: 'center',
-                                                alignItems: 'stretch',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
                                                 backgroundColor:'lavender',
-                                                margin:5}}>
+                                                margin:1}}>
                                     <Text style={{margin:15, fontSize:20, borderBottomColor:'black', borderBottomWidth: StyleSheet.hairlineWidth, padding:5}}>
-                                        No survey available now.
+                                        Sorry, survey has expired!
                                     </Text>
-                                    <Text style={{fontSize:16, margin:10, marginTop:10}}>
+                                    <Text style={{fontSize:16, margin:20, marginTop:10}}>
                                         Advertisement/reminder for MIMI and suggestion to come back later.
                                     </Text>
                                        <TouchableHighlight style ={[commonStyles.buttonTouchHLStyle]}>

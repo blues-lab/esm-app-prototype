@@ -25,6 +25,7 @@ import ServiceDetailsScreen from './UI/servicedetails'
 import ServicePermissionScreen from './UI/servicePermission'
 import ContextualQuestionScreen from './UI/contextualQuestion'
 import UserSettingsScreen from './UI/userSettings'
+import AlvaPromptScreen from './UI/alvaPrompt';
 
 import BackgroundJob from 'react-native-background-job';
 
@@ -56,6 +57,7 @@ const AppNavigator = createStackNavigator(
   {
     Home: HomeScreen,
     StartSurvey: SurveyStartScreen,
+    AlvaPrompt:AlvaPromptScreen,
     ServiceMenu: ServiceMenuScreen,
     ServiceDetails: ServiceDetailsScreen,
     ServicePermission: ServicePermissionScreen,
@@ -63,7 +65,7 @@ const AppNavigator = createStackNavigator(
     UserSettings:UserSettingsScreen
   },
   {
-    initialRouteName: "Home"
+    initialRouteName: "StartSurvey"
   }
 );
 

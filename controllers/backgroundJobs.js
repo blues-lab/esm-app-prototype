@@ -10,32 +10,14 @@ const codeFileName = 'backgroundJobs.js'
 
 import appStatus from '../controllers/appStatus';
 
+import utilities from '../controllers/utilities';
+
 class BackgroundJobs
 {
-  geWifiName()
-  {
-    wifi.isEnabled((isEnabled) => {
-    if (isEnabled)
-      {
-        wifi.connectionStatus((isConnected) => {
-          if (isConnected)
-          {
-              wifi.getSSID((ssid) => {
-                return ssid;
-              });
-          }
-        });
-      }
-    });
-
-    return "";
-  }
-
-
     showPrompt()
     {
         logger.info("BackgroundJobs","showPrompt", "Getting wifi name");
-        _wifiName = this.getWifiName();
+        _wifiName = utilities.getWifiName();
         _appStatus = appStatus.getStatus();
 
         if(this.getWifiName() == "ICSI") //TODO: change to userSettings

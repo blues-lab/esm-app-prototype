@@ -14,7 +14,7 @@ const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
 import commonStyle from './Style'
-
+import ToolBar from './toolbar'
 
 const fullShare= 0;
 const partialShare= 1;
@@ -27,6 +27,11 @@ const noShare = 2;
   ];
 
 export default class ServicePermissionScreen extends React.Component {
+
+ static navigationOptions = {
+      headerLeft: null,
+      headerTitle: <ToolBar title="Permission" progress={70}/>
+    };
 
 
   state= {  serviceName:"NO-SERVICE",

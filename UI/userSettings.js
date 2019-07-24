@@ -5,7 +5,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import logger from '../controllers/logger';
 import * as RNFS from 'react-native-fs';
 import commonStyle from './Style'
-
+import wifi from 'react-native-android-wifi';
 import utilities from '../controllers/utilities';
 
 
@@ -23,6 +23,7 @@ export default class UserSettingsScreen extends React.Component {
       this.state = {
         homeWifi:'',
         currentWifi:'',
+        askWifi:true,
         mondayFrom:'00:00',
         mondayTo:'00:00',
         tuesdayFrom:'00:00',
@@ -42,6 +43,39 @@ export default class UserSettingsScreen extends React.Component {
       };
     }
 
+   interval=null;
+   updateWifiState = ()=>
+   {
+
+      wifi.isEnabled((isEnabled) => {
+      if (isEnabled)
+        {
+          wifi.connectionStatus((isConnected) => {
+            if (isConnected) {
+                wifi.getSSID((ssid) => {
+                  this.setState({currentWifi:ssid});
+
+                  if(ssid.length>0)
+                  {
+                      Alert.alert(
+                      'Home wifi',
+                        'Is "'+ssid+'" your home wifi?',
+                        [
+                          {text: 'NO', onPress: () => {}},
+                          {text: 'YES', onPress: () => {this.setState({homeWifi: ssid})}},
+                        ]
+                      );
+                  }
+                  this.setState({askWifi:false});
+                  clearInterval(this.interval);
+                });
+              }
+          });
+        }
+      });
+   }
+
+
   componentDidMount()
   {
     //load user settings file if exists
@@ -50,26 +84,14 @@ export default class UserSettingsScreen extends React.Component {
     {
        this.setState({homeWifi: _userSettingsData.homeWifi,
                       currentWifi: _userSettingsData.homeWifi,
-                      isDateTimePickerVisible: false})
+                      isDateTimePickerVisible: false,
+                      askWifi: false})
     }
     else
     {
-        _wifi = utilities.getWifiName();
-        if(_wifi.length>0)
-        {
-            Alert.alert(
-            'Home wifi',
-              'Is `${_wifi}` your home wifi?',
-              [
-                {text: 'NO', onPress: () => {}},
-                {text: 'YES', onPress: () => {this.setState({homeWifi: _wifi})}},
-              ]
-            );
-        }
-        else
-        {
-
-        }
+       this.updateWifiState();
+       this.interval=setInterval(this.updateWifiState, 1000);
+       this.setState({askWifi:true});
     }
 
   }

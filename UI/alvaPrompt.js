@@ -10,12 +10,12 @@ const codeFileName = 'startsurvey.js';
 import ToolBar from './toolbar';
 
 
+
 export default class AlvaPromptScreen extends React.Component {
 
   static navigationOptions = {
-    title: 'Mimi',
-    headerLeft: null,
-    headerTitle: <ToolBar/>
+  headerTitle: <ToolBar title="MIMI" progress={10}/>,
+    headerLeft: null
   };
 
   constructor(props) {
@@ -54,11 +54,12 @@ export default class AlvaPromptScreen extends React.Component {
                         }}>
 
                     <View style={commonStyles.questionStyle}>
-                        <Text style={[commonStyles.longtextStyle,{fontSize:24}]}>
-                          Imagine an always-listening voice assistant, "Mimi," was able to offer you
-                          services that were relevant to your conversation. Please select all services
-                          that are relevant to your most recent conversation. You can also add new services.
-
+                        <Text style={[commonStyles.longtextStyle,{fontSize:24, backgroundColor:'lavender'}]}>
+                          <Text>Imagine an always-listening voice assistant, "Mimi," was able to offer you
+                          services that were </Text>
+                          <Text style={{fontWeight:'bold'}}>relevant </Text>
+                          <Text>to your conversation. Please select all services
+                          that are relevant to your most recent conversation. You can also add new services.</Text>
                         </Text>
                     </View>
 

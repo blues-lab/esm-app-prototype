@@ -2,38 +2,47 @@
     "serviceCategories":
     [ 
         {
-            "categoryName":"Recommendation1",
+            "categoryName":"Recommendation",
             "services":
             [
                 {
-                    "serviceName":"Recommend food"
+                    "serviceName":"Recommend product"
                 },
                 {
-                    "serviceName":"Recommend restaurant"
+                    "serviceName":"Recommend places"
+                },
+                {
+                    "serviceName":"Recommend service"
                 }
             ]
         },
         {
-            "categoryName":"Order item1",
+            "categoryName":"Reminder",
             "services":
             [
                 {
-                    "serviceName":"Order food"
+                    "serviceName":"Appointment"
                 },
                 {
-                    "serviceName":"Order drinks"
+                    "serviceName":"Reservation"
+                },
+                {
+                    "serviceName":"Calendar event"
                 }
             ]
         },
         {
-            "categoryName":"Recommendation2",
+            "categoryName":"Initiate communication",
             "services":
             [
                 {
-                    "serviceName":"Recommend food"
+                    "serviceName":"Text"
                 },
                 {
-                    "serviceName":"Recommend restaurant"
+                    "serviceName":"Call"
+                },
+                {
+                    "serviceName":"Email"
                 }
             ]
         }

@@ -62,7 +62,7 @@ export default StyleSheet.create({
     paddingTop:10,
     paddingBottom:10,
     marginTop:5,
-    backgroundColor:'#a7f1e9',
+    //backgroundColor:'#a7f1e9',
   },
 
    radioFrameStyle: {
