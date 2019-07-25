@@ -341,6 +341,8 @@ export default class ServiceMenuScreen extends React.Component {
         this.setState({permissionPages: _permissionPages});
     }
 
+
+
     if(_permissionPages.length==0)
     {
         Alert.alert("Please select at least one service to continue.");
@@ -348,18 +350,20 @@ export default class ServiceMenuScreen extends React.Component {
     }
 
     _permissionPageIdx = this.state.permissionPageIdx+1;
-
+    //Alert.alert(_permissionPageIdx.toString(),_permissionPages[_permissionPageIdx].serviceName)
     if(_permissionPageIdx < _permissionPages.length)
     {
         this.setState({permissionPageIdx: _permissionPageIdx,
                        activeServiceCategoryName: _permissionPages[_permissionPageIdx].categoryName,
                        activeServiceName: _permissionPages[_permissionPageIdx].serviceName,
                        permissionModalVisible: false});
+
         this.props.navigation.navigate('ServicePermission',
                     {serviceName : _permissionPages[_permissionPageIdx].serviceName,
                     serviceCategoryName: _permissionPages[_permissionPageIdx].categoryName,
                     permissionResponseHandler : this.savePermissionResponse.bind(this)});
     }
+
   }
 
   renderListItem = ({item}) => {
