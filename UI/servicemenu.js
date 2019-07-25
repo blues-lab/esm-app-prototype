@@ -16,7 +16,9 @@ const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 import ToolBar from './toolbar'
 
 import logger from '../controllers/logger';
+import utilities from '../controllers/utilities';
 
+const codeFileName ='servicemenu.js';
 
 export default class ServiceMenuScreen extends React.Component {
 
@@ -40,10 +42,11 @@ export default class ServiceMenuScreen extends React.Component {
     surveyResponseJS:{},             //Hold participants responses
     activeServiceCategoryName:null,
     activeServiceName:null,
+    refreshList:false,
   };
 
 
-  OpenServiceDetailsPage(selectedServiceCategory)
+  openServiceDetailsPage(selectedServiceCategory)
   {
   //When clicked on a service category item, show the service-details page with the services
   // unless "No relevant service"/"None" was selected
@@ -66,11 +69,13 @@ export default class ServiceMenuScreen extends React.Component {
       {
         if(_serviceCategories[i].name == selectedServiceCategory.name)
         {
+        //Alert.alert(_serviceCategories[i].name,_serviceCategories[i].services.length.toString());
             logger.info("ServiceMenu","OpenServiceDetailsPage", 'Navigating to service details for:'+selectedServiceCategory.name);
             this.props.navigation.navigate('ServiceDetails',
             {
                 serviceCategory: _serviceCategories[i],
-                serviceSelectionHandler: this.handleServiceSelectionChange.bind(this)
+                serviceSelectionHandler: this.handleServiceSelectionChange.bind(this),
+                newServiceHandler: this.createNewService.bind(this)
             });
             break;
         }
@@ -95,6 +100,28 @@ export default class ServiceMenuScreen extends React.Component {
     }
   }
 
+  createNewService(newCategoryName, newServiceName)
+  {
+    //create entry in the database when users enter a new service
+
+    _serviceCategoriesJS = this.state.serviceCategoriesJS;
+
+    idx=0;
+
+    for(var i=0; i<_serviceCategoriesJS.serviceCategories.length; i++)
+    {
+        if(_serviceCategoriesJS.serviceCategories[i].categoryName == newCategoryName)
+        {idx=i;
+            _serviceCategoriesJS.serviceCategories[i].services.push({serviceName: newServiceName});
+            break;
+        }
+    }
+
+    utilities.writeJSONFile(_serviceCategoriesJS, serviceFileLocal, codeFileName, 'createNewService');
+
+    this.setState({serviceCategoriesJS: _serviceCategoriesJS});
+  }
+
 
   loadServices()
   {
@@ -103,8 +130,10 @@ export default class ServiceMenuScreen extends React.Component {
 
     logger.info("ServiceMenu","ReadServiceFile", 'Successfully read:'+serviceFileLocal);
 
-      _serviceCategoriesJS = JSON.parse(_fileContent).serviceCategories;
+      _fullJsonObj = JSON.parse(_fileContent);
+      _serviceCategoriesJS = _fullJsonObj.serviceCategories;
       _serviceCategories=[];
+
       for(var i=0; i< _serviceCategoriesJS.length; i++)
       {
         _servicesJS = _serviceCategoriesJS[i].services;
@@ -134,16 +163,17 @@ export default class ServiceMenuScreen extends React.Component {
 
       logger.info("ServiceMenu","ReadServiceFile", 'Number of categories found:'+_serviceCategories.length);
 
-      _serviceCategories.push //Add 'Other' category
-      (
-        {
-          id: 'Other',
-          name: 'Other',
-          selectedServiceNames: new Set([]),
-          renderStyle: commonStyles.listItemStyle,
-          services: []
-        }
-      );
+//      //Add 'Other' category if not exists
+//      _serviceCategories.push
+//      (
+//        {
+//          id: 'Other',
+//          name: 'Other',
+//          selectedServiceNames: new Set([]),
+//          renderStyle: commonStyles.listItemStyle,
+//          services: []
+//        }
+//      );
       _serviceCategories.push //Add 'No relevant service'
         (
           {
@@ -169,7 +199,7 @@ export default class ServiceMenuScreen extends React.Component {
       this.setState
       (
         {
-          serviceCategoriesJS: _serviceCategoriesJS,
+          serviceCategoriesJS: _fullJsonObj,
           serviceCategories: _serviceCategories
         }
       );
@@ -188,6 +218,10 @@ export default class ServiceMenuScreen extends React.Component {
 
   componentDidMount()
   {
+      const { navigation } = this.props;
+      this.focusListener = navigation.addListener("didFocus", () => {
+            //Alert.alert("Focusing");
+        });
     this.loadServices();
   }
 
@@ -341,7 +375,7 @@ export default class ServiceMenuScreen extends React.Component {
         img=null;
     }
     return (
-        <TouchableHighlight onPress={this.OpenServiceDetailsPage.bind(this, item)}>
+        <TouchableHighlight onPress={this.openServiceDetailsPage.bind(this, item)}>
           <View style={{flex: 1, flexDirection: 'column'}}>
             <View style={{flex: 1, flexDirection: 'row'}}>
                 <Image
@@ -476,6 +510,11 @@ export default class ServiceMenuScreen extends React.Component {
 
     );
   }
+
+  componentWillUnmount() {
+      // Remove the event listener
+      this.focusListener.remove();
+    }
 }
 
 

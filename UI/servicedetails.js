@@ -17,7 +17,8 @@ const codeFileName = "serviceDetails.js"
 export default class ServiceDetailsScreen extends React.Component {
 
 static navigationOptions = {
-    headerTitle: <ToolBar title="Services" progress={40}/>
+    //headerTitle: <ToolBar title="Services" progress={40}/>
+    title:"Services"
   };
 
   state = {
@@ -65,7 +66,8 @@ static navigationOptions = {
         );
     }
 
-    if(serviceCategory.name != "Other")
+
+    if (_serviceNames.length>0)
     {
     _serviceNames.push //Add 'Other'
       (
@@ -78,20 +80,22 @@ static navigationOptions = {
           imgSrc : require('../res/unchecked.png')
         }
       );
-
-
-         _serviceNames.push //Add 'Next' button
-        (
-          {
-            id: 'Next',
-            name: 'Next',
-            description: "",
-            renderStyle: commonStyles.listItemStyle,
-            imgSrc : require('../res/unchecked.png')
-          }
-        );
-
     }
+
+
+
+//         _serviceNames.push //Add 'Next' button
+//        (
+//          {
+//            id: 'Next',
+//            name: 'Next',
+//            description: "",
+//            renderStyle: commonStyles.listItemStyle,
+//            imgSrc : require('../res/unchecked.png')
+//          }
+//        );
+
+
     return _serviceNames;
   }
 
@@ -145,9 +149,28 @@ static navigationOptions = {
 
   renderListItem = ({item}) => {
 
-    if (item.id=="Next" || item.id=="Other")
+    if (item.id=="Other")
     {
-        img = null;
+        return(
+            <TouchableHighlight onPress={ ()=> {this.setState({isAddServiceDialogVisible:true})}}>
+                <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start'}}>
+                    <Image
+                        style={{width: 30, height:30, resizeMode : 'contain' , margin:1}}
+                        source= {require('../res/unchecked.png')}
+                    />
+                    <Text style={{fontSize:20}}> {item.name} </Text>
+                </View>
+            </TouchableHighlight>
+        );
+    }
+    else if(item.id=="Next")
+    {
+        return(
+            <TouchableHighlight onPress={ ()=> {this.setState({isAddServiceDialogVisible:true})}}>
+                <View style={{flex:1, flexDirection:'row', justifyContent:'center'}}>
+                    <Text style={{fontSize:20}}> {item.name} </Text>
+                </View>
+            </TouchableHighlight>        );
     }
     else if(item.selected)
     {
@@ -169,7 +192,7 @@ static navigationOptions = {
                   </Text>
               </View>
           </TouchableHighlight>
-      )
+      );
 
     }
 
@@ -210,15 +233,17 @@ static navigationOptions = {
                                         imgSrc : require('../res/checked.png')
                                     }
                       _serviceNames = this.state.serviceNames;
-                      _serviceNames.push(_newService);
+                      _serviceNames.splice(_serviceNames.length-1, 0, _newService);
+                      //_serviceNames.push(_newService);
 
                       logger.info(`${codeFileName}`,"DialogInput.NewService",
                               `Newly added service name:${inputText}`);
 
-                      this.setState({serviceNames: _serviceNames, isAddServiceDialogVisible:false});
-
+                      this.props.navigation.state.params.newServiceHandler(this.state.serviceCategoryName, inputText);
                       this.props.navigation.state.params.serviceSelectionHandler(
                                               this.state.serviceCategoryName, _newService);
+
+                      this.setState({serviceNames: _serviceNames, isAddServiceDialogVisible:false});
                     }
                   }
                   closeDialog={ () => {

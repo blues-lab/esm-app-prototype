@@ -99,31 +99,38 @@ export default class App extends Component<Props>
     }
 
 
-  generateInitialFiles(assetFile, localFile)
+  async generateInitialFiles(assetFile, localFile)
   {
-    RNFS.readFileAssets(assetFile)
-        .then((res) =>
-        {
-              RNFS.writeFile(localFile, res)
-              .then((success) => 
-              {
-                logger.info(`${codeFileName}`, 'generateInitialFiles', 'Writing '+localFile);
-              })
-              .catch((err) => 
-              {
-                logger.error(`${codeFileName}`, 'generateInitialFiles'
-                  ,'Failed to write '+localFile+'. Error code:'+err.code+', Error: '+err.message);
+    if(await RNFS.exists(localFile))
+    {
+        //do nothing
+    }
+    else
+    {
+        RNFS.readFileAssets(assetFile)
+            .then((res) =>
+            {
+                  RNFS.writeFile(localFile, res)
+                  .then((success) =>
+                  {
+                    logger.info(`${codeFileName}`, 'generateInitialFiles', 'Writing '+localFile);
+                  })
+                  .catch((err) =>
+                  {
+                    logger.error(`${codeFileName}`, 'generateInitialFiles'
+                      ,'Failed to write '+localFile+'. Error code:'+err.code+', Error: '+err.message);
 
-              })
-        })  
-        .catch((err) => {
-          logger.error(`${codeFileName}`, 'generateInitialFiles'
-                 ,'Failed to read '+assetFile+'. Error: '+err.message);
-        })
+                  })
+            })
+            .catch((err) => {
+              logger.error(`${codeFileName}`, 'generateInitialFiles'
+                     ,'Failed to read '+assetFile+'. Error: '+err.message);
+            })
+    }
   }
 
 
-  componentWillMount()
+  componentDidMount()
   {
     this.generateInitialFiles(serviceFileAsset, serviceFileLocal);
   }
