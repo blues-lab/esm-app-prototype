@@ -31,6 +31,7 @@ import Relations from './relations';
 import ToolBar from './toolbar'
 const codeFileName='contextualQuestion.js';
 const surveyResponseFilePath= RNFS.DocumentDirectoryPath+'/Responses.js';
+import utilities from '../controllers/utilities';
 
 export default class ContextualQuestionScreen extends React.Component {
 
@@ -48,14 +49,14 @@ export default class ContextualQuestionScreen extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {  numOfPeople:0, relations: [], locations:[],
-                           familySelected:false, friendSelected:false,
-                           selectedRelations: new Set([]), selectedLocations: new Set([]),
-                           numOfPeopleCanHear:0,
-                           childrenPresent: false, adolescentPresent: false, remoteConversation:false,
-                           contextResponseJS: {}, //holds responses to the contextual questions
-                           surveyResponseJS: {}, //whole survey response passed by parent
-                           surrounding:true, //Questions about surrounding people VS participating people
+    this.state = { numOfPeople:0, relations: [], locations:[],
+                   familySelected:false, friendSelected:false,
+                   selectedRelations: new Set([]), selectedLocations: new Set([]),
+                   numOfPeopleCanHear:0,
+                   childrenPresent: false, adolescentPresent: false, remoteConversation:false,
+                   contextResponseJS: {}, //holds responses to the contextual questions
+                   surveyResponseJS: {}, //whole survey response passed by parent
+                   surrounding:true, //Questions about surrounding people VS participating people
                         };
 
     this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
@@ -77,22 +78,6 @@ export default class ContextualQuestionScreen extends React.Component {
     this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
       BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
     );
-
-    //create the response file
-    RNFS.exists(surveyResponseFilePath)
-        .then( (exists) => {})
-        .else
-         {
-          RNFS.writeFile(surveyResponseFilePath, JSON.stringify({Responses:[]}))
-              .then((success) =>
-              {
-                 logger.info(`${codeFileName}`,'componentDidMount','Created response file');
-              })
-              .catch((error) =>
-              {
-                  logger.error(`${codeFileName}`,'componentDidMount','Failed to create response file:'+error.message);
-              })
-         }
   }
 
   onBackButtonPressAndroid = () => {
@@ -133,7 +118,7 @@ export default class ContextualQuestionScreen extends React.Component {
      }
   }
 
-   saveResponse()
+   async saveResponse()
    {
 
      _contextResponseJS={
@@ -146,38 +131,21 @@ export default class ContextualQuestionScreen extends React.Component {
         "Locations": Array.from(this.state.selectedLocations).toString(),
      }
 
-
-
      logger.info(`${codeFileName}`, 'saveResponse', 'Response: '+JSON.stringify(_contextResponseJS));
 
      _surveyResponseJS = this.state.surveyResponseJS;
      _surveyResponseJS.ContextualQuestionResponses = _contextResponseJS;
-     Alert.alert("Saved:", JSON.stringify(_surveyResponseJS));
 
-     //Now save all responses
-     RNFS.readFile(surveyResponseFilePath)
-         .then((_fileContent)=>
-         {
-            responses = JSON.parse(_fileContent);
-            responses.push(_surveyResponseJS);
-            RNFS.writeFile(surveyResponseFilePath,JSON.stringify(responses))
-                .then((success) =>
-                {
-                    logger.info(`${codeFileName}`, 'saveResponse', 'Saved full survey response');
-                    appStatus.setSurveyStatus("Done");
-                    //Alert.alert("Thank you!","All data have been saved.");
-                    logger.showLog();
-                })
-                .catch((error) =>
-                {
-                    logger.error(`${codeFileName}`, 'saveResponse', 'Failed to save survey response:'+error.message);
-                })
+     _allResponses = await utilities.readJSONFile(surveyResponseFilePath, codeFileName, "saveResponse");
+     if (_allResponses == null)
+     {
+        _allResponses = {"surveys":[]};
+     }
 
-         })
-         .catch((error)=>{
-            logger.error(`${codeFileName}`, 'saveResponse', 'Failed to read survey response file:'+error.message);
-            }
-         )
+     _allResponses.surveys.push(_surveyResponseJS);
+     utilities.writeJSONFile(_allResponses, surveyResponseFilePath, codeFileName, "saveResponse");
+
+     Alert.alert("Done!","Great! you have earned $.2!");
    }
 
 

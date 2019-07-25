@@ -97,20 +97,20 @@ class Utilities extends Component
 
          if (await RNFS.exists(filePath))
          {
-            logger.info(`${callerClass}`, `${callerFunc}-->readJSONFile`, 'Reading file:'+filePath);
+            logger.info(callerClass, callerFunc+"-->readJSONFile", 'Reading file:'+filePath);
              RNFS.readFile(filePath)
                  .then((_fileContent) => {
-                    logger.info(`${callerClass}`, `${callerFunc}-->readJSONFile`, 'Successfully read file.');
+                    logger.info(callerClass, callerFunc+"-->readJSONFile", 'Successfully read file.');
                      return _fileContent;
                  })
                  .catch( (error)=>{
-                       logger.error(`${callerClass}`, `${callerFunc}-->readJSONFile`, 'Failed to read file:'+error.message);
+                       logger.error(callerClass, callerFunc+"-->readJSONFile", 'Failed to read file:'+error.message);
                    })
 
          }
          else
          {
-            logger.info(`${callerClass}`, `${callerFunc}-->readJSONFile`, 'Reading file:'+filePath+' does not exist');
+            logger.error(callerClass, callerFunc+"-->readJSONFile", 'Reading file:'+filePath+' does not exist');
          }
 
          return null;

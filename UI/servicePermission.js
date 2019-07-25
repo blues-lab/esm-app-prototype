@@ -63,7 +63,8 @@ export default class ServicePermissionScreen extends React.Component {
           "WhyNoShare": this.state.whyNoShare,
        }
        logger.info(`${codeFileName}`,'saveResponse',"Response: "+JSON.stringify(_permissionResponse));
-       this.props.callBack(_permissionResponse);
+       //this.props.callBack(_permissionResponse);
+       this.props.navigation.state.params.permissionResponseHandler(_permissionResponse);
   }
 
   render() {
