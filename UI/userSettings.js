@@ -10,16 +10,22 @@ import utilities from '../controllers/utilities';
 
 
 const codeFileName="userSettings.js"
-const userSettingsFile= RNFS.DocumentDirectoryPath+'/userSettingsData.js';
+const userSettingsFile= RNFS.DocumentDirectoryPath+'/usersettings.js';
 
 export default class UserSettingsScreen extends React.Component {
 
-  static navigationOptions = {
-    title: 'Settings',
+static navigationOptions = ({ navigation }) => {
+    const { params = {} } = navigation.state;
+
+    return{
+        title: 'Settings',
+        headerLeft: <Button title='<'  onPress={() => {params.backHandler();}}/>
+    };
   };
 
     constructor(props) {
       super(props);
+
       this.state = {
         homeWifi:'',
         currentWifi:'',
@@ -41,12 +47,13 @@ export default class UserSettingsScreen extends React.Component {
         currentDay:'mondayFrom',
         isDateTimePickerVisible:false
       };
+
+      this.loadSettings(userSettingsFile);
     }
 
    interval=null;
-   updateWifiState = ()=>
+   getHomeWiFi = ()=>
    {
-
       wifi.isEnabled((isEnabled) => {
       if (isEnabled)
         {
@@ -59,9 +66,11 @@ export default class UserSettingsScreen extends React.Component {
                   {
                       Alert.alert(
                       'Home wifi',
-                        'Is "'+ssid+'" your home wifi?',
+                        'We will only send surveys when you are connected to the home WiFi. Is "'+ssid+'" your home wifi?',
                         [
-                          {text: 'NO', onPress: () => {}},
+                          {text: 'NO', onPress: () => {
+                                Alert.alert("We'll try to ask again, when you connect to another network");
+                            }},
                           {text: 'YES', onPress: () => {this.setState({homeWifi: ssid})}},
                         ]
                       );
@@ -75,25 +84,67 @@ export default class UserSettingsScreen extends React.Component {
       });
    }
 
+   async loadSettings(filePath)
+   {
+        if (await RNFS.exists(filePath))
+        {
+            RNFS.readFile(filePath)
+                .then((_fileContent) => {
 
+                    logger.info(`${codeFileName}`, 'loadSettings', 'Successfully read file.');
+                    _userSettingsData = JSON.parse(_fileContent);
+                    this.setState({homeWifi: _userSettingsData.homeWifi,
+                                  currentWifi: _userSettingsData.homeWifi,
+                                  isDateTimePickerVisible: false,
+                                  askWifi: false,
+                                  mondayFrom: _userSettingsData.mondayFrom,
+                                  mondayTo: _userSettingsData.mondayTo,
+                                  tuesdayFrom: _userSettingsData.tuesdayFrom,
+                                  tuesdayTo: _userSettingsData.tuesdayTo,
+                                  wedFrom: _userSettingsData.wedFrom,
+                                  wedTo: _userSettingsData.wedTo,
+                                  thFrom: _userSettingsData.thFrom,
+                                  thTo: _userSettingsData.thTo,
+                                  friFrom: _userSettingsData.friFrom,
+                                  friTo: _userSettingsData.friTo,
+                                  satFrom: _userSettingsData.satFrom,
+                                  satTo: _userSettingsData.satTo,
+                                  sunFrom: _userSettingsData.sunFrom,
+                                  sunTo: _userSettingsData.sunTo}, () => {
+                                        if(this.state.homeWifi.length==0)
+                                        {
+                                            this.getHomeWiFi();
+                                        }
+                                    });
+                })
+                .catch( (error)=>{
+                    logger.error(`${codeFileName}`, 'loadSettings', 'Failed to read file:'+error.message);
+                  })
+
+        }
+        else
+        {
+            this.getHomeWiFi();
+        }
+
+   }
   componentDidMount()
   {
-    //load user settings file if exists
-    _userSettingsData = utilities.readJSONFile(userSettingsFile);
-    if(_userSettingsData != null)
-    {
-       this.setState({homeWifi: _userSettingsData.homeWifi,
-                      currentWifi: _userSettingsData.homeWifi,
-                      isDateTimePickerVisible: false,
-                      askWifi: false})
-    }
-    else
-    {
-       this.updateWifiState();
-       this.interval=setInterval(this.updateWifiState, 1000);
-       this.setState({askWifi:true});
-    }
+    this.props.navigation.setParams({ backHandler: this.handleBackNavigation.bind(this)});
+  }
 
+  handleBackNavigation()
+  {
+    Alert.alert(
+      'Do you want to save changes?',
+        '',
+        [
+          {text: 'NO', onPress: () => {
+                this.props.navigation.goBack(null);
+            }},
+          {text: 'YES', onPress: () => {this.saveSettings(); this.props.navigation.goBack(null);}},
+        ]
+      );
   }
 
 
@@ -102,7 +153,7 @@ export default class UserSettingsScreen extends React.Component {
     if(this.state.currentDay=='mondayFrom')
     {
         this.setState({mondayFrom: time.getHours()+":"+time.getMinutes(),
-            tuesdayFrom: time.getHours()+":"+time.getMinutes()});
+            tuesdayFrom: time.getHours()+":"+time.getMinutes() });
         this.setState({wedFrom: time.getHours()+":"+time.getMinutes()});
         this.setState({thFrom: time.getHours()+":"+time.getMinutes()});
         this.setState({friFrom: time.getHours()+":"+time.getMinutes()});
@@ -176,56 +227,65 @@ export default class UserSettingsScreen extends React.Component {
       this.setState({ isDateTimePickerVisible: false });
     };
 
+  saveSettings()
+  {
+    _settings={
+        homeWifi: this.state.homeWifi,
+        mondayFrom: this.state.mondayFrom,
+        mondayTo: this.state.mondayTo,
+        tuesdayFrom: this.state.tuesdayFrom,
+        tuesdayTo: this.state.tuesdayTo,
+        wedFrom: this.state.wedFrom,
+        wedTo: this.state.wedTo,
+        thFrom: this.state.thFrom,
+        thTo: this.state.thTo,
+        friFrom: this.state.friFrom,
+        friTo: this.state.friTo,
+        satFrom: this.state.satFrom,
+        satTo: this.state.satTo,
+        sunFrom: this.state.sunFrom,
+        sunTo: this.state.sunTo
+    }
+
+    utilities.writeJSONFile(_settings, userSettingsFile, codeFileName, 'saveSettings');
+
+    Alert.alert("Settings saved!");
+  }
+
   render() {
 
     return (
-    <ScrollView contentContainerStyle={{
-                     flex: 1
-                  }}>
+
        <View style={{
                 flex: 1,
                 flexDirection: 'column',
-                justifyContent: 'center',
+                justifyContent: 'flex-start',
                 alignItems: 'center',
                 backgroundColor:'lavender',
                 margin:5
             }}>
 
-            { this.state.homeWifi.length==0 &&
-                <Text style={{margin:15, fontSize:20, borderBottomColor:'black', borderBottomWidth: StyleSheet.hairlineWidth, padding:5}}>
-                    You will need to connect to your home wifi network
-                </Text>
-            }
-            { this.state.homeWifi.length>0 &&
-              <View style={{flex: 1,flexDirection: 'row', justifyContent: 'center'}}>
-                <Text> Home wifi network {this.state.homeWifi}</Text>
-                <TouchableHighlight onPress={this.changeWifi}>
-                    <Text>Change</Text>
-                </TouchableHighlight>
-              </View>
-            }
-
-            <Text style={{margin:15, fontSize:20}}>
-                Please specify at which times you do not want to get prompts. Note that you will
-                    only get prompts when connected to you home network.
+            <Text style={{margin:5, fontSize:20}}>
+                If there is specific time of the day you do not want to receive surveys,
+                while connected to the home WiFi, please indicate it below.
             </Text>
 
 
             <View style={{flex:1, flexDirection:'column', margin:10, justifyContent: 'space-around', alignItems:'flex-start'}}>
                 <View style={{flex:1, flexDirection:'row', justifyContent:'space-around', alignItems:'center'}}>
                    <Text style={styles.dayLabelStyle}>Monday</Text>
-                    <TouchableHighlight style={{borderWidth:.5, padding:5}}
+                    <TouchableHighlight style={{borderWidth:.5, padding:5,}}
                         onPress= {() => {
                               this.setState({currentDay:'mondayFrom',isDateTimePickerVisible:true})
                         }}>
-                      <Text>{this.state.mondayFrom}</Text>
+                      <Text style={styles.timeBoxStyle}>{this.state.mondayFrom}</Text>
                     </TouchableHighlight>
                     <Text style={{margin:5}}>to</Text>
                     <TouchableHighlight style={{borderWidth:.5, padding:5}}
                         onPress= {() => {
                               this.setState({currentDay:'mondayTo',isDateTimePickerVisible:true})
                         }}>
-                      <Text >{this.state.mondayTo}</Text>
+                      <Text style={styles.timeBoxStyle}>{this.state.mondayTo}</Text>
                     </TouchableHighlight>
                 </View>
 
@@ -235,7 +295,7 @@ export default class UserSettingsScreen extends React.Component {
                         onPress= {() => {
                               this.setState({currentDay:'tuesdayFrom',isDateTimePickerVisible:true})
                         }}>
-                      <Text >{this.state.tuesdayFrom}</Text>
+                      <Text style={styles.timeBoxStyle}>{this.state.tuesdayFrom}</Text>
                     </TouchableHighlight>
                     <Text style={{margin:5}}>to</Text>
                     <TouchableHighlight style={{borderWidth:.5, padding:5}}
@@ -243,7 +303,7 @@ export default class UserSettingsScreen extends React.Component {
                               this.setState({currentDay:'tuesdayTo',isDateTimePickerVisible:true})
 
                         }}>
-                      <Text >{this.state.tuesdayTo}</Text>
+                      <Text style={styles.timeBoxStyle}>{this.state.tuesdayTo}</Text>
                     </TouchableHighlight>
                 </View>
 
@@ -253,7 +313,7 @@ export default class UserSettingsScreen extends React.Component {
                         onPress= {() => {
                               this.setState({currentDay:'wedFrom',isDateTimePickerVisible:true})
                         }}>
-                      <Text >{this.state.wedFrom}</Text>
+                      <Text style={styles.timeBoxStyle}>{this.state.wedFrom}</Text>
                     </TouchableHighlight>
                     <Text style={{margin:5}}>to</Text>
                     <TouchableHighlight style={{borderWidth:.5, padding:5}}
@@ -261,7 +321,7 @@ export default class UserSettingsScreen extends React.Component {
                               this.setState({currentDay:'wedTo',isDateTimePickerVisible:true})
 
                         }}>
-                      <Text >{this.state.wedTo}</Text>
+                      <Text style={styles.timeBoxStyle}>{this.state.wedTo}</Text>
                     </TouchableHighlight>
                 </View>
 
@@ -271,7 +331,7 @@ export default class UserSettingsScreen extends React.Component {
                         onPress= {() => {
                               this.setState({currentDay:'thFrom',isDateTimePickerVisible:true})
                         }}>
-                      <Text >{this.state.thFrom}</Text>
+                      <Text style={styles.timeBoxStyle}>{this.state.thFrom}</Text>
                     </TouchableHighlight>
                     <Text style={{margin:5}}>to</Text>
                     <TouchableHighlight style={{borderWidth:.5, padding:5}}
@@ -279,7 +339,7 @@ export default class UserSettingsScreen extends React.Component {
                               this.setState({currentDay:'thTo',isDateTimePickerVisible:true})
 
                         }}>
-                      <Text >{this.state.thTo}</Text>
+                      <Text style={styles.timeBoxStyle}>{this.state.thTo}</Text>
                     </TouchableHighlight>
                 </View>
 
@@ -289,7 +349,7 @@ export default class UserSettingsScreen extends React.Component {
                         onPress= {() => {
                               this.setState({currentDay:'friFrom',isDateTimePickerVisible:true})
                         }}>
-                      <Text >{this.state.friFrom}</Text>
+                      <Text style={styles.timeBoxStyle}>{this.state.friFrom}</Text>
                     </TouchableHighlight>
                     <Text style={{margin:5}}>to</Text>
                     <TouchableHighlight style={{borderWidth:.5, padding:5}}
@@ -297,7 +357,7 @@ export default class UserSettingsScreen extends React.Component {
                               this.setState({currentDay:'friTo',isDateTimePickerVisible:true})
 
                         }}>
-                      <Text >{this.state.friTo}</Text>
+                      <Text style={styles.timeBoxStyle}>{this.state.friTo}</Text>
                     </TouchableHighlight>
                 </View>
 
@@ -307,7 +367,7 @@ export default class UserSettingsScreen extends React.Component {
                         onPress= {() => {
                               this.setState({currentDay:'satFrom',isDateTimePickerVisible:true})
                         }}>
-                      <Text >{this.state.satFrom}</Text>
+                      <Text style={styles.timeBoxStyle}>{this.state.satFrom}</Text>
                     </TouchableHighlight>
                     <Text style={{margin:5}}>to</Text>
                     <TouchableHighlight style={{borderWidth:.5, padding:5}}
@@ -315,7 +375,7 @@ export default class UserSettingsScreen extends React.Component {
                               this.setState({currentDay:'satTo',isDateTimePickerVisible:true})
 
                         }}>
-                      <Text >{this.state.satTo}</Text>
+                      <Text style={styles.timeBoxStyle}>{this.state.satTo}</Text>
                     </TouchableHighlight>
                 </View>
 
@@ -325,7 +385,7 @@ export default class UserSettingsScreen extends React.Component {
                         onPress= {() => {
                               this.setState({currentDay:'sunFrom',isDateTimePickerVisible:true})
                         }}>
-                      <Text >{this.state.sunFrom}</Text>
+                      <Text style={styles.timeBoxStyle}>{this.state.sunFrom}</Text>
                     </TouchableHighlight>
                     <Text style={{margin:5}}>to</Text>
                     <TouchableHighlight style={{borderWidth:.5, padding:5}}
@@ -333,7 +393,7 @@ export default class UserSettingsScreen extends React.Component {
                               this.setState({currentDay:'sunTo',isDateTimePickerVisible:true})
 
                         }}>
-                      <Text >{this.state.sunTo}</Text>
+                      <Text style={styles.timeBoxStyle}>{this.state.sunTo}</Text>
                     </TouchableHighlight>
                 </View>
 
@@ -342,23 +402,19 @@ export default class UserSettingsScreen extends React.Component {
             <TouchableHighlight style ={[commonStyle.buttonTouchHLStyle]}>
                  <Button title="Save settings"
                      color="#20B2AA"
-                     onPress={() => {
-                         logger.info(`${codeFileName}`, 'save button press', "Saving user settings and navigating to home screen");
-                         this.props.navigation.goBack();
-
-                     }}
+                     onPress={() => {this.saveSettings();}}
                  />
              </TouchableHighlight>
 
+
+         <DateTimePicker
+                 isVisible={this.state.isDateTimePickerVisible}
+                 onConfirm={this.handleDatePicked}
+                 onCancel={this.hideDateTimePicker}
+                 mode='time'
+               />
        </View>
 
-       <DateTimePicker
-         isVisible={this.state.isDateTimePickerVisible}
-         onConfirm={this.handleDatePicked}
-         onCancel={this.hideDateTimePicker}
-         mode='time'
-       />
-       </ScrollView>
     );
   }
 }
@@ -370,6 +426,11 @@ const styles = StyleSheet.create({
           width: 80,
           margin:5,
           fontSize:14
+  },
+  timeBoxStyle:{
+    width:40,
+    fontSize:14,
+    textAlign: 'center'
   },
 
 });
