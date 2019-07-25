@@ -15,7 +15,7 @@ export default class AlvaPromptScreen extends React.Component {
 
   static navigationOptions = {
   headerTitle: <ToolBar title="MIMI" progress={10}/>,
-    headerLeft: null
+   // headerLeft: null
   };
 
   constructor(props) {
@@ -58,8 +58,7 @@ export default class AlvaPromptScreen extends React.Component {
                           <Text>Imagine an always-listening voice assistant, "Mimi," was able to offer you
                           services that were </Text>
                           <Text style={{fontWeight:'bold'}}>relevant </Text>
-                          <Text>to your conversation. Please select all services
-                          that are relevant to your most recent conversation. You can also add new services.</Text>
+                          <Text>to your conversation.</Text>
                         </Text>
                     </View>
 

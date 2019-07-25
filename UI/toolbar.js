@@ -57,7 +57,7 @@ class ToolBar extends React.Component {
                  source={require('../res/settings-icon.png')}
                 />
              </TouchableHighlight>
-             <Text style={{marginRight:5}}>2.00$</Text>
+             <Text style={{marginRight:5}}>$2.00</Text>
 
         </View>
     );

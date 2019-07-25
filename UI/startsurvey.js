@@ -16,7 +16,7 @@ export default class SurveyStartScreen extends React.Component {
   _willBlurSubscription;
 
   static navigationOptions = {
-    headerLeft: null,
+    //headerLeft: null,
     headerTitle: <ToolBar title="Conversation topic" progress={0}/>
   };
 

@@ -74,6 +74,7 @@ export default StyleSheet.create({
       marginTop: 15,
       paddingLeft:30,
       paddingRight:40,
+      fontSize:16
     },
       inputStyle:{
         height: 100,

@@ -39,56 +39,81 @@ class Utilities extends Component
    }
 
 
-    writeJSONFile(content, fileName, callerClass, callerFunc)
+    async writeJSONFile(content, fileName, callerClass, callerFunc)
     {
-         RNFS.copyFile(fileName, fileName+'.backup')
-             .then( (success) => {
-                 logger.info(`${callerClass}`, 'writeServiceFile', 'Backed up service file.');
+        //if there is an existing file, create a backup first
 
-                 RNFS.writeFile(fileName, JSON.stringify(content))
-                     .then( (success) => {
-                         logger.info(`${callerClass}`, `${callerFunc}`, 'Saved service in file.');
-                           RNFS.unlink(fileName+'.backup')
-                               .then(() => {
-                                 logger.info(`${callerClass}`, `${callerFunc}`, 'Deleted backup service file.');
-                               })
-                               // `unlink` will throw an error, if the item to unlink does not exist
-                               .catch((err) => {
-                                 logger.error(`${callerClass}`, `${callerFunc}`, 'Error in deleting backup service file:'+error.message);
-                               });
-                     })
-                     .catch( (error)=>{
-                         logger.error(`${callerClass}`, `${callerFunc}`, 'Error in saving service file:'+error.message+'. Restoring backup file');
-                         RNFS.copyFile(fileName+'.backup', fileName)
-                             .then( (success)=> {
-                                 logger.info(`${callerClass}`, `${callerFunc}`, 'Restored backup service file.');
-                             })
-                             .catch( (error)=>{
-                                 logger.error(`${callerClass}`, `${callerFunc}`, 'Failed to Restore backup service file:'+error.message);
-                             })
+         if (await RNFS.exists(fileName))
+         {
+             logger.info(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'File already exists.');
 
-                     })
-             })
-             .catch( (error) => {
-                 logger.error(`${codeFileName}`, 'saveState',
-                     'Error backing up status file:'+error.message);
-             })
+             RNFS.copyFile(fileName, fileName+'.backup')
+                 .then( (success) => {
+                     logger.info(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Backed up existing file.');
+
+                     RNFS.writeFile(fileName, JSON.stringify(content))
+                         .then( (success) => {
+                             logger.info(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Created new file.');
+                               RNFS.unlink(fileName+'.backup')
+                                   .then(() => {
+                                     logger.info(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Deleted old file.');
+                                   })
+                                   // `unlink` will throw an error, if the item to unlink does not exist
+                                   .catch((err) => {
+                                      logger.error(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Failed to delete backup file:'+error.message);
+                                   });
+                         })
+                         .catch( (error)=>{
+                             logger.error(`${callerClass}`, `${callerFunc}-->writeJSONFile`,'Error in creating new file:'+error.message+'. Restoring backup.');
+
+                             RNFS.copyFile(fileName+'.backup', fileName)
+                                 .then( (success)=> {
+                                     logger.info(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Restored backup file.');
+                                 })
+                                 .catch( (error)=>{
+                                     logger.error(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Failed to Restore backup file:'+error.message);
+                                 })
+
+                         })
+                 })
+                 .catch( (error) => {
+                     logger.error(`${codeFileName}`, `${callerFunc}-->writeJSONFile`, 'Error backing up file:'+error.message);
+                 })
+         }
+         else
+         {
+            RNFS.writeFile(fileName, JSON.stringify(content))
+                 .then( (success) => {
+                     logger.info(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Created new file: '+fileName);
+                 })
+                 .catch( (error)=>{
+                      logger.error(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Failed to create file:'+error.message);
+                  })
+         }
     }
 
-    readJSONFile(filePath)
+    async readJSONFile(filePath, callerClass, callerFunc)
     {
-          RNFS.exists(filePath)
-            .then( (exists) => {
-                if (exists)
-                {
-                    RNFS.readFile(this.serviceFileLocal)
-                        .then((_fileContent) => {
-                            return JSON.parse(_fileContent);
-                        });
-                }
-            });
 
-            return null;
+         if (await RNFS.exists(filePath))
+         {
+            logger.info(`${callerClass}`, `${callerFunc}-->readJSONFile`, 'Reading file:'+filePath);
+             RNFS.readFile(filePath)
+                 .then((_fileContent) => {
+                    logger.info(`${callerClass}`, `${callerFunc}-->readJSONFile`, 'Successfully read file.');
+                     return _fileContent;
+                 })
+                 .catch( (error)=>{
+                       logger.error(`${callerClass}`, `${callerFunc}-->readJSONFile`, 'Failed to read file:'+error.message);
+                   })
+
+         }
+         else
+         {
+            logger.info(`${callerClass}`, `${callerFunc}-->readJSONFile`, 'Reading file:'+filePath+' does not exist');
+         }
+
+         return null;
     }
 
     readServiceFile()

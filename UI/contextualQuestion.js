@@ -273,7 +273,7 @@ export default class ContextualQuestionScreen extends React.Component {
 
       </View>
 
-        { this.state.surrounding &&
+
           <View style={commonStyle.buttonViewStyle}>
               <TouchableHighlight style ={commonStyle.buttonTouchHLStyle}>
                 <Button
@@ -295,31 +295,7 @@ export default class ContextualQuestionScreen extends React.Component {
                 />
               </TouchableHighlight>
           </View>
-        }
 
-           { !this.state.surrounding &&
-                  <View style={commonStyle.buttonViewStyle}>
-                      <TouchableHighlight style ={commonStyle.buttonTouchHLStyle}>
-                        <Button
-                          onPress={() =>
-                            {
-                                if(this.state.surrounding)
-                                {
-                                    this.setState({surrounding:false})
-                                }
-                                else
-                                {
-                                    this.saveResponse();
-                                }
-                            }
-                          }
-                          title="Done!"
-                          color="#20B2AA"
-                          accessibilityLabel="Save"
-                        />
-                      </TouchableHighlight>
-                  </View>
-                }
 
       </View>
       </ScrollView>
