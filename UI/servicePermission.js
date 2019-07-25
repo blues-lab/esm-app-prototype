@@ -49,13 +49,17 @@ export default class ServicePermissionScreen extends React.Component {
 
   componentDidMount()
   {
-    this.setState({serviceName: this.props.serviceName});
+      const { navigation } = this.props;
+      const _categoryName = navigation.getParam('serviceCategoryName', 'NO-SERVICE');
+      const _serviceName = navigation.getParam('serviceName', 'NO-SERVICE');
+
+    this.setState({categoryName: _categoryName, serviceName: _serviceName});
   }
 
   saveResponse()
   {
        _permissionResponse= {
-          "ServiceCategory": this.state.serviceCategory,
+          "ServiceCategory": this.state.categoryName,
           "ServiceName": this.state.serviceName,
           "Sharing": this.state.sharingDecision,
           "PartsToRedact": this.state.partsToRedact,
@@ -82,8 +86,9 @@ export default class ServicePermissionScreen extends React.Component {
           }}>
 
           <Text style={commonStyle.questionStyle}>
+
             Would you allow MiMi to access the relevant parts of
-            the conversation to provide you the service {this.state.serviceName}?
+            the conversation to provide you the service "{this.state.serviceName}"?
           </Text>
           <RadioForm style={commonStyle.radioFrameStyle}
               radio_props={radioOptions}

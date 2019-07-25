@@ -356,8 +356,8 @@ export default class ServiceMenuScreen extends React.Component {
                        activeServiceName: _permissionPages[_permissionPageIdx].serviceName,
                        permissionModalVisible: false});
         this.props.navigation.navigate('ServicePermission',
-                    {serviceName : this.state.activeServiceName,
-                    serviceCategoryName: this.state.activeServiceCategoryName,
+                    {serviceName : _permissionPages[_permissionPageIdx].serviceName,
+                    serviceCategoryName: _permissionPages[_permissionPageIdx].categoryName,
                     permissionResponseHandler : this.savePermissionResponse.bind(this)});
     }
   }

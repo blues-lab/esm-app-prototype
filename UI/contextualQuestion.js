@@ -129,6 +129,7 @@ export default class ContextualQuestionScreen extends React.Component {
         "RemoteConversation":this.state.remoteConversation,
         "Relations": Array.from(this.state.selectedRelations).toString(),
         "Locations": Array.from(this.state.selectedLocations).toString(),
+        "CompletionTime": new Date()
      }
 
      logger.info(`${codeFileName}`, 'saveResponse', 'Response: '+JSON.stringify(_contextResponseJS));
