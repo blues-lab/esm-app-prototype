@@ -3,6 +3,7 @@ package com.alva;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.staltz.reactnativeandroidlocalnotification.NotificationPackage;
 import com.pilloxa.backgroundjob.BackgroundJobPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
@@ -30,6 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new AsyncStoragePackage(),
             new NotificationPackage(),
             new BackgroundJobPackage(),
             new ReactNativePushNotificationPackage(),

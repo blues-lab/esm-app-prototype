@@ -16,7 +16,7 @@ export default class SurveyStartScreen extends React.Component {
   _willBlurSubscription;
 
   static navigationOptions = {
-    //headerLeft: null,
+    headerLeft: null,
     headerTitle: <ToolBar title="Conversation topic" progress={0}/>
   };
 
@@ -30,37 +30,6 @@ export default class SurveyStartScreen extends React.Component {
   }
 
   componentDidMount() {
-
-      if(true)//check if survey is available from app settings
-      {
-            Alert.alert(
-              'New survey!',
-              'Have you had a conversation recently?',
-              [
-                {text: 'Yes', onPress: () => {
-                    logger.info(`${codeFileName}`, "'Yes' to recent conversation", "Navigating to StartSurvey");
-                    appStatus.setSurveyStatus("Started");
-                    //this.props.navigation.navigate('StartSurvey');
-                  }},
-                {text: 'No', onPress: () => {
-                      logger.info(`${codeFileName}`, "'No' to recent conversation", "Exiting App.");
-
-                      Alert.alert("Thank you!", "We will try again later.",
-                        [
-                            {text: 'OK', onPress:() => {BackHandler.exitApp()}}
-                        ]
-                      )
-                      //this.setState({noSurveyDialogVisible: true});
-                }}
-              ],
-              {cancelable: true},
-            );
-      }
-      else
-      {
-          this.setState({noSurveyDialogVisible: true});
-      }
-
         this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
       BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
     );

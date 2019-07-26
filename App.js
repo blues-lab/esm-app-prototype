@@ -65,7 +65,7 @@ const AppNavigator = createStackNavigator(
     UserSettings:UserSettingsScreen
   },
   {
-    initialRouteName: "StartSurvey"
+    initialRouteName: "Home"
   }
 );
 

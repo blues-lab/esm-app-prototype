@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert,
-DeviceEventEmitter, Image, TouchableHighlight, Modal} from 'react-native';
+DeviceEventEmitter, Image, TouchableHighlight, Modal, BackHandler} from 'react-native';
 import wifi from 'react-native-android-wifi';
 import Notification from 'react-native-android-local-notification';
 
@@ -20,6 +20,11 @@ import ToolBar from './toolbar'
 
 const codeFileName='home.js';
 
+import utilities from '../controllers/utilities';
+
+import AsyncStorage from '@react-native-community/async-storage';
+
+
 export default class HomeScreen extends React.Component {
 
 
@@ -36,36 +41,79 @@ export default class HomeScreen extends React.Component {
     this.props.navigation.navigate('StartSurvey');
   }
 
-  componentDidMount()
-  {
 
-    if(true)//check if survey is available from app settings
+    isFirstLaunch = async () => {
+      try {
+        const value = await AsyncStorage.getItem('@HAS_LAUNCHED')
+        return value;
+      } catch(e) {
+        // error reading value
+      }
+    }
+
+  async componentDidMount()
+  {
+    if(await this.isFirstLaunch()==null)
     {
-          Alert.alert(
-            'New survey!',
-            'Were you talking recently?',
-            [
-              {text: 'Yes', onPress: () => {
-                logger.info(`${codeFileName}`, "'Yes' to recent conversation", "Navigating to StartSurvey");
-                appStatus.setSurveyStatus("Started");
-                this.props.navigation.navigate('StartSurvey');
-                }},
-              {text: 'No', onPress: () => {
-                    logger.info(`${codeFileName}`, "'No' to recent conversation", "Showing NoSurvey dialog.");
-                    //this.setState({noSurveyDialogVisible: true});
-              }}
-            ],
-            {cancelable: true},
-          );
+        logger.info(codeFileName, 'componentDidMount', "First time app launch. Trying to set flag.");
+        try
+        {
+            await AsyncStorage.setItem('@HAS_LAUNCHED', 'true')
+        }
+        catch (e)
+        {
+            logger.info(codeFileName, 'componentDidMount', "Failed to set flag:"+e.message);
+
+        }
     }
     else
     {
-        this.setState({noSurveyDialogVisible: true});
+        logger.info(codeFileName, 'componentDidMount', "Nth time app launch");
     }
 
+     if(true)
+     {
+        //launching for the first time, show settings screen
+        appStatus.setFirstLaunch(0);
+        //this.props.navigation.navigate('UserSettings');
+     }
+     else
+     {
+            //Alert.alert("Survey",appStatus.getStatus().surveyAvailable().toString());
+            if(true)//check if survey is available from app settings
+            {
+                  Alert.alert(
+                    'New survey!',
+                    'Have you had a conversation recently?',
+                    [
+                      {text: 'Yes', onPress: () => {
+                          logger.info(`${codeFileName}`, "'Yes' to recent conversation", "Navigating to StartSurvey");
+                          appStatus.setSurveyStatus("Started");
+                          this.props.navigation.navigate('StartSurvey');
+                        }},
+                      {text: 'No', onPress: () => {
+                            logger.info(`${codeFileName}`, "'No' to recent conversation", "Exiting App.");
 
-   // this.UpdateWifiState();
-    //this.interval = setInterval(()=> this.UpdateWifiState(), 5000);
+                            Alert.alert("Thank you!", "We will try again later.",
+                              [
+                                  {text: 'OK', onPress:() => {BackHandler.exitApp()}}
+                              ]
+                            )
+                            //this.setState({noSurveyDialogVisible: true});
+                      }}
+                    ],
+                    {cancelable: true},
+                  );
+            }
+            else
+            {
+                //this.setState({noSurveyDialogVisible: true});
+            }
+     }
+
+        this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
+            BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+      );
   }
 
   UpdateWifiState()
@@ -107,27 +155,6 @@ export default class HomeScreen extends React.Component {
             style={{width: '85%', height:250, resizeMode : 'contain' , margin:20}}
             source={require('../res/logo.png')}
           />
-
-           <View style={{
-                                       flex: 1,
-                                       flexDirection: 'column',
-                                       justifyContent: 'center',
-                                       alignItems: 'center'
-                                   }}>
-             <TouchableHighlight style ={[commonStyles.buttonTouchHLStyle]}>
-                 <Button title="Start new survey"
-                     color="#20B2AA"
-                     onPress={() => {
-                         logger.info(`${codeFileName}`, "Start new survey button press", "Navigating to StartSurvey");
-                                         appStatus.setSurveyStatus("Started");
-                                         this.props.navigation.navigate('StartSurvey');
-
-                     }}
-                 />
-             </TouchableHighlight>
-
-             <Text>{this.state.msg}</Text>
-           </View>
 
            <Modal visible = {this.state.noSurveyDialogVisible}>
             <View style={{  flex: 1,
