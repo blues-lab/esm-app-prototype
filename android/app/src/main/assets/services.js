@@ -45,6 +45,10 @@
                     "serviceName":"Email"
                 }
             ]
+        },
+        {
+            "categoryName":"Other",
+            "services":[]
         }
     ]
 }

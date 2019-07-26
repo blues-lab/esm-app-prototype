@@ -32,7 +32,12 @@ export default class AlvaPromptScreen extends React.Component {
      //this.props.navigation.navigate('StartSurvey');
    }
 
-
+   componentDidMount()
+   {
+        const { navigation } = this.props;
+        const _topic = navigation.getParam('conversationTopic', '');
+        this.setState({conversationTopic:_topic})
+   }
 
 
   render() {
@@ -67,7 +72,7 @@ export default class AlvaPromptScreen extends React.Component {
                             <Button title="Next"
                                 color="#20B2AA"
                                 onPress={() => {
-                                        this.props.navigation.navigate('ServiceMenu');
+                                        this.props.navigation.navigate('ServiceMenu', {conversationTopic:this.state.conversationTopic});
                                     }
                                 }
                             />

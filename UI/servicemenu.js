@@ -83,23 +83,6 @@ export default class ServiceMenuScreen extends React.Component {
 
   }
 
-  getSelectedServices()
-  {
-    //Convert selected services in JSON format
-    _selectedServicesJS = []
-    _serviceCategories = this.state.serviceCategories;
-    for(var i=0; i< _serviceCategories.length; i++)
-    {
-       if(_serviceCategories[i].selectedServiceNames.size>0)
-        {
-            _selectedServicesJS.push({
-                "category": _serviceCategories[i].name,
-                'services': Array.from(_serviceCategories[i].selectedServiceNames)}
-            );
-        }
-    }
-  }
-
   createNewService(newCategoryName, newServiceName)
   {
     //create entry in the database when users enter a new service
@@ -219,6 +202,11 @@ export default class ServiceMenuScreen extends React.Component {
   componentDidMount()
   {
       const { navigation } = this.props;
+      const _topic = navigation.getParam('conversationTopic', '');
+      _surveyResponseJS = this.state.surveyResponseJS;
+      _surveyResponseJS.conversationTopic = _topic;
+      this.setState({surveyResponseJS: _surveyResponseJS});
+
       this.focusListener = navigation.addListener("didFocus", () => {
             //Alert.alert("Focusing");
         });
@@ -230,6 +218,24 @@ export default class ServiceMenuScreen extends React.Component {
       return (
         <View style={{height: 0.5, width: '100%', backgroundColor: '#C8C8C8'}}/>
       );
+  }
+
+  getSelectedServices()
+  {
+    //Convert selected services in JSON format
+    _selectedServicesJS = []
+    _serviceCategories = this.state.serviceCategories;
+    for(var i=0; i< _serviceCategories.length; i++)
+    {
+       if(_serviceCategories[i].selectedServiceNames.size>0)
+        {
+            _selectedServicesJS.push({
+                "category": _serviceCategories[i].name,
+                'services': Array.from(_serviceCategories[i].selectedServiceNames)}
+            );
+        }
+    }
+    return _selectedServicesJS;
   }
 
   handleServiceSelectionChange = (categoryName, service) =>
@@ -296,7 +302,9 @@ export default class ServiceMenuScreen extends React.Component {
      {
         //add permission responses to the survey response
         _surveyResponseJS = this.state.surveyResponseJS;
+
         _surveyResponseJS.PermissionResponses = _permissionResponses;
+        _surveyResponseJS.SelectedServices = this.getSelectedServices();
 
         this.setState({permissionModalVisible: false, _surveyResponseJS: _surveyResponseJS}, ()=>
             this.props.navigation.navigate('ContextualQuestion',

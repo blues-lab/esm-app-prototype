@@ -137,16 +137,10 @@ export default class ContextualQuestionScreen extends React.Component {
      _surveyResponseJS = this.state.surveyResponseJS;
      _surveyResponseJS.ContextualQuestionResponses = _contextResponseJS;
 
-     _allResponses = await utilities.readJSONFile(surveyResponseFilePath, codeFileName, "saveResponse");
-     if (_allResponses == null)
-     {
-        _allResponses = {"surveys":[]};
-     }
+     time =  Date.now().toString()
+     utilities.writeJSONFile(_surveyResponseJS, RNFS.DocumentDirectoryPath+"/response-"+ time+'.js', codeFileName, "saveResponse");
 
-     _allResponses.surveys.push(_surveyResponseJS);
-     utilities.writeJSONFile(_allResponses, surveyResponseFilePath, codeFileName, "saveResponse");
-
-     Alert.alert("Done!","Great! you have earned $.2!");
+     Alert.alert("Done!","You have earned $.2!");
    }
 
 
