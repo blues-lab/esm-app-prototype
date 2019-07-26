@@ -43,7 +43,7 @@ export default class SurveyStartScreen extends React.Component {
                     //this.props.navigation.navigate('StartSurvey');
                   }},
                 {text: 'No', onPress: () => {
-                      logger.info(`${codeFileName}`, "'No' to recent conversation", "Showing NoSurvey dialog.");
+                      logger.info(`${codeFileName}`, "'No' to recent conversation", "Exiting App.");
 
                       Alert.alert("Thank you!", "We will try again later.",
                         [
