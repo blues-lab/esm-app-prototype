@@ -39,7 +39,7 @@ class Logger extends Component
 
         var time = date.getHours() + ":" + date.getMinutes()+ ':' + date.getSeconds()+':'+date.getMilliseconds();
 
-        return day+'-'+m+'-'+y+' '+time
+        return y+'-'+m+'-'+day+' '+time
     }
 
     writeLog(type, className, funcName, message)
