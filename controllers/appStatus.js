@@ -6,6 +6,7 @@ import wifi from 'react-native-android-wifi';
 import logger from './logger';
 const codeFileName = 'appStatus.js'
 
+import utilities from './utilities'
 
 
 class AppStatus
@@ -19,34 +20,33 @@ class AppStatus
                  PromptDuration:60,
                  CompletedSurveys:0,
                  SurveyProgress:0,
+                 FirstLaunch:1,
              }
 
-    loadStatus()
+
+    async loadStatus()
     {
-           RNFS.exists(this.appStatusFilePath)
-               .then( (exists) =>{
-                    RNFS.readFile(this.appStatusFilePath)
-                          .then( (_fileContent) =>
-                          {
-                              this.status =  JSON.parse(_fileContent);
-                          })
-                          .catch( (error) =>
-                          {
-                              logger.error("AppStatus","loadStatus", "Reading appStatus file failed.");
-                          })
-                    return this.status;
-               })
 
+        if(await RNFS.exists(this.appStatusFilePath))
+        {
+            RNFS.readFile(this.appStatusFilePath)
+                .then((_fileContent) => {
 
-           RNFS.writeFile(this.appStatusFilePath, JSON.stringify(this.status))
-               .then( (success) => {
-                logger.info(`${codeFileName}`, 'loadState', 'Saved initial app status in file.');
-               })
-               .catch( (error)=>{
-                    logger.error(`${codeFileName}`, 'loadState', 'Error in saving initial status file:'+error.message);
-               })
+                    logger.info(`${codeFileName}`, 'loadStatus', 'Successfully read status file:'+_fileContent);
+                    this.status = JSON.parse(_fileContent);
+                })
+                .catch((error)=>
+                {
+                    logger.error(callerClass, "loadStatus", 'Failed to read status file:'+error.message);
+                })
+        }
+        else
+        {
+            logger.info(codeFileName, 'loadStatus', 'Status file does not exist, creating one.');
+            utilities.writeJSONFile(this.status, this.appStatusFilePath,
+                                       codeFileName, 'loadStatus')
+        }
 
-           return this.status;
     }
 
     getStatus()
@@ -55,41 +55,10 @@ class AppStatus
         return _status;
     }
 
+
     saveState()
     {
-        RNFS.copyFile(this.appStatusFilePath, this.appStatusFilePath+'.backup')
-            .then( (success) => {
-                logger.info(`${codeFileName}`, 'saveState', 'Backed up status file.');
-
-                RNFS.writeFile(this.appStatusFilePath, JSON.stringify(this.status))
-                    .then( (success) => {
-                        logger.info(`${codeFileName}`, 'saveState', 'Saved status in file.');
-                          RNFS.unlink(this.appStatusFilePath+'.backup')
-                              .then(() => {
-                                logger.info(`${codeFileName}`, 'saveState', 'Deleted backup file.');
-                              })
-                              // `unlink` will throw an error, if the item to unlink does not exist
-                              .catch((err) => {
-                                logger.error(`${codeFileName}`, 'saveState', 'Error in deleting backup file:'+error.message);
-                              });
-                    })
-                    .catch( (error)=>{
-                        logger.error(`${codeFileName}`, 'saveState', 'Error in saving status file:'+error.message+'. Restoring backup file');
-                        RNFS.copyFile(this.appStatusFilePath+'.backup', this.appStatusFilePath)
-                            .then( (success)=> {
-                                logger.info(`${codeFileName}`, 'saveState', 'Restored backup file.');
-                            })
-                            .catch( (error)=>{
-                                logger.error(`${codeFileName}`, 'saveState', 'Failed to Restore backup file:'+error.message);
-                            })
-
-                    })
-            })
-            .catch( (error) => {
-                logger.error(`${codeFileName}`, 'saveState',
-                    'Error backing up status file:'+error.message);
-            })
-
+        utilities.writeJSONFile(this.status, this.appStatusFilePath, codeFileName, "saveState")
     }
 
     setMaxNumberNotification(value)
@@ -122,6 +91,20 @@ class AppStatus
                     'Setting Survey Status to '+value.toString());
         this.status.SurveyStatus = value;
         this.saveState();
+    }
+
+    setFirstLaunch(value)
+    {
+        logger.info(`${codeFileName}`, 'setFirstLaunch',
+                     'Setting First Launch to '+value.toString());
+        this.status.FirstLaunch = value;
+        this.saveState();
+    }
+
+    surveyAvailable()
+    {
+        mins = (Date.now() - this.status.LastNotificationTime)/60000;
+        return mins ;
     }
 }
 
