@@ -29,12 +29,6 @@ export default class SurveyStartScreen extends React.Component {
         );
   }
 
-   startNewSurvey = () => //Will be called if participants indicate recent conversation
-   {
-     //this.props.navigation.navigate('StartSurvey');
-   }
-
-
   componentDidMount() {
 
       if(true)//check if survey is available from app settings
@@ -44,13 +38,19 @@ export default class SurveyStartScreen extends React.Component {
               'Have you had a conversation recently?',
               [
                 {text: 'Yes', onPress: () => {
-                  logger.info(`${codeFileName}`, "'Yes' to recent conversation", "Navigating to StartSurvey");
-                  appStatus.setSurveyStatus("Started");
-                  this.props.navigation.navigate('StartSurvey');
+                    logger.info(`${codeFileName}`, "'Yes' to recent conversation", "Navigating to StartSurvey");
+                    appStatus.setSurveyStatus("Started");
+                    //this.props.navigation.navigate('StartSurvey');
                   }},
                 {text: 'No', onPress: () => {
                       logger.info(`${codeFileName}`, "'No' to recent conversation", "Showing NoSurvey dialog.");
-                      this.setState({noSurveyDialogVisible: true});
+
+                      Alert.alert("Thank you!", "We will try again later.",
+                        [
+                            {text: 'OK', onPress:() => {BackHandler.exitApp()}}
+                        ]
+                      )
+                      //this.setState({noSurveyDialogVisible: true});
                 }}
               ],
               {cancelable: true},
