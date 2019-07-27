@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert, TextInput,
-Picker, ScrollView,TouchableHighlight} from 'react-native';
+Picker, ScrollView,TouchableHighlight, BackHandler} from 'react-native';
 import DateTimePicker from "react-native-modal-datetime-picker";
 import logger from '../controllers/logger';
 import * as RNFS from 'react-native-fs';
@@ -45,11 +45,30 @@ static navigationOptions = ({ navigation }) => {
         sunFrom:'00:00',
         sunTo:'00:00',
         currentDay:'mondayFrom',
-        isDateTimePickerVisible:false
+        isDateTimePickerVisible:false,
+        stateSaved: true
       };
 
       this.loadSettings(userSettingsFile);
+
+      this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
+            BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+          );
     }
+
+    componentDidMount()
+    {
+        this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
+          BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+        );
+    }
+
+    onBackButtonPressAndroid = () =>
+    {
+        this.handleBackNavigation();
+        return true;
+    };
+
 
    interval=null;
    getHomeWiFi = ()=>
@@ -135,16 +154,32 @@ static navigationOptions = ({ navigation }) => {
 
   handleBackNavigation()
   {
-    Alert.alert(
-      'Do you want to save changes?',
-        '',
-        [
-          {text: 'NO', onPress: () => {
-                this.props.navigation.goBack(null);
-            }},
-          {text: 'YES', onPress: () => {this.saveSettings(); this.props.navigation.goBack(null);}},
-        ]
-      );
+    if(!this.state.stateSaved)
+    {
+        logger.info(codeFileName, 'handleBackNavigation', "Back button pressed, asking to save settings.");
+        Alert.alert(
+          'Do you want to save changes?',
+            '',
+            [
+              {text: 'NO', onPress: () =>
+                {
+                    logger.info(codeFileName, 'handleBackNavigation', "Declined to save settings, going to previous page.");
+                    this.props.navigation.goBack(null);
+                }},
+              {text: 'YES', onPress: () =>
+                {
+                    logger.info(codeFileName, 'handleBackNavigation', "Agreed to save settings, saving and then going to previous page.");
+                    this.saveSettings();
+                    this.props.navigation.goBack(null);
+                }},
+            ]
+          );
+    }
+    else
+    {
+        logger.info(codeFileName, 'handleBackNavigation', "Back button pressed, nothing to save, going to previous page.");
+        this.props.navigation.goBack(null);
+    }
   }
 
 
@@ -219,7 +254,7 @@ static navigationOptions = ({ navigation }) => {
         this.setState({sunTo: time.getHours()+":"+time.getMinutes()});
     }
 
-    this.setState({isDateTimePickerVisible:false});
+    this.setState({isDateTimePickerVisible:false, stateSaved:false});
 
   }
 
@@ -402,7 +437,7 @@ static navigationOptions = ({ navigation }) => {
             <TouchableHighlight style ={[commonStyle.buttonTouchHLStyle]}>
                  <Button title="Save settings"
                      color="#20B2AA"
-                     onPress={() => {this.saveSettings();}}
+                     onPress={() => {this.saveSettings(); this.setState({stateSaved:true})}}
                  />
              </TouchableHighlight>
 
