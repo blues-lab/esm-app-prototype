@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, 
-  TextInput, Alert, FlatList, ScrollView, TouchableHighlight, Image} from 'react-native';
+  TextInput, Alert, FlatList, ScrollView, TouchableHighlight, Image, BackHandler} from 'react-native';
 import * as RNFS from 'react-native-fs';
 import DialogInput from 'react-native-dialog-input';
 
@@ -45,6 +45,10 @@ static navigationOptions = {
   constructor(props) 
   {
     super(props);
+
+    this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
+                BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+        );
   }
 
   parseServiceNames(serviceCategory)
@@ -69,32 +73,18 @@ static navigationOptions = {
 
     if (_serviceNames.length>0)
     {
-    _serviceNames.push //Add 'Other'
-      (
-        {
-          id: 'Other',
-          name: 'Other',
-          selected: false,
-          description: "",
-          renderStyle: commonStyles.listItemStyle,
-          imgSrc : require('../res/unchecked.png')
-        }
-      );
+        _serviceNames.push //Add 'Other'
+          (
+            {
+              id: 'Other',
+              name: 'Other',
+              selected: false,
+              description: "",
+              renderStyle: commonStyles.listItemStyle,
+              imgSrc : require('../res/unchecked.png')
+            }
+          );
     }
-
-
-
-//         _serviceNames.push //Add 'Next' button
-//        (
-//          {
-//            id: 'Next',
-//            name: 'Next',
-//            description: "",
-//            renderStyle: commonStyles.listItemStyle,
-//            imgSrc : require('../res/unchecked.png')
-//          }
-//        );
-
 
     return _serviceNames;
   }
@@ -109,7 +99,24 @@ static navigationOptions = {
                  serviceNames: this.parseServiceNames(_serviceCategory)}, ()=>
                     this.setState({isAddServiceDialogVisible: this.state.serviceNames.length==0}));
 
+    this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
+              BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+            );
   }
+
+  componentWillUnmount()
+  {
+      this._didFocusSubscription && this._didFocusSubscription.remove();
+      this._willBlurSubscription && this._willBlurSubscription.remove();
+  }
+
+  onBackButtonPressAndroid = () =>
+  {
+      //this.handleBackNavigation();
+      //Alert.alert("Back pressed!");
+      this.props.navigation.goBack(null);
+      return true;
+  };
 
   handleServiceSelection = (selectedServiceName) => {
     _serviceNames = this.state.serviceNames;
@@ -170,7 +177,8 @@ static navigationOptions = {
                 <View style={{flex:1, flexDirection:'row', justifyContent:'center'}}>
                     <Text style={{fontSize:20}}> {item.name} </Text>
                 </View>
-            </TouchableHighlight>        );
+            </TouchableHighlight>
+        );
     }
     else if(item.selected)
     {
@@ -236,7 +244,7 @@ static navigationOptions = {
                       _serviceNames.splice(_serviceNames.length-1, 0, _newService);
                       //_serviceNames.push(_newService);
 
-                      logger.info(`${codeFileName}`,"DialogInput.NewService",
+                      logger.info(codeFileName,"DialogInput.NewService",
                               `Newly added service name:${inputText}`);
 
                       this.props.navigation.state.params.newServiceHandler(this.state.serviceCategoryName, inputText);

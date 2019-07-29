@@ -65,55 +65,61 @@ export default class ServiceMenuScreen extends React.Component {
       }
 
       _serviceCategories = this.state.serviceCategories;
+      _selectedIdx = 0;
       for(var i=0; i< _serviceCategories.length; i++)
       {
         if(_serviceCategories[i].name == selectedServiceCategory.name)
         {
-        //Alert.alert(_serviceCategories[i].name,_serviceCategories[i].services.length.toString());
-            logger.info("ServiceMenu","OpenServiceDetailsPage", 'Navigating to service details for:'+selectedServiceCategory.name);
-            this.props.navigation.navigate('ServiceDetails',
-            {
-                serviceCategory: _serviceCategories[i],
-                serviceSelectionHandler: this.handleServiceSelectionChange.bind(this),
-                newServiceHandler: this.createNewService.bind(this)
-            });
+            _selectedIdx = i;
             break;
         }
       }
 
+      logger.info("ServiceMenu","OpenServiceDetailsPage",
+                'Navigating to service details for:'+selectedServiceCategory.name);
+
+      this.props.navigation.navigate('ServiceDetails',
+      {
+          serviceCategory: _serviceCategories[_selectedIdx],
+          serviceSelectionHandler: this.handleServiceSelectionChange.bind(this),
+          newServiceHandler: this.createNewService.bind(this)
+      });
+
   }
 
-  createNewService(newCategoryName, newServiceName)
+  createNewService(categoryName, newServiceName)
   {
     //create entry in the database when users enter a new service
 
-    _serviceCategoriesJS = this.state.serviceCategoriesJS;
+    logger.info(codeFileName, 'createNewService', 'Category:'+categoryName+', service:'+newServiceName);
 
-    idx=0;
+    _serviceCategoriesJS = this.state.serviceCategoriesJS;
 
     for(var i=0; i<_serviceCategoriesJS.serviceCategories.length; i++)
     {
-        if(_serviceCategoriesJS.serviceCategories[i].categoryName == newCategoryName)
-        {idx=i;
-            _serviceCategoriesJS.serviceCategories[i].services.push({serviceName: newServiceName});
+        if(_serviceCategoriesJS.serviceCategories[i].categoryName == categoryName)
+        {
+            _serviceCategoriesJS.serviceCategories[i].services.push(
+                    {
+                        serviceName: newServiceName,
+                        selected:true
+                    }
+                );
             break;
         }
     }
 
-    utilities.writeJSONFile(_serviceCategoriesJS, serviceFileLocal, codeFileName, 'createNewService');
 
     this.setState({serviceCategoriesJS: _serviceCategoriesJS});
+    utilities.writeJSONFile(_serviceCategoriesJS, serviceFileLocal, codeFileName, 'createNewService');
+    this.parseService(_serviceCategoriesJS);
+    //Alert.alert(_serviceCategoriesJS.serviceCategories.length.toString(),
+      //               JSON.stringify(_serviceCategoriesJS.serviceCategories))
   }
 
-
-  loadServices()
+  parseService(_fullJsonObj)
   {
-    RNFS.readFile(serviceFileLocal)
-    .then((_fileContent) => {
-
-    logger.info("ServiceMenu","ReadServiceFile", 'Successfully read:'+serviceFileLocal);
-
-      _fullJsonObj = JSON.parse(_fileContent);
+    //parse json data
       _serviceCategoriesJS = _fullJsonObj.serviceCategories;
       _serviceCategories=[];
 
@@ -144,20 +150,9 @@ export default class ServiceMenuScreen extends React.Component {
         );
       }
 
-      logger.info("ServiceMenu","ReadServiceFile", 'Number of categories found:'+_serviceCategories.length);
+      logger.info("ServiceMenu","parseService", 'Number of categories found:'+_serviceCategories.length);
 
-//      //Add 'Other' category if not exists
-//      _serviceCategories.push
-//      (
-//        {
-//          id: 'Other',
-//          name: 'Other',
-//          selectedServiceNames: new Set([]),
-//          renderStyle: commonStyles.listItemStyle,
-//          services: []
-//        }
-//      );
-      _serviceCategories.push //Add 'No relevant service'
+    _serviceCategories.push //Add 'No relevant service'
         (
           {
             id: 'None',
@@ -184,9 +179,21 @@ export default class ServiceMenuScreen extends React.Component {
         {
           serviceCategoriesJS: _fullJsonObj,
           serviceCategories: _serviceCategories
-        }
-      );
+        },
+        ()=>Alert.alert(this.state.serviceCategories.length.toString(),
+                                       JSON.stringify(this.state.serviceCategories[1]))
+      )
 
+  }
+
+  loadServices()
+  {
+    RNFS.readFile(serviceFileLocal)
+    .then((_fileContent) => {
+
+      logger.info("ServiceMenu","ReadServiceFile", 'Successfully read:'+serviceFileLocal);
+      _fullJsonObj = JSON.parse(_fileContent);
+      this.parseService(_fullJsonObj);
     })  
     .catch((err) => {
       logger.info("ServiceMenu","ReadServiceFile", 'Failed to read:'+serviceFileLocal+". Err:"+err.message);
@@ -242,12 +249,13 @@ export default class ServiceMenuScreen extends React.Component {
   {
   //Callback function sent to the service details page, and called when a service is selected.
     logger.info("ServiceMenu","handleServiceSelectionChange",
-            'Selected category:'+categoryName+', service:'+service.name);
+            'Category:'+categoryName+', service:'+service.name,', selected:'+service.selected);
       _serviceCategories = this.state.serviceCategories;
       for(var i=0; i< _serviceCategories.length; i++)
       {
         if(_serviceCategories[i].name == categoryName)
         {
+            //add service to the selected list
             if (service.selected)
             {
                 _serviceCategories[i].selectedServiceNames.add(service.name)
@@ -255,6 +263,16 @@ export default class ServiceMenuScreen extends React.Component {
             else
             {
                 _serviceCategories[i].selectedServiceNames.delete(service.name);
+            }
+
+            //mark the service as selected
+            _services = _serviceCategories[i].services;
+            for(var j=0; j<_services.length; j++)
+            {
+                if(_services[j].name==service.name)
+                {
+                    _services[j].selected=service.selected;
+                }
             }
         }
       }
