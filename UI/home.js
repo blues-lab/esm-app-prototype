@@ -25,9 +25,13 @@ import utilities from '../controllers/utilities';
 import AsyncStorage from '@react-native-community/async-storage';
 
 
+
 export default class HomeScreen extends React.Component {
 
-
+  static navigationOptions = {
+        headerLeft: null,
+        headerTitle: <ToolBar title="Mimi" progress={0}/>
+      };
 
   constructor(props)
   {
@@ -51,6 +55,11 @@ export default class HomeScreen extends React.Component {
       }
     }
 
+  componentDidUpdate()
+  {
+
+  }
+
   async componentDidMount()
   {
     if(await this.isFirstLaunch()==null)
@@ -63,53 +72,50 @@ export default class HomeScreen extends React.Component {
         catch (e)
         {
             logger.info(codeFileName, 'componentDidMount', "Failed to set flag:"+e.message);
-
         }
+
+        logger.info(codeFileName, 'componentDidMount', "Navigating to settings page.");
+        this.props.navigation.navigate('UserSettings');
     }
     else
     {
         logger.info(codeFileName, 'componentDidMount', "Nth time app launch");
+
+        if(appStatus.surveyAvailable())//check if survey is available from app settings
+        {
+            logger.info(codeFileName, 'componentDidMount', "New survey available. Asking for conversation.");
+
+              Alert.alert(
+                'New survey!',
+                'Have you had a conversation recently?',
+                [
+                  {text: 'Yes', onPress: () => {
+                      logger.info(`${codeFileName}`, "'Yes' to recent conversation", "Navigating to StartSurvey");
+                      //appStatus.setSurveyStatus("Started");
+                      this.props.navigation.navigate('StartSurvey');
+                    }},
+                  {text: 'No', onPress: () => {
+                        logger.info(`${codeFileName}`, "'No' to recent conversation", "Exiting App.");
+
+                        Alert.alert("Thank you!", "We will try again later.",
+                          [
+                              {text: 'OK', onPress:() => {BackHandler.exitApp()}}
+                          ]
+                        )
+                        //this.setState({noSurveyDialogVisible: true});
+                  }}
+                ],
+                {cancelable: true},
+              );
+        }
+        else
+        {
+            logger.info(codeFileName, 'componentDidMount', "No survey available.");
+
+        }
     }
 
-     if(true)
-     {
-        //launching for the first time, show settings screen
-        appStatus.setFirstLaunch(0);
-        //this.props.navigation.navigate('UserSettings');
-     }
-     else
-     {
-            //Alert.alert("Survey",appStatus.getStatus().surveyAvailable().toString());
-            if(true)//check if survey is available from app settings
-            {
-                  Alert.alert(
-                    'New survey!',
-                    'Have you had a conversation recently?',
-                    [
-                      {text: 'Yes', onPress: () => {
-                          logger.info(`${codeFileName}`, "'Yes' to recent conversation", "Navigating to StartSurvey");
-                          appStatus.setSurveyStatus("Started");
-                          this.props.navigation.navigate('StartSurvey');
-                        }},
-                      {text: 'No', onPress: () => {
-                            logger.info(`${codeFileName}`, "'No' to recent conversation", "Exiting App.");
-
-                            Alert.alert("Thank you!", "We will try again later.",
-                              [
-                                  {text: 'OK', onPress:() => {BackHandler.exitApp()}}
-                              ]
-                            )
-                            //this.setState({noSurveyDialogVisible: true});
-                      }}
-                    ],
-                    {cancelable: true},
-                  );
-            }
-            else
-            {
-                //this.setState({noSurveyDialogVisible: true});
-            }
-     }
+      this.setState({noSurveyDialogVisible: true})
 
         this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
             BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
@@ -151,34 +157,32 @@ export default class HomeScreen extends React.Component {
                       backgroundColor:'lavender',
                       margin:5
                   }}>
-          <Image
-            style={{width: '85%', height:250, resizeMode : 'contain' , margin:20}}
-            source={require('../res/logo.png')}
-          />
 
-           <Modal visible = {this.state.noSurveyDialogVisible}>
-            <View style={{  flex: 1,
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'stretch',
-                            backgroundColor:'lavender',
-                            margin:5}}>
-                <Text style={{margin:15, fontSize:20, borderBottomColor:'black', borderBottomWidth: StyleSheet.hairlineWidth, padding:5}}>
-                    No survey available now.
-                </Text>
-                <Text style={{fontSize:16, margin:10, marginTop:10}}>
-                    Advertisement/reminder for MIMI and suggestion to come back later.
-                </Text>
-                   <TouchableHighlight style ={[commonStyles.buttonTouchHLStyle]}>
-                      <Button title="I will come back later!"
-                          color="#20B2AA"
-                        onPress={() => {
-                          logger.info(`${codeFileName}`, "No survey modal", "Closing app");
-                          this.setState({noSurveyDialogVisible: false});
-                      }}/>
-                </TouchableHighlight>
-            </View>
-           </Modal>
+
+           { this.state.noSurveyDialogVisible &&
+                <View style={{  flex: 1,
+                                flexDirection: 'column',
+                                justifyContent: 'flex-start',
+                                alignItems: 'center',
+                                backgroundColor:'lavender',
+                                margin:20}}>
+                    <Text style={{margin:15, fontSize:20, borderBottomColor:'black', borderBottomWidth: StyleSheet.hairlineWidth, padding:5}}>
+                        Sorry, survey expired!
+                    </Text>
+                    <Text style={{fontSize:16, margin:10, marginTop:10}}>
+                        Advertisement/reminder for MIMI and suggestion to come back later.
+                    </Text>
+                       <TouchableHighlight style ={[commonStyles.buttonTouchHLStyle]}>
+                          <Button title="Ok, try later!"
+                              color="#20B2AA"
+                            onPress={() => {
+                              logger.info(`${codeFileName}`, "No survey modal", "Closing app");
+                              this.setState({noSurveyDialogVisible: false});
+                              BackHandler.exitApp();
+                          }}/>
+                    </TouchableHighlight>
+                </View>
+           }
 
       </View>
     );

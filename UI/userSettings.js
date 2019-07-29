@@ -58,9 +58,17 @@ static navigationOptions = ({ navigation }) => {
 
     componentDidMount()
     {
+        this.props.navigation.setParams({ backHandler: this.handleBackNavigation.bind(this)});
+
         this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
           BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
         );
+    }
+
+    componentWillUnmount()
+    {
+        this._didFocusSubscription && this._didFocusSubscription.remove();
+        this._willBlurSubscription && this._willBlurSubscription.remove();
     }
 
     onBackButtonPressAndroid = () =>
@@ -91,7 +99,8 @@ static navigationOptions = ({ navigation }) => {
                                 Alert.alert("We'll try to ask again, when you connect to another network");
                             }},
                           {text: 'YES', onPress: () => {this.setState({homeWifi: ssid})}},
-                        ]
+                        ],
+                        {cancelable: false}
                       );
                   }
                   this.setState({askWifi:false});
@@ -147,10 +156,6 @@ static navigationOptions = ({ navigation }) => {
         }
 
    }
-  componentDidMount()
-  {
-    this.props.navigation.setParams({ backHandler: this.handleBackNavigation.bind(this)});
-  }
 
   handleBackNavigation()
   {
