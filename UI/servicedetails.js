@@ -36,11 +36,6 @@ static navigationOptions = {
     );
   }
 
-  GetItem(item)
-  {
-    //Function for click on an item
-    //Alert.alert(item);
-  }
 
   constructor(props) 
   {
@@ -98,10 +93,6 @@ static navigationOptions = {
                  serviceCategoryName: _serviceCategory.name,
                  serviceNames: this.parseServiceNames(_serviceCategory)}, ()=>
                     this.setState({isAddServiceDialogVisible: this.state.serviceNames.length==0}));
-
-    this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
-              BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-            );
   }
 
   componentWillUnmount()

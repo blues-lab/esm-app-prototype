@@ -21,10 +21,6 @@ export default class AlvaPromptScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = { conversationTopic: '', noSurveyDialogVisible: false };
-
-    this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
-          BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-        );
   }
 
    startNewSurvey = () => //Will be called if participants indicate recent conversation
@@ -38,7 +34,11 @@ export default class AlvaPromptScreen extends React.Component {
         const _topic = navigation.getParam('conversationTopic', '');
         this.setState({conversationTopic:_topic})
    }
-
+  componentWillUnmount()
+  {
+      this._didFocusSubscription && this._didFocusSubscription.remove();
+      this._willBlurSubscription && this._willBlurSubscription.remove();
+  }
 
   render() {
     return (

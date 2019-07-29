@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, ScrollView, Image,
  TextInput, Alert, FlatList, TouchableHighlight, TouchableOpacity,
- Modal, CheckBox} from 'react-native';
+ Modal, CheckBox, BackHandler} from 'react-native';
 
 import * as RNFS from 'react-native-fs';
 import ElevatedView from 'react-native-elevated-view';
@@ -179,9 +179,7 @@ export default class ServiceMenuScreen extends React.Component {
         {
           serviceCategoriesJS: _fullJsonObj,
           serviceCategories: _serviceCategories
-        },
-        ()=>Alert.alert(this.state.serviceCategories.length.toString(),
-                                       JSON.stringify(this.state.serviceCategories[1]))
+        }
       )
 
   }
@@ -204,6 +202,10 @@ export default class ServiceMenuScreen extends React.Component {
   constructor(props) 
   {
     super(props);
+
+    this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
+                BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+        );
   }
 
   componentDidMount()
@@ -214,10 +216,12 @@ export default class ServiceMenuScreen extends React.Component {
       _surveyResponseJS.conversationTopic = _topic;
       this.setState({surveyResponseJS: _surveyResponseJS});
 
-      this.focusListener = navigation.addListener("didFocus", () => {
-            //Alert.alert("Focusing");
-        });
+
     this.loadServices();
+
+    this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
+              BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+            );
   }
 
   flatListItemSeparator = () =>
@@ -541,10 +545,19 @@ export default class ServiceMenuScreen extends React.Component {
     );
   }
 
-  componentWillUnmount() {
-      // Remove the event listener
-      this.focusListener.remove();
-    }
+  componentWillUnmount()
+  {
+    this._didFocusSubscription && this._didFocusSubscription.remove();
+    this._willBlurSubscription && this._willBlurSubscription.remove();
+  }
+
+onBackButtonPressAndroid = () =>
+{
+    //this.handleBackNavigation();
+    //Alert.alert("Back pressed!");
+    //this.props.navigation.goBack(null);
+    return true;
+};
 }
 
 
