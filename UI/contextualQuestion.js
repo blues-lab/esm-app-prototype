@@ -140,7 +140,11 @@ export default class ContextualQuestionScreen extends React.Component {
      time =  Date.now().toString()
      utilities.writeJSONFile(_surveyResponseJS, RNFS.DocumentDirectoryPath+"/response-"+ time+'.js', codeFileName, "saveResponse");
 
-     Alert.alert("Done!","You have earned $.2!");
+     Alert.alert("Congratulations!", "You have earned $.2!",
+               [
+                   {text: 'OK', onPress:() => {BackHandler.exitApp()}}
+               ]
+             )
    }
 
 
