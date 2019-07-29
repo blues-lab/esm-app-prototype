@@ -3,7 +3,7 @@ import {Platform, StyleSheet, Text, View, Button, Alert,
 DeviceEventEmitter, Image, TouchableHighlight, Modal, BackHandler} from 'react-native';
 import wifi from 'react-native-android-wifi';
 import Notification from 'react-native-android-local-notification';
-
+import * as RNFS from 'react-native-fs';
 import PushNotificationAndroid from 'react-native-push-notification';
 
 import AnimatedProgressWheel from 'react-native-progress-wheel';
@@ -24,13 +24,15 @@ import utilities from '../controllers/utilities';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
+import {USER_SETTINGS_FILE_PATH} from '../controllers/constants'
+
 
 
 export default class HomeScreen extends React.Component {
 
   static navigationOptions = {
         headerLeft: null,
-        headerTitle: <ToolBar title="Mimi" progress={0}/>
+        headerTitle: <ToolBar title="Mimi" showProgress={false}/>
       };
 
   constructor(props)
@@ -80,44 +82,68 @@ export default class HomeScreen extends React.Component {
     else
     {
         logger.info(codeFileName, 'componentDidMount', "Nth time app launch");
-
-        if(appStatus.surveyAvailable())//check if survey is available from app settings
+        if (await RNFS.exists(USER_SETTINGS_FILE_PATH))
         {
-            logger.info(codeFileName, 'componentDidMount', "New survey available. Asking for conversation.");
+            RNFS.readFile(USER_SETTINGS_FILE_PATH)
+                .then((_fileContent) =>
+               {
+                    logger.info(codeFileName, 'componentDidMount', 'Successfully read user settings file, checking if home wifi was set.');
+                    _userSettingsData = JSON.parse(_fileContent);
 
-              Alert.alert(
-                'New survey!',
-                'Have you had a conversation recently?',
-                [
-                  {text: 'Yes', onPress: () => {
-                      logger.info(`${codeFileName}`, "'Yes' to recent conversation", "Navigating to StartSurvey");
-                      //appStatus.setSurveyStatus("Started");
-                      this.props.navigation.navigate('StartSurvey');
-                    }},
-                  {text: 'No', onPress: () => {
-                        logger.info(`${codeFileName}`, "'No' to recent conversation", "Exiting App.");
+                    if(_userSettingsData.homeWifi.length==0)
+                    {
+                         this.props.navigation.navigate('UserSettings');
+                    }
+                    else
+                    {
+                        if(appStatus.surveyAvailable())//check if survey is available from app settings
+                        {
+                                  logger.info(codeFileName, 'componentDidMount', "New survey available. Asking for conversation.");
 
-                        Alert.alert("Thank you!", "We will try again later.",
-                          [
-                              {text: 'OK', onPress:() => {BackHandler.exitApp()}}
-                          ]
-                        )
-                        //this.setState({noSurveyDialogVisible: true});
-                  }}
-                ],
-                {cancelable: true},
-              );
+                                  Alert.alert(
+                                    'New survey!',
+                                    'Have you had a conversation recently?',
+                                    [
+                                      {text: 'Yes', onPress: () => {
+                                          logger.info(`${codeFileName}`, "'Yes' to recent conversation", "Navigating to StartSurvey");
+                                          //appStatus.setSurveyStatus("Started");
+                                          this.props.navigation.navigate('StartSurvey');
+                                        }},
+                                      {text: 'No', onPress: () => {
+                                            logger.info(`${codeFileName}`, "'No' to recent conversation", "Exiting App.");
+
+                                            Alert.alert("Thank you!", "We will try again later.",
+                                              [
+                                                  {text: 'OK', onPress:() => {BackHandler.exitApp()}}
+                                              ]
+                                            )
+                                            this.setState({noSurveyDialogVisible: true});
+                                      }}
+                                    ],
+                                    {cancelable: true},
+                                  );
+                        }
+                        else
+                        {
+                            logger.info(codeFileName, 'componentDidMount', "No survey available.");
+                        }
+                    }
+               })
+               .catch( (error) =>
+                {
+                    logger.error(codeFileName, 'componentDidMount', 'Error reading user settings file:'+error.message);
+                }
+               )
         }
         else
         {
-            logger.info(codeFileName, 'componentDidMount', "No survey available.");
-
+            this.props.navigation.navigate('UserSettings');
         }
     }
 
-      this.setState({noSurveyDialogVisible: true})
+      //this.setState({noSurveyDialogVisible: true})
 
-        this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
+      this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
             BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
       );
   }

@@ -7,10 +7,10 @@ import * as RNFS from 'react-native-fs';
 import commonStyle from './Style'
 import wifi from 'react-native-android-wifi';
 import utilities from '../controllers/utilities';
-
+import {USER_SETTINGS_FILE_PATH} from '../controllers/constants'
 
 const codeFileName="userSettings.js"
-const userSettingsFile= RNFS.DocumentDirectoryPath+'/usersettings.js';
+
 
 export default class UserSettingsScreen extends React.Component {
 
@@ -19,7 +19,6 @@ static navigationOptions = ({ navigation }) => {
 
     return{
         title: 'Settings',
-        headerLeft: <Button title='<'  onPress={() => {params.backHandler();}}/>
     };
   };
 
@@ -49,7 +48,7 @@ static navigationOptions = ({ navigation }) => {
         stateSaved: true
       };
 
-      this.loadSettings(userSettingsFile);
+      this.loadSettings();
 
       this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
             BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
@@ -81,6 +80,7 @@ static navigationOptions = ({ navigation }) => {
    interval=null;
    getHomeWiFi = ()=>
    {
+      showMsg = true;
       wifi.isEnabled((isEnabled) => {
       if (isEnabled)
         {
@@ -92,7 +92,7 @@ static navigationOptions = ({ navigation }) => {
                   if(ssid.length>0)
                   {
                       Alert.alert(
-                      'Home wifi',
+                      'Home WiFi',
                         'We will only send surveys when you are connected to the home WiFi. Is "'+ssid+'" your home wifi?',
                         [
                           {text: 'NO', onPress: () => {
@@ -102,6 +102,8 @@ static navigationOptions = ({ navigation }) => {
                         ],
                         {cancelable: false}
                       );
+
+                      showMsg=false;
                   }
                   this.setState({askWifi:false});
                   clearInterval(this.interval);
@@ -110,13 +112,20 @@ static navigationOptions = ({ navigation }) => {
           });
         }
       });
+
+      if(showMsg)
+      {
+        Alert.alert("Home WiFi",
+            'We will only send surveys when you are connected to the home WiFi. We wil ask about it again when you are connected to WiFi.',)
+      }
+
    }
 
-   async loadSettings(filePath)
+   async loadSettings()
    {
-        if (await RNFS.exists(filePath))
+        if (await RNFS.exists(USER_SETTINGS_FILE_PATH))
         {
-            RNFS.readFile(filePath)
+            RNFS.readFile(USER_SETTINGS_FILE_PATH)
                 .then((_fileContent) => {
 
                     logger.info(`${codeFileName}`, 'loadSettings', 'Successfully read file.');
@@ -287,7 +296,7 @@ static navigationOptions = ({ navigation }) => {
         sunTo: this.state.sunTo
     }
 
-    utilities.writeJSONFile(_settings, userSettingsFile, codeFileName, 'saveSettings');
+    utilities.writeJSONFile(_settings, USER_SETTINGS_FILE_PATH, codeFileName, 'saveSettings');
 
     Alert.alert("Settings saved!");
   }

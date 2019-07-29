@@ -54,44 +54,40 @@ class ToolBar extends React.Component {
   render() {
 
     return (
-        <View style={{flex:1, flexDirection:'row', justifyContent:'space-between', margin:2}}>
-            <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'center', width:70}}>
-            <View style={{flex:1, flexDirection:'column', justifyContent:'center',alignItems:'flex-start', width:70}}>
-
-                 <Text style={{marginLeft:10,marginBottom:8, fontWeight: 'bold',fontSize: 19}}>
+        <View style={{flex:1, flexDirection:'row', justifyContent:'center', alignItems:'stretch', margin:2}}>
+            <View style={{flex:1, flexDirection:'column', justifyContent:'center',alignItems:'stretch', width:300}}>
+                 <Text numberOfLines={1} style={{width:300,textAlign: "left", marginLeft:10,marginBottom:8, fontWeight: 'bold',fontSize: 20}}>
                     {this.props.title}
                  </Text>
                  <View style={{flex:1, flexDirection:'row', justifyContent:'center',alignItems:'center', marginBottom:5, marginLeft:20}}>
-                 <AnimatedProgressWheel style={{marginLeft:30, paddingLeft:30, backgroundColor:'blue'}}
-                      progress={this.props.progress}
-                      animateFromValue={0}
-                      duration={2000}
-                      color={'green'}
-                      backgroundColor={'#ffd280'}
-                      size={20}
-                      width={5}
-                  />
-                 <Text style={{marginLeft:10, fontSize:17}}>{this.state.minRemaining>9?this.state.minRemaining:'0'+this.state.minRemaining}:{this.state.secRemaining>9?this.state.secRemaining:'0'+this.state.secRemaining}</Text>
-            </View>
-            </View>
+                     <AnimatedProgressWheel style={{marginLeft:30, paddingLeft:30, backgroundColor:'blue'}}
+                          progress={this.props.progress}
+                          animateFromValue={0}
+                          duration={2000}
+                          color={'green'}
+                          backgroundColor={'#ffd280'}
+                          size={20}
+                          width={5}
+                      />
+                     <Text style={{marginLeft:10, fontSize:17}}>{this.state.minRemaining>9?this.state.minRemaining:'0'+this.state.minRemaining}:{this.state.secRemaining>9?this.state.secRemaining:'0'+this.state.secRemaining}</Text>
+                 </View>
             </View>
 
-<View style={{flex:1, flexDirection:'row', justifyContent:'flex-end',alignItems:'center', marginBottom:5}}>
-            <View style={{flex:1, flexDirection:'column', justifyContent:'center',alignItems:'center'}}>
-                <TouchableHighlight style={{height: 30, width:30,
-                                            marginLeft:5, marginRight:1,marginTop:10
-                                            }}
-                    onPress={() => this.props.navigation.navigate('UserSettings')}>
+            <View style={{flex:1, flexDirection:'column', justifyContent:'center',alignItems:'flex-end', marginBottom:5}}>
+                 <TouchableHighlight style={{height: 30, width:30,
+                                             marginLeft:5, marginRight:10,marginTop:10
+                                             }}
+                     onPress={() => this.props.navigation.navigate('UserSettings')}>
 
-                    <Image
-                     style={{width: '100%',
-                            height:25, resizeMode : 'contain' , marginBottom:10, marginTop:10}}
-                     source={require('../res/settings-icon.png')}
-                    />
-                 </TouchableHighlight>
-                 <Text style={{marginRight:0, color:'green', marginTop:5}}>${appStatus.getStatus().CompletedSurveys*0.2}</Text>
+                     <Image
+                      style={{width: '100%',
+                             height:25, resizeMode : 'contain' , marginBottom:10, marginTop:10}}
+                      source={require('../res/settings-icon.png')}
+                     />
+                  </TouchableHighlight>
+                  <Text style={{marginRight:10, color:'green', marginTop:5, marginBottom:5}}>${appStatus.getStatus().CompletedSurveys*0.2}</Text>
             </View>
-            </View>
+
         </View>
     );
   }
