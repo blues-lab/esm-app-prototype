@@ -15,7 +15,7 @@ class AppStatus
     appStatusFilePath = RNFS.DocumentDirectoryPath+'/appStatus.js';
     status = {
                  NotificationCountToday: 0,
-                 SurveyStatus: SURVEY_STATUS.AVAILABLE,
+                 SurveyStatus: SURVEY_STATUS.NOT_AVAILABLE,
                  LastNotificationTime: new Date(),
                  MaxNumberNotification: 5,
                  PromptDuration:60,
@@ -33,7 +33,7 @@ class AppStatus
             RNFS.readFile(this.appStatusFilePath)
                 .then((_fileContent) => {
 
-                    logger.info(`${codeFileName}`, 'loadStatus', 'Successfully read status file:'+_fileContent);
+                    logger.info(`${codeFileName}`, 'loadStatus', 'Successfully read app status file.');
                     this.status = JSON.parse(_fileContent);
                 })
                 .catch((error)=>
@@ -43,7 +43,7 @@ class AppStatus
         }
         else
         {
-            logger.info(codeFileName, 'loadStatus', 'Status file does not exist, creating one.');
+            logger.info(codeFileName, 'loadStatus', 'Status file does not exist so creating a new one.');
             utilities.writeJSONFile(this.status, this.appStatusFilePath,
                                        codeFileName, 'loadStatus')
         }
@@ -57,9 +57,9 @@ class AppStatus
     }
 
 
-    saveState()
+    saveAppStatus()
     {
-        utilities.writeJSONFile(this.status, this.appStatusFilePath, codeFileName, "saveState")
+        utilities.writeJSONFile(this.status, this.appStatusFilePath, codeFileName, "saveAppStatus")
     }
 
     setMaxNumberNotification(value)
@@ -67,7 +67,7 @@ class AppStatus
         logger.info(`${codeFileName}`, 'incrementNotificationCount',
             'Setting max notification number to '+value);
         this.status.MaxNumberNotification = value;
-        this.saveState();
+        this.saveAppStatus();
     }
 
     incrementNotificationCount()
@@ -75,7 +75,7 @@ class AppStatus
         logger.info(`${codeFileName}`, 'incrementNotificationCount',
             'Incrementing notification count to '+this.status.incrementNotificationCount+1)
         this.status.NotificationCountToday +=1;
-        this.saveState();
+        this.saveAppStatus();
     }
 
     setLastNotificationTime(value)
@@ -83,7 +83,7 @@ class AppStatus
         logger.info(`${codeFileName}`, 'setLastNotificationTime',
                     'Setting last notification time to '+value.toString());
         this.status.setLastNotificationTime = value;
-        this.saveState();
+        this.saveAppStatus();
     }
 
     setSurveyStatus(value)
@@ -91,13 +91,7 @@ class AppStatus
         logger.info(codeFileName, 'setSurveyStatus',
                     'Setting Survey Status to '+value.toString());
         this.status.SurveyStatus = value;
-        this.saveState();
-    }
-
-    surveyAvailable()
-    {
-        mins = (Date.now() - this.status.LastNotificationTime)/60000;
-        return true ;
+        this.saveAppStatus();
     }
 
     increaseCompletedSurveys()
@@ -105,7 +99,7 @@ class AppStatus
         this.status.CompletedSurveys+=1;
         logger.info(codeFileName, 'increaseCompletedSurveys',
                    'Increasing completed surveys to '+this.status.CompletedSurveys.toString());
-        this.saveState();
+        this.saveAppStatus();
     }
 }
 
