@@ -146,6 +146,9 @@ export default class ContextualQuestionScreen extends React.Component {
      appStatus.setSurveyStatus("Completed");
      notificationController.cancelNotifications();
 
+     logger.info(codeFileName, 'saveResponse', 'Updating completed survey count.');
+     appStatus.increaseCompletedSurveys();
+
      Alert.alert("Congratulations!", "You have earned $.2!",
                [
                    {text: 'OK', onPress:() => {BackHandler.exitApp()}}
