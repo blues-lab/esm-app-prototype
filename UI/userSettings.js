@@ -55,6 +55,75 @@ static navigationOptions = ({ navigation }) => {
           );
     }
 
+    getFromHour(day)
+    {
+        //return min+hour*60
+        time = null;
+        switch (day)
+        {
+          case 0:
+            time = this.state.sunFrom;
+            break;
+          case 1:
+            time = this.state.mondayFrom;
+            break;
+          case 2:
+            time = this.state.tuesdayFrom;
+            break;
+          case 3:
+            time = this.state.wedFrom;
+            break;
+          case 4:
+            time = this.state.thFrom;
+            break;
+          case 5:
+            time = this.state.friFrom;
+            break;
+          case 6:
+            time = this.state.satFrom;
+            break;
+        }
+
+        //Alert.alert(time,time.split(':')[0])
+        hr = time.split(':')[0]
+        min = time.split(':')[1]
+        return  Number(min)+Number(hr)*60;
+    }
+
+    getToHour(day)
+    {
+        //return min+hour*60
+        time = null;
+        switch (day)
+        {
+          case 0:
+            time = this.state.sunTo;
+            break;
+          case 1:
+            time = this.state.mondayTo;
+            break;
+          case 2:
+            time = this.state.tuesdayTo;
+            break;
+          case 3:
+            time = this.state.wedTo;
+            break;
+          case 4:
+            time = this.state.thTo;
+            break;
+          case 5:
+            time = this.state.friTo;
+            break;
+          case 6:
+            time = this.state.satTo;
+            break;
+        }
+
+        hr = time.split(':')[0]
+        min = time.split(':')[1]
+        return  Number(min)+Number(hr)*60;
+    }
+
     componentDidMount()
     {
         this.props.navigation.setParams({ backHandler: this.handleBackNavigation.bind(this)});
@@ -98,7 +167,7 @@ static navigationOptions = ({ navigation }) => {
                           {text: 'NO', onPress: () => {
                                 Alert.alert("We'll try to ask again, when you connect to another network");
                             }},
-                          {text: 'YES', onPress: () => {this.setState({homeWifi: ssid})}},
+                          {text: 'YES', onPress: () => {this.setState({homeWifi: ssid}, ()=>this.saveSettings())}},
                         ],
                         {cancelable: false}
                       );
@@ -199,10 +268,11 @@ static navigationOptions = ({ navigation }) => {
 
   handleDatePicked = (time) =>
   {
+
     if(this.state.currentDay=='mondayFrom')
     {
-        this.setState({mondayFrom: time.getHours()+":"+time.getMinutes(),
-            tuesdayFrom: time.getHours()+":"+time.getMinutes() });
+        this.setState({mondayFrom: time.getHours()+":"+time.getMinutes()});
+        this.setState({tuesdayFrom: time.getHours()+":"+time.getMinutes()});
         this.setState({wedFrom: time.getHours()+":"+time.getMinutes()});
         this.setState({thFrom: time.getHours()+":"+time.getMinutes()});
         this.setState({friFrom: time.getHours()+":"+time.getMinutes()});
@@ -211,8 +281,8 @@ static navigationOptions = ({ navigation }) => {
     }
     if(this.state.currentDay=='mondayTo')
     {
-        this.setState({mondayTo: time.getHours()+":"+time.getMinutes(),
-                    tuesdayTo: time.getHours()+":"+time.getMinutes()});
+        this.setState({mondayTo: time.getHours()+":"+time.getMinutes()});
+        this.setState({tuesdayTo: time.getHours()+":"+time.getMinutes()});
         this.setState({wedTo: time.getHours()+":"+time.getMinutes()});
         this.setState({thTo: time.getHours()+":"+time.getMinutes()});
         this.setState({friTo: time.getHours()+":"+time.getMinutes()});
@@ -297,8 +367,6 @@ static navigationOptions = ({ navigation }) => {
     }
 
     utilities.writeJSONFile(_settings, USER_SETTINGS_FILE_PATH, codeFileName, 'saveSettings');
-
-    Alert.alert("Settings saved!");
   }
 
   render() {
@@ -451,7 +519,11 @@ static navigationOptions = ({ navigation }) => {
             <TouchableHighlight style ={[commonStyle.buttonTouchHLStyle]}>
                  <Button title="Save settings"
                      color="#20B2AA"
-                     onPress={() => {this.saveSettings(); this.setState({stateSaved:true})}}
+                     onPress={() => {
+                                        this.saveSettings();
+                                        this.setState({stateSaved:true});
+                                        //Alert.alert("Settings saved!");
+                                    }}
                  />
              </TouchableHighlight>
 
