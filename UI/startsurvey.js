@@ -29,8 +29,9 @@ export default class SurveyStartScreen extends React.Component {
         );
   }
 
-  componentDidMount() {
-        this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
+  componentDidMount()
+  {
+      this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
       BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
     );
   }
@@ -96,7 +97,7 @@ export default class SurveyStartScreen extends React.Component {
                             <Button title="Next"
                                 color="#20B2AA"
                                 onPress={() => {
-                                    if(this.state.conversationTopic.length==0)
+                                    if(false &&(this.state.conversationTopic.length==0))
                                     {
                                         Alert.alert("Please insert conversation topic to continue.")
                                     }

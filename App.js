@@ -42,83 +42,6 @@ const backgroundJobPrompt = {
     jobKey: "showNotification",
     job: () =>
     {
-        logger.info(codeFileName, "showPrompt", "Getting app status.");
-        _appStatus = appStatus.getStatus();
-
-        logger.info(codeFileName, "showPrompt", "Loading user settings.");
-        _userSettingsData = null;
-
-        RNFS.exists(USER_SETTINGS_FILE_PATH)
-            .then( (exists) =>
-            {
-                if (exists)
-                {
-                    RNFS.readFile(USER_SETTINGS_FILE_PATH)
-                        .then((_fileContent) =>
-                        {
-                            logger.info(codeFileName, 'showPrompt', 'Successfully read user settings file.');
-                            _userSettingsData = JSON.parse(_fileContent);
-                        })
-                        .catch( (error)=>
-                        {
-                            logger.error(codeFileName, 'showPrompt', 'Failed to read User settings file.'+error.message);
-                        })
-                }
-                else
-                {
-                    logger.info(codeFileName,'showPrompt','User settings file does not exist.')
-                }
-            });
-
-
-        if(_appStatus.SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE)//if no survey is available, randomly create one
-        {
-            logger.info(codeFileName,"showPrompt", "No survey available.");
-            _remainingTime = _appStatus.getStatus().PromptDuration;
-            notificationController.cancelNotifications();
-            notificationController.showNotification("New survey available!",
-                 "Complete it within "+_remainingTime+" minutes and get $0.2!!!");
-            appStatus.setLastNotificationTime(new Date());
-            logger.info(codeFileName,"showPrompt", "Creating new survey and changing status to AVAILABLE.");
-            _appStatus.setSurveyStatus(SURVEY_STATUS.AVAILABLE);
-        }
-        else
-        {
-
-            const _lastNotificationTime = Date.parse(_appStatus.LastNotificationTime);
-            _minPassed = Math.floor((Date.now() - _lastNotificationTime)/60000);
-            logger.info(codeFileName,"showPrompt", _minPassed.toString()+" minutes have passed since the last notification date at "+_lastNotificationTime);
-
-            _remainingTime = 30 - _minPassed;
-
-            if(_remainingTime==0) //remove all existing notification
-            {
-                logger.info(codeFileName,"showPrompt", "Remaining time "+_remainingTime+", cancelling notifications.");
-                notificationController.cancelNotifications();
-                logger.info(codeFileName,"showPrompt", "Changing survey status to NOT_AVAILABLE.");
-                _appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
-            }
-            else
-            {
-                //Get day of week and then check for "Don't disturb" times (Sunday is 0, Monday is 1)
-
-
-                logger.info(codeFileName, 'showPrompt','Remaining time:'+_remainingTime+
-                            ', survey status:'+_appStatus.SurveyStatus+', notification count:'+_appStatus.NotificationCountToday)
-                if(
-                    _remainingTime>0 &&
-                    _appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE &&
-                    _appStatus.NotificationCountToday < MAX_NOTIFICATION_NUM
-                  )
-                {
-                    notificationController.cancelNotifications();
-                    notificationController.showNotification("New survey available!",
-                                "Complete it within "+_remainingTime+" minutes and get $0.2!!!");
-                    logger.info(codeFileName,"showPrompt", "Scheduling prompt done.");
-                    appStatus.setLastNotificationTime(new Date());
-                }
-            }
-        }
     }
 };
 
@@ -194,25 +117,7 @@ const appStatusFileLocal = RNFS.DocumentDirectoryPath+'/appStatus.js';
 export default class App extends Component<Props> 
 {
 
-    state = {};
-
-    componentDidMount()
-    {
-      AppState.addEventListener('change', this.handleAppStateChange);
-      logger.info(codeFileName, 'componentDidMount', 'Registering to listen app foreground/background transition');
-    }
-
-    componentWillUnmount()
-    {
-      AppState.removeEventListener('change', this.handleAppStateChange);
-      logger.info(codeFileName, 'componentDidMount', 'Removing listener for app foreground/background transition');
-    }
-
-    handleAppStateChange = (currentState) =>
-    {
-        logger.info(codeFileName, "handleAppStateChange", "Current app state: "+currentState);
-    }
-
+  state = {};
 
   async generateInitialFiles(assetFile, localFile)
   {
@@ -283,41 +188,62 @@ export default class App extends Component<Props>
                   }
               });
 
+          //Check if in "Don't disturb" times (Sunday is 0, Monday is 1)
+          doNotDisturb = false;
+          if(_userSettingsData)
+          {
+              day = new Date().getDay();
+              from = userSettings.getFromHour(day)
+              to= userSettings.getToHour(day)
 
-          if(_appStatus.SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE)
+              current = new Date();
+              now = current.getHours()*60 + current.getMinutes();
+              doNotDisturb = now>from && now<to;
+              if(doNotDisturb)
+              {
+                logger.info(codeFileName, 'showPrompt', 'Inside "Do not disturb" mode. Canceling all notification.');
+                notificationController.cancelNotifications();
+              }
+
+              logger.info(codeFileName, 'showPrompt', 'Not in "Do not disturb" mode.');
+          }
+
+          if( !doNotDisturb && (_appStatus.SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE))
           {//if no survey is available, randomly create one
 
-              logger.info(codeFileName,"showPrompt", "No survey available.");
-              _remainingTime = _appStatus.getStatus().PromptDuration;
-              notificationController.cancelNotifications();
-              notificationController.showNotification("New survey available!",
-                   "Complete it within "+_remainingTime+" minutes and get $0.2!!!");
-              appStatus.setLastNotificationTime(new Date());
-              logger.info(codeFileName,"showPrompt", "Creating new survey and changing status to AVAILABLE.");
-              _appStatus.setSurveyStatus(SURVEY_STATUS.AVAILABLE);
+              logger.info(codeFileName,"showPrompt", "No survey available; randomly creating one.");
+              _createSurvey = (Math.floor(Math.random() * 100) + 1)%2==0;
+              logger.info(codeFileName,"showPrompt", "No survey available; randomly creating one; _createSurvey:"+_createSurvey);
+
+              if(_createSurvey)
+              {
+                  logger.info(codeFileName,"showPrompt", "Creating new survey and changing status to AVAILABLE.");
+                  appStatus.setSurveyStatus(SURVEY_STATUS.AVAILABLE);
+                  _remainingTime = _appStatus.PromptDuration;
+                  notificationController.cancelNotifications();
+                  notificationController.showNotification("New survey available!",
+                       "Complete it within "+_remainingTime+" minutes and get $0.2!!!");
+                  appStatus.setLastNotificationTime(new Date());
+              }
           }
-          else
+          else if( !doNotDisturb && (_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE))
           {//Survey is available, show prompt if there is still time, or make survey expired
 
-              logger.info(codeFileName,"showPrompt", "Ongoing survey available.");
+              logger.info(codeFileName,"showPrompt", "Survey available.");
               const _lastNotificationTime = Date.parse(_appStatus.LastNotificationTime);
               _minPassed = Math.floor((Date.now() - _lastNotificationTime)/60000);
               logger.info(codeFileName,"showPrompt", _minPassed.toString()+" minutes have passed since the last notification date at "+_lastNotificationTime);
 
-              _remainingTime = 30 - _minPassed;
-
-              if(_remainingTime==0) //remove all existing notification
+              _remainingTime = _appStatus.PromptDuration - _minPassed;
+              if(_remainingTime==0) //survey expired, remove all existing notification
               {
                   logger.info(codeFileName,"showPrompt", "Remaining time "+_remainingTime+", cancelling notifications.");
                   notificationController.cancelNotifications();
                   logger.info(codeFileName,"showPrompt", "Changing survey status to NOT_AVAILABLE.");
-                  _appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
+                  appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
               }
               else
               {
-                  //Get day of week and then check for "Don't disturb" times (Sunday is 0, Monday is 1)
-
-
                   logger.info(codeFileName, 'showPrompt','Remaining time:'+_remainingTime+
                               ', survey status:'+_appStatus.SurveyStatus+', notification count:'+_appStatus.NotificationCountToday)
                   if(
@@ -329,7 +255,7 @@ export default class App extends Component<Props>
                       notificationController.cancelNotifications();
                       notificationController.showNotification("New survey available!",
                                   "Complete it within "+_remainingTime+" minutes and get $0.2!!!");
-                      logger.info(codeFileName,"showPrompt", "Scheduling prompt done.");
+                      logger.info(codeFileName,"showPrompt", "Showing latest notification at: "+new Date());
                       appStatus.setLastNotificationTime(new Date());
                   }
               }
@@ -340,6 +266,7 @@ export default class App extends Component<Props>
 
     return <AppContainer />;
   }
+
 }
 
 const styles = StyleSheet.create({

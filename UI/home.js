@@ -10,6 +10,7 @@ import AnimatedProgressWheel from 'react-native-progress-wheel';
 import logger from '../controllers/logger';
 
 import appStatus from '../controllers/appStatus';
+import {SURVEY_STATUS} from '../controllers/constants'
 
 //Import UIs
 import SurveyStartScreen from './startsurvey';
@@ -73,6 +74,8 @@ export default class HomeScreen extends React.Component {
       AppState.addEventListener('change', this.handleAppStateChange);
       logger.info(codeFileName, 'componentDidMount', 'Registering to listen app foreground/background transition');
 
+      logger.info(codeFileName, "componentDidMount", "Getting app status.");
+      const _appStatus = appStatus.getStatus();
 
     if(await this.isFirstLaunch()==null)
     {
@@ -97,7 +100,7 @@ export default class HomeScreen extends React.Component {
             RNFS.readFile(USER_SETTINGS_FILE_PATH)
                 .then((_fileContent) =>
                {
-                    logger.info(codeFileName, 'componentDidMount', 'Successfully read user settings file, checking if home wifi was set.');
+                    logger.info(codeFileName, 'componentDidMount', 'Successfully read user settings file. Checking if home wifi was set.');
                     _userSettingsData = JSON.parse(_fileContent);
 
                     if(_userSettingsData.homeWifi.length==0)
@@ -106,7 +109,7 @@ export default class HomeScreen extends React.Component {
                     }
                     else
                     {
-                        if(appStatus.surveyAvailable())//check if survey is available from app settings
+                        if(_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE)//check if survey is available from app settings
                         {
                                   logger.info(codeFileName, 'componentDidMount', "New survey available. Asking for conversation.");
 
@@ -115,8 +118,8 @@ export default class HomeScreen extends React.Component {
                                     'Have you had a conversation recently?',
                                     [
                                       {text: 'Yes', onPress: () => {
-                                          logger.info(`${codeFileName}`, "'Yes' to recent conversation", "Navigating to StartSurvey");
-                                          //appStatus.setSurveyStatus("Started");
+                                          logger.info(`${codeFileName}`, "'Yes' to recent conversation", " Setting survey status to ONGOING and navigating to StartSurvey");
+                                          appStatus.setSurveyStatus(SURVEY_STATUS.ONGOING);
                                           this.props.navigation.navigate('StartSurvey');
                                         }},
                                       {text: 'No', onPress: () => {
