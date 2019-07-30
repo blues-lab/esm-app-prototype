@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert,
-DeviceEventEmitter, Image, TouchableHighlight, Modal, BackHandler} from 'react-native';
+DeviceEventEmitter, Image, TouchableHighlight, Modal, BackHandler, AppState} from 'react-native';
 import wifi from 'react-native-android-wifi';
-import Notification from 'react-native-android-local-notification';
 import * as RNFS from 'react-native-fs';
 import PushNotificationAndroid from 'react-native-push-notification';
 
@@ -57,13 +56,24 @@ export default class HomeScreen extends React.Component {
       }
     }
 
+  handleAppStateChange = (currentState) =>
+  {
+      logger.info(codeFileName, "handleAppStateChange", "Current app state: "+currentState);
+      //this.setState({noSurveyDialogVisible: })
+  }
+
   componentDidUpdate()
   {
-
+    //Alert.alert("componentDidUpdate")
   }
+
 
   async componentDidMount()
   {
+      AppState.addEventListener('change', this.handleAppStateChange);
+      logger.info(codeFileName, 'componentDidMount', 'Registering to listen app foreground/background transition');
+
+
     if(await this.isFirstLaunch()==null)
     {
         logger.info(codeFileName, 'componentDidMount', "First time app launch. Trying to set flag.");
@@ -117,15 +127,16 @@ export default class HomeScreen extends React.Component {
                                                   {text: 'OK', onPress:() => {BackHandler.exitApp()}}
                                               ]
                                             )
-                                            this.setState({noSurveyDialogVisible: true});
+
                                       }}
                                     ],
-                                    {cancelable: true},
+                                    {cancelable: false},
                                   );
                         }
                         else
                         {
                             logger.info(codeFileName, 'componentDidMount', "No survey available.");
+                            this.setState({noSurveyDialogVisible:true})
                         }
                     }
                })
@@ -146,6 +157,12 @@ export default class HomeScreen extends React.Component {
       this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
             BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
       );
+
+      this.didFocusSubscription= this.props.navigation.addListener(
+              'didBlur',
+              payload => {}
+            );
+
   }
 
   UpdateWifiState()
@@ -193,7 +210,7 @@ export default class HomeScreen extends React.Component {
                                 backgroundColor:'lavender',
                                 margin:20}}>
                     <Text style={{margin:15, fontSize:20, borderBottomColor:'black', borderBottomWidth: StyleSheet.hairlineWidth, padding:5}}>
-                        Sorry, survey expired!
+                        Sorry, no survey available!
                     </Text>
                     <Text style={{fontSize:16, margin:10, marginTop:10}}>
                         Advertisement/reminder for MIMI and suggestion to come back later.
@@ -214,5 +231,11 @@ export default class HomeScreen extends React.Component {
     );
   }
 
+    componentWillUnmount()
+    {
+      AppState.removeEventListener('change', this.handleAppStateChange);
+      this._didFocusSubscription && this._didFocusSubscription.remove();
+      logger.info(codeFileName, 'componentWillUnmount', 'Removing listeners and evens handlers');
+    }
 
 }
