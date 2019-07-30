@@ -5,8 +5,9 @@ Image, TouchableHighlight} from 'react-native';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
 import { withNavigation } from 'react-navigation';
 import appStatus from '../controllers/appStatus';
-
+import logger from '../controllers/logger';
 const codeFileName='toolbar.js';
+import {SURVEY_STATUS} from '../controllers/constants'
 import commonStyles from './Style'
 
 class ToolBar extends React.Component {
@@ -18,7 +19,7 @@ class ToolBar extends React.Component {
   //var { navigate } = this.props.navigation;
   componentDidMount()
   {
-    this.setState({minRemaining:1, secRemaining:12})
+    this.setState({minRemaining:0, secRemaining:10})
     this.interval = setInterval(()=> this.updateTimeDisplay(), 1000)
   }
 
@@ -35,7 +36,7 @@ class ToolBar extends React.Component {
   updateTimeDisplay()
   {
     _minRemaining= this.state.minRemaining;
-    _secRemaining = this.state.secRemaining-1;
+    _secRemaining = Math.max(0, this.state.secRemaining-1);
     if(_secRemaining==0)
     {
         if(_minRemaining>0)
@@ -45,7 +46,16 @@ class ToolBar extends React.Component {
         }
         else
         {
-            //end
+            if(appStatus.getStatus().SurveyStatus == SURVEY_STATUS.ONGOING)
+            {
+                //ongoing survey expired, go back to home
+                logger.info(codeFileName, "updateTimeDisplay", "Survey expired, going back to home screen.");
+                appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
+                if(this.props.title!="Settings")
+                {
+                    this.props.navigation.navigate('Home');
+                }
+            }
         }
     }
     this.setState({secRemaining: _secRemaining, minRemaining: _minRemaining});
@@ -59,18 +69,21 @@ class ToolBar extends React.Component {
                  <Text numberOfLines={1} style={{width:300,textAlign: "left", marginLeft:10,marginBottom:8, fontWeight: 'bold',fontSize: 20}}>
                     {this.props.title}
                  </Text>
-                 <View style={{flex:1, flexDirection:'row', justifyContent:'center',alignItems:'center', marginBottom:5, marginLeft:20}}>
-                     <AnimatedProgressWheel style={{marginLeft:30, paddingLeft:30, backgroundColor:'blue'}}
-                          progress={this.props.progress}
-                          animateFromValue={0}
-                          duration={2000}
-                          color={'green'}
-                          backgroundColor={'#ffd280'}
-                          size={20}
-                          width={5}
-                      />
-                     <Text style={{marginLeft:10, fontSize:17}}>{this.state.minRemaining>9?this.state.minRemaining:'0'+this.state.minRemaining}:{this.state.secRemaining>9?this.state.secRemaining:'0'+this.state.secRemaining}</Text>
-                 </View>
+
+                 {(appStatus.getStatus().SurveyStatus == SURVEY_STATUS.ONGOING) &&
+                     <View style={{flex:1, flexDirection:'row', justifyContent:'center',alignItems:'center', marginBottom:5}}>
+                         <AnimatedProgressWheel style={{marginLeft:2, backgroundColor:'blue'}}
+                              progress={this.props.progress}
+                              animateFromValue={0}
+                              duration={2000}
+                              color={'green'}
+                              backgroundColor={'#ffd280'}
+                              size={20}
+                              width={5}
+                          />
+                         <Text style={{marginLeft:10, fontSize:17}}>{this.state.minRemaining>9?this.state.minRemaining:'0'+this.state.minRemaining}:{this.state.secRemaining>9?this.state.secRemaining:'0'+this.state.secRemaining}</Text>
+                     </View>
+                 }
             </View>
 
             <View style={{flex:1, flexDirection:'column', justifyContent:'center',alignItems:'flex-end', marginBottom:5}}>
