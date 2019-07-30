@@ -21,6 +21,7 @@ import logger from '../controllers/logger';
 
 import appStatus from '../controllers/appStatus';
 
+import notificationController from '../controllers/notificationController';
 
 import RelationGroup from './relationGroup';
 import LocationGroup from './locationGroup';
@@ -132,7 +133,7 @@ export default class ContextualQuestionScreen extends React.Component {
         "CompletionTime": new Date()
      }
 
-     logger.info(`${codeFileName}`, 'saveResponse', 'Response: '+JSON.stringify(_contextResponseJS));
+     logger.info(codeFileName, 'saveResponse', 'Saving survey response.');
 
      _surveyResponseJS = this.state.surveyResponseJS;
      _surveyResponseJS.ContextualQuestionResponses = _contextResponseJS;
@@ -140,11 +141,18 @@ export default class ContextualQuestionScreen extends React.Component {
      time =  Date.now().toString()
      utilities.writeJSONFile(_surveyResponseJS, RNFS.DocumentDirectoryPath+"/response-"+ time+'.js', codeFileName, "saveResponse");
 
+     logger.info(codeFileName, 'saveResponse', 'Updating survey status to "Completed" and removing all notifications.');
+
+     appStatus.setSurveyStatus("Completed");
+     notificationController.cancelNotifications();
+
      Alert.alert("Congratulations!", "You have earned $.2!",
                [
                    {text: 'OK', onPress:() => {BackHandler.exitApp()}}
                ]
              )
+
+     logger.info(codeFileName, 'saveResponse', 'All done!');
    }
 
 
