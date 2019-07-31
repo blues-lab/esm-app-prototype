@@ -171,8 +171,8 @@ static navigationOptions = ({ navigation }) => {
                           }},
                           {
                             text: 'YES', onPress: () => {
-                                this.setState({homeWifi: ssid}, ()=>this.saveSettings());
                                 logger.info(codeFileName, 'getHomeWiFi', 'Connected to home WiFi. Saving home WiFi:'+ssid);
+                                this.setState({homeWifi: ssid}, ()=>this.saveSettings(false));
                           }},
                         ],
                         {cancelable: false}
@@ -354,7 +354,7 @@ static navigationOptions = ({ navigation }) => {
       this.setState({ isDateTimePickerVisible: false });
     };
 
-  saveSettings()
+  saveSettings(showConfirmation)
   {
     _settings={
         homeWifi: this.state.homeWifi,
@@ -375,6 +375,31 @@ static navigationOptions = ({ navigation }) => {
     }
 
     utilities.writeJSONFile(_settings, USER_SETTINGS_FILE_PATH, codeFileName, 'saveSettings');
+
+    const _firstLaunch = this.props.navigation.getParam('firstLaunch', false);
+
+    if(_firstLaunch)
+    {
+        Alert.alert("Thank you!","Your settings have been saved. We will prompt you when new survey becomes available.");
+
+        Alert.alert(
+          'Thank you!',
+            "Your settings have been saved. We will prompt you when new survey becomes available.",
+            [
+              { text: 'OK', onPress: () => {
+                logger.info(codeFileName, 'saveSettings', 'Settings saved. Since this is first launch exiting app.')
+                BackHandler.exitApp();
+              }}
+            ],
+            {cancelable: false}
+          );
+
+    }
+    else if(showConfirmation)
+    {
+        Alert.alert("Settings saved!");
+        logger.info(codeFileName, 'saveSettings', 'Settings saved.')
+    }
   }
 
   render() {
@@ -528,9 +553,8 @@ static navigationOptions = ({ navigation }) => {
                  <Button title="Save settings"
                      color="#20B2AA"
                      onPress={() => {
-                                        this.saveSettings();
+                                        this.saveSettings(true);
                                         this.setState({stateSaved:true});
-                                        Alert.alert("Settings saved!");
                                     }}
                  />
              </TouchableHighlight>

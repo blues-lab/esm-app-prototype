@@ -102,7 +102,7 @@ class ToolBar extends React.Component {
                  <TouchableHighlight style={{height: 30, width:30,
                                              marginLeft:5, marginRight:10,marginTop:10
                                              }}
-                     onPress={() => this.props.navigation.navigate('UserSettings')}>
+                     onPress={() => this.props.navigation.navigate('UserSettings',{firstLaunch:false})}>
 
                      <Image
                       style={{width: '100%',

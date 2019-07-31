@@ -114,6 +114,7 @@ export default class HomeScreen extends React.Component {
 
     if(await this.isFirstLaunch()==null)
     {
+        //first launch
         logger.info(codeFileName, 'componentDidMount', "First time app launch. Trying to set flag.");
         try
         {
@@ -128,7 +129,7 @@ export default class HomeScreen extends React.Component {
         }
 
         logger.info(codeFileName, 'componentDidMount', "Navigating to settings page.");
-        this.props.navigation.navigate('UserSettings');
+        this.props.navigation.navigate('UserSettings', {firstLaunch:true});
         logger.info(codeFileName, 'componentDidMount', "Setting noSurveyDialogVisible=true.");
         this.setState({noSurveyDialogVisible: true});
     }
