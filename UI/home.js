@@ -69,6 +69,10 @@ export default class HomeScreen extends React.Component {
             this.setState({noSurveyDialogVisible:false})
             this.startSurvey();
         }
+        else if(_appStatus.SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE)
+        {//survey not is available
+            this.setState({noSurveyDialogVisible:true})
+        }
       }
   }
 
@@ -125,6 +129,8 @@ export default class HomeScreen extends React.Component {
 
         logger.info(codeFileName, 'componentDidMount', "Navigating to settings page.");
         this.props.navigation.navigate('UserSettings');
+        logger.info(codeFileName, 'componentDidMount', "Setting noSurveyDialogVisible=true.");
+        this.setState({noSurveyDialogVisible: true});
     }
     else
     {
