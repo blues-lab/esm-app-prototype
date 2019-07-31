@@ -160,18 +160,25 @@ static navigationOptions = ({ navigation }) => {
 
                   if(ssid.length>0)
                   {
+                      logger.info(codeFileName, 'getHomeWiFi', 'WiFi is connected. Asking for Home WiFi name.');
                       Alert.alert(
                       'Home WiFi',
                         'We will only send surveys when you are connected to the home WiFi. Is "'+ssid+'" your home wifi?',
                         [
-                          {text: 'NO', onPress: () => {
+                          { text: 'NO', onPress: () => {
                                 Alert.alert("We'll try to ask again, when you connect to another network");
-                            }},
-                          {text: 'YES', onPress: () => {this.setState({homeWifi: ssid}, ()=>this.saveSettings())}},
+                                logger.info(codeFileName, 'getHomeWiFi', 'Not connected to home WiFi. Will ask again');
+                          }},
+                          {
+                            text: 'YES', onPress: () => {
+                                this.setState({homeWifi: ssid}, ()=>this.saveSettings());
+                                logger.info(codeFileName, 'getHomeWiFi', 'Connected to home WiFi. Saving home WiFi:'+ssid);
+                          }},
                         ],
                         {cancelable: false}
                       );
 
+                      logger.info(codeFileName, 'getHomeWiFi', 'Setting showMsg=false');
                       showMsg=false;
                   }
                   this.setState({askWifi:false});
@@ -184,6 +191,7 @@ static navigationOptions = ({ navigation }) => {
 
       if(showMsg)
       {
+        logger.info(codeFileName, 'getHomeWiFi', 'WiFi is not enabled or connected. Will check again later.')
         Alert.alert("Home WiFi",
             'We will only send surveys when you are connected to the home WiFi. We wil ask about it again when you are connected to WiFi.',)
       }
