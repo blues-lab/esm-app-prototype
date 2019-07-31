@@ -19,7 +19,14 @@ class ToolBar extends React.Component {
   //var { navigate } = this.props.navigation;
   componentDidMount()
   {
-    this.setState({minRemaining:0, secRemaining:10})
+    const _appStatus = appStatus.getStatus();
+    const _lastNotificationTime = _appStatus.LastNotificationTime;
+    const _curTime = new Date();
+
+    const _secondsPassed = (_curTime.getTime() - _lastNotificationTime.getTime())/1000;
+    const _secRemaining = _appStatus.PromptDuration * 60 - _secondsPassed;
+
+    this.setState({minRemaining: Math.floor(_secRemaining/60), secRemaining: Math.floor(_secRemaining%60)})
     this.interval = setInterval(()=> this.updateTimeDisplay(), 1000)
   }
 
