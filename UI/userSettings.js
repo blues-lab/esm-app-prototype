@@ -522,7 +522,7 @@ static navigationOptions = ({ navigation }) => {
                      onPress={() => {
                                         this.saveSettings();
                                         this.setState({stateSaved:true});
-                                        //Alert.alert("Settings saved!");
+                                        Alert.alert("Settings saved!");
                                     }}
                  />
              </TouchableHighlight>
