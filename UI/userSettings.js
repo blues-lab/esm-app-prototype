@@ -172,7 +172,7 @@ static navigationOptions = ({ navigation }) => {
                           {
                             text: 'YES', onPress: () => {
                                 logger.info(codeFileName, 'getHomeWiFi', 'Connected to home WiFi. Saving home WiFi:'+ssid);
-                                this.setState({homeWifi: ssid}, ()=>this.saveSettings(false));
+                                this.setState({homeWifi: ssid}, ()=>this.saveSettings(true));
                           }},
                         ],
                         {cancelable: false}
@@ -354,7 +354,7 @@ static navigationOptions = ({ navigation }) => {
       this.setState({ isDateTimePickerVisible: false });
     };
 
-  saveSettings(showConfirmation)
+  saveSettings(onlySaveWiFi)
   {
     _settings={
         homeWifi: this.state.homeWifi,
@@ -377,8 +377,7 @@ static navigationOptions = ({ navigation }) => {
     utilities.writeJSONFile(_settings, USER_SETTINGS_FILE_PATH, codeFileName, 'saveSettings');
 
     const _firstLaunch = this.props.navigation.getParam('firstLaunch', false);
-
-    if(_firstLaunch)
+    if(_firstLaunch && !onlySaveWiFi)
     {
         Alert.alert("Thank you!","Your settings have been saved. We will prompt you when new survey becomes available.");
 
@@ -393,13 +392,13 @@ static navigationOptions = ({ navigation }) => {
             ],
             {cancelable: false}
           );
-
     }
-    else if(showConfirmation)
+    else if(!onlySaveWiFi)
     {
-        Alert.alert("Settings saved!");
-        logger.info(codeFileName, 'saveSettings', 'Settings saved.')
+         Alert.alert("Settings saved!");
+         logger.info(codeFileName, 'saveSettings', 'Settings saved.')
     }
+
   }
 
   render() {
@@ -553,7 +552,7 @@ static navigationOptions = ({ navigation }) => {
                  <Button title="Save settings"
                      color="#20B2AA"
                      onPress={() => {
-                                        this.saveSettings(true);
+                                        this.saveSettings(false);
                                         this.setState({stateSaved:true});
                                     }}
                  />
