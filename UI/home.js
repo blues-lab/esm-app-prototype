@@ -59,13 +59,44 @@ export default class HomeScreen extends React.Component {
 
   handleAppStateChange = (currentState) =>
   {
+      const _appStatus = appStatus.getStatus();
       logger.info(codeFileName, "handleAppStateChange", "Current app state: "+currentState);
-      //this.setState({noSurveyDialogVisible: })
+      if(currentState=='active')
+      {
+        //show appropriate screen based on if survey is available
+        if(_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE)
+        {//survey is available, but not ONGOING
+            this.setState({noSurveyDialogVisible:false})
+            this.startSurvey();
+        }
+      }
   }
 
-  componentDidUpdate()
+  startSurvey()
   {
-    //Alert.alert("componentDidUpdate")
+
+      Alert.alert(
+        'New survey!',
+        'Have you had a conversation recently?',
+        [
+          {text: 'Yes', onPress: () => {
+              logger.info(`${codeFileName}`, "'Yes' to recent conversation", " Setting survey status to ONGOING and navigating to StartSurvey");
+              appStatus.setSurveyStatus(SURVEY_STATUS.ONGOING);
+              this.props.navigation.navigate('StartSurvey');
+            }},
+          {text: 'No', onPress: () => {
+                logger.info(`${codeFileName}`, "'No' to recent conversation", "Exiting App.");
+
+                Alert.alert("Thank you!", "We will try again later.",
+                  [
+                      {text: 'OK', onPress:() => {BackHandler.exitApp()}}
+                  ]
+                )
+
+          }}
+        ],
+        {cancelable: false},
+      );
   }
 
 
@@ -82,7 +113,10 @@ export default class HomeScreen extends React.Component {
         logger.info(codeFileName, 'componentDidMount', "First time app launch. Trying to set flag.");
         try
         {
-            await AsyncStorage.setItem('@HAS_LAUNCHED', 'true')
+            await AsyncStorage.setItem('@HAS_LAUNCHED', 'true');
+            const _installationDate = new Date();
+            logger.info(codeFileName, 'componentDidMount', "Setting installation date:"+_installationDate.toString());
+            appStatus.setInstallationDate(_installationDate);
         }
         catch (e)
         {
@@ -95,6 +129,31 @@ export default class HomeScreen extends React.Component {
     else
     {
         logger.info(codeFileName, 'componentDidMount', "Nth time app launch");
+
+        //Check if study period has ended
+        {
+            _installationDate = _appStatus.InstallationDate;
+            if(_installationDate==null)
+            {
+                logger.error(codeFileName, 'componentDidMount', 'Fatal error: installation date is null!!!')
+            }
+            else
+            {
+                _oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+                _currDate = new Date();
+                _diffDays = Math.round(Math.abs((_currDate.getTime() - _installationDate.getTime())/(_oneDay)));
+                if(_diffDays > _appStatus.StudyDuration)
+                {
+                    logger.info(codeFileName, 'componentDidMount', "Survey period ended. Returning");
+                    return;
+                }
+                else
+                {
+                    logger.info(codeFileName, 'componentDidMount', "Still in survey period. "+_diffDays+' days have passed.');
+                }
+            }
+
+        }
         if (await RNFS.exists(USER_SETTINGS_FILE_PATH))
         {
             RNFS.readFile(USER_SETTINGS_FILE_PATH)
@@ -111,30 +170,8 @@ export default class HomeScreen extends React.Component {
                     {
                         if(_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE)//check if survey is available from app settings
                         {
-                                  logger.info(codeFileName, 'componentDidMount', "New survey available. Asking for conversation.");
-
-                                  Alert.alert(
-                                    'New survey!',
-                                    'Have you had a conversation recently?',
-                                    [
-                                      {text: 'Yes', onPress: () => {
-                                          logger.info(`${codeFileName}`, "'Yes' to recent conversation", " Setting survey status to ONGOING and navigating to StartSurvey");
-                                          appStatus.setSurveyStatus(SURVEY_STATUS.ONGOING);
-                                          this.props.navigation.navigate('StartSurvey');
-                                        }},
-                                      {text: 'No', onPress: () => {
-                                            logger.info(`${codeFileName}`, "'No' to recent conversation", "Exiting App.");
-
-                                            Alert.alert("Thank you!", "We will try again later.",
-                                              [
-                                                  {text: 'OK', onPress:() => {BackHandler.exitApp()}}
-                                              ]
-                                            )
-
-                                      }}
-                                    ],
-                                    {cancelable: false},
-                                  );
+                            logger.info(codeFileName, 'componentDidMount', "New survey available. Asking for conversation.");
+                            this.startSurvey();
                         }
                         else
                         {
