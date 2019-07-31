@@ -15,7 +15,7 @@ class AppStatus
     appStatusFilePath = RNFS.DocumentDirectoryPath+'/appStatus.js';
     status = {
                  NotificationCountToday: 0,
-                 SurveyStatus: SURVEY_STATUS.AVAILABLE,
+                 SurveyStatus: SURVEY_STATUS.NOT_AVAILABLE,
                  LastNotificationTime: new Date(),
                  MaxNumberNotification: 5,
                  PromptDuration:60,
@@ -65,33 +65,33 @@ class AppStatus
 
     setMaxNumberNotification(value)
     {
-        logger.info(`${codeFileName}`, 'incrementNotificationCount',
-            'Setting max notification number to '+value);
         this.status.MaxNumberNotification = value;
+        logger.info(`${codeFileName}`, 'incrementNotificationCount',
+            'Setting max notification number to '+this.status.MaxNumberNotification.toString());
         this.saveAppStatus();
     }
 
     incrementNotificationCount()
     {
-        logger.info(`${codeFileName}`, 'incrementNotificationCount',
-            'Incrementing notification count to '+this.status.incrementNotificationCount+1)
         this.status.NotificationCountToday +=1;
+        logger.info(`${codeFileName}`, 'incrementNotificationCount',
+            'Incrementing notification count to '+this.status.NotificationCountToday);
         this.saveAppStatus();
     }
 
     setLastNotificationTime(value)
     {
+        this.status.LastNotificationTime = value;
         logger.info(`${codeFileName}`, 'setLastNotificationTime',
-                    'Setting last notification time to '+value.toString());
-        this.status.setLastNotificationTime = value;
+                    'Setting last notification time to '+this.status.LastNotificationTime.toString());
         this.saveAppStatus();
     }
 
     setSurveyStatus(value)
     {
-        logger.info(codeFileName, 'setSurveyStatus',
-                    'Setting Survey Status to '+value.toString());
         this.status.SurveyStatus = value;
+        logger.info(codeFileName, 'setSurveyStatus',
+                    'Setting Survey Status to '+this.status.SurveyStatus.toString());
         this.saveAppStatus();
     }
 
@@ -104,9 +104,9 @@ class AppStatus
     }
     setInstallationDate(date)
     {
-        logger.info(codeFileName, 'setInstallationDate',
-                   'Setting installation date to '+date.toString());
         this.status.InstallationDate = date;
+        logger.info(codeFileName, 'setInstallationDate',
+                   'Setting installation date to '+this.status.InstallationDate.toString());
         this.saveAppStatus();
     }
 }
