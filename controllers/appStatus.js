@@ -15,13 +15,14 @@ class AppStatus
     appStatusFilePath = RNFS.DocumentDirectoryPath+'/appStatus.js';
     status = {
                  NotificationCountToday: 0,
-                 SurveyStatus: SURVEY_STATUS.NOT_AVAILABLE,
+                 SurveyStatus: SURVEY_STATUS.AVAILABLE,
                  LastNotificationTime: new Date(),
                  MaxNumberNotification: 5,
                  PromptDuration:60,
                  CompletedSurveys:0,
                  SurveyProgress:0,
-                 Earning:0
+                 InstallationDate: null,
+                 StudyDuration: 1,
              }
 
 
@@ -99,6 +100,13 @@ class AppStatus
         this.status.CompletedSurveys+=1;
         logger.info(codeFileName, 'increaseCompletedSurveys',
                    'Increasing completed surveys to '+this.status.CompletedSurveys.toString());
+        this.saveAppStatus();
+    }
+    setInstallationDate(date)
+    {
+        logger.info(codeFileName, 'setInstallationDate',
+                   'Setting installation date to '+date.toString());
+        this.status.InstallationDate = date;
         this.saveAppStatus();
     }
 }
