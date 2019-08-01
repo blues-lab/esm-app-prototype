@@ -140,6 +140,7 @@ export default class HomeScreen extends React.Component {
         //Check if study period has ended
         {
             _installationDate = _appStatus.InstallationDate;
+            logger.info(codeFileName, 'componentDidMount', 'Checking if study period has ended. _installationDate:'+_installationDate)
             if(_installationDate==null)
             {
                 logger.error(codeFileName, 'componentDidMount', 'Fatal error: installation date is null!!!')
