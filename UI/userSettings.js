@@ -12,6 +12,140 @@ import {USER_SETTINGS_FILE_PATH} from '../controllers/constants'
 const codeFileName="userSettings.js"
 
 
+export class UserSettingsEntity
+{
+
+    state = {
+            homeWifi:'',
+            mondayFrom:'00:00',
+            mondayTo:'00:00',
+            tuesdayFrom:'00:00',
+            tuesdayTo:'00:00',
+            wedFrom: '00:00',
+            wedTo:'00:00',
+            thFrom:'00:00',
+            thTo:'00:00',
+            friFrom:'00:00',
+            friTo:'00:00',
+            satFrom:'00:00',
+            satTo:'00:00',
+            sunFrom:'00:00',
+            sunTo:'00:00'
+          };
+    constructor()
+    {
+        RNFS.exists(USER_SETTINGS_FILE_PATH)
+            .then( (exists) =>
+            {
+                if (exists)
+                {
+                    RNFS.readFile(USER_SETTINGS_FILE_PATH)
+                        .then((_fileContent) => {
+
+                            logger.info(`${codeFileName}`, 'constructor', 'Successfully read file.');
+                            _userSettingsData = JSON.parse(_fileContent);
+                            this.setState({homeWifi: _userSettingsData.homeWifi,
+
+                                          mondayFrom: _userSettingsData.mondayFrom,
+                                          mondayTo: _userSettingsData.mondayTo,
+                                          tuesdayFrom: _userSettingsData.tuesdayFrom,
+                                          tuesdayTo: _userSettingsData.tuesdayTo,
+                                          wedFrom: _userSettingsData.wedFrom,
+                                          wedTo: _userSettingsData.wedTo,
+                                          thFrom: _userSettingsData.thFrom,
+                                          thTo: _userSettingsData.thTo,
+                                          friFrom: _userSettingsData.friFrom,
+                                          friTo: _userSettingsData.friTo,
+                                          satFrom: _userSettingsData.satFrom,
+                                          satTo: _userSettingsData.satTo,
+                                          sunFrom: _userSettingsData.sunFrom,
+                                          sunTo: _userSettingsData.sunTo});
+                        })
+                        .catch( (error)=>{
+                            logger.error(`${codeFileName}`, 'constructor', 'Failed to read file:'+error.message);
+                          })
+                }
+                else
+                {
+                    logger.info(`${codeFileName}`, 'constructor', 'User settings file does not exist to read file.');
+                }
+            })
+             .catch( (error)=>{
+                        logger.error(`${codeFileName}`, 'constructor', 'Failed to check if file exists:'+error.message);
+              })
+
+    }
+
+     getFromHour(day)
+        {
+            //return min+hour*60
+            time = null;
+            switch (day)
+            {
+              case 0:
+                time = this.state.sunFrom;
+                break;
+              case 1:
+                time = this.state.mondayFrom;
+                break;
+              case 2:
+                time = this.state.tuesdayFrom;
+                break;
+              case 3:
+                time = this.state.wedFrom;
+                break;
+              case 4:
+                time = this.state.thFrom;
+                break;
+              case 5:
+                time = this.state.friFrom;
+                break;
+              case 6:
+                time = this.state.satFrom;
+                break;
+            }
+
+            //Alert.alert(time,time.split(':')[0])
+            hr = time.split(':')[0]
+            min = time.split(':')[1]
+            return  Number(min)+Number(hr)*60;
+        }
+
+        getToHour(day)
+        {
+            //return min+hour*60
+            time = null;
+            switch (day)
+            {
+              case 0:
+                time = this.state.sunTo;
+                break;
+              case 1:
+                time = this.state.mondayTo;
+                break;
+              case 2:
+                time = this.state.tuesdayTo;
+                break;
+              case 3:
+                time = this.state.wedTo;
+                break;
+              case 4:
+                time = this.state.thTo;
+                break;
+              case 5:
+                time = this.state.friTo;
+                break;
+              case 6:
+                time = this.state.satTo;
+                break;
+            }
+
+            hr = time.split(':')[0]
+            min = time.split(':')[1]
+            return  Number(min)+Number(hr)*60;
+        }
+}
+
 export default class UserSettingsScreen extends React.Component {
 
 static navigationOptions = ({ navigation }) => {
@@ -53,75 +187,6 @@ static navigationOptions = ({ navigation }) => {
       this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
             BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
           );
-    }
-
-    getFromHour(day)
-    {
-        //return min+hour*60
-        time = null;
-        switch (day)
-        {
-          case 0:
-            time = this.state.sunFrom;
-            break;
-          case 1:
-            time = this.state.mondayFrom;
-            break;
-          case 2:
-            time = this.state.tuesdayFrom;
-            break;
-          case 3:
-            time = this.state.wedFrom;
-            break;
-          case 4:
-            time = this.state.thFrom;
-            break;
-          case 5:
-            time = this.state.friFrom;
-            break;
-          case 6:
-            time = this.state.satFrom;
-            break;
-        }
-
-        //Alert.alert(time,time.split(':')[0])
-        hr = time.split(':')[0]
-        min = time.split(':')[1]
-        return  Number(min)+Number(hr)*60;
-    }
-
-    getToHour(day)
-    {
-        //return min+hour*60
-        time = null;
-        switch (day)
-        {
-          case 0:
-            time = this.state.sunTo;
-            break;
-          case 1:
-            time = this.state.mondayTo;
-            break;
-          case 2:
-            time = this.state.tuesdayTo;
-            break;
-          case 3:
-            time = this.state.wedTo;
-            break;
-          case 4:
-            time = this.state.thTo;
-            break;
-          case 5:
-            time = this.state.friTo;
-            break;
-          case 6:
-            time = this.state.satTo;
-            break;
-        }
-
-        hr = time.split(':')[0]
-        min = time.split(':')[1]
-        return  Number(min)+Number(hr)*60;
     }
 
     componentDidMount()
