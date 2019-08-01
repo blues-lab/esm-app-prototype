@@ -42,14 +42,14 @@ class AppStatus
             RNFS.readFile(this.appStatusFilePath)
                 .then((_fileContent) => {
                     this.status = JSON.parse(_fileContent);
-                    this.status.InstallationDate =  Date.parse(this.status.InstallationDate);
+                    this.status.InstallationDate =  new Date(this.status.InstallationDate);
                     if(this.status.FirstNotificationTime!=null)
                     {
-                        this.status.FirstNotificationTime = Date(this.status.FirstNotificationTime);
+                        this.status.FirstNotificationTime = new Date(this.status.FirstNotificationTime);
                     }
                     if(this.status.LastNotificationTime!=null)
                     {
-                        this.status.LastNotificationTime = Date(this.status.LastNotificationTime);
+                        this.status.LastNotificationTime = new Date(this.status.LastNotificationTime);
                     }
 
 
@@ -128,9 +128,9 @@ class AppStatus
                    'Increasing completed surveys to '+this.status.CompletedSurveys);
         this.saveAppStatus();
     }
-    setInstallationDate(date)
+    setInstallationDate(value)
     {
-        this.status.InstallationDate = date;
+        this.status.InstallationDate = value;
         logger.info(codeFileName, 'setInstallationDate',
                    'Setting installation date to '+this.status.InstallationDate);
         this.saveAppStatus();
