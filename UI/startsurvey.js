@@ -103,7 +103,12 @@ export default class SurveyStartScreen extends React.Component {
                                     }
                                     else
                                     {
-                                        this.props.navigation.navigate('AlvaPrompt', {conversationTopic: this.state.conversationTopic})}
+                                        this.props.navigation.navigate('AlvaPrompt',
+                                            {
+                                                conversationTopic: this.state.conversationTopic,
+                                                surveyProgress: 20
+                                            }
+                                        )}
                                     }
                                 }
                             />

@@ -42,6 +42,7 @@ class ToolBar extends React.Component {
 
 
         this.setState({minRemaining: Math.floor(_secRemaining/60), secRemaining: Math.floor(_secRemaining%60)})
+        //this.setState({minRemaining: 4, secRemaining: 20})
         this.interval = setInterval(()=> this.updateTimeDisplay(), 1000)
     }
     else

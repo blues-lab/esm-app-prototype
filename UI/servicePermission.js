@@ -26,13 +26,19 @@ const noShare = 2;
     {label: 'No, I will not allow access to any relevant parts of the conversation', value: noShare}
   ];
 
-export default class ServicePermissionScreen extends React.Component {
+export default class ServicePermissionScreen extends React.Component
+{
 
- static navigationOptions = {
-      headerLeft: null,
-      headerTitle: <ToolBar title="Permission" progress={70}/>
+// static navigationOptions = {
+//      headerLeft: null,
+//      headerTitle: <ToolBar title="Permission" progress={70}/>
+//    };
+static navigationOptions = ({ navigation }) => {
+    return {
+        headerLeft: null,
+        headerTitle: <ToolBar title="Permission" progress={navigation.state.params.surveyProgress}/>,
     };
-
+  };
 
   state= {  serviceName:"NO-SERVICE",
             sharingDecision:fullShare,

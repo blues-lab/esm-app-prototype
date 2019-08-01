@@ -23,10 +23,17 @@ const codeFileName ='servicemenu.js';
 export default class ServiceMenuScreen extends React.Component {
 
 
-  static navigationOptions = {
-      headerLeft: null,
-      headerTitle: <ToolBar title="Service categories" progress={20}/>
+//  static navigationOptions = {
+//      headerLeft: null,
+//      headerTitle: <ToolBar title="Service categories" progress={20}/>
+//    };
+//
+  static navigationOptions = ({ navigation }) => {
+    return {
+        headerLeft: null,
+        headerTitle: <ToolBar title="Service categories" progress={navigation.state.params.surveyProgress}/>,
     };
+  };
 
   state = {
     serviceCategoriesJS: '',        //JSON object loaded from file and then parsed
@@ -214,7 +221,8 @@ export default class ServiceMenuScreen extends React.Component {
       const _topic = navigation.getParam('conversationTopic', '');
       _surveyResponseJS = this.state.surveyResponseJS;
       _surveyResponseJS.conversationTopic = _topic;
-      this.setState({surveyResponseJS: _surveyResponseJS});
+      this.setState({surveyResponseJS: _surveyResponseJS,
+                    surveyProgress:navigation.getParam('surveyProgress', 0)});
 
 
     this.loadServices();
@@ -330,7 +338,10 @@ export default class ServiceMenuScreen extends React.Component {
 
         this.setState({permissionModalVisible: false, _surveyResponseJS: _surveyResponseJS}, ()=>
             this.props.navigation.navigate('ContextualQuestion',
-                {surveyResponseJS: this.state.surveyResponseJS}));
+                {
+                    surveyResponseJS: this.state.surveyResponseJS,
+                    surveyProgress: 80
+                }));
      }
   }
 
@@ -386,12 +397,14 @@ export default class ServiceMenuScreen extends React.Component {
         this.setState({permissionPageIdx: _permissionPageIdx,
                        activeServiceCategoryName: _permissionPages[_permissionPageIdx].categoryName,
                        activeServiceName: _permissionPages[_permissionPageIdx].serviceName,
-                       permissionModalVisible: false});
+                       permissionModalVisible: false,
+                       surveyProgress: this.state.surveyProgress+Math.floor(40/_permissionPages.length)});
 
         this.props.navigation.navigate('ServicePermission',
                     {serviceName : _permissionPages[_permissionPageIdx].serviceName,
                     serviceCategoryName: _permissionPages[_permissionPageIdx].categoryName,
-                    permissionResponseHandler : this.savePermissionResponse.bind(this)});
+                    permissionResponseHandler : this.savePermissionResponse.bind(this),
+                    surveyProgress: this.state.surveyProgress});
     }
 
   }
@@ -525,7 +538,10 @@ export default class ServiceMenuScreen extends React.Component {
                 {
                     logger.info("ServiceMenu","SaveButton.onPress", "Navigating to contextual question page.");
                     this.props.navigation.navigate('ContextualQuestion',
-                                                    {surveyResponseJS: this.state.surveyResponseJS});
+                                                   {
+                                                     surveyResponseJS: this.state.surveyResponseJS,
+                                                     surveyProgress: 80
+                                                   });
                 }
             }}
         />

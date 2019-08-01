@@ -37,14 +37,17 @@ import utilities from '../controllers/utilities';
 export default class ContextualQuestionScreen extends React.Component {
 
 
-  static navigationOptions = {
-      headerTitle: <ToolBar title="Contextual questions" progress={90}/>,
-      headerLeft: null
+//  static navigationOptions = {
+//      headerTitle: <ToolBar title="Contextual questions" progress={80}/>,
+//      headerLeft: null
+//    };
+
+static navigationOptions = ({ navigation }) => {
+    return {
+        headerLeft: null,
+        headerTitle: <ToolBar title="Contextual questions" progress={navigation.state.params.surveyProgress}/>,
     };
-
-
-
-
+  };
 
 
   constructor(props) {
@@ -69,7 +72,8 @@ export default class ContextualQuestionScreen extends React.Component {
     const { navigation } = this.props;
     const _surveyResponseJS = navigation.getParam('surveyResponseJS', null);
 
-    this.setState({surveyResponseJS: _surveyResponseJS});
+    this.setState({surveyResponseJS: _surveyResponseJS,
+                   surveyProgress: navigation.getParam('surveyProgress', 0)});
 
 //    this.setState({surveyResponseJS: _surveyResponseJS}, ()=>
 //                    Alert.alert("surveyResponseJS", JSON.stringify(this.state.surveyResponseJS)));
@@ -259,7 +263,7 @@ export default class ContextualQuestionScreen extends React.Component {
                     {
                         if(this.state.surrounding)
                         {
-                            this.setState({surrounding:false})
+                            this.setState({surrounding:false, surveyProgress:90})
                         }
                         else
                         {

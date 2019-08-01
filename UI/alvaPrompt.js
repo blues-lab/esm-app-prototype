@@ -13,8 +13,10 @@ import ToolBar from './toolbar';
 
 export default class AlvaPromptScreen extends React.Component {
 
-  static navigationOptions = {
-  headerTitle: <ToolBar title="MIMI" progress={10}/>,
+  static navigationOptions = ({ navigation }) => {
+    return {
+        headerTitle: <ToolBar title="MIMI" progress={navigation.state.params.surveyProgress}/>,
+    };
    // headerLeft: null
   };
 
@@ -72,7 +74,11 @@ export default class AlvaPromptScreen extends React.Component {
                             <Button title="Next"
                                 color="#20B2AA"
                                 onPress={() => {
-                                        this.props.navigation.navigate('ServiceMenu', {conversationTopic:this.state.conversationTopic});
+                                        this.props.navigation.navigate('ServiceMenu',
+                                            {
+                                                conversationTopic:this.state.conversationTopic,
+                                                surveyProgress: 30
+                                            });
                                     }
                                 }
                             />
