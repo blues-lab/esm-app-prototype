@@ -16,23 +16,39 @@ class ToolBar extends React.Component {
 
   interval = null;
 
-  //var { navigate } = this.props.navigation;
   componentDidMount()
   {
     logger.info(codeFileName, 'componentDidMount', 'getting appStatus');
     const _appStatus = appStatus.getStatus();
-    const _lastNotificationTime = _appStatus.LastNotificationTime;
-    const _curTime = new Date();
 
-    logger.info(codeFileName, 'componentDidMount', 'curTime:'+_curTime.toString()+'. _lastNotificationTime:'+_lastNotificationTime.toString());
-    const _secondsPassed = (_curTime.getTime() - _lastNotificationTime.getTime())/1000;
-    const _secRemaining = _appStatus.PromptDuration * 60 - _secondsPassed;
+    if(_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING)
+    {
+        logger.info(codeFileName, 'componentDidMount', 'Survey status is ONGOING so setting up toolbar to show remaining time.')
+        const _firstNotificationTime = _appStatus.FirstNotificationTime;
 
-    logger.info(codeFileName, 'componentDidMount', '_secRemaining:'+_secRemaining);
+        if(_firstNotificationTime==null)
+        {
+            logger.error(codeFileName, 'componentDidMount', 'Fatal error: _firstNotificationTime is null. Returning.');
+            return;
+        }
+
+        const _curTime = new Date();
+
+        logger.info(codeFileName, 'componentDidMount', 'curTime:'+_curTime+'. _firstNotificationTime:'+_firstNotificationTime);
+        const _secondsPassed = (_curTime.getTime() - _firstNotificationTime.getTime())/1000;
+        const _secRemaining = _appStatus.PromptDuration * 60 - _secondsPassed;
+
+        logger.info(codeFileName, 'componentDidMount', '_secRemaining:'+_secRemaining);
 
 
-    this.setState({minRemaining: Math.floor(_secRemaining/60), secRemaining: Math.floor(_secRemaining%60)})
-    this.interval = setInterval(()=> this.updateTimeDisplay(), 1000)
+        this.setState({minRemaining: Math.floor(_secRemaining/60), secRemaining: Math.floor(_secRemaining%60)})
+        this.interval = setInterval(()=> this.updateTimeDisplay(), 1000)
+    }
+    else
+    {
+        logger.info(codeFileName, 'componentDidMount', 'No survey is ONGOING. Returning.');
+        return;
+    }
   }
 
   componentWillUnmount()

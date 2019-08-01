@@ -16,7 +16,8 @@ class AppStatus
     status = {
                  NotificationCountToday: 0,
                  SurveyStatus: SURVEY_STATUS.NOT_AVAILABLE,
-                 LastNotificationTime: new Date(),
+                 FirstNotificationTime: null,
+                 LastNotificationTime: null,
                  MaxNumberNotification: 5,
                  PromptDuration:60,
                  CompletedSurveys:0,
@@ -26,6 +27,13 @@ class AppStatus
              }
 
 
+    constructor(props)
+    {
+        //super(props);
+        this.loadStatus();
+    }
+
+
     async loadStatus()
     {
 
@@ -33,9 +41,19 @@ class AppStatus
         {
             RNFS.readFile(this.appStatusFilePath)
                 .then((_fileContent) => {
-
-                    logger.info(`${codeFileName}`, 'loadStatus', 'Successfully read app status file.');
                     this.status = JSON.parse(_fileContent);
+                    this.status.InstallationDate =  Date.parse(this.status.InstallationDate);
+                    if(this.status.FirstNotificationTime!=null)
+                    {
+                        this.status.FirstNotificationTime = Date.parse(this.status.FirstNotificationTime);
+                    }
+                    if(this.status.LastNotificationTime!=null)
+                    {
+                        this.status.LastNotificationTime = Date.parse(this.status.LastNotificationTime);
+                    }
+
+
+                    logger.info(`${codeFileName}`, 'loadStatus', 'Successfully read app status file:'+JSON.stringify(this.status));
                 })
                 .catch((error)=>
                 {
@@ -67,7 +85,7 @@ class AppStatus
     {
         this.status.MaxNumberNotification = value;
         logger.info(`${codeFileName}`, 'incrementNotificationCount',
-            'Setting max notification number to '+this.status.MaxNumberNotification.toString());
+            'Setting max notification number to '+this.status.MaxNumberNotification);
         this.saveAppStatus();
     }
 
@@ -83,7 +101,15 @@ class AppStatus
     {
         this.status.LastNotificationTime = value;
         logger.info(`${codeFileName}`, 'setLastNotificationTime',
-                    'Setting last notification time to '+this.status.LastNotificationTime.toString());
+                    'Setting last notification time to '+this.status.LastNotificationTime);
+        this.saveAppStatus();
+    }
+
+    setFirstNotificationTime(value)
+    {
+        this.status.FirstNotificationTime = value;
+        logger.info(`${codeFileName}`, 'setFirstNotificationTime',
+                    'Setting first notification time to '+this.status.FirstNotificationTime);
         this.saveAppStatus();
     }
 
@@ -91,7 +117,7 @@ class AppStatus
     {
         this.status.SurveyStatus = value;
         logger.info(codeFileName, 'setSurveyStatus',
-                    'Setting Survey Status to '+this.status.SurveyStatus.toString());
+                    'Setting Survey Status to '+this.status.SurveyStatus);
         this.saveAppStatus();
     }
 
@@ -99,18 +125,18 @@ class AppStatus
     {
         this.status.CompletedSurveys+=1;
         logger.info(codeFileName, 'increaseCompletedSurveys',
-                   'Increasing completed surveys to '+this.status.CompletedSurveys.toString());
+                   'Increasing completed surveys to '+this.status.CompletedSurveys);
         this.saveAppStatus();
     }
     setInstallationDate(date)
     {
         this.status.InstallationDate = date;
         logger.info(codeFileName, 'setInstallationDate',
-                   'Setting installation date to '+this.status.InstallationDate.toString());
+                   'Setting installation date to '+this.status.InstallationDate);
         this.saveAppStatus();
     }
 }
 
 appStatus = new AppStatus();
-appStatus.loadStatus();
+//appStatus.loadStatus();
 export default appStatus;
