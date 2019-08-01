@@ -14,7 +14,7 @@ class AppStatus
 {
     appStatusFilePath = RNFS.DocumentDirectoryPath+'/appStatus.js';
     status = {
-                 NotificationCountToday: 0,
+                 SurveyCountToday: 0, //how many surveys were created today
                  SurveyStatus: SURVEY_STATUS.NOT_AVAILABLE,
                  FirstNotificationTime: null,
                  LastNotificationTime: null,
@@ -45,11 +45,11 @@ class AppStatus
                     this.status.InstallationDate =  Date.parse(this.status.InstallationDate);
                     if(this.status.FirstNotificationTime!=null)
                     {
-                        this.status.FirstNotificationTime = Date.parse(this.status.FirstNotificationTime);
+                        this.status.FirstNotificationTime = Date(this.status.FirstNotificationTime);
                     }
                     if(this.status.LastNotificationTime!=null)
                     {
-                        this.status.LastNotificationTime = Date.parse(this.status.LastNotificationTime);
+                        this.status.LastNotificationTime = Date(this.status.LastNotificationTime);
                     }
 
 
@@ -89,11 +89,11 @@ class AppStatus
         this.saveAppStatus();
     }
 
-    incrementNotificationCount()
+    incrementSurveyCountToday()
     {
-        this.status.NotificationCountToday +=1;
-        logger.info(`${codeFileName}`, 'incrementNotificationCount',
-            'Incrementing notification count to '+this.status.NotificationCountToday);
+        this.status.SurveyCountToday +=1;
+        logger.info(`${codeFileName}`, 'incrementSurveyCountToday',
+            'Incrementing survey count to '+this.status.SurveyCountToday);
         this.saveAppStatus();
     }
 
@@ -133,6 +133,13 @@ class AppStatus
         this.status.InstallationDate = date;
         logger.info(codeFileName, 'setInstallationDate',
                    'Setting installation date to '+this.status.InstallationDate);
+        this.saveAppStatus();
+    }
+    setSurveyProgress(value)
+    {
+        this.status.SurveyProgress= date;
+        logger.info(codeFileName, 'setSurveyProgress',
+                   'Setting survey progress to '+this.status.SurveyProgress);
         this.saveAppStatus();
     }
 }
