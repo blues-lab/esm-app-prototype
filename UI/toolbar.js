@@ -8,7 +8,11 @@ import appStatus from '../controllers/appStatus';
 import logger from '../controllers/logger';
 const codeFileName='toolbar.js';
 import {SURVEY_STATUS} from '../controllers/constants'
-import commonStyles from './Style'
+import commonStyles from './Style';
+
+import ProgressBarAnimated from 'react-native-progress-bar-animated';
+
+import { ProgressBar, Colors } from 'react-native-paper';
 
 class ToolBar extends React.Component {
 
@@ -93,44 +97,43 @@ class ToolBar extends React.Component {
   render() {
 
     return (
-        <View style={{flex:1, flexDirection:'row', justifyContent:'center', alignItems:'stretch', margin:2}}>
-            <View style={{flex:1, flexDirection:'column', justifyContent:'center',alignItems:'stretch', width:300}}>
-                 <Text numberOfLines={1} style={{width:300,textAlign: "left", marginLeft:10,marginBottom:8, fontWeight: 'bold',fontSize: 20}}>
-                    {this.props.title}
-                 </Text>
+    <View style={{flex:1, flexDirection:'row', justifyContent:'space-between', alignItems:'stretch', margin:5}}>
 
-                 {(appStatus.getStatus().SurveyStatus == SURVEY_STATUS.ONGOING) &&
-                     <View style={{flex:1, flexDirection:'row', justifyContent:'center',alignItems:'center', marginBottom:5}}>
-                         <AnimatedProgressWheel style={{marginLeft:2, backgroundColor:'blue'}}
-                              progress={this.props.progress}
-                              animateFromValue={0}
-                              duration={2000}
-                              color={'green'}
-                              backgroundColor={'#ffd280'}
-                              size={20}
-                              width={5}
-                          />
-                         <Text style={{marginLeft:10, fontSize:17}}>{this.state.minRemaining>9?this.state.minRemaining:'0'+this.state.minRemaining}:{this.state.secRemaining>9?this.state.secRemaining:'0'+this.state.secRemaining}</Text>
-                     </View>
-                 }
-            </View>
+             <TouchableHighlight style={{height: 30, width:30
+                                         }}
+                 onPress={() => this.props.navigation.navigate('UserSettings',{firstLaunch:false})}>
 
-            <View style={{flex:1, flexDirection:'column', justifyContent:'center',alignItems:'flex-end', marginBottom:5}}>
-                 <TouchableHighlight style={{height: 30, width:30,
-                                             marginLeft:5, marginRight:10,marginTop:10
-                                             }}
-                     onPress={() => this.props.navigation.navigate('UserSettings',{firstLaunch:false})}>
+                 <Image
+                  style={{width: '100%',
+                         height:25, resizeMode : 'contain'}}
+                  source={require('../res/settings-icon.png')}
+                 />
+             </TouchableHighlight>
 
-                     <Image
-                      style={{width: '100%',
-                             height:25, resizeMode : 'contain' , marginBottom:10, marginTop:10}}
-                      source={require('../res/settings-icon.png')}
+
+             { (false || appStatus.getStatus().SurveyStatus == SURVEY_STATUS.ONGOING) &&
+                 <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                     <Text style={{fontSize:20}}>
+                         {this.state.minRemaining>9?this.state.minRemaining:'0'+this.state.minRemaining}:{this.state.secRemaining>9?this.state.secRemaining:'0'+this.state.secRemaining}
+                     </Text>
+
+                     <ProgressBarAnimated
+                                 width={120}
+                                 value={this.props.progress}
+                                 height={10}
+                                 maxValue={100}
+                                 borderColor='grey'
+                                 backgroundColorOnComplete="green"
+                                 backgroundColor = 'green'
                      />
-                  </TouchableHighlight>
-                  <Text style={{marginRight:10, color:'green', marginTop:5, marginBottom:5}}>${appStatus.getStatus().CompletedSurveys*0.2}</Text>
-            </View>
+                 </View>
+            }
 
-        </View>
+            <Text style={{color:'green',fontSize:20, marginRight:10}}>
+                ${appStatus.getStatus().CompletedSurveys*0.2}
+            </Text>
+    </View>
+
     );
   }
 
