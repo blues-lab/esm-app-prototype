@@ -134,7 +134,7 @@ const backgroundJobPrompt = {
                       {
                           notificationController.cancelNotifications();
                           notificationController.showNotification("New survey available!",
-                                      "Complete it within "+_remainingTime+" minutes and get $0.2!!!");
+                                                                  "Complete it within "+_remainingTime+" minutes and get \u002420!!!");
                           logger.info(codeFileName,"showPrompt", "Showing latest notification at: "+new Date());
                           appStatus.setLastNotificationTime(new Date());
                       }
@@ -253,7 +253,7 @@ export default class App extends Component<Props>
   componentDidMount()
   {
     this.generateInitialFiles(serviceFileAsset, serviceFileLocal);
-    //this.testPrompt();
+    this.testPrompt();
     //setTimeout(this.testPrompt, 70*1000);
     //setTimeout(notificationController.cancelNotifications, 90*1000)
   }
@@ -303,7 +303,7 @@ export default class App extends Component<Props>
                             _remainingTime = _appStatus.PromptDuration;
                             notificationController.cancelNotifications();
                             notificationController.showNotification("New survey available!",
-                                 "Complete it within "+_remainingTime+" minutes and get $0.2!!!");
+                                 "Complete it within "+_remainingTime+" minutes and get \u00A2 20!!!");
 
                             _notificationTime = new Date();
                             appStatus.setFirstNotificationTime(_notificationTime);
@@ -351,7 +351,7 @@ export default class App extends Component<Props>
                         {
                             notificationController.cancelNotifications();
                             notificationController.showNotification("New survey available!",
-                                        "Complete it within "+_remainingTime+" minutes and get $0.2!!!");
+                                        "Complete it within "+_remainingTime+" minutes and get \u0024!!!");
                             logger.info(codeFileName,"showPrompt", "Showing latest notification at: "+new Date());
                             appStatus.setLastNotificationTime(new Date());
                         }
