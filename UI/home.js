@@ -109,8 +109,8 @@ export default class HomeScreen extends React.Component {
       AppState.addEventListener('change', this.handleAppStateChange);
       logger.info(codeFileName, 'componentDidMount', 'Registering to listen app foreground/background transition');
 
-      logger.info(codeFileName, "componentDidMount", "Getting app status.");
       const _appStatus = appStatus.getStatus();
+      logger.info(codeFileName, "componentDidMount", "Current app status:"+JSON.stringify(_appStatus));
 
     if(await this.isFirstLaunch()==null)
     {
@@ -167,11 +167,12 @@ export default class HomeScreen extends React.Component {
             RNFS.readFile(USER_SETTINGS_FILE_PATH)
                 .then((_fileContent) =>
                {
-                    logger.info(codeFileName, 'componentDidMount', 'Successfully read user settings file. Checking if home wifi was set.');
                     _userSettingsData = JSON.parse(_fileContent);
+                    logger.info(codeFileName, 'componentDidMount', 'Read user settings file:'+_fileContent);
 
                     if(_userSettingsData.homeWifi.length==0)
                     {
+                         logger.info(codeFileName, 'componentDidMount', 'Home Wifi not set. Navigating to settings page.');
                          this.props.navigation.navigate('UserSettings');
                     }
                     else
@@ -196,6 +197,7 @@ export default class HomeScreen extends React.Component {
         }
         else
         {
+            logger.info(codeFileName, 'componentDidMount', 'Settings file not found. Navigating to settings page.');
             this.props.navigation.navigate('UserSettings');
         }
     }

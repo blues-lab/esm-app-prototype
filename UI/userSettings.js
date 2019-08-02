@@ -15,7 +15,7 @@ const codeFileName="userSettings.js"
 export class UserSettingsEntity
 {
 
-    state = {
+    settings = {
             homeWifi:'',
             mondayFrom:'00:00',
             mondayTo:'00:00',
@@ -34,6 +34,11 @@ export class UserSettingsEntity
           };
     constructor()
     {
+        this.loadSettingsFile();
+    }
+
+    loadSettingsFile()
+    {
         RNFS.exists(USER_SETTINGS_FILE_PATH)
             .then( (exists) =>
             {
@@ -42,24 +47,25 @@ export class UserSettingsEntity
                     RNFS.readFile(USER_SETTINGS_FILE_PATH)
                         .then((_fileContent) => {
 
-                            logger.info(`${codeFileName}`, 'constructor', 'Successfully read file.');
+                            logger.info(codeFileName, 'loadSettingsFile', 'Successfully read file:'+_fileContent);
                             _userSettingsData = JSON.parse(_fileContent);
-                            this.setState({homeWifi: _userSettingsData.homeWifi,
-
-                                          mondayFrom: _userSettingsData.mondayFrom,
-                                          mondayTo: _userSettingsData.mondayTo,
-                                          tuesdayFrom: _userSettingsData.tuesdayFrom,
-                                          tuesdayTo: _userSettingsData.tuesdayTo,
-                                          wedFrom: _userSettingsData.wedFrom,
-                                          wedTo: _userSettingsData.wedTo,
-                                          thFrom: _userSettingsData.thFrom,
-                                          thTo: _userSettingsData.thTo,
-                                          friFrom: _userSettingsData.friFrom,
-                                          friTo: _userSettingsData.friTo,
-                                          satFrom: _userSettingsData.satFrom,
-                                          satTo: _userSettingsData.satTo,
-                                          sunFrom: _userSettingsData.sunFrom,
-                                          sunTo: _userSettingsData.sunTo});
+                            this.settings = {
+                                                  homeWifi: _userSettingsData.homeWifi,
+                                                  mondayFrom: _userSettingsData.mondayFrom,
+                                                  mondayTo: _userSettingsData.mondayTo,
+                                                  tuesdayFrom: _userSettingsData.tuesdayFrom,
+                                                  tuesdayTo: _userSettingsData.tuesdayTo,
+                                                  wedFrom: _userSettingsData.wedFrom,
+                                                  wedTo: _userSettingsData.wedTo,
+                                                  thFrom: _userSettingsData.thFrom,
+                                                  thTo: _userSettingsData.thTo,
+                                                  friFrom: _userSettingsData.friFrom,
+                                                  friTo: _userSettingsData.friTo,
+                                                  satFrom: _userSettingsData.satFrom,
+                                                  satTo: _userSettingsData.satTo,
+                                                  sunFrom: _userSettingsData.sunFrom,
+                                                  sunTo: _userSettingsData.sunTo
+                                             };
                         })
                         .catch( (error)=>{
                             logger.error(`${codeFileName}`, 'constructor', 'Failed to read file:'+error.message);
@@ -73,7 +79,6 @@ export class UserSettingsEntity
              .catch( (error)=>{
                         logger.error(`${codeFileName}`, 'constructor', 'Failed to check if file exists:'+error.message);
               })
-
     }
 
      getFromHour(day)
@@ -83,25 +88,25 @@ export class UserSettingsEntity
             switch (day)
             {
               case 0:
-                time = this.state.sunFrom;
+                time = this.settings.sunFrom;
                 break;
               case 1:
-                time = this.state.mondayFrom;
+                time = this.settings.mondayFrom;
                 break;
               case 2:
-                time = this.state.tuesdayFrom;
+                time = this.settings.tuesdayFrom;
                 break;
               case 3:
-                time = this.state.wedFrom;
+                time = this.settings.wedFrom;
                 break;
               case 4:
-                time = this.state.thFrom;
+                time = this.settings.thFrom;
                 break;
               case 5:
-                time = this.state.friFrom;
+                time = this.settings.friFrom;
                 break;
               case 6:
-                time = this.state.satFrom;
+                time = this.settings.satFrom;
                 break;
             }
 
@@ -118,25 +123,25 @@ export class UserSettingsEntity
             switch (day)
             {
               case 0:
-                time = this.state.sunTo;
+                time = this.settings.sunTo;
                 break;
               case 1:
-                time = this.state.mondayTo;
+                time = this.settings.mondayTo;
                 break;
               case 2:
-                time = this.state.tuesdayTo;
+                time = this.settings.tuesdayTo;
                 break;
               case 3:
-                time = this.state.wedTo;
+                time = this.settings.wedTo;
                 break;
               case 4:
-                time = this.state.thTo;
+                time = this.settings.thTo;
                 break;
               case 5:
-                time = this.state.friTo;
+                time = this.settings.friTo;
                 break;
               case 6:
-                time = this.state.satTo;
+                time = this.settings.satTo;
                 break;
             }
 
@@ -237,7 +242,7 @@ static navigationOptions = ({ navigation }) => {
                           {
                             text: 'YES', onPress: () => {
                                 logger.info(codeFileName, 'getHomeWiFi', 'Connected to home WiFi. Saving home WiFi:'+ssid);
-                                this.setState({homeWifi: ssid}, ()=>this.saveSettings(true));
+                                this.setState({homeWifi: ssid}, ()=>this.saveSettings());
                           }},
                         ],
                         {cancelable: false}
@@ -303,6 +308,7 @@ static navigationOptions = ({ navigation }) => {
         }
         else
         {
+            this.saveSettings(); //save the default settings
             this.getHomeWiFi();
         }
 
@@ -326,7 +332,7 @@ static navigationOptions = ({ navigation }) => {
                 {
                     logger.info(codeFileName, 'handleBackNavigation', "Agreed to save settings, saving and then going to previous page.");
                     this.saveSettings();
-                    this.props.navigation.goBack(null);
+                    Alert.alert("Settings saved.",'',[{text: 'OK', onPress: () => this.props.navigation.goBack(null)}]);
                 }},
             ]
           );
@@ -438,31 +444,9 @@ static navigationOptions = ({ navigation }) => {
         sunFrom: this.state.sunFrom,
         sunTo: this.state.sunTo
     }
-
     utilities.writeJSONFile(_settings, USER_SETTINGS_FILE_PATH, codeFileName, 'saveSettings');
 
-    const _firstLaunch = this.props.navigation.getParam('firstLaunch', false);
-    if(_firstLaunch && !onlySaveWiFi)
-    {
-        Alert.alert("Thank you!","Your settings have been saved. We will prompt you when new survey becomes available.");
-
-        Alert.alert(
-          'Thank you!',
-            "Your settings have been saved. We will prompt you when new survey becomes available.",
-            [
-              { text: 'OK', onPress: () => {
-                logger.info(codeFileName, 'saveSettings', 'Settings saved. Since this is first launch exiting app.')
-                BackHandler.exitApp();
-              }}
-            ],
-            {cancelable: false}
-          );
-    }
-    else if(!onlySaveWiFi)
-    {
-         Alert.alert("Settings saved!");
-         logger.info(codeFileName, 'saveSettings', 'Settings saved.')
-    }
+    logger.info(codeFileName, 'saveSettings', 'Saving settings:'+JSON.stringify(_settings))
 
   }
 
@@ -617,8 +601,29 @@ static navigationOptions = ({ navigation }) => {
                  <Button title="Save settings"
                      color="#20B2AA"
                      onPress={() => {
-                                        this.saveSettings(false);
+                                        this.saveSettings();
                                         this.setState({stateSaved:true});
+                                        const _firstLaunch = this.props.navigation.getParam('firstLaunch', false);
+                                        if(_firstLaunch)
+                                        {
+                                            Alert.alert("Thank you!","Your settings have been saved. We will prompt you when new survey becomes available.");
+
+                                            Alert.alert(
+                                              'Thank you!',
+                                                "Your settings have been saved. We will prompt you when new survey becomes available.",
+                                                [
+                                                  { text: 'OK', onPress: () => {
+                                                    logger.info(codeFileName, 'SaveButtonClick', 'Settings saved. Since this is first launch exiting app.')
+                                                    BackHandler.exitApp();
+                                                  }}
+                                                ],
+                                                {cancelable: false}
+                                              );
+                                        }
+                                        else
+                                        {
+                                            Alert.alert("Settings saved.");
+                                        }
                                     }}
                  />
              </TouchableHighlight>

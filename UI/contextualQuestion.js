@@ -156,13 +156,24 @@ static navigationOptions = ({ navigation }) => {
      logger.info(codeFileName, 'saveResponse', 'Updating completed survey count.');
      appStatus.increaseCompletedSurveys();
 
+     logger.info(codeFileName, 'saveResponse', 'Uploading survey response.');
+
+     utilities.uploadData(_surveyResponseJS, 'SurveyResponse', codeFileName, 'saveResponse');
+     logger.info(codeFileName, 'saveResponse', 'All done!');
+
      Alert.alert("Congratulations!", "You have earned $.2!",
                [
                    {text: 'OK', onPress:() => {BackHandler.exitApp()}}
-               ]
+               ],
+               {cancelable: false}
              )
 
-     logger.info(codeFileName, 'saveResponse', 'All done!');
+
+
+
+     //https://mimi.research.icsi.institute/save
+
+     //{parameters}
    }
 
 
