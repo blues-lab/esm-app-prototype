@@ -2,7 +2,7 @@ module.exports = {
   env: {
     es6: true
   },
-  extends: ["standard", "prettier"],
+  extends: ["standard", "plugin:prettier/recommended"],
   globals: {
     Atomics: "readonly",
     SharedArrayBuffer: "readonly"
