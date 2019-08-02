@@ -3,8 +3,8 @@ import { Platform, StyleSheet, Text, View, Button,
         TextInput, Alert, FlatList, Modal, ScrollView,
         TouchableHighlight, BackHandler} from 'react-native';
 import * as RNFS from 'react-native-fs';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
-
+//import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+import { RadioButton } from 'react-native-paper';
 import DialogInput from 'react-native-dialog-input';
 
 import logger from '../controllers/logger';
@@ -16,9 +16,9 @@ const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 import commonStyle from './Style'
 import ToolBar from './toolbar'
 
-const fullShare= 0;
-const partialShare= 1;
-const noShare = 2;
+const fullShare= 'fullShare';
+const partialShare= 'partialShare';
+const noShare = 'noShare';
 
  var radioOptions = [
     {label: 'Yes, I will allow access to any relevant parts of the conversation', value: fullShare },
@@ -44,7 +44,8 @@ static navigationOptions = ({ navigation }) => {
             sharingDecision:fullShare,
             whyNoShare: '',
             whyPartShare: '',
-            partsToRedact:''
+            partsToRedact:'',
+            value: fullShare,
          }
 
 
@@ -67,7 +68,7 @@ static navigationOptions = ({ navigation }) => {
        _permissionResponse= {
           "ServiceCategory": this.state.categoryName,
           "ServiceName": this.state.serviceName,
-          "Sharing": this.state.sharingDecision,
+          "Sharing": this.state.value,
           "PartsToRedact": this.state.partsToRedact,
           "WhyPartShare": this.state.whyPartShare,
           "WhyNoShare": this.state.whyNoShare,
@@ -89,26 +90,41 @@ static navigationOptions = ({ navigation }) => {
           alignItems: 'center',
           marginRight:10,
           marginLeft:10,
-          backgroundColor:'lightcyan',
+          backgroundColor:'lavendar',
           }}>
 
-          <Text style={commonStyle.questionStyle}>
+          <Text style={[commonStyle.questionStyle,{fontSize:22}]}>
 
             Would you allow MiMi to access the relevant parts of
             the conversation to provide you the service "{this.state.serviceName}"?
           </Text>
-          <RadioForm style={commonStyle.radioFrameStyle}
-              radio_props={radioOptions}
-              initial={0}
-              onPress={(value) =>
-                {
-                    logger.info(`${codeFileName}`,'RadioForm',"Selected sharing decision: "+value);
-                    this.setState({sharingDecision:value});
-                }
-              }
-          />
+          <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'flex-start', margin:10}}>
+          <RadioButton.Group
+               onValueChange={value => this.setState({ value})}
+               value={this.state.value}
+             >
+               <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'flex-start'}}>
+                 <RadioButton value='fullShare' />
+                 <Text style={{fontSize:20}}>
+                    Yes, I will allow access to any relevant parts of the conversation.
+                 </Text>
+               </View>
+               <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'flex-start'}}>
+                 <RadioButton value='partialShare'/>
+                 <Text style={{fontSize:20}}>
+                    I will only allow access if I could censor certain parts of the relevant conversation.
+                 </Text>
+               </View>
+               <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'center'}}>
+                <RadioButton value='noShare'/>
+                <Text style={{fontSize:20}}>
+                    No, I will not allow access to any relevant parts of the conversation.
+                </Text>
+              </View>
+          </RadioButton.Group>
+          </View>
 
-          { (this.state.sharingDecision == partialShare) &&
+          { (this.state.value == partialShare) &&
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={commonStyle.questionStyle}>
                     What parts would you not allow the device to access?
@@ -128,7 +144,7 @@ static navigationOptions = ({ navigation }) => {
             </View>
           }
 
-          { (this.state.sharingDecision == noShare) &&
+          { (this.state.value == noShare) &&
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={commonStyle.questionStyle}>
                     Why would you not allow to access the relevant conversation?
