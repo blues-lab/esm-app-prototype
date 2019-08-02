@@ -4,6 +4,8 @@ import * as RNFS from 'react-native-fs';
 import wifi from 'react-native-android-wifi';
 import logger from './logger';
 
+import {VERSION_NUMBER} from './constants'
+
 const codeFileName = 'utilities.js';
 
 
@@ -199,6 +201,40 @@ class Utilities extends Component
               return _serviceCategories;
             })
 
+    }
+
+    async uploadData(data, type, callerClass, callerFunc)
+    {
+
+          logger.info(callerClass, callerFunc+"-->uploadData", 'Uploading data.');
+
+          try
+          {
+               let response = await fetch
+               (
+                  'https://mimi.research.icsi.institute/save/',
+                  {
+                    method: 'POST',
+                    headers: {
+                      Accept: 'application/json',
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(
+                    {
+                      "uid": "rakib",
+                      "app_version": VERSION_NUMBER,
+                      "key": type,
+                      "value": JSON.stringify(data)
+                    }),
+                  }
+               );
+
+                logger.info(callerClass, callerFunc+"-->uploadData", 'Server response:'+JSON.stringify(response));
+          }
+          catch (error)
+          {
+            logger.error(callerClass, callerFunc+"-->uploadData", 'Error uploading data:'+error.message);
+          }
     }
 
 
