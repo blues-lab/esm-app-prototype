@@ -112,6 +112,7 @@ export default class ServicePermissionScreen extends React.Component {
   }
 
   onSharingDecisionChanged(shareValue) {
+    Alert.alert("new value:"+shareValue);
     this.setState({ sharingDecision: shareValue });
   }
 
