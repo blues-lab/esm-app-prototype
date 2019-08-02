@@ -292,6 +292,18 @@ export default class ServiceMenuScreen extends React.Component {
     this.setState({saveButtonEnabled: true});
   }
 
+  clearServiceSelections()
+  {
+    //clears all selected services if 'No relevant service' selected
+    logger.info(codeFileName, 'clearServiceSelections', 'Clearing all selected services.')
+    _serviceCategories = this.state.serviceCategories;
+    for(var i=0; i< _serviceCategories.length; i++)
+    {
+       _serviceCategories[i].selectedServiceNames.clear();
+    }
+    this.setState({serviceCategories: _serviceCategories});
+  }
+
 
   savePermissionResponse(response)
   {
@@ -496,7 +508,6 @@ export default class ServiceMenuScreen extends React.Component {
             value={this.state.noRelevantServiceReason}
             onChangeText={(reason) => {
                   this.setState({ noRelevantServiceReason: reason});
-                  logger.info("ServiceMenu","DialogInput.Submit", "No relevant service: "+reason);
                 }}
         />
         <Dialog.Button label="Cancel" onPress={ () => {
@@ -508,6 +519,9 @@ export default class ServiceMenuScreen extends React.Component {
         <Dialog.Button label="Next" onPress={() => {
                 _surveyResponseJS = this.state.surveyResponseJS;
                 _surveyResponseJS.noRelevantServiceReason = this.state.noRelevantServiceReason;
+                this.clearServiceSelections();
+                logger.info("ServiceMenu","DialogInput.Submit", "Reason for no relevant service: "+this.state.noRelevantServiceReason);
+
                 this.setState({noRelevantDialogVisible: false, surveyResponseJS: _surveyResponseJS});
 
                 if(this.state.surveyResponseJS.noRelevantServiceReason.length>0)
