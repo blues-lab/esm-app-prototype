@@ -26,7 +26,7 @@ export default StyleSheet.create({
       marginBottom: 1,
       marginTop: 5,
       //borderWidth:1,
-      backgroundColor:"lightcyan",
+      //backgroundColor:"lightcyan",
       paddingBottom:2,
       paddingTop:2,
     },
@@ -55,7 +55,7 @@ export default StyleSheet.create({
     color: 'black',
     fontFamily:'Times New Roman',
     //fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 22,
     borderColor: 'black',
     paddingRight:20,
     paddingLeft:20,
@@ -87,6 +87,7 @@ export default StyleSheet.create({
         paddingTop:10,
         paddingBottom:10,
         marginTop:5,
+        backgroundColor:'white',
       },
     buttonViewStyle: {
       flex: 1,
@@ -106,9 +107,9 @@ export default StyleSheet.create({
       verticalViewStyle:{
         flex: 1,
         flexDirection: 'column',
-        justifyContent: 'space-around',
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundColor:'lightcyan',
+        //backgroundColor:'lightcyan',
       },
 
       insideVerticalViewStyle:{
@@ -131,6 +132,14 @@ export default StyleSheet.create({
           flexDirection: 'row',
           justifyContent: 'flex-start',
           alignItems: 'center',
-      }
+      },
+
+      dividerStyle:{
+            flex:1,
+            flexDirection:'column',
+            borderBottomColor:'black',
+            paddingBottom:20,
+            borderBottomWidth: StyleSheet.hairlineWidth,
+        }
 
 });

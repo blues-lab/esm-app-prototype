@@ -18,7 +18,7 @@ export default class ServiceDetailsScreen extends React.Component {
 
 static navigationOptions = {
     //headerTitle: <ToolBar title="Services" progress={40}/>
-    title:"Services"
+    title:"Save and return"
   };
 
   state = {
@@ -197,7 +197,7 @@ static navigationOptions = {
 
   render() {
     return (
-      <ScrollView>
+      <ScrollView contentContainerStyle={{ backgroundColor:'lavender'}}>
           <View style={{
               flex: 1,
               flexDirection: 'column',

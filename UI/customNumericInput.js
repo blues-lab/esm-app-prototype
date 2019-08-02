@@ -13,7 +13,7 @@ export default class CustomNumericInput extends React.Component
                 flex: 1,
                 flexDirection: 'row',
                 justifyContent: 'center',
-                alignItems: 'center',
+                alignItems: 'space-around',
                 }}>
                <NumericInput style={{marginTop:100, marginBottom:30, paddingTop:10, paddingBottom:30}}
                    value={this.state.value}

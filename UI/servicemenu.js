@@ -211,7 +211,7 @@ export default class ServiceMenuScreen extends React.Component {
   flatListItemSeparator = () =>
   {
       return (
-        <View style={{height: 0.5, width: '100%', backgroundColor: '#C8C8C8'}}/>
+        <View style={{height: 0.5, width: '100%', backgroundColor: 'grey'}}/>
       );
   }
 
@@ -398,7 +398,7 @@ export default class ServiceMenuScreen extends React.Component {
         img=null;
     }
     return (
-        <TouchableHighlight onPress={this.openServiceDetailsPage.bind(this, item)}>
+        <TouchableHighlight style={{backgroundColor:'lavender'}} onPress={this.openServiceDetailsPage.bind(this, item)}>
           <View style={{flex: 1, flexDirection: 'column'}}>
             <View style={{flex: 1, flexDirection: 'row'}}>
                 <Image
@@ -419,21 +419,21 @@ export default class ServiceMenuScreen extends React.Component {
 
   render() {
     return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={{ backgroundColor:'lavender'}}>
 
       <View style={{
-          flex: 1,
-          flexDirection: 'column',
-          justifyContent: 'space-around',
-          alignItems: 'stretch',
-          backgroundColor:'white'
-        }}>
+                flex: 1,
+               flexDirection: 'column',
+               justifyContent: 'flex-start',
+               alignItems: 'stretch',
+               margin:5
+           }}>
 
-        <View style={commonStyles.longTextView}>
-            <Text style={commonStyles.longtextStyle}>
+
+            <Text style={commonStyles.questionStyle}>
               What services could MiMi offer based on your conversation?
             </Text>
-        </View>
+
 
 
         <View style={commonStyles.listContainerStyle}>

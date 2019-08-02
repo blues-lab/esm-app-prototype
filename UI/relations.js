@@ -106,7 +106,7 @@ export default class Relations extends React.Component {
                  justifyContent: 'space-around',
                  alignItems: 'stretch',
                  margin:10,
-                 backgroundColor:'lightcyan',
+                 //backgroundColor:'lightcyan',
                  }}>
 
             <View style={styles.rowView}>

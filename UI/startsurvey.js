@@ -64,11 +64,9 @@ export default class SurveyStartScreen extends React.Component {
                           alignItems: 'center',
                         }}>
 
-                    <View style={commonStyles.questionStyle}>
-                        <Text style={[commonStyles.longtextStyle,{fontSize:28}]}>
+                        <Text style={commonStyles.questionStyle}>
                           What were you talking about?
                         </Text>
-                    </View>
 
 
                     <TextInput
@@ -88,7 +86,7 @@ export default class SurveyStartScreen extends React.Component {
                         value={this.state.conversationTopic}
                     />
 
-                    <Text style={{fontSize:12, fontStyle:'italic', margin:10}}>
+                    <Text style={{fontSize:14, fontStyle:'italic', margin:10}}>
                         Enter 'Prefer not to answer' to skip
                     </Text>
 

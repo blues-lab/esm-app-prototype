@@ -176,7 +176,7 @@ static navigationOptions = ({ navigation }) => {
   render() {
     return (
 
-    <ScrollView>
+    <ScrollView contentContainerStyle={{ backgroundColor:'lavender'}}>
 
       <View style={{margin:10}}>
       <View style={styles.verticalViewStyle}>
@@ -184,18 +184,21 @@ static navigationOptions = ({ navigation }) => {
         {
             this.state.surrounding &&
             <View style={styles.verticalViewStyle}>
-            <Text style={commonStyle.questionStyle}>
-                Where were you talking (select all that apply)?
-            </Text>
-            <Locations locationSelectionHandler={this.locationSelectionHandler.bind(this)} />
+                <View style={commonStyle.dividerStyle}>
+                    <Text style={commonStyle.questionStyle}>
+                        Where were you talking (select all that apply)?
+                    </Text>
+                    <Locations locationSelectionHandler={this.locationSelectionHandler.bind(this)} />
+                </View>
 
-
-            <View style={styles.insideVerticalViewStyle}>
-                <Text style={commonStyle.questionStyle}>
-                    How many people, who did not participate in the conversation, could hear it?
-                </Text>
-                <CustomNumericInput valueChangeCallback={this.numPeopleCanHearChangeHandler.bind(this)}/>
-            </View>
+                <View style={styles.insideVerticalViewStyle}>
+                    <View style={commonStyle.dividerStyle}>
+                        <Text style={commonStyle.questionStyle}>
+                            How many people, who did not participate in the conversation, could hear it?
+                        </Text>
+                        <CustomNumericInput valueChangeCallback={this.numPeopleCanHearChangeHandler.bind(this)}/>
+                    </View>
+                </View>
             </View>
 
         }
@@ -203,47 +206,57 @@ static navigationOptions = ({ navigation }) => {
         {   !this.state.surrounding &&
 
             <View style={styles.verticalViewStyle}>
-            <Text style={commonStyle.questionStyle}>
-                How many other people (excluding you) were talking?
-            </Text>
-            <CustomNumericInput valueChangeCallback={this.numPeopleAroundChangeHandler.bind(this)}/>
+                <View style={commonStyle.dividerStyle}>
+                    <Text style={commonStyle.questionStyle}>
+                        How many other people (excluding you) were talking?
+                    </Text>
+                    <CustomNumericInput valueChangeCallback={this.numPeopleAroundChangeHandler.bind(this)}/>
+
+                </View>
 
             {   this.state.numOfPeople>0 &&
                 <View style={styles.verticalViewStyle}>
-                    <Text style={commonStyle.questionStyle}>
-                        How do you relate to them (select all that apply)?
-                    </Text>
-                    <Relations relationSelectionHandler ={this.relationSelectionHandler.bind(this)}/>
-
-                    <Text style={commonStyle.questionStyle}>
-                        Among people who were talking, were there:
-                    </Text>
-                    <View style= {styles.horizontalViewStyle}>
-                        <Text style={{fontSize:16}}> Children (0-12 years old):</Text>
-                        <Switch style={{marginLeft:10}}
-                          value={this.state.childrenPresent}
-                          onValueChange={(val) => this.setState({childrenPresent: val})}
-                        />
-                    </View>
-                     <View style= {styles.horizontalViewStyle}>
-                        <Text style={{fontSize:16}}> Adolescent (13-17 years old):</Text>
-                        <Switch style={{marginLeft:10}}
-                          value={this.state.adolescentPresent}
-                          onValueChange={(val) => this.setState({adolescentPresent: val})}
-                        />
+                    <View style={commonStyle.dividerStyle}>
+                        <Text style={commonStyle.questionStyle}>
+                            How do you relate to them (select all that apply)?
+                        </Text>
+                        <Relations relationSelectionHandler ={this.relationSelectionHandler.bind(this)}/>
                     </View>
 
-                    <Text style={commonStyle.questionStyle}>
-                        Did any of the people who were talking call in or connect to a video chat (as
-                            opposed to being physically present in the room)?
-                    </Text>
-                    <View style= {styles.horizontalViewStyle}>
-                        <Text>No</Text>
-                        <Switch style={{marginLeft:10}}
-                          value={this.state.remoteConversation}
-                          onValueChange={(val) => this.setState({remoteConversation: val})}
-                        />
-                        <Text>Yes</Text>
+                    <View style={commonStyle.dividerStyle}>
+                        <Text style={commonStyle.questionStyle}>
+                            Among people who were talking, were there:
+                        </Text>
+                        <View style= {styles.horizontalViewStyle}>
+                            <Text style={{margin:10, fontSize:18}}> Children (0-12 years old):</Text>
+                            <Switch style={{marginLeft:10}}
+                              value={this.state.childrenPresent}
+                              onValueChange={(val) => this.setState({childrenPresent: val})}
+                            />
+                        </View>
+                         <View style= {styles.horizontalViewStyle}>
+                            <Text style={{margin:10, fontSize:18}}> Adolescent (13-17 years old):</Text>
+                            <Switch style={{marginLeft:10}}
+                              value={this.state.adolescentPresent}
+                              onValueChange={(val) => this.setState({adolescentPresent: val})}
+                            />
+                        </View>
+                    </View>
+
+                    <View style={commonStyle.dividerStyle}>
+
+                        <Text style={commonStyle.questionStyle}>
+                            Did any of the people who were talking call in or connect to a video chat (as
+                                opposed to being physically present in the room)?
+                        </Text>
+                        <View style= {styles.horizontalViewStyle}>
+                            <Text style={{margin:10, fontSize:18}}>No</Text>
+                            <Switch style={{marginLeft:10}}
+                              value={this.state.remoteConversation}
+                              onValueChange={(val) => this.setState({remoteConversation: val})}
+                            />
+                            <Text style={{margin:10, fontSize:18}}>Yes</Text>
+                        </View>
                     </View>
 
                 </View>
@@ -256,7 +269,7 @@ static navigationOptions = ({ navigation }) => {
       </View>
 
 
-          <View style={commonStyle.buttonViewStyle}>
+          <View style={[commonStyle.buttonViewStyle,{marginTop:20}]}>
               <TouchableHighlight style ={commonStyle.buttonTouchHLStyle}>
                 <Button
                   onPress={() =>
@@ -298,7 +311,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 //    marginRight:10,
 //    marginLeft:10,
-    backgroundColor:'lightcyan',
+    //backgroundColor:'lightcyan',
   },
 
   insideVerticalViewStyle:{
@@ -316,7 +329,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
 //      marginRight:10,
 //      marginLeft:10,
-      backgroundColor:'lightcyan',
+      ///backgroundColor:'lightcyan',
   }
 
 });

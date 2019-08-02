@@ -82,7 +82,7 @@ static navigationOptions = ({ navigation }) => {
   render() {
     return (
 
-    <ScrollView>
+    <ScrollView contentContainerStyle={{ backgroundColor:'lavender'}}>
       <View style={{
           flex: 1,
           flexDirection: 'column',

@@ -62,7 +62,7 @@ export default class AlvaPromptScreen extends React.Component {
 
                     <View style={commonStyles.questionStyle}>
                         <Text style={[commonStyles.longtextStyle,{fontSize:24, backgroundColor:'lavender'}]}>
-                          <Text>Imagine an always-listening voice assistant, "Mimi," was able to offer you
+                          <Text>Imagine an always-listening voice assistant, 'MiMi,' was able to offer you
                           services that were </Text>
                           <Text style={{fontWeight:'bold'}}>relevant </Text>
                           <Text>to your conversation.</Text>
