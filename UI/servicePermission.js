@@ -3,10 +3,10 @@ import { Platform, StyleSheet, Text, View, Button,
         TextInput, Alert, FlatList, Modal, ScrollView,
         TouchableHighlight, BackHandler} from 'react-native';
 import * as RNFS from 'react-native-fs';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
-
+//import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+import { RadioButton } from 'react-native-paper';
 import DialogInput from 'react-native-dialog-input';
-
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import logger from '../controllers/logger';
 
 const codeFileName="servicePermission.js";
@@ -21,9 +21,9 @@ const partialShare= 1;
 const noShare = 2;
 
  var radioOptions = [
-    {label: 'Yes, I will allow access to any relevant parts of the conversation', value: fullShare },
-    {label: 'I will only allow access if I could censor certain parts of the relevant conversation', value: partialShare },
-    {label: 'No, I will not allow access to any relevant parts of the conversation', value: noShare}
+    {label: 'Yes, I will allow access to any relevant parts of the conversation.', value: fullShare },
+    {label: 'I will only allow access if I could censor certain parts of the relevant conversation.', value: partialShare },
+    {label: 'No, I will not allow access to any relevant parts of the conversation.', value: noShare}
   ];
 
 export default class ServicePermissionScreen extends React.Component
@@ -44,7 +44,8 @@ static navigationOptions = ({ navigation }) => {
             sharingDecision:fullShare,
             whyNoShare: '',
             whyPartShare: '',
-            partsToRedact:''
+            partsToRedact:'',
+            value: 'first',
          }
 
 
@@ -78,6 +79,10 @@ static navigationOptions = ({ navigation }) => {
        this.props.navigation.goBack(null);
   }
 
+  onSharingDecisionChanged(shareValue){
+    this.setState({sharingDecision: shareValue})
+    }
+
   render() {
     return (
 
@@ -89,7 +94,7 @@ static navigationOptions = ({ navigation }) => {
           alignItems: 'center',
           marginRight:10,
           marginLeft:10,
-          backgroundColor:'lightcyan',
+          backgroundColor:'white',
           }}>
 
           <Text style={commonStyle.questionStyle}>
@@ -97,16 +102,30 @@ static navigationOptions = ({ navigation }) => {
             Would you allow MiMi to access the relevant parts of
             the conversation to provide you the service "{this.state.serviceName}"?
           </Text>
-          <RadioForm style={commonStyle.radioFrameStyle}
-              radio_props={radioOptions}
-              initial={0}
-              onPress={(value) =>
-                {
-                    logger.info(`${codeFileName}`,'RadioForm',"Selected sharing decision: "+value);
-                    this.setState({sharingDecision:value});
-                }
-              }
-          />
+
+
+       <View style={{flex:1, flexDirection:'column', margin:10, marginLeft:20, marginRight:20}}>
+             <View style={{flex:1,flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                <Icon name="radio-button-checked" size={30} color="grey" onPress={() => {this.onSharingDecisionChanged(fullShare);}}/>
+                <Text style={{fontSize:20}}>
+                    Yes, I will allow access to any relevant parts of the conversation.
+                </Text>
+             </View>
+
+             <View style={{flex:1,flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                 <Icon name="radio-button-unchecked" size={30} color="grey" onPress={() => {this.onSharingDecisionChanged(partialShare);}}/>
+                 <Text style={{fontSize:20}}>
+                    I will only allow access if I could censor certain parts of the relevant conversation.
+                 </Text>
+             </View>
+
+             <View style={{flex:1,flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                 <Icon name="radio-button-unchecked" size={30} color="grey" onPress={() => {this.onSharingDecisionChanged(noShare);}}/>
+                 <Text style={{fontSize:20}}>
+                    No, I will not allow access to any relevant parts of the conversation.
+                 </Text>
+             </View>
+       </View>
 
           { (this.state.sharingDecision == partialShare) &&
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>

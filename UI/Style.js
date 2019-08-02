@@ -55,7 +55,7 @@ export default StyleSheet.create({
     color: 'black',
     fontFamily:'Times New Roman',
     //fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 22,
     borderColor: 'black',
     paddingRight:20,
     paddingLeft:20,

@@ -18,7 +18,7 @@ export default class ServiceDetailsScreen extends React.Component {
 
 static navigationOptions = {
     //headerTitle: <ToolBar title="Services" progress={40}/>
-    title:"Services"
+    title:"Save and go back"
   };
 
   state = {
