@@ -22,12 +22,6 @@ const codeFileName ='servicemenu.js';
 
 export default class ServiceMenuScreen extends React.Component {
 
-
-//  static navigationOptions = {
-//      headerLeft: null,
-//      headerTitle: <ToolBar title="Service categories" progress={20}/>
-//    };
-//
   static navigationOptions = ({ navigation }) => {
     return {
         headerLeft: null,
@@ -63,11 +57,6 @@ export default class ServiceMenuScreen extends React.Component {
       if (selectedServiceCategory.id == "None")
       {
         this.setState({noRelevantDialogVisible:true});
-        return;
-      }
-      else if (selectedServiceCategory.id == "Next")
-      {
-        this.showPermissionPage();
         return;
       }
 
@@ -120,8 +109,6 @@ export default class ServiceMenuScreen extends React.Component {
     this.setState({serviceCategoriesJS: _serviceCategoriesJS});
     utilities.writeJSONFile(_serviceCategoriesJS, serviceFileLocal, codeFileName, 'createNewService');
     this.parseService(_serviceCategoriesJS);
-    //Alert.alert(_serviceCategoriesJS.serviceCategories.length.toString(),
-      //               JSON.stringify(_serviceCategoriesJS.serviceCategories))
   }
 
   parseService(_fullJsonObj)
@@ -164,17 +151,6 @@ export default class ServiceMenuScreen extends React.Component {
           {
             id: 'None',
             name: 'No relevant service',
-            selectedServiceNames: new Set([]),
-            renderStyle: commonStyles.listItemStyle,
-            services: []
-          }
-        );
-
-         _serviceCategories.push //Add 'Next' button
-        (
-          {
-            id: 'Next',
-            name: 'Next',
             selectedServiceNames: new Set([]),
             renderStyle: commonStyles.listItemStyle,
             services: []
@@ -450,12 +426,12 @@ export default class ServiceMenuScreen extends React.Component {
           flexDirection: 'column',
           justifyContent: 'space-around',
           alignItems: 'stretch',
-          backgroundColor:'lavender'
+          backgroundColor:'white'
         }}>
 
         <View style={commonStyles.longTextView}>
             <Text style={commonStyles.longtextStyle}>
-              What services could mimi offer based on your conversation?
+              What services could MiMi offer based on your conversation?
             </Text>
         </View>
 
@@ -469,18 +445,18 @@ export default class ServiceMenuScreen extends React.Component {
             extraData={this.state}
           />
         </View>
+      </View>
 
-
-        <View style={{
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            alignItems: 'stretch',
-            marginTop:2,
-            marginBottom:2
-        }}>
-
-        </View>
+       <View style={commonStyles.buttonViewStyle}>
+          <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
+              <Button title="Next"
+                  color="#20B2AA"
+                  onPress={() => {
+                          this.showPermissionPage();
+                      }
+                  }
+              />
+          </TouchableHighlight>
 
       </View>
 
