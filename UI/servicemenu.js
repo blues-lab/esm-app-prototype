@@ -409,7 +409,7 @@ export default class ServiceMenuScreen extends React.Component {
                     {item.name}
                 </Text>
             </View>
-            <Text style={{fontSize:12, fontStyle:'italic', marginLeft:10}}>
+            <Text numberOfLines={1} ellipsizeMode={'tail'} style={{fontSize:14, fontStyle:'italic', marginLeft:10, marginRight:5}}>
                 {Array.from(item.selectedServiceNames).toString()}
             </Text>
           </View>
