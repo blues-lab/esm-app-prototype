@@ -126,6 +126,7 @@ static navigationOptions = ({ navigation }) => {
    async saveResponse()
    {
 
+     const _appStatus = appStatus.getStatus();
      _contextResponseJS={
         "NumOfPeopleAround": this.state.numOfPeople,
         "NumOfPeopleCanHear": this.state.numOfPeopleCanHear,
@@ -134,7 +135,9 @@ static navigationOptions = ({ navigation }) => {
         "RemoteConversation":this.state.remoteConversation,
         "Relations": Array.from(this.state.selectedRelations).toString(),
         "Locations": Array.from(this.state.selectedLocations).toString(),
-        "CompletionTime": new Date()
+        "SurveyCountToday": _appStatus.SurveyCountToday,
+        "CurrentSurveyCreationTime": _appStatus.FirstNotificationTime,
+        "CurrentSurveyCompletionTime": new Date(),
      }
 
      logger.info(codeFileName, 'saveResponse', 'Saving survey response.');
