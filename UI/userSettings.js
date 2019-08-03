@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert, TextInput,
-Picker, ScrollView,TouchableHighlight, BackHandler} from 'react-native';
+Picker, ScrollView,TouchableHighlight, BackHandler, Dimensions} from 'react-native';
 import DateTimePicker from "react-native-modal-datetime-picker";
 import logger from '../controllers/logger';
 import * as RNFS from 'react-native-fs';
@@ -425,7 +425,7 @@ static navigationOptions = ({ navigation }) => {
       this.setState({ isDateTimePickerVisible: false });
     };
 
-  saveSettings(onlySaveWiFi)
+  saveSettings()
   {
     _settings={
         homeWifi: this.state.homeWifi,
@@ -450,6 +450,17 @@ static navigationOptions = ({ navigation }) => {
 
   }
 
+  changeWifi = ()=>
+  {
+    logger.info(codeFileName,'changeWifi', 'Setting current wifi to empty and getting new wifi info.')
+    this.setState({homeWifi:''}, ()=>
+        {
+            this.saveSettings();
+            this.getHomeWiFi();
+        });
+
+  }
+
   render() {
 
     return (
@@ -459,11 +470,23 @@ static navigationOptions = ({ navigation }) => {
                 flexDirection: 'column',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                backgroundColor:'lavender',
-                margin:5
+                backgroundColor:'lavender'
+
             }}>
 
-            <Text style={{margin:5, fontSize:20}}>
+            {   this.state.homeWifi.length>0 &&
+                       <Text style={{textAlign: 'center',borderBottomColor:'black', borderBottomWidth: StyleSheet.hairlineWidth, color:'black', marginTop:10, marginBottom:10, fontSize:20, width:Math.floor(Dimensions.get('window').width*.9)}}>
+                           <Text style={{marginBottom:10, paddingBottom:10}}> Your home WiFi: </Text>
+                               <Text style={{color:'blue', fontSize:20, margin:0, textDecorationLine:'underline'}} onPress={this.changeWifi}>
+                                 {this.state.homeWifi}
+                               </Text>
+                               <Text>{"\n"}</Text>
+                       </Text>
+            }
+
+
+
+            <Text style={{color:'black', margin:10, fontSize:20,textAlign: 'center'}}>
                 If there is specific time of the day you do not want to receive surveys,
                 while connected to the home WiFi, please indicate it below.
             </Text>
