@@ -145,5 +145,5 @@ class AppStatus
 }
 
 appStatus = new AppStatus();
-//appStatus.loadStatus();
+appStatus.loadStatus();
 export default appStatus;

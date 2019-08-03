@@ -222,7 +222,7 @@ class Utilities extends Component
                   body: JSON.stringify(
                     {
                       "uid": "rakib",
-                      "app_version": VERSION_NUMBER,
+                      "client": VERSION_NUMBER,
                       "key": type,
                       "value": JSON.stringify(data)
                     }),

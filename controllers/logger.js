@@ -44,12 +44,13 @@ class Logger extends Component
 
     writeLog(type, className, funcName, message)
     {
+       const _time = this.getDateTime();
        RNFS.appendFile(logFilePath,
                     type +','+
                     className+','+
                     funcName+','+
                     message+','+
-                    this.getDateTime()+'\n'
+                    _time+'\n'
                )
             .then((success) =>
             {
