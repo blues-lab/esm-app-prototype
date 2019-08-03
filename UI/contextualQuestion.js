@@ -126,6 +126,7 @@ static navigationOptions = ({ navigation }) => {
    async saveResponse()
    {
 
+     await appStatus.loadStatus();
      const _appStatus = appStatus.getStatus();
      _contextResponseJS={
         "NumOfPeopleAround": this.state.numOfPeople,
@@ -138,6 +139,7 @@ static navigationOptions = ({ navigation }) => {
         "SurveyCountToday": _appStatus.SurveyCountToday,
         "CurrentSurveyCreationTime": _appStatus.FirstNotificationTime,
         "CurrentSurveyCompletionTime": new Date(),
+        "UIID": _appStatus.UIID,
      }
 
      logger.info(codeFileName, 'saveResponse', 'Saving survey response.');
@@ -158,7 +160,7 @@ static navigationOptions = ({ navigation }) => {
 
      logger.info(codeFileName, 'saveResponse', 'Uploading survey response.');
 
-     utilities.uploadData(_surveyResponseJS, 'SurveyResponse', codeFileName, 'saveResponse');
+     utilities.uploadData(_surveyResponseJS, _appStatus.UUID, 'SurveyResponse', codeFileName, 'saveResponse');
      logger.info(codeFileName, 'saveResponse', 'All done!');
 
      Alert.alert("Congratulations!", "You have earned $.2!",

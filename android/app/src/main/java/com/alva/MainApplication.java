@@ -3,6 +3,7 @@ package com.alva;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.github.traviskn.rnuuidgenerator.RNUUIDGeneratorPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.staltz.reactnativeandroidlocalnotification.NotificationPackage;
 import com.pilloxa.backgroundjob.BackgroundJobPackage;
@@ -31,6 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNUUIDGeneratorPackage(),
             new AsyncStoragePackage(),
             new NotificationPackage(),
             new BackgroundJobPackage(),

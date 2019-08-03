@@ -130,7 +130,7 @@ class ToolBar extends React.Component {
             }
 
             <Text style={{color:'green',fontSize:20, marginRight:10}}>
-                ${appStatus.getStatus().CompletedSurveys*0.2}
+                ${(appStatus.getStatus().CompletedSurveys*0.2).toFixed(2)}
             </Text>
     </View>
 

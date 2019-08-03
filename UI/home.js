@@ -8,7 +8,7 @@ import PushNotificationAndroid from 'react-native-push-notification';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
 
 import logger from '../controllers/logger';
-
+import UUIDGenerator from 'react-native-uuid-generator';
 import appStatus from '../controllers/appStatus';
 import {SURVEY_STATUS} from '../controllers/constants'
 
@@ -57,22 +57,27 @@ export default class HomeScreen extends React.Component {
       }
     }
 
-  handleAppStateChange = (currentState) =>
+  async handleAppStateChange(currentState)
   {
-      const _appStatus = appStatus.getStatus();
       logger.info(codeFileName, "handleAppStateChange", "Current app state: "+currentState);
+
+
       if(currentState=='active')
       {
-        //show appropriate screen based on if survey is available
-        if(_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE)
-        {//survey is available, but not ONGOING
-            this.setState({noSurveyDialogVisible:false})
-            this.startSurvey();
-        }
-        else if(_appStatus.SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE)
-        {//survey not is available
-            this.setState({noSurveyDialogVisible:true})
-        }
+            logger.info(codeFileName, "handleAppStateChange", "Reloading app status.");
+            await appStatus.loadStatus(); //force reload and wait to finish
+            const _appStatus = appStatus.getStatus();
+
+            //show appropriate screen based on if survey is available
+            if(_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE)
+            {//survey is available, but not ONGOING
+                this.setState({noSurveyDialogVisible:false})
+                this.startSurvey();
+            }
+            else if(_appStatus.SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE)
+            {//survey not is available
+                this.setState({noSurveyDialogVisible:true})
+            }
       }
   }
 
@@ -106,9 +111,11 @@ export default class HomeScreen extends React.Component {
 
   async componentDidMount()
   {
-      AppState.addEventListener('change', this.handleAppStateChange);
+      AppState.addEventListener('change', this.handleAppStateChange.bind(this));
       logger.info(codeFileName, 'componentDidMount', 'Registering to listen app foreground/background transition');
 
+      logger.info(codeFileName, "componentDidMount", "Reloading app status.");
+      await appStatus.loadStatus(); //force reload and wait to finish
       const _appStatus = appStatus.getStatus();
       logger.info(codeFileName, "componentDidMount", "Current app status:"+JSON.stringify(_appStatus));
 
@@ -119,9 +126,14 @@ export default class HomeScreen extends React.Component {
         try
         {
             await AsyncStorage.setItem('@HAS_LAUNCHED', 'true');
-            const _installationDate = new Date();
-            logger.info(codeFileName, 'componentDidMount', "Setting installation date:"+_installationDate.toString());
-            appStatus.setInstallationDate(_installationDate);
+            UUIDGenerator.getRandomUUID((uuid) =>
+            {
+                  const _installationDate = new Date();
+                  logger.info(codeFileName, 'componentDidMount', "Setting installation date:"+_installationDate+" and UUID:"+uuid);
+                  appStatus.setInstallationDate(_installationDate);
+                  appStatus.setUUID(uuid);
+            });
+
         }
         catch (e)
         {
@@ -285,7 +297,7 @@ export default class HomeScreen extends React.Component {
     {
       AppState.removeEventListener('change', this.handleAppStateChange);
       this._didFocusSubscription && this._didFocusSubscription.remove();
-      logger.info(codeFileName, 'componentWillUnmount', 'Removing listeners and evens handlers');
+      logger.info(codeFileName, 'componentWillUnmount', 'Removing listeners and event handlers');
     }
 
 }

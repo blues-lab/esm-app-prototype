@@ -24,6 +24,7 @@ class AppStatus
                  SurveyProgress:0,
                  InstallationDate: null,
                  StudyDuration: 1,
+                 UUID:null,
              }
 
 
@@ -140,6 +141,14 @@ class AppStatus
         this.status.SurveyProgress= date;
         logger.info(codeFileName, 'setSurveyProgress',
                    'Setting survey progress to '+this.status.SurveyProgress);
+        this.saveAppStatus();
+    }
+
+    setUUID(value)
+    {
+        this.status.UUID= value;
+        logger.info(codeFileName, 'setUUID',
+                   'Setting UUID to '+this.status.UUID);
         this.saveAppStatus();
     }
 }

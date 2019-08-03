@@ -203,10 +203,10 @@ class Utilities extends Component
 
     }
 
-    async uploadData(data, type, callerClass, callerFunc)
+    async uploadData(data, uuid, type, callerClass, callerFunc)
     {
 
-          logger.info(callerClass, callerFunc+"-->uploadData", 'Uploading data.');
+          logger.info(callerClass, callerFunc+"-->uploadData", 'Uploading data. UUID:'+uuid);
 
           try
           {
@@ -221,7 +221,7 @@ class Utilities extends Component
                   },
                   body: JSON.stringify(
                     {
-                      "uid": "rakib",
+                      "uid": uuid,
                       "client": VERSION_NUMBER,
                       "key": type,
                       "value": JSON.stringify(data)
