@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert} from 'react-native';
 import * as RNFS from 'react-native-fs';
 
-const logFilePath= RNFS.DocumentDirectoryPath+'/log.csv';
+import {LOG_FILE_PATH} from './constants';
 
 class Logger extends Component
 {
@@ -10,9 +10,9 @@ class Logger extends Component
     {
         try
         {
-            if(await !RNFS.exists(logFilePath))
+            if(await !RNFS.exists(LOG_FILE_PATH))
             {
-                await RNFS.writeFile(logFilePath,'Type,File,Function,Message,Time\n');
+                await RNFS.writeFile(LOG_FILE_PATH,'Type,File,Function,Message,Time\n');
             }
         }
         catch(error)
@@ -38,7 +38,7 @@ class Logger extends Component
        const _time = this.getDateTime();
        try
        {
-            await  RNFS.appendFile(logFilePath, type +','+ className+','+ funcName+','+ message+','+_time+'\n');
+            await  RNFS.appendFile(LOG_FILE_PATH, type +','+ className+','+ funcName+','+ message+','+_time+'\n');
        }
        catch(error)
        {
@@ -69,7 +69,7 @@ class Logger extends Component
 
     showLog()
     {
-         RNFS.readFile(logFilePath)
+         RNFS.readFile(LOG_FILE_PATH)
                 .then((res) => {
                       Alert.alert("Log", res);
                 })
