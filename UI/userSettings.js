@@ -5,10 +5,9 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import logger from '../controllers/logger';
 import * as RNFS from 'react-native-fs';
 import commonStyle from './Style'
-import wifi from 'react-native-android-wifi';
 import utilities from '../controllers/utilities';
 import {USER_SETTINGS_FILE_PATH} from '../controllers/constants'
-
+import WifiManager from 'react-native-wifi';
 const codeFileName="userSettings.js"
 
 
@@ -213,59 +212,45 @@ static navigationOptions = ({ navigation }) => {
     {
         this.handleBackNavigation();
         return true;
-    };
+    }
 
-
-   interval=null;
-   getHomeWiFi = ()=>
+   async getHomeWiFi()
    {
-      showMsg = true;
-      wifi.isEnabled((isEnabled) => {
-      if (isEnabled)
-        {
-          wifi.connectionStatus((isConnected) => {
-            if (isConnected) {
-                wifi.getSSID((ssid) => {
-                  this.setState({currentWifi:ssid});
 
-                  if(ssid.length>0)
-                  {
-                      logger.info(codeFileName, 'getHomeWiFi', 'WiFi is connected. Asking for Home WiFi name.');
-                      Alert.alert(
-                      'Home WiFi',
-                        'We will only send surveys when you are connected to the home WiFi. Is "'+ssid+'" your home wifi?',
-                        [
-                          { text: 'NO', onPress: () => {
-                                Alert.alert("We'll try to ask again, when you connect to another network");
-                                logger.info(codeFileName, 'getHomeWiFi', 'Not connected to home WiFi. Will ask again');
-                          }},
-                          {
-                            text: 'YES', onPress: () => {
-                                logger.info(codeFileName, 'getHomeWiFi', 'Connected to home WiFi. Saving home WiFi:'+ssid);
-                                this.setState({homeWifi: ssid}, ()=>this.saveSettings());
-                          }},
-                        ],
-                        {cancelable: false}
-                      );
-
-                      logger.info(codeFileName, 'getHomeWiFi', 'Setting showMsg=false');
-                      showMsg=false;
-                  }
-                  this.setState({askWifi:false});
-                  clearInterval(this.interval);
-                });
-              }
-          });
-        }
-      });
-
-      if(showMsg)
+      try
       {
-        logger.info(codeFileName, 'getHomeWiFi', 'WiFi is not enabled or connected. Will check again later.')
-        Alert.alert("Home WiFi",
-            'We will only send surveys when you are connected to the home WiFi. We wil ask about it again when you are connected to WiFi.',)
+          const _ssid = await WifiManager.getCurrentWifiSSID();
+          if((_ssid.length>0)  && (_ssid != '<unknown ssid>'))
+          {
+              logger.info(codeFileName, 'getHomeWiFi', `Connected WiFi:${_ssid}. Asking if this the is Home WiFi.`);
+              Alert.alert(
+              'Home WiFi',
+                'We will only send surveys when you are connected to the home WiFi.\nIs "'+_ssid+'" your home wifi?',
+                [
+                  { text: 'NO', onPress: () => {
+                        Alert.alert("We'll try to ask again, when you connect to another network");
+                        logger.info(codeFileName, 'getHomeWiFi', 'Not connected to home WiFi. Will ask again');
+                  }},
+                  {
+                    text: 'YES', onPress: () => {
+                        logger.info(codeFileName, 'getHomeWiFi', 'Connected to home WiFi. Saving home WiFi:'+_ssid);
+                        this.setState({homeWifi: _ssid}, ()=>this.saveSettings());
+                  }},
+                ],
+                {cancelable: false}
+              );
+          }
+          else
+          {
+            logger.info(codeFileName, 'getHomeWiFi', 'WiFi is not enabled or connected. Will check again later.')
+            Alert.alert("Home WiFi", 'We will only send surveys when you are connected to the home WiFi.'+
+                                     ' We wil ask about it again when you are connected to WiFi.');
+          }
       }
-
+      catch(error)
+      {
+        logger.error(codeFileName, 'getHomeWiFi', 'Failed to get WiFi information:'+error);
+      }
    }
 
    async loadSettings()

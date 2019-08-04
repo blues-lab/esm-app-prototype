@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, AsyncStorage, Alert} from 'react-native';
 import * as RNFS from 'react-native-fs';
-import wifi from 'react-native-android-wifi';
 import logger from './logger';
 
 import {VERSION_NUMBER} from './constants'
@@ -13,32 +12,6 @@ class Utilities extends Component
 {
     serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
-   getWifiName()
-   {
-       _ssid = '';
-       wifi.isEnabled((isEnabled) => {
-         if (isEnabled)
-         {
-           wifi.connectionStatus((isConnected) => {
-             if (isConnected) {
-                 wifi.getSSID((ssid) => {
-                   this.setState({msg: "Connected: "+ssid});
-                   _ssid = ssid;
-                 });
-               } else {
-                 this.setState({msg: "Not connected!"});
-             }
-           });
-
-           this.setState({msg: "Wifi is enabled!"});
-         }
-         else
-         {
-           this.setState({msg: "Wifi not enabled!"});
-         }
-       });
-       return _ssid;
-   }
 
    async fileExists(path, fileName, callerClass, callerFunc)
    {

@@ -10,6 +10,7 @@
     "@react-native-community/async-storage": "^1.6.1",
     "file-exists": "^5.0.1",
     "fs": "^0.0.1-security",
+    "install": "^0.13.0",
     "react": "16.8.3",
     "react-native": "0.59.9",
     "react-native-android-local-notification": "^2.0.0",
@@ -32,6 +33,7 @@
     "react-native-simple-radio-button": "^2.7.3",
     "react-native-uuid-generator": "^6.0.0",
     "react-native-vector-icons": "^6.6.0",
+    "react-native-wifi": "^1.0.1",
     "react-navigation": "^3.11.0"
   },
   "devDependencies": {

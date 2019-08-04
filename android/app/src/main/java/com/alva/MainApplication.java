@@ -3,6 +3,7 @@ package com.alva;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactlibrary.RNWifiPackage;
 import io.github.traviskn.rnuuidgenerator.RNUUIDGeneratorPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.staltz.reactnativeandroidlocalnotification.NotificationPackage;
@@ -11,7 +12,6 @@ import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.rnfs.RNFSPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
-import com.devstepbcn.wifi.AndroidWifiPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -32,6 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNWifiPackage(),
             new RNUUIDGeneratorPackage(),
             new AsyncStoragePackage(),
             new NotificationPackage(),
@@ -39,8 +40,7 @@ public class MainApplication extends Application implements ReactApplication {
             new ReactNativePushNotificationPackage(),
             new RNFSPackage(),
             new VectorIconsPackage(),
-            new RNGestureHandlerPackage(),
-            new AndroidWifiPackage()
+            new RNGestureHandlerPackage()
       );
     }
 
