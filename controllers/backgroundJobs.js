@@ -11,7 +11,7 @@ const codeFileName = 'backgroundJobs.js'
 import appStatus from '../controllers/appStatus';
 
 import utilities from '../controllers/utilities';
-import {USER_SETTINGS_FILE_PATH, SURVEY_STATUS,MAX_NOTIFICATION_NUM} from './constants';
+import {USER_SETTINGS_FILE_PATH, SURVEY_STATUS,MAX_SURVEY_PER_DAY} from './constants';
 
 
 function getFromHour(settings, day)
@@ -150,14 +150,21 @@ export async function showPrompt()
               logger.info(codeFileName,"showPrompt", "No survey available; checking if already completed survey today.");
               if(_appStatus.SurveyStatus != SURVEY_STATUS.COMPLETED)
               {
+
+                  if(_appStatus.SurveyCountToday>=MAX_SURVEY_PER_DAY)
+                  {
+                    logger.info(codeFileName,"showPrompt", "Survey not completed today. Already "+_appStatus.SurveyCountToday+' surveys were created. Returning');
+                    return;
+                  }
                   _createSurvey = true;//(Math.floor(Math.random() * 100) + 1)%2==0;
-                  logger.info(codeFileName,"showPrompt", "Survey not completed today. Randomly creating one; _createSurvey:"+_createSurvey);
+                  logger.info(codeFileName,"showPrompt", "Randomly creating survey:"+_createSurvey);
 
                   if(_createSurvey)
                   {
-                      logger.info(codeFileName,"showPrompt", "Creating new survey and changing status to AVAILABLE.");
-                      appStatus.setSurveyStatus(SURVEY_STATUS.AVAILABLE);
                       appStatus.incrementSurveyCountToday();
+                      logger.info(codeFileName,"showPrompt", "Created new survey number:"+_appStatus.SurveyCountToday+". Changing status to AVAILABLE.");
+                      appStatus.setSurveyStatus(SURVEY_STATUS.AVAILABLE);
+
                       _remainingTime = _appStatus.PromptDuration;
                       notificationController.cancelNotifications();
                       notificationController.showNotification("New survey available!",
