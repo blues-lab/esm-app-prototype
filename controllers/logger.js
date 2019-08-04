@@ -6,28 +6,19 @@ const logFilePath= RNFS.DocumentDirectoryPath+'/log.csv';
 
 class Logger extends Component
 {
-    setup()
+    async setup()
     {
-
-        RNFS.exists(logFilePath)
-            .then( (exists) => {
-                if (exists)
-                {
-
-                }
-                else
-                {
-                    RNFS.writeFile(logFilePath,'Type,File,Function,Message,Time\n')
-                        .then((success) =>
-                        {
-                           // Alert.alert("Setup log file","created log file:"+logFilePath)
-                        })
-                        .catch((err) =>
-                        {
-                            Alert.alert("Error: "+err.code,err.message);
-                        })
-                }
-            });
+        try
+        {
+            if(await !RNFS.exists(logFilePath))
+            {
+                await RNFS.writeFile(logFilePath,'Type,File,Function,Message,Time\n');
+            }
+        }
+        catch(error)
+        {
+            Alert.alert("Error: "+error.message);
+        }
     }
 
     getDateTime()
@@ -69,6 +60,11 @@ class Logger extends Component
     error(className, funcName, message)
     {
         this.writeLog('Error', className, funcName, message);
+    }
+
+    debug(className, funcName, message)
+    {
+        this.writeLog('Debug', className, funcName, message);
     }
 
     showLog()
