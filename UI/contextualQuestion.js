@@ -168,7 +168,7 @@ static navigationOptions = ({ navigation }) => {
      {
         logger.error(codeFileName, 'saveResponse', 'Failed to upload response. Saving in local file for now.')
         _time =  Date.now().toString();
-        await utilities.writeJSONFile(_surveyResponseJS, RNFS.DocumentDirectoryPath+"/response-"+ _time+'.js',
+        await utilities.writeJSONFile(_surveyResponseJS, RNFS.DocumentDirectoryPath+"/survey--response--"+ _time+'.js',
                                 codeFileName, "saveResponse");
      }
 
