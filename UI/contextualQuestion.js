@@ -4,6 +4,7 @@ import {Platform, StyleSheet, Text, View, Button,
   TouchableHighlight, Switch, BackHandler} from 'react-native';
 import * as RNFS from 'react-native-fs';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+import { ProgressDialog } from 'react-native-simple-dialogs';
 
 import DialogInput from 'react-native-dialog-input';
 
@@ -61,7 +62,8 @@ static navigationOptions = ({ navigation }) => {
                    contextResponseJS: {}, //holds responses to the contextual questions
                    surveyResponseJS: {}, //whole survey response passed by parent
                    surrounding:true, //Questions about surrounding people VS participating people
-                        };
+                   saveWaitVisible: false, //show progress dialog while saving survey response
+                 };
 
     this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
           BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
@@ -126,6 +128,8 @@ static navigationOptions = ({ navigation }) => {
    async saveResponse()
    {
 
+    this.setState({saveWaitVisible:true});
+
     const _appStatus = await appStatus.loadStatus();
 
      _contextResponseJS={
@@ -173,12 +177,13 @@ static navigationOptions = ({ navigation }) => {
      }
 
 
+     this.setState({saveWaitVisible:true}, ()=> {
      Alert.alert("Congratulations!", "You have earned $.2!",
                [
                    {text: 'OK', onPress:() => {BackHandler.exitApp()}}
                ],
                {cancelable: false}
-             )
+             )});
 
 
 
@@ -319,6 +324,12 @@ static navigationOptions = ({ navigation }) => {
 
 
       </View>
+
+      <ProgressDialog
+          visible={this.state.saveWaitVisible}
+          title="Progress Dialog"
+          message="Saving response. Please, wait..."
+      />
       </ScrollView>
 
     );
