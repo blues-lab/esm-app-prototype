@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, Alert} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, Alert, AppState} from 'react-native';
 import * as RNFS from 'react-native-fs';
-import wifi from 'react-native-android-wifi';
+import WifiManager from 'react-native-wifi';
 
 import logger from './logger';
 import notificationController from './notificationController';
@@ -11,7 +11,7 @@ const codeFileName = 'backgroundJobs.js'
 import appStatus from '../controllers/appStatus';
 
 import utilities from '../controllers/utilities';
-import {USER_SETTINGS_FILE_PATH, SURVEY_STATUS,MAX_SURVEY_PER_DAY} from './constants';
+import {USER_SETTINGS_FILE_PATH, SURVEY_STATUS,MAX_SURVEY_PER_DAY, LOG_FILE_PATH} from './constants';
 
 
 function getFromHour(settings, day)
@@ -82,6 +82,7 @@ function getToHour(settings, day)
      min = time.split(':')[1]
      return  Number(min)+Number(hr)*60;
 }
+
 
 function isInDoNotDisturbTime(settings)
 {
@@ -219,3 +220,79 @@ export async function showPrompt()
       }
 }
 
+
+
+export async function uploadFiles()
+{
+    //TODO: check if app in background, otherwise return
+    if(AppState.currentState=='active')
+    {
+        logger.info('Global','uploadFiles', 'Current app state is '+AppState.currentState+'. Returning.');
+        return;
+    }
+
+    logger.info('Global','uploadFiles', 'Current app state is '+AppState.currentState+'. Attempting to upload files.');
+
+    const _appStatus = await appStatus.loadStatus();
+    try
+    {
+        //check if WiFi is connected.
+        const _ssid = await WifiManager.getCurrentWifiSSID();
+        if((_ssid.length>0)  && (_ssid != '<unknown ssid>'))
+        {
+            logger.info('Global', 'uploadFiles', 'Obtained  SSID:'+_ssid+'.');
+
+            //check if there is any survey response files, if so, upload them
+            const _files = await RNFS.readdir(RNFS.DocumentDirectoryPath);
+            logger.info('Global', 'uploadFiles', 'Uploading survey response files. Existing files:'+_files.toString());
+            for(i =0; i< _files.length; i++)
+            {
+                const _file = _files[i];
+                if(_file.startsWith('survey--response--'))
+                {
+                    logger.info('Global','uploadFiles', 'Uploading survey response file:'+_file);
+                    const _filePath = RNFS.DocumentDirectoryPath+'/'+_file;
+                    const _fileContent = await RNFS.readFile(_filePath);
+                    const _uploaded = await utilities.uploadData( _fileContent, _appStatus.UUID,
+                                                    'SurveyResponse', codeFileName, 'uploadFiles');
+                     if(_uploaded)
+                     {
+                        logger.info(codeFileName, 'uploadFiles', 'Uploaded file content for:'+_file+'. Removing file.');
+                        await RNFS.unlink(_filePath);
+                     }
+                     else
+                     {
+                        logger.error(codeFileName, 'uploadFiles', 'Failed to upload file:'+_file);
+                     }
+                }
+            }
+
+            //upload log file
+            logger.info('Global', 'uploadFiles', 'Attempting to upload log file.');
+            const _fileContent = await RNFS.readFile(LOG_FILE_PATH);
+            const _uploaded = await utilities.uploadData( _fileContent, _appStatus.UUID,
+                                            'Log', codeFileName, 'uploadFiles');
+             if(_uploaded)
+             {
+                await RNFS.writeFile(LOG_FILE_PATH,'');
+                logger.info(codeFileName, 'uploadFiles', 'Uploaded previous log file content. Replaced with empty file.');
+             }
+             else
+             {
+                logger.error(codeFileName, 'uploadFiles', 'Failed to upload log file.');
+             }
+
+        }
+        else
+        {
+            logger.error('Global', 'uploadFiles', 'Obtained empty SSID:'+_ssid+'. Returning');
+            return;
+        }
+    }
+    catch(error)
+    {
+        logger.error('Global', 'uploadFiles', 'Failed to upload files: '+error);
+        return;
+    }
+
+}

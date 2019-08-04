@@ -35,7 +35,7 @@ import notificationController from './controllers/notificationController';
 import {USER_SETTINGS_FILE_PATH,SURVEY_STATUS, MAX_NOTIFICATION_NUM} from './controllers/constants'
 const codeFileName="App.js";
 
-import {showPrompt} from './controllers/backgroundJobs';
+import {showPrompt, uploadFiles} from './controllers/backgroundJobs';
 
 
 //----- set up job for showing periodic survey prompts --------//
@@ -66,26 +66,27 @@ BackgroundJob.schedule(notificationSchedulePrompt)
 //----- set up job for periodic file upload  --------//
 
 //// define the job
-//    const backgroundJobFU = {
-//     jobKey: "fileUpload",
-//     job: () => {
-//            //notificationController.showNotification("Notification from App.js");
-//        }
-//    };
-//
-//    ////register the job
-//    BackgroundJob.register(backgroundJobFU);
-//
-//    ////create schedule for the notification
-//    var notificationScheduleFU = {
-//     jobKey: "fileUpload",
-//     period: 60*60*1000
-//    }
-//
-//    ////schedule the 'schedule'
-//    BackgroundJob.schedule(notificationScheduleFU)
-//      .then(() => logger.info(`${codeFileName}`,'Global',"Successfully scheduled background job for file upload."))
-//      .catch(err => logger.error(`${codeFileName}`,'Global',"Error in scheduling job for file upload:"+err.message));
+    const backgroundJobFU = {
+     jobKey: "fileUpload",
+     job: () =>
+     {
+
+     }
+    };
+
+    ////register the job
+    BackgroundJob.register(backgroundJobFU);
+
+    ////create schedule for the notification
+    var notificationScheduleFU = {
+     jobKey: "fileUpload",
+     period: 30*60*1000
+    }
+
+    ////schedule the 'schedule'
+    BackgroundJob.schedule(notificationScheduleFU)
+      .then(() => logger.info(`${codeFileName}`,'Global',"Successfully scheduled background job for file upload."))
+      .catch(err => logger.error(`${codeFileName}`,'Global',"Error in scheduling job for file upload:"+err.message));
 
 //----- set up job for periodic file upload --------//
 
@@ -156,7 +157,8 @@ export default class App extends Component<Props>
   {
     this.generateInitialFiles(serviceFileAsset, serviceFileLocal);
 
-    //showPrompt();
+    //uploadFiles();
+   // showPrompt();
   }
 
 
