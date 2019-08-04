@@ -123,7 +123,7 @@ function isInDoNotDisturbTime(settings)
 
 async function showPrompt()
 {
-      const _appStatus = appStatus.loadStatus();
+      const _appStatus = await appStatus.loadStatus();
       logger.info(codeFileName, "showPrompt", "Current app status:"+JSON.stringify(_appStatus));
 
       _userSettingsData = null;
@@ -357,10 +357,7 @@ export default class App extends Component<Props>
   {
     this.generateInitialFiles(serviceFileAsset, serviceFileLocal);
 
-    //setInterval(this.testPrompt,60*1000);
-    //this.testPrompt();
-    //setTimeout(this.testPrompt, 70*1000);
-    //setTimeout(notificationController.cancelNotifications, 90*1000)
+    showPrompt();
   }
 
 
