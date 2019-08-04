@@ -34,7 +34,7 @@ export default class HomeScreen extends React.Component {
 
   static navigationOptions = {
         headerLeft: null,
-        headerTitle: <ToolBar title="Mimi" showProgress={false}/>
+        headerTitle: <ToolBar title="Home" progress={0} showProgress={false}/>
       };
 
   constructor(props)
@@ -88,8 +88,10 @@ export default class HomeScreen extends React.Component {
           {text: 'Yes', onPress: () => {
               logger.info(`${codeFileName}`, "'Yes' to recent conversation", " Setting survey status to ONGOING and navigating to StartSurvey");
 
-              appStatus.setSurveyStatus(SURVEY_STATUS.ONGOING);
-              this.props.navigation.navigate('StartSurvey');
+              appStatus.setSurveyStatus(SURVEY_STATUS.ONGOING)
+                       .then(() => {
+                            this.props.navigation.navigate('StartSurvey');
+                        })
             }},
           {text: 'No', onPress: () => {
                 logger.info(`${codeFileName}`, "'No' to recent conversation", "Exiting App.");
