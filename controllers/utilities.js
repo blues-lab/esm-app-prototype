@@ -188,6 +188,11 @@ class Utilities extends Component
                );
 
                 logger.info(callerClass, callerFunc+"-->uploadData", 'Server response:'+JSON.stringify(response));
+
+                if (!response.ok)
+                {
+                    throw Error(response.statusText);
+                }
           }
           catch (error)
           {
