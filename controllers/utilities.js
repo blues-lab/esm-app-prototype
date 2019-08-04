@@ -191,7 +191,7 @@ class Utilities extends Component
 
                 if (!response.ok)
                 {
-                    throw Error(response.statusText);
+                    logger.error(callerClass, callerFunc+"-->uploadData", 'Error uploading data:'+response.statusText);
                 }
           }
           catch (error)

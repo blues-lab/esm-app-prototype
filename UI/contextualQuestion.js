@@ -126,7 +126,7 @@ static navigationOptions = ({ navigation }) => {
    async saveResponse()
    {
 
-    const _appStatus = appStatus.loadStatus();
+    const _appStatus = await appStatus.loadStatus();
 
      _contextResponseJS={
         "NumOfPeopleAround": this.state.numOfPeople,
