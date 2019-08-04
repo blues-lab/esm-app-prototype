@@ -22,14 +22,17 @@ class ToolBar extends React.Component {
 
   async componentDidMount()
   {
-    logger.info(codeFileName, 'componentDidMount', 'Loading appStatus');
+    const _appStatus  = await appStatus.loadStatus();
 
-    this.setState({surveyStatus: appStatus.getStatus().SurveyStatus, completedSurveys: appStatus.getStatus().CompletedSurveys})
+    this.setState({surveyStatus: _appStatus.SurveyStatus,
+                   completedSurveys: _appStatus.CompletedSurveys});
 
-    if(appStatus.getStatus().SurveyStatus == SURVEY_STATUS.ONGOING)
+
+    logger.info(codeFileName, 'componentDidMount', 'Current appStatus:'+JSON.stringify(_appStatus));
+    if(_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING)
     {
         logger.info(codeFileName, 'componentDidMount', 'Survey status is ONGOING so setting up toolbar to show remaining time.')
-        const _firstNotificationTime = appStatus.getStatus().FirstNotificationTime;
+        const _firstNotificationTime = _appStatus.FirstNotificationTime;
 
         if(_firstNotificationTime==null)
         {
@@ -41,7 +44,7 @@ class ToolBar extends React.Component {
 
         logger.info(codeFileName, 'componentDidMount', 'curTime:'+_curTime+'. _firstNotificationTime:'+_firstNotificationTime);
         const _secondsPassed = (_curTime.getTime() - _firstNotificationTime.getTime())/1000;
-        const _secRemaining = appStatus.getStatus().PromptDuration * 60 - _secondsPassed;
+        const _secRemaining = _appStatus.PromptDuration * 60 - _secondsPassed;
 
         logger.info(codeFileName, 'componentDidMount', '_secRemaining:'+_secRemaining);
 

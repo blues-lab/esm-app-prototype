@@ -15,7 +15,7 @@ import { createStackNavigator, createAppContainer } from 'react-navigation';
 
 import appStatus from './controllers/appStatus'
 import logger from './controllers/logger';
-//logger.setup();
+logger.setup();
 
 //Import UI files
 import HomeScreen from './UI/home'
@@ -164,12 +164,13 @@ async function showPrompt()
       }
       else
       {
+          const _appStatus = appStatus.loadStatus();
           logger.info(codeFileName, 'showPrompt', 'Not in "Do not disturb" mode.');
-          if(appStatus.getStatus().SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE)
+          if(_appStatus.SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE)
           {
               //if no survey is available, randomly create one
               logger.info(codeFileName,"showPrompt", "No survey available; checking if already completed survey today.");
-              if(appStatus.getStatus().SurveyStatus != SURVEY_STATUS.COMPLETED)
+              if(_appStatus.SurveyStatus != SURVEY_STATUS.COMPLETED)
               {
                   _createSurvey = true;//(Math.floor(Math.random() * 100) + 1)%2==0;
                   logger.info(codeFileName,"showPrompt", "Survey not completed today. Randomly creating one; _createSurvey:"+_createSurvey);
@@ -179,7 +180,7 @@ async function showPrompt()
                       logger.info(codeFileName,"showPrompt", "Creating new survey and changing status to AVAILABLE.");
                       appStatus.setSurveyStatus(SURVEY_STATUS.AVAILABLE);
                       appStatus.incrementSurveyCountToday();
-                      _remainingTime = appStatus.getStatus().PromptDuration;
+                      _remainingTime = _appStatus.PromptDuration;
                       notificationController.cancelNotifications();
                       notificationController.showNotification("New survey available!",
                            "Complete it within "+_remainingTime+" minutes and get $0.2!!!");
@@ -195,12 +196,12 @@ async function showPrompt()
                 logger.info(codeFileName,"showPrompt", "Survey already completed today.");
               }
           }
-          else if(appStatus.getStatus().SurveyStatus == SURVEY_STATUS.AVAILABLE)
+          else if(_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE)
           {
               //Survey is available, show prompt if there is still time, or make survey expired
 
               logger.info(codeFileName,"showPrompt", "Survey available.");
-              const _firstNotificationTime = appStatus.getStatus().FirstNotificationTime;
+              const _firstNotificationTime = _appStatus.FirstNotificationTime;
               if(_firstNotificationTime==null)
               {
                 logger.error(codeFileName, "showPrompt", "Fatal error: FirstNotificationTime is null. Returning.");
@@ -210,7 +211,7 @@ async function showPrompt()
               _minPassed = Math.floor((Date.now() - _firstNotificationTime)/60000);
               logger.info(codeFileName,"showPrompt", _minPassed.toString()+" minutes have passed since the last notification date at "+_firstNotificationTime);
 
-              _remainingTime = appStatus.getStatus().PromptDuration - _minPassed;
+              _remainingTime = _appStatus.PromptDuration - _minPassed;
               if(_remainingTime<=0) //survey expired, remove all existing notification
               {
                   logger.info(codeFileName,"showPrompt", "Remaining time "+_remainingTime+", cancelling notifications.");
@@ -220,11 +221,11 @@ async function showPrompt()
               }
               else
               {
-                  logger.info(codeFileName, 'showPrompt','Remaining time:'+_remainingTime+ ', survey status:'+appStatus.getStatus().SurveyStatus);
+                  logger.info(codeFileName, 'showPrompt','Remaining time:'+_remainingTime+ ', survey status:'+_appStatus.SurveyStatus);
                   if(
                       _remainingTime>0 &&
-                      appStatus.getStatus().SurveyStatus == SURVEY_STATUS.AVAILABLE &&
-                      appStatus.getStatus().NotificationCountToday < MAX_NOTIFICATION_NUM
+                      _appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE &&
+                      _appStatus.NotificationCountToday < MAX_NOTIFICATION_NUM
                     )
                   {
                       notificationController.cancelNotifications();

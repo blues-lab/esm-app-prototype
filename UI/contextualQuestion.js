@@ -126,6 +126,8 @@ static navigationOptions = ({ navigation }) => {
    async saveResponse()
    {
 
+    const _appStatus = appStatus.loadStatus();
+
      _contextResponseJS={
         "NumOfPeopleAround": this.state.numOfPeople,
         "NumOfPeopleCanHear": this.state.numOfPeopleCanHear,
@@ -134,10 +136,10 @@ static navigationOptions = ({ navigation }) => {
         "RemoteConversation":this.state.remoteConversation,
         "Relations": Array.from(this.state.selectedRelations).toString(),
         "Locations": Array.from(this.state.selectedLocations).toString(),
-        "SurveyCountToday": appStatus.getStatus().SurveyCountToday,
-        "CurrentSurveyCreationTime": appStatus.getStatus().FirstNotificationTime,
+        "SurveyCountToday": _appStatus.SurveyCountToday,
+        "CurrentSurveyCreationTime": _appStatus.FirstNotificationTime,
         "CurrentSurveyCompletionTime": new Date(),
-        "UIID": appStatus.getStatus().UIID,
+        "UIID": _appStatus.UIID,
      }
 
      logger.info(codeFileName, 'saveResponse', 'Saving survey response.');
@@ -158,7 +160,7 @@ static navigationOptions = ({ navigation }) => {
 
      logger.info(codeFileName, 'saveResponse', 'Uploading survey response.');
 
-     utilities.uploadData(_surveyResponseJS, appStatus.getStatus().UUID, 'SurveyResponse', codeFileName, 'saveResponse');
+     utilities.uploadData(_surveyResponseJS, _appStatus.UUID, 'SurveyResponse', codeFileName, 'saveResponse');
      logger.info(codeFileName, 'saveResponse', 'All done!');
 
      Alert.alert("Congratulations!", "You have earned $.2!",

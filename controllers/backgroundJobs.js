@@ -17,12 +17,12 @@ import {SURVEY_STATUS,MAX_NOTIFICATION_NUM} from './constants';
 
 class BackgroundJobs
 {
-    showPrompt()
+    async showPrompt()
     {
         logger.info(codeFileName, "showPrompt", "Getting app status.");
         //logger.info("BackgroundJobs","showPrompt", "Getting wifi name");
         //_wifiName = utilities.getWifiName();
-        _appStatus = appStatus.getStatus();
+        _appStatus = await appStatus.loadStatus();
 
         if(_appStatus.SurveyStatusToday == SURVEY_STATUS.AVAILABLE)//if no survey is available
 

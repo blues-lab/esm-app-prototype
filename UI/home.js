@@ -27,6 +27,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {USER_SETTINGS_FILE_PATH} from '../controllers/constants'
 
 
+logger.setup();
+appStatus.loadStatus();
 
 export default class HomeScreen extends React.Component {
 
@@ -111,7 +113,8 @@ export default class HomeScreen extends React.Component {
       logger.info(codeFileName, 'componentDidMount', 'Registering to listen app foreground/background transition');
 
       logger.info(codeFileName, "componentDidMount", "Reloading app status.");
-      logger.info(codeFileName, "componentDidMount", "Current app status:"+JSON.stringify(appStatus.getStatus()));
+      const _appStatus = await appStatus.loadStatus();
+      logger.info(codeFileName, "componentDidMount", "Current app status:"+JSON.stringify(_appStatus));
 
     if(await this.isFirstLaunch()==null)
     {
@@ -145,7 +148,7 @@ export default class HomeScreen extends React.Component {
 
         //Check if study period has ended
         {
-            _installationDate = appStatus.getStatus().InstallationDate;
+            _installationDate = _appStatus.InstallationDate;
             logger.info(codeFileName, 'componentDidMount', 'Checking if study period has ended. _installationDate:'+_installationDate)
             if(_installationDate==null)
             {
@@ -156,7 +159,7 @@ export default class HomeScreen extends React.Component {
                 _oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
                 _currDate = new Date();
                 _diffDays = Math.round(Math.abs((_currDate.getTime() - _installationDate.getTime())/(_oneDay)));
-                if(_diffDays > appStatus.getStatus().StudyDuration)
+                if(_diffDays > _appStatus.StudyDuration)
                 {
                     logger.info(codeFileName, 'componentDidMount', "Survey period ended. Returning");
                     return;
@@ -183,7 +186,7 @@ export default class HomeScreen extends React.Component {
                     }
                     else
                     {
-                        if(appStatus.getStatus().SurveyStatus == SURVEY_STATUS.AVAILABLE)//check if survey is available from app settings
+                        if(_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE)//check if survey is available from app settings
                         {
                             logger.info(codeFileName, 'componentDidMount', "New survey available. Asking for conversation.");
                             this.startSurvey();

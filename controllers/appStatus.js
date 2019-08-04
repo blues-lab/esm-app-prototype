@@ -29,7 +29,12 @@ class AppStatus
                  }
     }
 
-    getStatus(){return this.status;}
+//    async getStatus()
+//    {
+//        //await this.loadStatus();
+//        //logger.debug(codeFileName,'getStatus', 'Returning app status:'+JSON.stringify(this.status));
+//        return this.status;
+//    }
 
     async loadStatus()
     {
