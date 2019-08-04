@@ -28,7 +28,7 @@ class ToolBar extends React.Component {
                    completedSurveys: _appStatus.CompletedSurveys});
 
 
-    logger.info(codeFileName, 'componentDidMount', 'Current appStatus:'+JSON.stringify(_appStatus));
+    logger.info(codeFileName, 'componentDidMount', 'Page:'+this.props.title+'. Progress:'+this.props.progress+'. Current appStatus:'+JSON.stringify(_appStatus));
     if(_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING)
     {
         logger.info(codeFileName, 'componentDidMount', 'Survey status is ONGOING so setting up toolbar to show remaining time.')
