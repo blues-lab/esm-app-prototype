@@ -11,5 +11,7 @@ export const USER_SETTINGS_FILE_PATH = RNFS.DocumentDirectoryPath+'/usersettings
 
 export const APP_STATUS_FILE_PATH = RNFS.DocumentDirectoryPath+'/appStatus.js';
 
+export const LOG_FILE_PATH = RNFS.DocumentDirectoryPath+'/log.csv';
+
 
 export const VERSION_NUMBER = '1.0.0';
