@@ -154,11 +154,11 @@ static navigationOptions = ({ navigation }) => {
 
      logger.info(codeFileName, 'saveResponse', 'Updating survey status to "Completed" and removing all notifications.');
 
-     appStatus.setSurveyStatus("Completed");
+     await appStatus.setSurveyStatus("Completed");
      notificationController.cancelNotifications();
 
      logger.info(codeFileName, 'saveResponse', 'Updating completed survey count.');
-     appStatus.increaseCompletedSurveys();
+     await appStatus.increaseCompletedSurveys();
 
      logger.info(codeFileName, 'saveResponse', 'Uploading survey response.');
 

@@ -125,13 +125,11 @@ export default class HomeScreen extends React.Component {
         try
         {
             await AsyncStorage.setItem('@HAS_LAUNCHED', 'true');
-            UUIDGenerator.getRandomUUID((uuid) =>
-            {
-                  const _installationDate = new Date();
-                  logger.info(codeFileName, 'componentDidMount', "Setting installation date:"+_installationDate+" and UUID:"+uuid);
-                  appStatus.setInstallationDate(_installationDate);
-                  appStatus.setUUID(uuid);
-            });
+            const _uuid = await UUIDGenerator.getRandomUUID();
+            const _installationDate = new Date();
+            logger.info(codeFileName, 'componentDidMount', "Setting installation date:"+_installationDate+" and UUID:"+_uuid);
+            await appStatus.setInstallationDate(_installationDate);
+            await appStatus.setUUID(_uuid);
 
         }
         catch (e)

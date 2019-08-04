@@ -88,22 +88,24 @@ class ToolBar extends React.Component {
             {
                 //ongoing survey expired, go back to home
                 logger.info(codeFileName, "updateTimeDisplay", "Survey expired, going back to home screen.");
-                appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
-                if(this.props.title!="Settings")
-                {
-                    Alert.alert(
-                            'Survey expired!',
-                            'Sorry, the current survey is expired. We will notify you once new surveys become available.',
-                            [
-                              {text: 'OK', onPress: () =>
+                appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE)
+                         .then(()=> {
+                                if(this.props.title!="Settings")
                                 {
-                                  this.props.navigation.navigate('Home');
+                                    Alert.alert(
+                                            'Survey expired!',
+                                            'Sorry, the current survey is expired. We will notify you once new surveys become available.',
+                                            [
+                                              {text: 'OK', onPress: () =>
+                                                {
+                                                  this.props.navigation.navigate('Home');
+                                                }
+                                              }
+                                            ],
+                                            {cancelable: false},
+                                          );
                                 }
-                              }
-                            ],
-                            {cancelable: false},
-                          );
-                }
+                })
             }
         }
     }

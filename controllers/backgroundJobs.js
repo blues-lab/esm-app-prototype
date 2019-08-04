@@ -164,7 +164,7 @@ export async function showPrompt()
                   {
                       appStatus.incrementSurveyCountToday();
                       logger.info(codeFileName,"showPrompt", "Created new survey number:"+_appStatus.SurveyCountToday+". Changing status to AVAILABLE.");
-                      appStatus.setSurveyStatus(SURVEY_STATUS.AVAILABLE);
+                      await appStatus.setSurveyStatus(SURVEY_STATUS.AVAILABLE);
 
                       _remainingTime = _appStatus.PromptDuration;
                       notificationController.cancelNotifications();
@@ -172,8 +172,8 @@ export async function showPrompt()
                            "Complete it within "+_remainingTime+" minutes and get $0.2!!!");
 
                       _notificationTime = new Date();
-                      appStatus.setFirstNotificationTime(_notificationTime);
-                      appStatus.setLastNotificationTime(_notificationTime);
+                      await appStatus.setFirstNotificationTime(_notificationTime);
+                      await appStatus.setLastNotificationTime(_notificationTime);
                       logger.info(codeFileName,"showPrompt", "Notification for new survey is shown and first+last notification time is set at:"+_notificationTime);
                   }
               }
@@ -203,7 +203,7 @@ export async function showPrompt()
                   logger.info(codeFileName,"showPrompt", "Remaining time "+_remainingTime+", cancelling notifications.");
                   notificationController.cancelNotifications();
                   logger.info(codeFileName,"showPrompt", "Changing survey status to NOT_AVAILABLE.");
-                  appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
+                  await appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
               }
               else
               {
@@ -213,7 +213,7 @@ export async function showPrompt()
                   notificationController.showNotification("New survey available!",
                                                           "Complete it within "+_remainingTime+" minutes and get \u002420!!!");
                   logger.info(codeFileName,"showPrompt", "Showing latest notification at: "+new Date());
-                  appStatus.setLastNotificationTime(new Date());
+                  await appStatus.setLastNotificationTime(new Date());
 
               }
           }
