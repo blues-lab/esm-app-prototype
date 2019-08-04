@@ -308,9 +308,12 @@ static navigationOptions = ({ navigation }) => {
                         if(this.state.surrounding)
                         {
                             this.setState({surrounding:false, surveyProgress:90})
+                            this.props.navigation.setParams({ surveyProgress: 90})
                         }
                         else
                         {
+                            this.setState({surrounding:false, surveyProgress:100})
+                            this.props.navigation.setParams({ surveyProgress: 100})
                             this.saveResponse();
                         }
                     }

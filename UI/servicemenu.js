@@ -371,30 +371,35 @@ export default class ServiceMenuScreen extends React.Component {
     }
 
 
-
     if(_permissionPages.length==0)
     {
         Alert.alert("Please select at least one service to continue.");
+        logger.info(codeFileName, 'showPermissionPage','No service selected to show permission page. Returning.');
         return;
     }
 
+    logger.info(codeFileName, 'showPermissionPage','Total number of permission pages:'+_permissionPages.length);
+
     _permissionPageIdx = this.state.permissionPageIdx+1;
-    //Alert.alert(_permissionPageIdx.toString(),_permissionPages[_permissionPageIdx].serviceName)
+
     if(_permissionPageIdx < _permissionPages.length)
     {
+        _progress = this.state.surveyProgress+Math.floor(40/_permissionPages.length);
+        logger.info(codeFileName, 'showPermissionPage',
+                    'Navigating to permission pages. Progress change:'+this.state.surveyProgress+' to '+_progress+'.');
+
         this.setState({permissionPageIdx: _permissionPageIdx,
                        activeServiceCategoryName: _permissionPages[_permissionPageIdx].categoryName,
                        activeServiceName: _permissionPages[_permissionPageIdx].serviceName,
                        permissionModalVisible: false,
-                       surveyProgress: this.state.surveyProgress+Math.floor(40/_permissionPages.length)});
-
-        this.props.navigation.navigate('ServicePermission',
-                    {serviceName : _permissionPages[_permissionPageIdx].serviceName,
-                    serviceCategoryName: _permissionPages[_permissionPageIdx].categoryName,
-                    permissionResponseHandler : this.savePermissionResponse.bind(this),
-                    surveyProgress: this.state.surveyProgress});
+                       surveyProgress: _progress}, ()=>{
+                                            this.props.navigation.navigate('ServicePermission',
+                                            {serviceName : _permissionPages[_permissionPageIdx].serviceName,
+                                            serviceCategoryName: _permissionPages[_permissionPageIdx].categoryName,
+                                            permissionResponseHandler : this.savePermissionResponse.bind(this),
+                                            surveyProgress: this.state.surveyProgress});
+                       });
     }
-
   }
 
   renderListItem = ({item}) => {
