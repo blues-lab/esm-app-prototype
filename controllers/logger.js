@@ -42,23 +42,17 @@ class Logger extends Component
         return y+'-'+m+'-'+day+' '+time
     }
 
-    writeLog(type, className, funcName, message)
+    async writeLog(type, className, funcName, message)
     {
        const _time = this.getDateTime();
-       RNFS.appendFile(logFilePath,
-                    type +','+
-                    className+','+
-                    funcName+','+
-                    message+','+
-                    _time+'\n'
-               )
-            .then((success) =>
-            {
-            })
-            .catch((err) =>
-            {
-                Alert.alert("Error writing in log file",err.message);
-            })
+       try
+       {
+            await  RNFS.appendFile(logFilePath, type +','+ className+','+ funcName+','+ message+','+_time+'\n');
+       }
+       catch(error)
+       {
+            Alert.alert("Error writing in log file",error.message);
+       }
 
     }
 

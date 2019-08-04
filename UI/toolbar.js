@@ -16,19 +16,20 @@ import { ProgressBar, Colors } from 'react-native-paper';
 
 class ToolBar extends React.Component {
 
-  state={minRemaining:21, secRemaining:14}
+  state={minRemaining:21, secRemaining:14, surveyStatus:null, completedSurveys:0}
 
   interval = null;
 
-  componentDidMount()
+  async componentDidMount()
   {
-    logger.info(codeFileName, 'componentDidMount', 'getting appStatus');
-    const _appStatus = appStatus.getStatus();
+    logger.info(codeFileName, 'componentDidMount', 'Loading appStatus');
 
-    if(_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING)
+    this.setState({surveyStatus: appStatus.getStatus().SurveyStatus, completedSurveys: appStatus.getStatus().CompletedSurveys})
+
+    if(appStatus.getStatus().SurveyStatus == SURVEY_STATUS.ONGOING)
     {
         logger.info(codeFileName, 'componentDidMount', 'Survey status is ONGOING so setting up toolbar to show remaining time.')
-        const _firstNotificationTime = _appStatus.FirstNotificationTime;
+        const _firstNotificationTime = appStatus.getStatus().FirstNotificationTime;
 
         if(_firstNotificationTime==null)
         {
@@ -40,7 +41,7 @@ class ToolBar extends React.Component {
 
         logger.info(codeFileName, 'componentDidMount', 'curTime:'+_curTime+'. _firstNotificationTime:'+_firstNotificationTime);
         const _secondsPassed = (_curTime.getTime() - _firstNotificationTime.getTime())/1000;
-        const _secRemaining = _appStatus.PromptDuration * 60 - _secondsPassed;
+        const _secRemaining = appStatus.getStatus().PromptDuration * 60 - _secondsPassed;
 
         logger.info(codeFileName, 'componentDidMount', '_secRemaining:'+_secRemaining);
 
@@ -70,6 +71,7 @@ class ToolBar extends React.Component {
   {
     _minRemaining= this.state.minRemaining;
     _secRemaining = Math.max(0, this.state.secRemaining-1);
+    this.setState({secRemaining: _secRemaining, minRemaining: _minRemaining});
     if(_secRemaining==0)
     {
         if(_minRemaining>0)
@@ -79,19 +81,29 @@ class ToolBar extends React.Component {
         }
         else
         {
-            if(appStatus.getStatus().SurveyStatus == SURVEY_STATUS.ONGOING)
+            if(this.state.surveyStatus == SURVEY_STATUS.ONGOING)
             {
                 //ongoing survey expired, go back to home
                 logger.info(codeFileName, "updateTimeDisplay", "Survey expired, going back to home screen.");
                 appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
                 if(this.props.title!="Settings")
                 {
-                    this.props.navigation.navigate('Home');
+                    Alert.alert(
+                            'Survey expired!',
+                            'Sorry, the current survey is expired. We will notify you once new surveys become available.',
+                            [
+                              {text: 'OK', onPress: () =>
+                                {
+                                  this.props.navigation.navigate('Home');
+                                }
+                              }
+                            ],
+                            {cancelable: false},
+                          );
                 }
             }
         }
     }
-    this.setState({secRemaining: _secRemaining, minRemaining: _minRemaining});
   }
 
   render() {
@@ -111,7 +123,7 @@ class ToolBar extends React.Component {
              </TouchableHighlight>
 
 
-             { (false || appStatus.getStatus().SurveyStatus == SURVEY_STATUS.ONGOING) &&
+             { (false || this.state.surveyStatus == SURVEY_STATUS.ONGOING) &&
                  <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
                      <Text style={{fontSize:20}}>
                          {this.state.minRemaining>9?this.state.minRemaining:'0'+this.state.minRemaining}:{this.state.secRemaining>9?this.state.secRemaining:'0'+this.state.secRemaining}
@@ -130,7 +142,7 @@ class ToolBar extends React.Component {
             }
 
             <Text style={{color:'green',fontSize:20, marginRight:10}}>
-                ${(appStatus.getStatus().CompletedSurveys*0.2).toFixed(2)}
+                ${(this.state.completedSurveys * 0.2).toFixed(2)}
             </Text>
     </View>
 

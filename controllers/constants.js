@@ -9,5 +9,7 @@ export const VALID_SURVEY_PERIOD = 60; //60 minutes
 
 export const USER_SETTINGS_FILE_PATH = RNFS.DocumentDirectoryPath+'/usersettings.js';
 
+export const APP_STATUS_FILE_PATH = RNFS.DocumentDirectoryPath+'/appStatus.js';
+
 
 export const VERSION_NUMBER = '1.0.0';

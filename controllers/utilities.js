@@ -55,106 +55,64 @@ class Utilities extends Component
     {
         //NOTE: send JSON object to write, DO NOT stringify
 
-        //if there is an existing file, create a backup first
-         if (await RNFS.exists(fileName))
-         {
-             logger.info(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'File already exists.');
-
-             RNFS.copyFile(fileName, fileName+'.backup')
-                 .then( (success) => // 1S
-                 {
-                     logger.info(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Created backup copy of the file.');
-
-                     RNFS.writeFile(fileName, JSON.stringify(content))
-                         .then( (success) => // 2S
-                         {
-                             logger.info(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Wrote new content in the original file.');
-
-                             RNFS.writeFile(fileName, JSON.stringify(content))
-                                 .then( (success) => // 2S
-                                 {
-                                       logger.info(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Created new file.');
-                                       RNFS.unlink(fileName+'.backup')
-                                           .then(() => // 3S
-                                           {
-                                             logger.info(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Deleted backup file.');
-                                           })
-                                           // `unlink` will throw an error, if the item to unlink does not exist
-                                           .catch((error) => //3E
-                                           {
-                                              logger.error(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Failed to delete backup file:'+error.message);
-                                           });
-                                 })
-                                 .catch( (error)=> // 2E
-                                 {
-                                     logger.error(`${callerClass}`, `${callerFunc}-->writeJSONFile`,'Error in creating new file:'+error.message+'. Restoring backup.');
-
-                                     RNFS.copyFile(fileName+'.backup', fileName)
-                                         .then( (success)=> //4S
-                                         {
-                                             logger.info(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Restored backup file.');
-                                         })
-                                         .catch( (error)=> //4E
-                                         {
-                                             logger.error(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Failed to Restore backup file:'+error.message);
-                                         })
-
-
-                                 })
-
-                         })
-                         .catch( (error)=> // 2E
-                         {
-                             logger.error(`${callerClass}`, `${callerFunc}-->writeJSONFile`,'Error in creating new file:'+error.message+'. Restoring backup.');
-                         })
-                 })
-                 .catch( (error) => // 1E
-                 {
-                     logger.error(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Error backing up file:'+error.message);
-                 })
-         }
-         else
-         {
-            RNFS.writeFile(fileName, JSON.stringify(content))
-                 .then( (success) =>
-                 {
-                     logger.info(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Created new file: '+fileName);
-                 })
-                 .catch( (error)=>
-                 {
-                      logger.error(`${callerClass}`, `${callerFunc}-->writeJSONFile`, 'Failed to create file:'+error.message);
-                 })
-         }
-    }
-
-    readJSONFile(filePath, callerClass, callerFunc)
-    {
-
-        RNFS.exists(filePath)
-            .then( (exists) =>
+        try
+        {   const _fileExists = await RNFS.exists(fileName); //if there is an existing file, create a backup first
+            if(_fileExists)
             {
-                if (exists)
-                {
-                     logger.info(callerClass, callerFunc+"-->readJSONFile", 'Reading file:'+filePath);
-                     RNFS.readFile(filePath)
-                         .then((_fileContent) =>
-                         {
-                             logger.info(callerClass, callerFunc+"-->readJSONFile", 'Successfully read file:'+_fileContent);
-                             return _fileContent;
-                         })
-                         .catch( (error)=>
-                         {
-                               logger.error(callerClass, callerFunc+"-->readJSONFile", 'Failed to read file:'+error.message);
-                         })
-                }
-                else
-                {
-                     logger.error(callerClass, callerFunc+"-->readJSONFile", 'Reading file:'+filePath+' does not exist');
-                }
-            });
+                logger.info(callerClass, `${callerFunc}-->writeJSONFile`, fileName+' already exists. Creating backup.');
+                const _backupFileName = fileName+'.backup_'+Date.now().toString();
+                await RNFS.copyFile(fileName, _backupFileName);
 
-            logger.info(callerClass, callerFunc+"-->readJSONFile", 'Returning null');
-         return null;
+                try
+                {
+                    logger.info(callerClass, `${callerFunc}-->writeJSONFile`, 'Creating new file with content.');
+                    await RNFS.writeFile(fileName, JSON.stringify(content));
+                    logger.info(callerClass, `${callerFunc}-->writeJSONFile`, 'Deleting backup file.');
+                    await RNFS.unlink(_backupFileName);
+                }
+                catch(error)
+                {
+                    logger.error(codeFileName, `${callerFunc}-->writeJSONFile`, 'Failed to write content in new file:'+error.message);
+                    RNFS.copyFile(_backupFileName, fileName);
+                    logger.info(callerClass, `${callerFunc}-->writeJSONFile`, 'Restored backup file.');
+                }
+
+            }
+            else
+            {
+                logger.info(callerClass, `${callerFunc}-->writeJSONFile`, 'File did not exist. Writing content in new file.');
+                await RNFS.writeFile(fileName, JSON.stringify(content));
+            }
+        }
+        catch(error)
+        {
+            logger.error(codeFileName, `${callerFunc}-->writeJSONFile`, 'Failed to write file:'+error.message);
+        }
+ }
+
+    async readJSONFile(filePath, callerClass, callerFunc)
+    {
+        try
+        {
+            const _fileExists = await RNFS.exists(filePath);
+            if(_fileExists)
+            {
+                const _fileContent = await RNFS.readFile(filePath);
+                logger.info(callerClass, callerFunc+"-->readJSONFile", 'Successfully read file. Content:'+_fileContent);
+                return _fileContent;
+            }
+            else
+            {
+                logger.info(callerClass, callerFunc+"-->readJSONFile", filePath+' does not exist.');
+            }
+        }
+        catch(error)
+        {
+            logger.error(callerClass, callerFunc+"-->readJSONFile", 'Reading file '+filePath+' failed:'+error.message);
+        }
+
+        logger.info(callerClass, callerFunc+"-->readJSONFile", 'Returning null');
+        return null;
     }
 
     readServiceFile()
@@ -235,6 +193,18 @@ class Utilities extends Component
           {
             logger.error(callerClass, callerFunc+"-->uploadData", 'Error uploading data:'+error.message);
           }
+    }
+
+    getDateTime()
+    {
+        date = new Date();
+        var day = date.getDate();
+        var m = date.getMonth() + 1; //Month from 0 to 11
+        var y = date.getFullYear();
+
+        var time = date.getHours() + ":" + date.getMinutes()+ ':' + date.getSeconds()+':'+date.getMilliseconds();
+
+        return y+'-'+m+'-'+day+' '+time
     }
 
 

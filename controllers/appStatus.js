@@ -7,149 +7,140 @@ import logger from './logger';
 const codeFileName = 'appStatus.js'
 
 import utilities from './utilities';
-import {SURVEY_STATUS} from './constants';
+import {SURVEY_STATUS, APP_STATUS_FILE_PATH} from './constants';
 
 
 class AppStatus
 {
-    appStatusFilePath = RNFS.DocumentDirectoryPath+'/appStatus.js';
-    status = {
-                 SurveyCountToday: 0, //how many surveys were created today
-                 SurveyStatus: SURVEY_STATUS.NOT_AVAILABLE,
-                 FirstNotificationTime: null,
-                 LastNotificationTime: null,
-                 MaxNumberNotification: 5,
-                 PromptDuration:60,
-                 CompletedSurveys:0,
-                 SurveyProgress:0,
-                 InstallationDate: null,
-                 StudyDuration: 1,
-                 UUID:null,
-             }
-
-
-    constructor(props)
+    constructor()
     {
-        //super(props);
-        this.loadStatus();
+        this.status = {
+                     SurveyCountToday: 0, //how many surveys were created today
+                     SurveyStatus: SURVEY_STATUS.NOT_AVAILABLE,
+                     FirstNotificationTime: null,
+                     LastNotificationTime: null,
+                     MaxNumberNotification: 5,
+                     PromptDuration:60,
+                     CompletedSurveys:0,
+                     SurveyProgress:0,
+                     InstallationDate: null,
+                     StudyDuration: 1,
+                     UUID:null,
+                 }
     }
 
+    getStatus(){return this.status;}
 
     async loadStatus()
     {
-
-        if(await RNFS.exists(this.appStatusFilePath))
+        try
         {
-            RNFS.readFile(this.appStatusFilePath)
-                .then((_fileContent) => {
-                    this.status = JSON.parse(_fileContent);
-                    this.status.InstallationDate =  new Date(this.status.InstallationDate);
-                    if(this.status.FirstNotificationTime!=null)
-                    {
-                        this.status.FirstNotificationTime = new Date(this.status.FirstNotificationTime);
-                    }
-                    if(this.status.LastNotificationTime!=null)
-                    {
-                        this.status.LastNotificationTime = new Date(this.status.LastNotificationTime);
-                    }
-
-
-                    logger.info(`${codeFileName}`, 'loadStatus', 'Successfully read app status file:'+JSON.stringify(this.status));
-                })
-                .catch((error)=>
+            const _fileExists = await RNFS.exists(APP_STATUS_FILE_PATH);
+            if(_fileExists)
+            {
+                const _fileContent = await RNFS.readFile(APP_STATUS_FILE_PATH);
+                this.status = JSON.parse(_fileContent);
+                this.status.InstallationDate =  new Date(this.status.InstallationDate);
+                if(this.status.FirstNotificationTime!=null)
                 {
-                    logger.error(callerClass, "loadStatus", 'Failed to read status file:'+error.message);
-                })
+                    this.status.FirstNotificationTime = new Date(this.status.FirstNotificationTime);
+                }
+                if(this.status.LastNotificationTime!=null)
+                {
+                    this.status.LastNotificationTime = new Date(this.status.LastNotificationTime);
+                }
+
+                logger.info(codeFileName, 'loadStatus', 'Successfully read app status file.');
+            }
+            else
+            {
+                logger.info(codeFileName, 'loadStatus', 'App status file does not exist so creating a new one.');
+                await utilities.writeJSONFile(this.status, APP_STATUS_FILE_PATH, codeFileName, 'loadStatus')
+            }
         }
-        else
+        catch(error)
         {
-            logger.info(codeFileName, 'loadStatus', 'Status file does not exist so creating a new one.');
-            utilities.writeJSONFile(this.status, this.appStatusFilePath,
-                                       codeFileName, 'loadStatus')
+            logger.error(callerClass, "loadStatus", 'Failed to read app status file:'+error.message);
         }
 
+        logger.info(codeFileName, 'loadStatus', 'Returning current app status :'+JSON.stringify(this.status));
+        return this.status;
     }
 
-    getStatus()
+
+    async saveAppStatus()
     {
-        _status = this.status;
-        return _status;
+        await utilities.writeJSONFile(this.status, APP_STATUS_FILE_PATH, codeFileName, "saveAppStatus");
     }
 
-
-    saveAppStatus()
-    {
-        utilities.writeJSONFile(this.status, this.appStatusFilePath, codeFileName, "saveAppStatus")
-    }
-
-    setMaxNumberNotification(value)
+    async setMaxNumberNotification(value)
     {
         this.status.MaxNumberNotification = value;
         logger.info(`${codeFileName}`, 'incrementNotificationCount',
             'Setting max notification number to '+this.status.MaxNumberNotification);
-        this.saveAppStatus();
+        await this.saveAppStatus();
     }
 
-    incrementSurveyCountToday()
+    async incrementSurveyCountToday()
     {
         this.status.SurveyCountToday +=1;
         logger.info(`${codeFileName}`, 'incrementSurveyCountToday',
             'Incrementing survey count to '+this.status.SurveyCountToday);
-        this.saveAppStatus();
+        await this.saveAppStatus();
     }
 
-    setLastNotificationTime(value)
+    async setLastNotificationTime(value)
     {
         this.status.LastNotificationTime = value;
         logger.info(`${codeFileName}`, 'setLastNotificationTime',
                     'Setting last notification time to '+this.status.LastNotificationTime);
-        this.saveAppStatus();
+        await this.saveAppStatus();
     }
 
-    setFirstNotificationTime(value)
+    async setFirstNotificationTime(value)
     {
         this.status.FirstNotificationTime = value;
         logger.info(`${codeFileName}`, 'setFirstNotificationTime',
                     'Setting first notification time to '+this.status.FirstNotificationTime);
-        this.saveAppStatus();
+        await this.saveAppStatus();
     }
 
-    setSurveyStatus(value)
+    async setSurveyStatus(value)
     {
         this.status.SurveyStatus = value;
         logger.info(codeFileName, 'setSurveyStatus',
                     'Setting Survey Status to '+this.status.SurveyStatus);
-        this.saveAppStatus();
+        await this.saveAppStatus();
     }
 
-    increaseCompletedSurveys()
+    async increaseCompletedSurveys()
     {
         this.status.CompletedSurveys+=1;
         logger.info(codeFileName, 'increaseCompletedSurveys',
                    'Increasing completed surveys to '+this.status.CompletedSurveys);
-        this.saveAppStatus();
+        await this.saveAppStatus();
     }
-    setInstallationDate(value)
+    async setInstallationDate(value)
     {
         this.status.InstallationDate = value;
         logger.info(codeFileName, 'setInstallationDate',
                    'Setting installation date to '+this.status.InstallationDate);
-        this.saveAppStatus();
+        await this.saveAppStatus();
     }
-    setSurveyProgress(value)
+    async setSurveyProgress(value)
     {
         this.status.SurveyProgress= date;
         logger.info(codeFileName, 'setSurveyProgress',
                    'Setting survey progress to '+this.status.SurveyProgress);
-        this.saveAppStatus();
+        await this.saveAppStatus();
     }
 
-    setUUID(value)
+    async setUUID(value)
     {
         this.status.UUID= value;
         logger.info(codeFileName, 'setUUID',
                    'Setting UUID to '+this.status.UUID);
-        this.saveAppStatus();
+        await this.saveAppStatus();
     }
 }
 

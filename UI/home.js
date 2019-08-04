@@ -57,39 +57,35 @@ export default class HomeScreen extends React.Component {
       }
     }
 
-  async handleAppStateChange(currentState)
+  handleAppStateChange(currentState)
   {
-      logger.info(codeFileName, "handleAppStateChange", "Current app state: "+currentState);
-
-
-      if(currentState=='active')
-      {
-            logger.info(codeFileName, "handleAppStateChange", "Reloading app status.");
-            await appStatus.loadStatus(); //force reload and wait to finish
-            const _appStatus = appStatus.getStatus();
-
-            //show appropriate screen based on if survey is available
-            if(_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE)
-            {//survey is available, but not ONGOING
-                this.setState({noSurveyDialogVisible:false})
-                this.startSurvey();
-            }
-            else if(_appStatus.SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE)
-            {//survey not is available
-                this.setState({noSurveyDialogVisible:true})
-            }
-      }
+//      logger.info(codeFileName, "handleAppStateChange", "Current app state: "+currentState);
+//      if(currentState=='active')
+//      {
+//            logger.info(codeFileName, "handleAppStateChange", "Current app status:"+JSON.stringify(appStatus.getStatus()));
+//
+//            //show appropriate screen based on if survey is available
+//            if(appStatus.getStatus().SurveyStatus == SURVEY_STATUS.AVAILABLE)
+//            {//survey is available, but not ONGOING
+//                //this.setState({noSurveyDialogVisible:false})
+//                //this.startSurvey();
+//            }
+//            else if(appStatus.getStatus().SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE)
+//            {//survey not is available
+//                //this.setState({noSurveyDialogVisible:true})
+//            }
+//      }
   }
 
   startSurvey()
   {
-
       Alert.alert(
         'New survey!',
         'Have you had a conversation recently?',
         [
           {text: 'Yes', onPress: () => {
               logger.info(`${codeFileName}`, "'Yes' to recent conversation", " Setting survey status to ONGOING and navigating to StartSurvey");
+
               appStatus.setSurveyStatus(SURVEY_STATUS.ONGOING);
               this.props.navigation.navigate('StartSurvey');
             }},
@@ -115,9 +111,7 @@ export default class HomeScreen extends React.Component {
       logger.info(codeFileName, 'componentDidMount', 'Registering to listen app foreground/background transition');
 
       logger.info(codeFileName, "componentDidMount", "Reloading app status.");
-      await appStatus.loadStatus(); //force reload and wait to finish
-      const _appStatus = appStatus.getStatus();
-      logger.info(codeFileName, "componentDidMount", "Current app status:"+JSON.stringify(_appStatus));
+      logger.info(codeFileName, "componentDidMount", "Current app status:"+JSON.stringify(appStatus.getStatus()));
 
     if(await this.isFirstLaunch()==null)
     {
@@ -151,7 +145,7 @@ export default class HomeScreen extends React.Component {
 
         //Check if study period has ended
         {
-            _installationDate = _appStatus.InstallationDate;
+            _installationDate = appStatus.getStatus().InstallationDate;
             logger.info(codeFileName, 'componentDidMount', 'Checking if study period has ended. _installationDate:'+_installationDate)
             if(_installationDate==null)
             {
@@ -162,7 +156,7 @@ export default class HomeScreen extends React.Component {
                 _oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
                 _currDate = new Date();
                 _diffDays = Math.round(Math.abs((_currDate.getTime() - _installationDate.getTime())/(_oneDay)));
-                if(_diffDays > _appStatus.StudyDuration)
+                if(_diffDays > appStatus.getStatus().StudyDuration)
                 {
                     logger.info(codeFileName, 'componentDidMount', "Survey period ended. Returning");
                     return;
@@ -189,7 +183,7 @@ export default class HomeScreen extends React.Component {
                     }
                     else
                     {
-                        if(_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE)//check if survey is available from app settings
+                        if(appStatus.getStatus().SurveyStatus == SURVEY_STATUS.AVAILABLE)//check if survey is available from app settings
                         {
                             logger.info(codeFileName, 'componentDidMount', "New survey available. Asking for conversation.");
                             this.startSurvey();
