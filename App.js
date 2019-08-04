@@ -123,7 +123,8 @@ function isInDoNotDisturbTime(settings)
 
 async function showPrompt()
 {
-      logger.info(codeFileName, "showPrompt", "Current app status:"+JSON.stringify(appStatus.getStatus()));
+      const _appStatus = appStatus.loadStatus();
+      logger.info(codeFileName, "showPrompt", "Current app status:"+JSON.stringify(_appStatus));
 
       _userSettingsData = null;
       try
@@ -164,7 +165,6 @@ async function showPrompt()
       }
       else
       {
-          const _appStatus = appStatus.loadStatus();
           logger.info(codeFileName, 'showPrompt', 'Not in "Do not disturb" mode.');
           if(_appStatus.SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE)
           {
