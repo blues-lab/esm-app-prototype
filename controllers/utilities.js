@@ -192,12 +192,16 @@ class Utilities extends Component
                 if (!response.ok)
                 {
                     logger.error(callerClass, callerFunc+"-->uploadData", 'Error uploading data:'+response.statusText);
+                    return false;
                 }
           }
           catch (error)
           {
             logger.error(callerClass, callerFunc+"-->uploadData", 'Error uploading data:'+error.message);
+            return false;
           }
+
+          return true;
     }
 
     getDateTime()

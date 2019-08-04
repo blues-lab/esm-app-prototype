@@ -147,8 +147,6 @@ static navigationOptions = ({ navigation }) => {
      _surveyResponseJS = this.state.surveyResponseJS;
      _surveyResponseJS.ContextualQuestionResponses = _contextResponseJS;
 
-     time =  Date.now().toString()
-     utilities.writeJSONFile(_surveyResponseJS, RNFS.DocumentDirectoryPath+"/response-"+ time+'.js', codeFileName, "saveResponse");
 
      logger.info(codeFileName, 'saveResponse', 'Updating survey status to "Completed" and removing all notifications.');
 
@@ -160,8 +158,20 @@ static navigationOptions = ({ navigation }) => {
 
      logger.info(codeFileName, 'saveResponse', 'Uploading survey response.');
 
-     utilities.uploadData(_surveyResponseJS, _appStatus.UUID, 'SurveyResponse', codeFileName, 'saveResponse');
-     logger.info(codeFileName, 'saveResponse', 'All done!');
+     const _uploaded = await utilities.uploadData(
+            _surveyResponseJS, _appStatus.UUID, 'SurveyResponse', codeFileName, 'saveResponse');
+     if(_uploaded)
+     {
+        logger.info(codeFileName, 'saveResponse', 'All done!');
+     }
+     else
+     {
+        logger.error(codeFileName, 'saveResponse', 'Failed to upload response. Saving in local file for now.')
+        _time =  Date.now().toString();
+        await utilities.writeJSONFile(_surveyResponseJS, RNFS.DocumentDirectoryPath+"/response-"+ _time+'.js',
+                                codeFileName, "saveResponse");
+     }
+
 
      Alert.alert("Congratulations!", "You have earned $.2!",
                [
