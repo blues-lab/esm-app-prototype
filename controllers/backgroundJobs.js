@@ -6,8 +6,7 @@ import WifiManager from 'react-native-wifi';
 import logger from './logger';
 import notificationController from './notificationController';
 
-const codeFileName = 'backgroundJobs.js'
-
+const codeFileName = 'backgroundJobs.js';
 import appStatus from '../controllers/appStatus';
 
 import utilities from '../controllers/utilities';
@@ -137,6 +136,13 @@ export async function showPrompt()
       {
          logger.info(codeFileName, 'showPrompt', 'Home Wifi not set. Returning.');
          return;
+      }
+
+      const _ssid = await WifiManager.getCurrentWifiSSID();
+      if(_ssid != _userSettingsData.homeWifi)
+      {
+        logger.info(codeFileName, 'showPrompt', `Current SSID: ${_ssid}. Home Wifi: ${_userSettingsData.homeWifi} . Returning.`);
+        return;
       }
 
       //Check if in "Don't disturb" times (Sunday is 0, Monday is 1)
