@@ -15,7 +15,6 @@ import { createStackNavigator, createAppContainer } from 'react-navigation';
 
 import appStatus from './controllers/appStatus'
 import logger from './controllers/logger';
-logger.setup();
 
 //Import UI files
 import HomeScreen from './UI/home'

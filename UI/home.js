@@ -24,11 +24,7 @@ import utilities from '../controllers/utilities';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-import {USER_SETTINGS_FILE_PATH} from '../controllers/constants'
-
-
-logger.setup();
-appStatus.loadStatus();
+import {USER_SETTINGS_FILE_PATH} from '../controllers/constants';
 
 export default class HomeScreen extends React.Component {
 
