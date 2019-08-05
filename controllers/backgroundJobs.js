@@ -94,6 +94,12 @@ function isInDoNotDisturbTime(settings)
 
       _current = new Date();
       _now = _current.getHours()*60 + _current.getMinutes();
+      _doNotDisturb = false;
+
+      if(_to < _from)
+      {
+        _to = _to + 60*24;
+      }
       _doNotDisturb = _now>_from && _now<_to;
 
       logger.info('Global', "isInDoNotDisturbTime", `day of week:${_day} from:${_from} to:${_to} now:${_now} doNotDisturb:${_doNotDisturb}.`);
