@@ -13,12 +13,16 @@ import ToolBar from './toolbar';
 
 export default class AlvaPromptScreen extends React.Component {
 
-  static navigationOptions = ({ navigation }) => {
-    return {
-        headerTitle: <ToolBar title="MIMI" progress={navigation.state.params.surveyProgress}/>,
-    };
-   // headerLeft: null
-  };
+    static navigationOptions = ({ navigation }) => {
+        return {
+          headerTitle: <ToolBar title="MIMI" progress={navigation.state.params.surveyProgress}/>,
+          headerLeft: (
+            <TouchableHighlight>
+                <Button title='<' onPress={navigation.getParam('backHandler')}> </Button>
+            </TouchableHighlight>
+          )
+        };
+      };
 
   constructor(props) {
     super(props);
@@ -34,8 +38,18 @@ export default class AlvaPromptScreen extends React.Component {
    {
         const { navigation } = this.props;
         const _topic = navigation.getParam('conversationTopic', '');
+        this.props.navigation.setParams({ backHandler: this.onBackButtonPress.bind(this)});
         this.setState({conversationTopic:_topic})
    }
+
+     onBackButtonPress= () =>
+     {
+         //this.handleBackNavigation();
+         //Alert.alert("Back pressed!");
+         this.props.navigation.goBack(null);
+         return true;
+     };
+
   componentWillUnmount()
   {
       this._didFocusSubscription && this._didFocusSubscription.remove();

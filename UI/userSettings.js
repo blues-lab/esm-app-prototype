@@ -152,18 +152,17 @@ export class UserSettingsEntity
 
 export default class UserSettingsScreen extends React.Component {
 
-//static navigationOptions = ({ navigation }) => {
-//    const { params = {} } = navigation.state;
-//
-//    return{
-//        title: 'Settings',
-//    };
-//  };
+static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'Settings',
+      headerLeft: (
+        <TouchableHighlight>
+            <Button title='<' onPress={navigation.getParam('backHandler')}> </Button>
+        </TouchableHighlight>
+      )
+    };
+  };
 
-    static navigationOptions = {
-          headerLeft: null,
-          title: 'Settings',
-        };
 
     constructor(props) {
       super(props);
@@ -198,7 +197,7 @@ export default class UserSettingsScreen extends React.Component {
 
     componentDidMount()
     {
-        logger.info(codeFileName, 'componentDidMount', 'Setting event handlers.')
+        logger.info(codeFileName, 'componentDidMount', 'Setting event handlers.');
         this.props.navigation.setParams({ backHandler: this.handleBackNavigation.bind(this)});
         this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
           BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)

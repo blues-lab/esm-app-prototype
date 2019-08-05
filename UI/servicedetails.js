@@ -16,10 +16,17 @@ const codeFileName = "serviceDetails.js"
 
 export default class ServiceDetailsScreen extends React.Component {
 
-static navigationOptions = {
-    //headerTitle: <ToolBar title="Services" progress={40}/>
-    title:"Save and return"
-  };
+
+  static navigationOptions = ({ navigation }) => {
+      return {
+        title: "Save and return",
+        headerLeft: (
+          <TouchableHighlight>
+              <Button title='<' onPress={navigation.getParam('backHandler')}> </Button>
+          </TouchableHighlight>
+        )
+      };
+    };
 
   state = {
     serviceCategory: {}, //contains the whole category object passed by parent
@@ -42,7 +49,7 @@ static navigationOptions = {
     super(props);
 
     this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
-                BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+                BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPress)
         );
   }
 
@@ -101,6 +108,8 @@ static navigationOptions = {
     const { navigation } = this.props;
     const _serviceCategory = navigation.getParam('serviceCategory', 'NO-SERVICE');
 
+    this.props.navigation.setParams({ backHandler: this.onBackButtonPress.bind(this)});
+
     this.setState({ serviceCategory: _serviceCategory,
                  serviceCategoryName: _serviceCategory.name,
                  serviceNames: this.parseServiceNames(_serviceCategory)}, ()=>
@@ -113,7 +122,7 @@ static navigationOptions = {
       this._willBlurSubscription && this._willBlurSubscription.remove();
   }
 
-  onBackButtonPressAndroid = () =>
+  onBackButtonPress= () =>
   {
       //this.handleBackNavigation();
       //Alert.alert("Back pressed!");
