@@ -152,13 +152,18 @@ export class UserSettingsEntity
 
 export default class UserSettingsScreen extends React.Component {
 
-static navigationOptions = ({ navigation }) => {
-    const { params = {} } = navigation.state;
+//static navigationOptions = ({ navigation }) => {
+//    const { params = {} } = navigation.state;
+//
+//    return{
+//        title: 'Settings',
+//    };
+//  };
 
-    return{
-        title: 'Settings',
-    };
-  };
+    static navigationOptions = {
+          headerLeft: null,
+          title: 'Settings',
+        };
 
     constructor(props) {
       super(props);
@@ -188,24 +193,31 @@ static navigationOptions = ({ navigation }) => {
 
       this.loadSettings();
 
-      this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
-            BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-          );
+
     }
 
     componentDidMount()
     {
+        logger.info(codeFileName, 'componentDidMount', 'Setting event handlers.')
         this.props.navigation.setParams({ backHandler: this.handleBackNavigation.bind(this)});
-
         this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
           BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
         );
+
+        this._didFocusSubscription = this.props.navigation.addListener('didFocus', payload =>
+                    BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+                  );
+
+    //this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackNavigation.bind(this));
+
     }
 
     componentWillUnmount()
     {
+        logger.info(codeFileName, 'componentDidMount', 'Removing event handlers.')
         this._didFocusSubscription && this._didFocusSubscription.remove();
         this._willBlurSubscription && this._willBlurSubscription.remove();
+// this.backHandler.remove();
     }
 
     onBackButtonPressAndroid = () =>
@@ -327,6 +339,8 @@ static navigationOptions = ({ navigation }) => {
         logger.info(codeFileName, 'handleBackNavigation', "Back button pressed, nothing to save, going to previous page.");
         this.props.navigation.goBack(null);
     }
+
+    return true;
   }
 
 
