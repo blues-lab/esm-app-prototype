@@ -46,6 +46,16 @@ static navigationOptions = {
         );
   }
 
+
+  shuffle(a)
+  {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
   parseServiceNames(serviceCategory)
   {
     // load service names in array from service category object passed by parent
@@ -64,6 +74,8 @@ static navigationOptions = {
           }
         );
     }
+
+    _serviceNames = this.shuffle(_serviceNames);
 
 
     if (_serviceNames.length>0)

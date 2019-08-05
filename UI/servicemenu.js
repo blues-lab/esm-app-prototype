@@ -144,7 +144,8 @@ export default class ServiceMenuScreen extends React.Component {
         );
       }
 
-      logger.info("ServiceMenu","parseService", 'Number of categories found:'+_serviceCategories.length);
+      logger.info("ServiceMenu","parseService", 'Number of categories found:'+_serviceCategories.length+'. Shuffling categories');
+      _serviceCategories = this.shuffle(_serviceCategories);
 
     _serviceCategories.push //Add 'No relevant service'
         (
@@ -365,7 +366,7 @@ export default class ServiceMenuScreen extends React.Component {
             }
         }
         //randomly select 3 permission pages
-        this.shuffle(_permissionPages);
+        _permissionPages = this.shuffle(_permissionPages);
         _permissionPages = _permissionPages.slice(0,3);
         this.setState({permissionPages: _permissionPages});
     }
