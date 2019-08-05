@@ -74,13 +74,14 @@ class ToolBar extends React.Component {
   {
     _minRemaining= this.state.minRemaining;
     _secRemaining = Math.max(0, this.state.secRemaining-1);
-    this.setState({secRemaining: _secRemaining, minRemaining: _minRemaining});
     if(_secRemaining==0)
     {
         if(_minRemaining>0)
         {
             _minRemaining = _minRemaining-1;
             _secRemaining=59;
+
+            this.setState({secRemaining: _secRemaining, minRemaining: _minRemaining});
         }
         else
         {
