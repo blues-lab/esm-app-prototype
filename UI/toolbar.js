@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert,
-Image, TouchableHighlight} from 'react-native';
+Image, TouchableHighlight, BackHandler} from 'react-native';
 
 import AnimatedProgressWheel from 'react-native-progress-wheel';
 import { withNavigation } from 'react-navigation';
@@ -8,6 +8,7 @@ import appStatus from '../controllers/appStatus';
 import logger from '../controllers/logger';
 const codeFileName='toolbar.js';
 import {SURVEY_STATUS} from '../controllers/constants'
+import notificationController from '../controllers/notificationController';
 import commonStyles from './Style';
 
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
@@ -93,13 +94,12 @@ class ToolBar extends React.Component {
             {
                 //ongoing survey expired, go back to home
 
+                if(this.interval!=null)
+                {
+                    clearInterval(this.interval);
+                }
                 this.setState({surveyStatus:SURVEY_STATUS.NOT_AVAILABLE}, ()=>
                 {
-                    logger.info(codeFileName, "updateTimeDisplay", "Survey expired, going back to home screen.");
-                    if(this.interval!=null)
-                    {
-                        clearInterval(this.interval);
-                    }
                     appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE)
                              .then(()=>
                              {
@@ -111,7 +111,9 @@ class ToolBar extends React.Component {
                                                 [
                                                   {text: 'OK', onPress: () =>
                                                     {
-                                                      this.props.navigation.navigate('Home');
+                                                      logger.info(codeFileName, "updateTimeDisplay", "Survey expired, exiting app.");
+                                                      notificationController.cancelNotifications();
+                                                      BackHandler.exitApp();
                                                     }
                                                   }
                                                 ],
