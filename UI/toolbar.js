@@ -16,7 +16,7 @@ import { ProgressBar, Colors } from 'react-native-paper';
 
 class ToolBar extends React.Component {
 
-  state={minRemaining:21, secRemaining:14, surveyStatus:null, completedSurveys:0}
+  state={minRemaining:null, secRemaining:null, surveyStatus:null, completedSurveys:0}
 
   interval = null;
 
@@ -50,7 +50,7 @@ class ToolBar extends React.Component {
 
 
         this.setState({minRemaining: Math.floor(_secRemaining/60), secRemaining: Math.floor(_secRemaining%60)})
-        //this.setState({minRemaining: 4, secRemaining: 20})
+        //this.setState({minRemaining: 1, secRemaining: 20})
         this.interval = setInterval(()=> this.updateTimeDisplay(), 1000)
     }
     else
@@ -62,7 +62,10 @@ class ToolBar extends React.Component {
 
   componentWillUnmount()
   {
-    clearInterval(this.interval);
+    if(this.interval!=null)
+    {
+        clearInterval(this.interval);
+    }
   }
 
   constructor(props)
@@ -74,6 +77,7 @@ class ToolBar extends React.Component {
   {
     _minRemaining= this.state.minRemaining;
     _secRemaining = Math.max(0, this.state.secRemaining-1);
+    this.setState({secRemaining: _secRemaining});
     if(_secRemaining==0)
     {
         if(_minRemaining>0)
@@ -88,24 +92,33 @@ class ToolBar extends React.Component {
             if(this.state.surveyStatus == SURVEY_STATUS.ONGOING)
             {
                 //ongoing survey expired, go back to home
-                logger.info(codeFileName, "updateTimeDisplay", "Survey expired, going back to home screen.");
-                appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE)
-                         .then(()=> {
-                                if(this.props.title!="Settings")
-                                {
-                                    Alert.alert(
-                                            'Survey expired!',
-                                            'Sorry, the current survey is expired. We will notify you once new surveys become available.',
-                                            [
-                                              {text: 'OK', onPress: () =>
-                                                {
-                                                  this.props.navigation.navigate('Home');
-                                                }
-                                              }
-                                            ],
-                                            {cancelable: false},
-                                          );
-                                }
+
+                this.setState({surveyStatus:SURVEY_STATUS.NOT_AVAILABLE}, ()=>
+                {
+                    logger.info(codeFileName, "updateTimeDisplay", "Survey expired, going back to home screen.");
+                    if(this.interval!=null)
+                    {
+                        clearInterval(this.interval);
+                    }
+                    appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE)
+                             .then(()=>
+                             {
+                                    if(this.props.title!="Settings")
+                                    {
+                                        Alert.alert(
+                                                'Survey expired!',
+                                                'Sorry, the current survey is expired. We will notify you once new surveys become available.',
+                                                [
+                                                  {text: 'OK', onPress: () =>
+                                                    {
+                                                      this.props.navigation.navigate('Home');
+                                                    }
+                                                  }
+                                                ],
+                                                {cancelable: false},
+                                              );
+                                    }
+                             })
                 })
             }
         }
