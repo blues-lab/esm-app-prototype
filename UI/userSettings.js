@@ -254,7 +254,7 @@ static navigationOptions = ({ navigation }) => {
           else
           {
             logger.info(codeFileName, 'getHomeWiFi', 'WiFi is not enabled or connected. Will check again later.')
-            Alert.alert("Home WiFi", 'We will only send surveys when you are connected to the home WiFi.'+
+            Alert.alert("Home WiFi", 'We will only send surveys when you are connected to your home WiFi.'+
                                      ' We wil ask about it again when you are connected to WiFi.');
           }
       }
@@ -627,11 +627,11 @@ static navigationOptions = ({ navigation }) => {
                                         const _firstLaunch = this.props.navigation.getParam('firstLaunch', false);
                                         if(_firstLaunch)
                                         {
-                                            Alert.alert("Thank you!","Your settings have been saved. We will prompt you when new survey becomes available.");
+                                            Alert.alert("Thank you!","Your settings have been saved. We will prompt you when a new survey becomes available.");
 
                                             Alert.alert(
                                               'Thank you!',
-                                                "Your settings have been saved. We will prompt you when new survey becomes available.",
+                                                "Your settings have been saved. We will prompt you when a new survey becomes available.",
                                                 [
                                                   { text: 'OK', onPress: () => {
                                                     logger.info(codeFileName, 'SaveButtonClick', 'Settings saved. Since this is first launch exiting app.')

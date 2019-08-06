@@ -96,7 +96,7 @@ static navigationOptions = ({ navigation }) => {
           <Text style={[commonStyle.questionStyle,{fontSize:22}]}>
 
             Would you allow MiMi to access the relevant parts of
-            the conversation to provide you the service "{this.state.serviceName}"?
+            the conversation to "{this.state.serviceName.toLowerCase()}"?
           </Text>
           <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'flex-start', margin:10}}>
           <RadioButton.Group

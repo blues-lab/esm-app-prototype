@@ -213,7 +213,7 @@ export async function showPrompt()
                       _remainingTime = PROMPT_DURATION;
                       notificationController.cancelNotifications();
                       notificationController.showNotification("New survey available!",
-                           "Complete it within "+_remainingTime+" minutes and get $0.2!!!");
+                        "Complete within "+_remainingTime+" minutes to get \u002420!!!");
 
                       const _currentDate = new Date();
                       await appStatus.setLastSurveyCreationDate(_currentDate)
@@ -256,7 +256,7 @@ export async function showPrompt()
 
                   notificationController.cancelNotifications();
                   notificationController.showNotification("New survey available!",
-                                                          "Complete it within "+_remainingTime+" minutes and get \u002420!!!");
+                                                          "Complete within "+_remainingTime+" minutes to get \u002420!!!");
                   logger.info(codeFileName,"showPrompt", "Showing latest notification at: "+new Date());
                   await appStatus.setLastNotificationTime(new Date());
 

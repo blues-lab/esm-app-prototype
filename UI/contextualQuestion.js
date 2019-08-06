@@ -217,7 +217,7 @@ static navigationOptions = ({ navigation }) => {
             <View style={styles.verticalViewStyle}>
                 <View style={commonStyle.dividerStyle}>
                     <Text style={commonStyle.questionStyle}>
-                        Where were you talking (select all that apply)?
+                        Where were you talking? Select all that apply.
                     </Text>
                     <Locations locationSelectionHandler={this.locationSelectionHandler.bind(this)} />
                 </View>
@@ -249,7 +249,7 @@ static navigationOptions = ({ navigation }) => {
                 <View style={styles.verticalViewStyle}>
                     <View style={commonStyle.dividerStyle}>
                         <Text style={commonStyle.questionStyle}>
-                            How do you relate to them (select all that apply)?
+                            How do you relate to them? Select all that apply.
                         </Text>
                         <Relations relationSelectionHandler ={this.relationSelectionHandler.bind(this)}/>
                     </View>
@@ -266,7 +266,7 @@ static navigationOptions = ({ navigation }) => {
                             />
                         </View>
                          <View style= {styles.horizontalViewStyle}>
-                            <Text style={{margin:10, fontSize:18}}> Adolescent (13-17 years old):</Text>
+                            <Text style={{margin:10, fontSize:18}}> Adolescents (13-17 years old):</Text>
                             <Switch style={{marginLeft:10}}
                               value={this.state.adolescentPresent}
                               onValueChange={(val) => this.setState({adolescentPresent: val})}
@@ -277,8 +277,7 @@ static navigationOptions = ({ navigation }) => {
                     <View style={commonStyle.dividerStyle}>
 
                         <Text style={commonStyle.questionStyle}>
-                            Did any of the people who were talking call in or connect to a video chat (as
-                                opposed to being physically present in the room)?
+                            Was everyone talking physically present?
                         </Text>
                         <View style= {styles.horizontalViewStyle}>
                             <Text style={{margin:10, fontSize:18}}>No</Text>
