@@ -12,7 +12,8 @@ const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 import ToolBar from './toolbar'
 
 const selectionText = "Selected (tap again to remove)";
-const codeFileName = "serviceDetails.js"
+const codeFileName = "serviceDetails.js";
+import Icon from 'react-native-vector-icons/Fontisto';
 
 export default class ServiceDetailsScreen extends React.Component {
 
@@ -173,40 +174,32 @@ export default class ServiceDetailsScreen extends React.Component {
         return(
             <TouchableHighlight onPress={ ()=> {this.setState({isAddServiceDialogVisible:true})}}>
                 <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start'}}>
-                    <Image
-                        style={{width: 30, height:30, resizeMode : 'contain' , margin:1}}
-                        source= {require('../res/unchecked.png')}
-                    />
-                    <Text style={{fontSize:20}}> {item.name} </Text>
+                      {
+                          item.selected &&
+                          <Icon name="checkbox-active" size={20} color="#66cc94" style ={{margin:5}}/>
+                      }
+                      {
+                          !item.selected &&
+                          <Icon name="checkbox-passive" size={20} color="grey" style ={{margin:5}}/>
+                      }
+                      <Text style={{fontSize:20}}> {item.name} </Text>
                 </View>
             </TouchableHighlight>
         );
     }
-    else if(item.id=="Next")
-    {
-        return(
-            <TouchableHighlight onPress={ ()=> {this.setState({isAddServiceDialogVisible:true})}}>
-                <View style={{flex:1, flexDirection:'row', justifyContent:'center'}}>
-                    <Text style={{fontSize:20}}> {item.name} </Text>
-                </View>
-            </TouchableHighlight>
-        );
-    }
-    else if(item.selected)
-    {
-        img = require('../res/checked.png')
-    }
-    else
-    {
-        img = require('../res/unchecked.png')
-    }
+
       return (
           <TouchableHighlight onPress={this.handleServiceSelection.bind(this, item.name)}>
               <View style={{flex: 1, flexDirection: 'row'}}>
-                  <Image
-                      style={{width: 30, height:30, resizeMode : 'contain' , margin:1}}
-                      source={img}
-                  />
+
+              {
+                  item.selected &&
+                  <Icon name="checkbox-active" size={20} color="#66cc94" style ={{margin:5}}/>
+              }
+              {
+                  !item.selected &&
+                  <Icon name="checkbox-passive" size={20} color="grey" style ={{margin:5}}/>
+              }
                   <Text style={{fontSize:20}}>
                       {item.name}
                   </Text>

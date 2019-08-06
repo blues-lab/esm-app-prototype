@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, ScrollView, Image,
  TextInput, Alert, FlatList, TouchableHighlight, TouchableOpacity,
  Modal, CheckBox, BackHandler} from 'react-native';
+ import Icon from 'react-native-vector-icons/Fontisto';
 
 import * as RNFS from 'react-native-fs';
 import ElevatedView from 'react-native-elevated-view';
@@ -423,7 +424,7 @@ export default class ServiceMenuScreen extends React.Component {
         img= require('../res/checked.png');
         selected=true;
     }
-    else if(item.id=="None" || item.id=="Other")
+    else if(item.id=="None")
     {
         img=null;
     }
@@ -431,10 +432,18 @@ export default class ServiceMenuScreen extends React.Component {
         <TouchableHighlight style={{backgroundColor:'lavender'}} onPress={this.openServiceDetailsPage.bind(this, item)}>
           <View style={{flex: 1, flexDirection: 'column'}}>
             <View style={{flex: 1, flexDirection: 'row'}}>
-                <Image
-                    style={{width: 30, height:30, resizeMode : 'contain' , margin:1}}
-                    source={img}
-                />
+                {
+                    item.id!='None' && item.selectedServiceNames.size===0 &&
+                    <Icon name="checkbox-passive" size={20} color="grey" style ={{margin:5}}/>
+                }
+                {
+                    item.id!='None' && item.selectedServiceNames.size>0 &&
+                    <Icon name="checkbox-active" size={20} color="#66cc94" style ={{margin:5}}/>
+                }
+                {
+                    item.id==='None' &&
+                    <Icon name="radio-btn-passive" size={20} color="grey" style ={{margin:5}}/>
+                }
                 <Text style={{fontSize:20}}>
                     {item.name}
                 </Text>
