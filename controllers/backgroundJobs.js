@@ -10,7 +10,7 @@ const codeFileName = 'backgroundJobs.js';
 import appStatus from '../controllers/appStatus';
 
 import utilities from '../controllers/utilities';
-import {USER_SETTINGS_FILE_PATH, SURVEY_STATUS,MAX_SURVEY_PER_DAY, LOG_FILE_PATH} from './constants';
+import {USER_SETTINGS_FILE_PATH, SURVEY_STATUS,MAX_SURVEY_PER_DAY, LOG_FILE_PATH, PROMPT_DURATION} from './constants';
 
 
 function getFromHour(settings, day)
@@ -41,10 +41,9 @@ function getFromHour(settings, day)
          time = settings.satFrom;
          break;
      }
-
-     //Alert.alert(time,time.split(':')[0])
      hr = time.split(':')[0]
      min = time.split(':')[1]
+     logger.info('Global', 'getFromHour', `day of week: ${day} from time:${hr}:${min}`);
      return  Number(min)+Number(hr)*60;
 }
 
@@ -79,6 +78,7 @@ function getToHour(settings, day)
 
      hr = time.split(':')[0]
      min = time.split(':')[1]
+     logger.info('Global', 'getToHour', `day of week: ${day} from time:${hr}:${min}`);
      return  Number(min)+Number(hr)*60;
 }
 
@@ -92,16 +92,22 @@ function isInDoNotDisturbTime(settings)
       _to= getToHour(settings, _day);
 
       _current = new Date();
-      _now = _current.getHours()*60 + _current.getMinutes();
-      _doNotDisturb = false;
+      _hour = _current.getHours();
+      _min = _current.getMinutes();
+      logger.info('Global', 'isInDoNotDisturbTime', `day of week: ${_day} current time:${_hour}:${_min}`);
+      _now = _hour*60 + _min;
 
-      if(_to < _from)
-      {
-        _to = _to + 60*24;
-      }
       _doNotDisturb = _now>_from && _now<_to;
 
-      logger.info('Global', "isInDoNotDisturbTime", `day of week:${_day} from:${_from} to:${_to} now:${_now} doNotDisturb:${_doNotDisturb}.`);
+//      if(_to <= _from)
+//      {
+//        _doNotDisturb = _now>_from && _now<_to;
+//      }
+//      else
+//      {
+//        _doNotDisturb = (_now>_from && _now< 24*60) || (_now>0 && _now<_to);
+//      }
+
       return _doNotDisturb;
 }
 
@@ -178,7 +184,7 @@ export async function showPrompt()
                       logger.info(codeFileName,"showPrompt", "Created new survey number:"+_appStatus.SurveyCountToday+". Changing status to AVAILABLE.");
                       await appStatus.setSurveyStatus(SURVEY_STATUS.AVAILABLE);
 
-                      _remainingTime = _appStatus.PromptDuration;
+                      _remainingTime = PROMPT_DURATION;
                       notificationController.cancelNotifications();
                       notificationController.showNotification("New survey available!",
                            "Complete it within "+_remainingTime+" minutes and get $0.2!!!");
@@ -209,7 +215,7 @@ export async function showPrompt()
               _minPassed = Math.floor((Date.now() - _firstNotificationTime)/60000);
               logger.info(codeFileName,"showPrompt", _minPassed.toString()+" minutes have passed since the last notification date at "+_firstNotificationTime);
 
-              _remainingTime = _appStatus.PromptDuration - _minPassed;
+              _remainingTime = PROMPT_DURATION - _minPassed;
               if(_remainingTime<=0) //survey expired, remove all existing notification
               {
                   logger.info(codeFileName,"showPrompt", "Remaining time "+_remainingTime+", cancelling notifications.");

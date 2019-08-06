@@ -3,9 +3,11 @@ import * as RNFS from 'react-native-fs';
 
 export const SURVEY_STATUS =  {NOT_AVAILABLE: "NOT_AVAILABLE", AVAILABLE:"AVAILABLE", ONGOING:"ONGOING", COMPLETED:"COMPLETED"}
 
-export const MAX_SURVEY_PER_DAY = 5;
+export const MAX_SURVEY_PER_DAY = 5; //create max 5 surveys/day
 
-export const VALID_SURVEY_PERIOD = 60; //60 minutes
+export const  SURVEY_ALLOWED_TO_COMPLETE = 1; //allow to complete max 1 surveys/day
+
+export const PROMPT_DURATION = 60; //60 minutes
 
 export const USER_SETTINGS_FILE_PATH = RNFS.DocumentDirectoryPath+'/usersettings.js';
 

@@ -19,7 +19,6 @@ class AppStatus
                      SurveyStatus: SURVEY_STATUS.NOT_AVAILABLE,
                      FirstNotificationTime: null,
                      LastNotificationTime: null,
-                     PromptDuration:60,
                      CompletedSurveys:0,
                      SurveyProgress:0,
                      InstallationDate: null,

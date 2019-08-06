@@ -7,7 +7,7 @@ import { withNavigation } from 'react-navigation';
 import appStatus from '../controllers/appStatus';
 import logger from '../controllers/logger';
 const codeFileName='toolbar.js';
-import {SURVEY_STATUS} from '../controllers/constants'
+import {SURVEY_STATUS, PROMPT_DURATION} from '../controllers/constants'
 import notificationController from '../controllers/notificationController';
 import commonStyles from './Style';
 
@@ -45,7 +45,7 @@ class ToolBar extends React.Component {
 
                 logger.info(codeFileName, 'initToolbar', 'curTime:'+_curTime+'. _firstNotificationTime:'+_firstNotificationTime);
                 const _secondsPassed = (_curTime.getTime() - _firstNotificationTime.getTime())/1000;
-                const _secRemaining = _appStatus.PromptDuration * 60 - _secondsPassed;
+                const _secRemaining = PROMPT_DURATION * 60 - _secondsPassed;
 
                 this.setState({minRemaining: Math.floor(_secRemaining/60), secRemaining: Math.floor(_secRemaining%60)});
 
@@ -92,7 +92,7 @@ class ToolBar extends React.Component {
     }
     const _curTime = new Date();
     const _secondsPassed = (_curTime.getTime() - _firstNotificationTime.getTime())/1000;
-    _secRemaining = _appStatus.PromptDuration * 60 - _secondsPassed;
+    _secRemaining = PROMPT_DURATION * 60 - _secondsPassed;
 
 
     _minRemaining= Math.floor(_secRemaining/60);
