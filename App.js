@@ -69,7 +69,7 @@ BackgroundJob.schedule(notificationSchedulePrompt)
      jobKey: "fileUpload",
      job: () =>
      {
-
+        uploadFiles();
      }
     };
 
@@ -152,12 +152,12 @@ export default class App extends Component<Props>
   }
 
 
-  componentDidMount()
+  async componentDidMount()
   {
-    this.generateInitialFiles(serviceFileAsset, serviceFileLocal);
+    await this.generateInitialFiles(serviceFileAsset, serviceFileLocal);
 
     //uploadFiles();
-   // showPrompt();
+    //setTimeout(showPrompt, 10*1000);
   }
 
 
