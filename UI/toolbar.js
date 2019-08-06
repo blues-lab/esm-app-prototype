@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert,
-Image, TouchableHighlight, BackHandler} from 'react-native';
+Image, TouchableHighlight, BackHandler, AppState} from 'react-native';
 
 import AnimatedProgressWheel from 'react-native-progress-wheel';
 import { withNavigation } from 'react-navigation';
@@ -17,48 +17,55 @@ import { ProgressBar, Colors } from 'react-native-paper';
 
 class ToolBar extends React.Component {
 
-  state={minRemaining:null, secRemaining:null, surveyStatus:null, completedSurveys:0}
+  state={minRemaining:null, secRemaining:null, surveyStatus:null, completedSurveys:0, appState: AppState.currentState}
 
   interval = null;
 
+
+  async initToolbar()
+  {
+      const _appStatus  = await appStatus.loadStatus();
+
+      this.setState({surveyStatus: _appStatus.SurveyStatus,
+                       completedSurveys: _appStatus.CompletedSurveys}, ()=>
+        {
+            logger.info(codeFileName, 'initToolbar', 'Page:'+this.props.title+'. Progress:'+this.props.progress+'. Current appStatus:'+JSON.stringify(_appStatus));
+            if(_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING)
+            {
+                logger.info(codeFileName, 'initToolbar', 'Survey status is ONGOING so setting up toolbar to show remaining time.')
+                const _firstNotificationTime = _appStatus.FirstNotificationTime;
+
+                if(_firstNotificationTime==null)
+                {
+                    logger.error(codeFileName, 'initToolbar', 'Fatal error: _firstNotificationTime is null. Returning.');
+                    return;
+                }
+
+                const _curTime = new Date();
+
+                logger.info(codeFileName, 'initToolbar', 'curTime:'+_curTime+'. _firstNotificationTime:'+_firstNotificationTime);
+                const _secondsPassed = (_curTime.getTime() - _firstNotificationTime.getTime())/1000;
+                const _secRemaining = _appStatus.PromptDuration * 60 - _secondsPassed;
+
+                this.setState({minRemaining: Math.floor(_secRemaining/60), secRemaining: Math.floor(_secRemaining%60)});
+
+                if(this.interval==null)
+                {
+                    this.interval = setInterval(()=> this.updateTimeDisplay(), 1000)
+                }
+            }
+            else
+            {
+                logger.info(codeFileName, 'initToolbar', 'No survey is ONGOING. Returning.');
+                return;
+            }
+        })
+  }
+
   async componentDidMount()
   {
-    const _appStatus  = await appStatus.loadStatus();
-
-    this.setState({surveyStatus: _appStatus.SurveyStatus,
-                   completedSurveys: _appStatus.CompletedSurveys});
-
-
-    logger.info(codeFileName, 'componentDidMount', 'Page:'+this.props.title+'. Progress:'+this.props.progress+'. Current appStatus:'+JSON.stringify(_appStatus));
-    if(_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING)
-    {
-        logger.info(codeFileName, 'componentDidMount', 'Survey status is ONGOING so setting up toolbar to show remaining time.')
-        const _firstNotificationTime = _appStatus.FirstNotificationTime;
-
-        if(_firstNotificationTime==null)
-        {
-            logger.error(codeFileName, 'componentDidMount', 'Fatal error: _firstNotificationTime is null. Returning.');
-            return;
-        }
-
-        const _curTime = new Date();
-
-        logger.info(codeFileName, 'componentDidMount', 'curTime:'+_curTime+'. _firstNotificationTime:'+_firstNotificationTime);
-        const _secondsPassed = (_curTime.getTime() - _firstNotificationTime.getTime())/1000;
-        const _secRemaining = _appStatus.PromptDuration * 60 - _secondsPassed;
-
-        logger.info(codeFileName, 'componentDidMount', '_secRemaining:'+_secRemaining);
-
-
-        this.setState({minRemaining: Math.floor(_secRemaining/60), secRemaining: Math.floor(_secRemaining%60)})
-        //this.setState({minRemaining: 1, secRemaining: 20})
-        this.interval = setInterval(()=> this.updateTimeDisplay(), 1000)
-    }
-    else
-    {
-        logger.info(codeFileName, 'componentDidMount', 'No survey is ONGOING. Returning.');
-        return;
-    }
+     logger.info(codeFileName, 'componentDidMount', 'Initializing toolbar.');
+     await this.initToolbar();
   }
 
   componentWillUnmount()
@@ -74,12 +81,25 @@ class ToolBar extends React.Component {
     super(props);
   }
 
-  updateTimeDisplay()
+  async updateTimeDisplay()
   {
-    _minRemaining= this.state.minRemaining;
-    _secRemaining = Math.max(0, this.state.secRemaining-1);
+    const _appStatus  = await appStatus.loadStatus();
+    const _firstNotificationTime = _appStatus.FirstNotificationTime;
+    if(_firstNotificationTime==null)
+    {
+        logger.error(codeFileName, 'initToolbar', 'Fatal error: _firstNotificationTime is null. Returning.');
+        return;
+    }
+    const _curTime = new Date();
+    const _secondsPassed = (_curTime.getTime() - _firstNotificationTime.getTime())/1000;
+    _secRemaining = _appStatus.PromptDuration * 60 - _secondsPassed;
+
+
+    _minRemaining= Math.floor(_secRemaining/60);
+    _secRemaining = Math.floor(_secRemaining%60);
+
     this.setState({secRemaining: _secRemaining});
-    if(_secRemaining==0)
+    if(_secRemaining<=0)
     {
         if(_minRemaining>0)
         {
