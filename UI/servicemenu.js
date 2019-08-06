@@ -147,6 +147,18 @@ export default class ServiceMenuScreen extends React.Component {
       logger.info("ServiceMenu","parseService", 'Number of categories found:'+_serviceCategories.length+'. Shuffling categories');
       _serviceCategories = this.shuffle(_serviceCategories);
 
+       _serviceCategories.push //Add 'Other'
+        (
+          {
+            id: 'Other',
+            name: 'Other',
+            selectedServiceNames: new Set([]),
+            renderStyle: commonStyles.listItemStyle,
+            services: []
+          }
+        );
+
+
     _serviceCategories.push //Add 'No relevant service'
         (
           {
@@ -411,7 +423,7 @@ export default class ServiceMenuScreen extends React.Component {
         img= require('../res/checked.png');
         selected=true;
     }
-    else if(item.id=="None" || item.id=="Next")
+    else if(item.id=="None" || item.id=="Other")
     {
         img=null;
     }
