@@ -125,6 +125,7 @@ export default class HomeScreen extends React.Component {
             const _installationDate = new Date();
             logger.info(codeFileName, 'componentDidMount', "Setting installation date:"+_installationDate+" and UUID:"+_uuid);
             await appStatus.setInstallationDate(_installationDate);
+            await appStatus.setLastSurveyCreationDate(_installationDate);//this should not be a problem, since survey count is still zero.
             await appStatus.setUUID(_uuid);
 
         }
@@ -140,6 +141,7 @@ export default class HomeScreen extends React.Component {
     }
     else
     {
+        //TODO: check for home wifi set and connected, and the current survey (if available) was created today
         logger.info(codeFileName, 'componentDidMount', "Nth time app launch");
 
         //Check if study period has ended
