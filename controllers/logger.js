@@ -47,19 +47,19 @@ class Logger extends Component
 
     }
 
-    info(className, funcName, message)
+    async info(className, funcName, message)
     {
-        this.writeLog('Info', className, funcName, message);
+        await this.writeLog('Info', className, funcName, message);
     }
 
-    warn(className, funcName, message)
+    async warn(className, funcName, message)
     {
-        this.writeLog('Warning', className, funcName, message);
+        await this.writeLog('Warning', className, funcName, message);
     }
 
-    error(className, funcName, message)
+    async error(className, funcName, message)
     {
-        this.writeLog('Error', className, funcName, message);
+        await this.writeLog('Error', className, funcName, message);
     }
 
     debug(className, funcName, message)
