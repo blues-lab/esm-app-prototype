@@ -24,6 +24,7 @@ class AppStatus
                      InstallationDate: null,
                      StudyDuration: 1,
                      UUID:null,
+                     LastSurveyCreationDate:null, //date when the last survey was created. Needed to reset counts.
                  }
     }
 
@@ -51,6 +52,10 @@ class AppStatus
                 if(this.status.LastNotificationTime!=null)
                 {
                     this.status.LastNotificationTime = new Date(this.status.LastNotificationTime);
+                }
+                if(this.setLastSurveyCreationDate!=null)
+                {
+                    this.status.LastSurveyCreationDate = new Date(this.status.LastSurveyCreationDate);
                 }
 
                 logger.info(codeFileName, 'loadStatus', 'Successfully read app status file.');
@@ -89,6 +94,14 @@ class AppStatus
         this.status.SurveyCountToday +=1;
         logger.info(`${codeFileName}`, 'incrementSurveyCountToday',
             'Incrementing survey count to '+this.status.SurveyCountToday);
+        await this.saveAppStatus();
+    }
+
+    async resetSurveyCountToday()
+    {
+        this.status.SurveyCountToday =0;
+        logger.info(`${codeFileName}`, 'resetSurveyCountToday',
+            'Resetting survey count to '+this.status.SurveyCountToday);
         await this.saveAppStatus();
     }
 
@@ -143,6 +156,14 @@ class AppStatus
         this.status.UUID= value;
         logger.info(codeFileName, 'setUUID',
                    'Setting UUID to '+this.status.UUID);
+        await this.saveAppStatus();
+    }
+
+    async setLastSurveyCreationDate(value)
+    {
+        this.status.LastSurveyCreationDate = value;
+        logger.info(codeFileName, 'setLastSurveyCreationDate',
+                   'Setting LastSurveyCreationDate to '+this.status.LastSurveyCreationDate);
         await this.saveAppStatus();
     }
 }

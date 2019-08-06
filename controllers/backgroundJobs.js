@@ -111,6 +111,21 @@ function isInDoNotDisturbTime(settings)
       return _doNotDisturb;
 }
 
+function sameDay(d1, d2)
+{
+  return d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate();
+}
+
+function before(d1, d2)
+{
+    //returns true if d1 is before d2
+  return d1.getFullYear() < d2.getFullYear() ||
+    d1.getMonth() < d2.getMonth() ||
+    d1.getDate() < d2.getDate();
+}
+
 export async function showPrompt()
 {
       const _appStatus = await appStatus.loadStatus();
@@ -138,6 +153,7 @@ export async function showPrompt()
          return;
       }
 
+      //TODO: clear existing notifications if home wifi not set or not connected
       if(_userSettingsData.homeWifi.length==0)
       {
          logger.info(codeFileName, 'showPrompt', 'Home Wifi not set. Returning.');
@@ -163,6 +179,16 @@ export async function showPrompt()
       else
       {
           logger.info(codeFileName, 'showPrompt', 'Not in "Do not disturb" mode.');
+
+          //check if the date of last survey creation was before today, if so, reset variables.
+          await logger.info(codeFileName,'showPrompt', '_appStatus.LastSurveyCreationDate:'+_appStatus.LastSurveyCreationDate+' type:'+typeof(_appStatus.LastSurveyCreationDate));
+          if(_appStatus.LastSurveyCreationDate==null || before(_appStatus.LastSurveyCreationDate, new Date))
+          {
+            logger.info(codeFileName, 'showPrompt', 'Last survey was created at a previous day:'+_appStatus.setLastNotificationTime+'. Resetting appStatus.SurveyCountToday and setting survey status to NOT_AVAILABLE.')
+            await appStatus.resetSurveyCountToday();
+            await appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
+          }
+
           if(_appStatus.SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE)
           {
               //if no survey is available, randomly create one
@@ -189,10 +215,11 @@ export async function showPrompt()
                       notificationController.showNotification("New survey available!",
                            "Complete it within "+_remainingTime+" minutes and get $0.2!!!");
 
-                      _notificationTime = new Date();
-                      await appStatus.setFirstNotificationTime(_notificationTime);
-                      await appStatus.setLastNotificationTime(_notificationTime);
-                      logger.info(codeFileName,"showPrompt", "Notification for new survey is shown and first+last notification time is set at:"+_notificationTime);
+                      const _currentDate = new Date();
+                      await appStatus.setLastSurveyCreationDate(_currentDate)
+                      await appStatus.setFirstNotificationTime(_currentDate);
+                      await appStatus.setLastNotificationTime(_currentDate );
+                      //logger.info(codeFileName,"showPrompt", "Notification for new survey is shown and first+last notification time is set at:"+_currentDate);
                   }
               }
               else
