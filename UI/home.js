@@ -84,12 +84,18 @@ export default class HomeScreen extends React.Component {
           {text: 'Yes', onPress: () => {
               logger.info(`${codeFileName}`, "'Yes' to recent conversation", " Setting survey status to ONGOING and navigating to StartSurvey");
 
-              appStatus.setSurveyStatus(SURVEY_STATUS.ONGOING)
+              const _surveyID = 'SurveyID-'+Date.now();
+
+              appStatus.setCurrentSurveyID(_surveyID)
                        .then(() =>
                        {
-                            notificationController.cancelNotifications();
-                            this.props.navigation.navigate('StartSurvey');
-                       })
+                          appStatus.setSurveyStatus(SURVEY_STATUS.ONGOING)
+                                   .then(() =>
+                                   {
+                                        notificationController.cancelNotifications();
+                                        this.props.navigation.navigate('StartSurvey');
+                                   });
+                       });
             }},
           {text: 'No', onPress: () => {
                 logger.info(`${codeFileName}`, "'No' to recent conversation", "Exiting App.");
