@@ -34,6 +34,7 @@ export default class ServiceDetailsScreen extends React.Component {
     serviceCategoryName: '', //contains the category name
     serviceNames: [], //contains parsed services
     isAddServiceDialogVisible:false,
+    firstLoad:true, //indicates whether the services are being loaded for the first time
   };
 
   FlatListItemSeparator = () => 
@@ -83,7 +84,11 @@ export default class ServiceDetailsScreen extends React.Component {
         );
     }
 
-    _serviceNames = this.shuffle(_serviceNames);
+    if(this.state.firstLoad)
+    {
+        //_serviceNames = this.shuffle(_serviceNames);
+        //this.setState
+    }
 
 
     if (_serviceNames.length>0)
@@ -131,7 +136,7 @@ export default class ServiceDetailsScreen extends React.Component {
       return true;
   };
 
-  handleServiceSelection = (selectedServiceName) => {
+  handleServiceSelection = async (selectedServiceName) => {
     _serviceNames = this.state.serviceNames;
     for(var i=0; i< _serviceNames.length; i++)
     {
@@ -153,8 +158,8 @@ export default class ServiceDetailsScreen extends React.Component {
             }
 
             //call parent component to update service selections
-            this.props.navigation.state.params.serviceSelectionHandler(
-                        this.state.serviceCategoryName, _serviceNames[i]);
+            await this.props.navigation.state.params.serviceSelectionHandler(
+                        this.state.serviceCategoryName, _serviceNames[i], false);
 
             break;
         }
@@ -236,7 +241,7 @@ export default class ServiceDetailsScreen extends React.Component {
                   title={"What other service?"}
                   message={""}
                   hintInput ={""}
-                  submitInput={ (inputText) =>
+                  submitInput={async (inputText) =>
                     {
                       _newService = {   id: inputText,
                                         name: inputText,
@@ -252,10 +257,7 @@ export default class ServiceDetailsScreen extends React.Component {
                       logger.info(codeFileName,"DialogInput.NewService",
                               `Newly added service name:${inputText}`);
 
-                      this.props.navigation.state.params.newServiceHandler(this.state.serviceCategoryName, inputText);
-                      this.props.navigation.state.params.serviceSelectionHandler(
-                                              this.state.serviceCategoryName, _newService);
-
+                      await this.props.navigation.state.params.newServiceHandler(this.state.serviceCategoryName, inputText);
                       this.setState({serviceNames: _serviceNames, isAddServiceDialogVisible:false});
                     }
                   }

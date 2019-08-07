@@ -44,7 +44,7 @@ export default class ServiceMenuScreen extends React.Component {
     surveyResponseJS:{},             //Hold participants responses
     activeServiceCategoryName:null,
     activeServiceName:null,
-    refreshList:false,
+    firstLoad:true, //indicates whether the services are being loaded for the first time
   };
 
 
@@ -73,7 +73,7 @@ export default class ServiceMenuScreen extends React.Component {
       }
 
       logger.info("ServiceMenu","OpenServiceDetailsPage",
-                'Navigating to service details for:'+selectedServiceCategory.name);
+                'Navigating to service details for:'+selectedServiceCategory.name+'. '+JSON.stringify(_serviceCategories[_selectedIdx]));
 
       this.props.navigation.navigate('ServiceDetails',
       {
@@ -84,7 +84,7 @@ export default class ServiceMenuScreen extends React.Component {
 
   }
 
-  createNewService(categoryName, newServiceName)
+  createNewService = async (categoryName, newServiceName)=>
   {
     //create entry in the database when users enter a new service
 
@@ -92,11 +92,11 @@ export default class ServiceMenuScreen extends React.Component {
 
     _serviceCategoriesJS = this.state.serviceCategoriesJS;
 
-    for(var i=0; i<_serviceCategoriesJS.serviceCategories.length; i++)
+    for(var i=0; i<_serviceCategoriesJS.length; i++)
     {
-        if(_serviceCategoriesJS.serviceCategories[i].categoryName == categoryName)
+        if(_serviceCategoriesJS[i].categoryName == categoryName)
         {
-            _serviceCategoriesJS.serviceCategories[i].services.push(
+            _serviceCategoriesJS[i].services.push(
                     {
                         serviceName: newServiceName,
                         selected:true
@@ -107,15 +107,17 @@ export default class ServiceMenuScreen extends React.Component {
     }
 
 
-    this.setState({serviceCategoriesJS: _serviceCategoriesJS});
-    utilities.writeJSONFile(_serviceCategoriesJS, serviceFileLocal, codeFileName, 'createNewService');
-    this.parseService(_serviceCategoriesJS);
+    await this.promisedSetState({serviceCategoriesJS: _serviceCategoriesJS});
+    await this.handleServiceSelectionChange(categoryName, {id:newServiceName, name:newServiceName, selected:true}, true);
+    await utilities.writeJSONFile(_serviceCategoriesJS, serviceFileLocal, codeFileName, 'createNewService');
+    await logger.info(codeFileName, 'createNewService', 'All selected services:'+JSON.stringify(this.getSelectedServices()));
+
   }
 
-  parseService(_fullJsonObj)
+  async parseService(_fullJsonObj)
   {
     //parse json data
-      _serviceCategoriesJS = _fullJsonObj.serviceCategories;
+      _serviceCategoriesJS = _fullJsonObj;
       _serviceCategories=[];
 
       for(var i=0; i< _serviceCategoriesJS.length; i++)
@@ -145,10 +147,14 @@ export default class ServiceMenuScreen extends React.Component {
         );
       }
 
-      logger.info("ServiceMenu","parseService", 'Number of categories found:'+_serviceCategories.length+'. Shuffling categories');
-      _serviceCategories = this.shuffle(_serviceCategories);
+    await logger.info("ServiceMenu","parseService", 'Number of categories found:'+_serviceCategories.length+'.');
 
-       _serviceCategories.push //Add 'Other'
+
+    if(this.state.firstLoad) //only shuffle and add these items at the first time
+    {
+        logger.info(codeFileName, 'parseService', 'First time loading. Shuffling service categories.')
+        _serviceCategories = this.shuffle(_serviceCategories);
+        _serviceCategories.push //Add 'Other'
         (
           {
             id: 'Other',
@@ -159,8 +165,7 @@ export default class ServiceMenuScreen extends React.Component {
           }
         );
 
-
-    _serviceCategories.push //Add 'No relevant service'
+        _serviceCategories.push //Add 'No relevant service'
         (
           {
             id: 'None',
@@ -170,15 +175,80 @@ export default class ServiceMenuScreen extends React.Component {
             services: []
           }
         );
+    }
 
       this.setState
       (
         {
           serviceCategoriesJS: _fullJsonObj,
-          serviceCategories: _serviceCategories
-        }
+          serviceCategories: _serviceCategories,
+          firstLoad:false
+        },()=>
+        {logger.info("ServiceMenu","parseService", 'Service[0]:'+JSON.stringify(this.state.serviceCategories[0]));}
       )
 
+  }
+
+  handleServiceSelectionChange = async (categoryName, service, isNewService) =>
+  {
+    //Callback function sent to the service details page, and called when a service is selected.
+      logger.info("ServiceMenu","handleServiceSelectionChange",
+              'Category:'+categoryName+', service:'+service.name,', selected:'+service.selected);
+        _serviceCategories = this.state.serviceCategories;
+        for(var i=0; i< _serviceCategories.length; i++)
+        {
+          if(_serviceCategories[i].name == categoryName)
+          {
+              //add service to the selected list
+              if (service.selected)
+              {
+                  _serviceCategories[i].selectedServiceNames.add(service.name)
+              }
+              else
+              {
+                  _serviceCategories[i].selectedServiceNames.delete(service.name);
+              }
+
+              //if existing service, mark it as selected, or create a new entry
+              if(!isNewService)
+              {
+                  _services = _serviceCategories[i].services;
+                  for(var j=0; j<_services.length; j++)
+                  {
+                      if(_services[j].name==service.name)
+                      {
+                          _services[j].selected=service.selected;
+                      }
+                  }
+              }
+              else
+              {
+                _serviceCategories[i].services.push(service);
+              }
+          }
+        }
+
+        await this.promisedSetState({serviceCategories: _serviceCategories});
+        await logger.info(codeFileName, 'handleServiceSelectionChange', 'All selected services:'+JSON.stringify(this.getSelectedServices()));
+    }
+
+
+  getSelectedServices()
+  {
+    //Convert selected services in JSON format
+    _selectedServicesJS = []
+    _serviceCategories = this.state.serviceCategories;
+    for(var i=0; i< _serviceCategories.length; i++)
+    {
+       if(_serviceCategories[i].selectedServiceNames.size>0)
+        {
+            _selectedServicesJS.push({
+                "category": _serviceCategories[i].name,
+                'services': Array.from(_serviceCategories[i].selectedServiceNames)}
+            );
+        }
+    }
+    return _selectedServicesJS;
   }
 
   loadServices()
@@ -194,6 +264,17 @@ export default class ServiceMenuScreen extends React.Component {
       logger.info("ServiceMenu","ReadServiceFile", 'Failed to read:'+serviceFileLocal+". Err:"+err.message);
     })
 
+  }
+
+
+  promisedSetState = (newState) =>
+  {
+          return new Promise((resolve) =>
+          {
+              this.setState(newState, () => {
+                  resolve()
+              });
+          });
   }
 
   constructor(props) 
@@ -227,59 +308,6 @@ export default class ServiceMenuScreen extends React.Component {
       return (
         <View style={{height: 0.5, width: '100%', backgroundColor: 'grey'}}/>
       );
-  }
-
-  getSelectedServices()
-  {
-    //Convert selected services in JSON format
-    _selectedServicesJS = []
-    _serviceCategories = this.state.serviceCategories;
-    for(var i=0; i< _serviceCategories.length; i++)
-    {
-       if(_serviceCategories[i].selectedServiceNames.size>0)
-        {
-            _selectedServicesJS.push({
-                "category": _serviceCategories[i].name,
-                'services': Array.from(_serviceCategories[i].selectedServiceNames)}
-            );
-        }
-    }
-    return _selectedServicesJS;
-  }
-
-  handleServiceSelectionChange = (categoryName, service) =>
-  {
-  //Callback function sent to the service details page, and called when a service is selected.
-    logger.info("ServiceMenu","handleServiceSelectionChange",
-            'Category:'+categoryName+', service:'+service.name,', selected:'+service.selected);
-      _serviceCategories = this.state.serviceCategories;
-      for(var i=0; i< _serviceCategories.length; i++)
-      {
-        if(_serviceCategories[i].name == categoryName)
-        {
-            //add service to the selected list
-            if (service.selected)
-            {
-                _serviceCategories[i].selectedServiceNames.add(service.name)
-            }
-            else
-            {
-                _serviceCategories[i].selectedServiceNames.delete(service.name);
-            }
-
-            //mark the service as selected
-            _services = _serviceCategories[i].services;
-            for(var j=0; j<_services.length; j++)
-            {
-                if(_services[j].name==service.name)
-                {
-                    _services[j].selected=service.selected;
-                }
-            }
-        }
-      }
-
-      this.setState({serviceCategories: _serviceCategories})
   }
 
   enableDisableNextButton()
