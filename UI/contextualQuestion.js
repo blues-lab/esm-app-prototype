@@ -162,8 +162,9 @@ static navigationOptions = ({ navigation }) => {
 
      logger.info(codeFileName, 'saveResponse', 'Uploading survey response.');
 
-     const _uploaded = await utilities.uploadData(
-            _surveyResponseJS, _appStatus.UUID, 'SurveyResponse', codeFileName, 'saveResponse');
+     const _uploaded = await utilities.uploadData({SurveyID: _appStatus.CurrentSurveyID,
+            Stage: 'Completed.', Response: _surveyResponseJS},
+            _appStatus.UUID, 'SurveyResponse', codeFileName, 'saveResponse');
      if(_uploaded)
      {
         logger.info(codeFileName, 'saveResponse', 'All done!');
@@ -177,7 +178,7 @@ static navigationOptions = ({ navigation }) => {
      }
 
 
-     this.setState({saveWaitVisible:true}, ()=> {
+     this.setState({saveWaitVisible:false}, ()=> {
      Alert.alert("Congratulations!", "You have earned $.2!",
                [
                    {text: 'OK', onPress:() => {BackHandler.exitApp()}}

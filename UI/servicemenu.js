@@ -3,13 +3,13 @@ import {Platform, StyleSheet, Text, View, Button, ScrollView, Image,
  TextInput, Alert, FlatList, TouchableHighlight, TouchableOpacity,
  Modal, CheckBox, BackHandler} from 'react-native';
  import Icon from 'react-native-vector-icons/Fontisto';
-
+import { ProgressDialog } from 'react-native-simple-dialogs';
 import * as RNFS from 'react-native-fs';
 import ElevatedView from 'react-native-elevated-view';
 import Dialog from 'react-native-dialog';
 import DialogInput from 'react-native-dialog-input';
 
-
+import appStatus from '../controllers/appStatus';
 import ServicePermissionScreen from './servicePermission'
 import commonStyles from './Style'
 const serviceFileAsset= 'services.js';
@@ -45,6 +45,7 @@ export default class ServiceMenuScreen extends React.Component {
     activeServiceCategoryName:null,
     activeServiceName:null,
     firstLoad:true, //indicates whether the services are being loaded for the first time
+    saveWaitVisible: false, //show progress dialog while saving survey response
   };
 
 
@@ -229,7 +230,7 @@ export default class ServiceMenuScreen extends React.Component {
         }
 
         await this.promisedSetState({serviceCategories: _serviceCategories});
-        await logger.info(codeFileName, 'handleServiceSelectionChange', 'All selected services:'+JSON.stringify(this.getSelectedServices()));
+       // await logger.info(codeFileName, 'handleServiceSelectionChange', 'All selected services:'+JSON.stringify(this.getSelectedServices()));
     }
 
 
@@ -347,8 +348,11 @@ export default class ServiceMenuScreen extends React.Component {
   }
 
 
-  savePermissionResponse(response)
+  async savePermissionResponse(response)
   {
+    //*** Saves permission response. If there are more services, go to next permission page, otherwise go to
+    //    the contexual question page ***
+
      _permissionResponses = this.state.permissionResponses;
      _permissionResponses.push(response);
      this.setState({permissionResponses: _permissionResponses});
@@ -366,7 +370,24 @@ export default class ServiceMenuScreen extends React.Component {
         _surveyResponseJS.PermissionResponses = _permissionResponses;
         _surveyResponseJS.SelectedServices = this.getSelectedServices();
 
-        this.setState({permissionModalVisible: false, _surveyResponseJS: _surveyResponseJS}, ()=>
+        //upload partial survey response
+        {
+            this.setState({saveWaitVisible:true});
+            const _appStatus  = await appStatus.loadStatus();
+            logger.info(codeFileName, 'savePermissionResponse', 'Uploading partial response and going to ContextualQuestion page.');
+            const _uploaded = await utilities.uploadData(
+                    {SurveyID: _appStatus.CurrentSurveyID,
+                     Stage: 'Permission complete.',
+                     PartialResponse: _surveyResponseJS},
+                    _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'savePermissionResponse');
+             if(!_uploaded)
+             {
+                logger.error(codeFileName, 'savePermissionResponse',
+                `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage:Permission complete. Response: ${JSON.stringify(_surveyResponseJS)}`);
+             }
+        }
+
+        this.setState({saveWaitVisible:false, permissionModalVisible: false, _surveyResponseJS: _surveyResponseJS}, ()=>
             this.props.navigation.navigate('ContextualQuestion',
                 {
                     surveyResponseJS: this.state.surveyResponseJS,
@@ -384,7 +405,7 @@ export default class ServiceMenuScreen extends React.Component {
       return a;
   }
 
-  showPermissionPage()
+  async showPermissionPage()
   {
   //After service selection is done, show permission page for at most 3 selected services
 
@@ -430,11 +451,32 @@ export default class ServiceMenuScreen extends React.Component {
         logger.info(codeFileName, 'showPermissionPage',
                     'Navigating to permission pages. Progress change:'+this.state.surveyProgress+' to '+_progress+'.');
 
+        //upload partial survey response
+          {
+              this.setState({saveWaitVisible:true});
+              _surveyResponseJS = this.state.surveyResponseJS;
+              _surveyResponseJS.SelectedServices = this.getSelectedServices();
+              const _appStatus  = await appStatus.loadStatus();
+              logger.info(codeFileName, 'NextButtonPress', 'Uploading partial response and going to permission page.');
+              const _selectedServices = this.getSelectedServices();
+              const _uploaded = await utilities.uploadData(
+                      {SurveyID: _appStatus.CurrentSurveyID,
+                       Stage: 'Services selected.',
+                       PartialResponse: _surveyResponseJS},
+                      _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'NextButtonPress');
+               if(!_uploaded)
+               {
+                  logger.error(codeFileName, 'NextButtonPress',
+                  `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage: Services selected. Response: ${JSON.stringify(_surveyResponseJS)}`);
+               }
+          }
+
         this.setState({permissionPageIdx: _permissionPageIdx,
                        activeServiceCategoryName: _permissionPages[_permissionPageIdx].categoryName,
                        activeServiceName: _permissionPages[_permissionPageIdx].serviceName,
                        permissionModalVisible: false,
-                       surveyProgress: _progress}, ()=>{
+                       surveyProgress: _progress,
+                       saveWaitVisible: false}, ()=>{
                                             this.props.navigation.navigate('ServicePermission',
                                             {serviceName : _permissionPages[_permissionPageIdx].serviceName,
                                             serviceCategoryName: _permissionPages[_permissionPageIdx].categoryName,
@@ -558,7 +600,7 @@ export default class ServiceMenuScreen extends React.Component {
                 });
             }}
         />
-        <Dialog.Button label="Next" onPress={() => {
+        <Dialog.Button label="Next" onPress={async () => {
                 _surveyResponseJS = this.state.surveyResponseJS;
                 _surveyResponseJS.noRelevantServiceReason = this.state.noRelevantServiceReason;
                 this.clearServiceSelections();
@@ -568,7 +610,24 @@ export default class ServiceMenuScreen extends React.Component {
 
                 if(this.state.surveyResponseJS.noRelevantServiceReason.length>0)
                 {
-                    logger.info("ServiceMenu","SaveButton.onPress", "Navigating to contextual question page.");
+                      //upload partial survey response
+                      {
+                          this.setState({saveWaitVisible:true});
+                          const _appStatus  = await appStatus.loadStatus();
+                          logger.info(codeFileName, 'NoRelevantService.SaveButton.onPress', 'Uploading partial response and going to ContextualQuestion page.');
+                          const _uploaded = await utilities.uploadData(
+                                  {SurveyID: _appStatus.CurrentSurveyID,
+                                   Stage: 'No relevant service selected.',
+                                   PartialResponse: _surveyResponseJS},
+                                  _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'NextButtonPress');
+                           if(!_uploaded)
+                           {
+                              logger.error(codeFileName, 'NoRelevantService.SaveButton.onPress',
+                              `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage: No relevant service selected. Response: ${JSON.stringify(_surveyResponseJS)}`);
+                           }
+                           this.setState({saveWaitVisible:false});
+                      }
+
                     this.props.navigation.navigate('ContextualQuestion',
                                                    {
                                                      surveyResponseJS: this.state.surveyResponseJS,
@@ -587,6 +646,11 @@ export default class ServiceMenuScreen extends React.Component {
             extraData= {this.state}
         />
       </Modal>
+      <ProgressDialog
+        visible={this.state.saveWaitVisible}
+        title="Progress Dialog"
+        message="Saving response. Please, wait..."
+      />
 
       </ScrollView>
 

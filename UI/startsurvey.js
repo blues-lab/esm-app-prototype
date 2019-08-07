@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, TextInput, Alert,
     BackHandler, TouchableHighlight, Dimensions, Modal} from 'react-native';
-
+import { ProgressDialog } from 'react-native-simple-dialogs';
 import logger from '../controllers/logger';
 import ServiceMenuScreen from './servicemenu';
 import commonStyles from './Style';
-
+import appStatus from '../controllers/appStatus';
 const codeFileName = 'startsurvey.js';
 import ToolBar from './toolbar'
-
+import utilities from '../controllers/utilities';
 
 export default class SurveyStartScreen extends React.Component {
 
@@ -22,7 +22,9 @@ export default class SurveyStartScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { conversationTopic: '', noSurveyDialogVisible: false };
+    this.state = {  conversationTopic: '', noSurveyDialogVisible: false,
+                    saveWaitVisible: false, //show progress dialog while saving survey response
+                 };
 
     this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
           BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
@@ -94,13 +96,31 @@ export default class SurveyStartScreen extends React.Component {
                         <TouchableHighlight style ={commonStyles.buttonTouchHLStyle}>
                             <Button title="Next"
                                 color="#20B2AA"
-                                onPress={() => {
-                                    if(false &&(this.state.conversationTopic.length==0))
+                                onPress={ async () => {
+                                    if(this.state.conversationTopic.length==0)
                                     {
                                         Alert.alert("Please insert conversation topic to continue.")
                                     }
                                     else
                                     {
+                                        //upload partial survey response
+                                        {
+                                            this.setState({saveWaitVisible:true});
+                                            const _appStatus  = await appStatus.loadStatus();
+                                            logger.info(codeFileName, 'NextButtonPress', 'Uploading conversation topic and going to AlvaPrompt.');
+                                            const _uploaded = await utilities.uploadData(
+                                                    {SurveyID: _appStatus.CurrentSurveyID,
+                                                    Stage: 'Conversation topic.',
+                                                    PartialResponse: this.state.conversationTopic},
+                                                    _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'NextButtonPress');
+                                             if(!_uploaded)
+                                             {
+                                                logger.error(codeFileName, 'NextButtonPress',
+                                                `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage:Conversation topic. Response: ${this.state.conversationTopic}`);
+                                             }
+
+                                            this.setState({saveWaitVisible:false});
+                                        }
                                         this.props.navigation.navigate('AlvaPrompt',
                                             {
                                                 conversationTopic: this.state.conversationTopic,
@@ -138,7 +158,11 @@ export default class SurveyStartScreen extends React.Component {
                                 </View>
                                </Modal>
           </View>
-
+              <ProgressDialog
+                  visible={this.state.saveWaitVisible}
+                  title="Progress Dialog"
+                  message="Saving response. Please, wait..."
+              />
       </View>
     );
   }
