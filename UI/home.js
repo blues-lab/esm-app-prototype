@@ -4,7 +4,7 @@ DeviceEventEmitter, Image, TouchableHighlight, Modal, BackHandler, AppState} fro
 import wifi from 'react-native-android-wifi';
 import * as RNFS from 'react-native-fs';
 import PushNotificationAndroid from 'react-native-push-notification';
-
+import notificationController from '../controllers/notificationController';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
 
 import logger from '../controllers/logger';
@@ -85,9 +85,11 @@ export default class HomeScreen extends React.Component {
               logger.info(`${codeFileName}`, "'Yes' to recent conversation", " Setting survey status to ONGOING and navigating to StartSurvey");
 
               appStatus.setSurveyStatus(SURVEY_STATUS.ONGOING)
-                       .then(() => {
+                       .then(() =>
+                       {
+                            notificationController.cancelNotifications();
                             this.props.navigation.navigate('StartSurvey');
-                        })
+                       })
             }},
           {text: 'No', onPress: () => {
                 logger.info(`${codeFileName}`, "'No' to recent conversation", "Exiting App.");
