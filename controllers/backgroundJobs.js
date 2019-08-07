@@ -16,31 +16,31 @@ import {USER_SETTINGS_FILE_PATH, SURVEY_STATUS,MAX_SURVEY_PER_DAY, LOG_FILE_PATH
 function getFromHour(settings, day)
 {
      //return min+hour*60
-     time = null;
-     switch (day)
-     {
-       case 0:
-         time = settings.sunFrom;
-         break;
-       case 1:
-         time = settings.mondayFrom;
-         break;
-       case 2:
-         time = settings.tuesdayFrom;
-         break;
-       case 3:
-         time = settings.wedFrom;
-         break;
-       case 4:
-         time = settings.thFrom;
-         break;
-       case 5:
-         time = settings.friFrom;
-         break;
-       case 6:
-         time = settings.satFrom;
-         break;
-     }
+     time = "11:11";
+//     switch (day)
+//     {
+//       case 0:
+//         time = settings.sunFrom;
+//         break;
+//       case 1:
+//         time = settings.mondayFrom;
+//         break;
+//       case 2:
+//         time = settings.tuesdayFrom;
+//         break;
+//       case 3:
+//         time = settings.wedFrom;
+//         break;
+//       case 4:
+//         time = settings.thFrom;
+//         break;
+//       case 5:
+//         time = settings.friFrom;
+//         break;
+//       case 6:
+//         time = settings.satFrom;
+//         break;
+//     }
      hr = time.split(':')[0]
      min = time.split(':')[1]
      logger.info('Global', 'getFromHour', `day of week: ${day} from time:${hr}:${min}`);
@@ -50,31 +50,31 @@ function getFromHour(settings, day)
 function getToHour(settings, day)
 {
      //return min+hour*60
-     time = null;
-     switch (day)
-     {
-       case 0:
-         time = settings.sunTo;
-         break;
-       case 1:
-         time = settings.mondayTo;
-         break;
-       case 2:
-         time = settings.tuesdayTo;
-         break;
-       case 3:
-         time = settings.wedTo;
-         break;
-       case 4:
-         time = settings.thTo;
-         break;
-       case 5:
-         time = settings.friTo;
-         break;
-       case 6:
-         time = settings.satTo;
-         break;
-     }
+     time = "11:11";
+//     switch (day)
+//     {
+//       case 0:
+//         time = settings.sunTo;
+//         break;
+//       case 1:
+//         time = settings.mondayTo;
+//         break;
+//       case 2:
+//         time = settings.tuesdayTo;
+//         break;
+//       case 3:
+//         time = settings.wedTo;
+//         break;
+//       case 4:
+//         time = settings.thTo;
+//         break;
+//       case 5:
+//         time = settings.friTo;
+//         break;
+//       case 6:
+//         time = settings.satTo;
+//         break;
+//     }
 
      hr = time.split(':')[0]
      min = time.split(':')[1]
@@ -85,28 +85,14 @@ function getToHour(settings, day)
 
 function isInDoNotDisturbTime(settings)
 {
-     logger.info('Global', 'isInDoNotDisturbTime', 'Figuring out if in "Do not disturb" period.');
+      const _date = new Date();
+      _current = _date.getHours()+":"+_date.getMinutes();
 
-      _day = new Date().getDay();
-      _from = getFromHour(settings, _day);
-      _to= getToHour(settings, _day);
+      logger.info('Global', 'isInDoNotDisturbTime',
+      `Do not disturb afterTime:${settings.afterTime} and beforeTime:${settings.beforeTime}. Current time:${_current}`);
 
-      _current = new Date();
-      _hour = _current.getHours();
-      _min = _current.getMinutes();
-      logger.info('Global', 'isInDoNotDisturbTime', `day of week: ${_day} current time:${_hour}:${_min}`);
-      _now = _hour*60 + _min;
 
-      _doNotDisturb = _now>_from && _now<_to;
-
-//      if(_to <= _from)
-//      {
-//        _doNotDisturb = _now>_from && _now<_to;
-//      }
-//      else
-//      {
-//        _doNotDisturb = (_now>_from && _now< 24*60) || (_now>0 && _now<_to);
-//      }
+      const _doNotDisturb = _current>settings.afterTime &&  _current<settings.beforeTime;
 
       return _doNotDisturb;
 }
@@ -219,7 +205,7 @@ export async function showPrompt()
                       await appStatus.setLastSurveyCreationDate(_currentDate)
                       await appStatus.setFirstNotificationTime(_currentDate);
                       await appStatus.setLastNotificationTime(_currentDate );
-                      //logger.info(codeFileName,"showPrompt", "Notification for new survey is shown and first+last notification time is set at:"+_currentDate);
+                      logger.info(codeFileName,"showPrompt", "Notification for new survey is shown");
                   }
               }
               else

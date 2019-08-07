@@ -169,25 +169,11 @@ static navigationOptions = ({ navigation }) => {
 
       this.state = {
         homeWifi:'',
-        currentWifi:'',
-        askWifi:true,
-        mondayFrom:'00:00',
-        mondayTo:'00:00',
-        tuesdayFrom:'00:00',
-        tuesdayTo:'00:00',
-        wedFrom: '00:00',
-        wedTo:'00:00',
-        thFrom:'00:00',
-        thTo:'00:00',
-        friFrom:'00:00',
-        friTo:'00:00',
-        satFrom:'00:00',
-        satTo:'00:00',
-        sunFrom:'00:00',
-        sunTo:'00:00',
-        currentDay:'mondayFrom',
         isDateTimePickerVisible:false,
-        stateSaved: true
+        stateSaved: true,
+        afterTimeSelected:true, //indicates if the 'after' or 'before' time was selected
+        afterTime: '00:00',
+        beforeTime:'00:00',
       };
 
       this.loadSettings();
@@ -273,24 +259,11 @@ static navigationOptions = ({ navigation }) => {
 
                     logger.info(`${codeFileName}`, 'loadSettings', 'Successfully read file.');
                     _userSettingsData = JSON.parse(_fileContent);
-                    this.setState({homeWifi: _userSettingsData.homeWifi,
-                                  currentWifi: _userSettingsData.homeWifi,
-                                  isDateTimePickerVisible: false,
-                                  askWifi: false,
-                                  mondayFrom: _userSettingsData.mondayFrom,
-                                  mondayTo: _userSettingsData.mondayTo,
-                                  tuesdayFrom: _userSettingsData.tuesdayFrom,
-                                  tuesdayTo: _userSettingsData.tuesdayTo,
-                                  wedFrom: _userSettingsData.wedFrom,
-                                  wedTo: _userSettingsData.wedTo,
-                                  thFrom: _userSettingsData.thFrom,
-                                  thTo: _userSettingsData.thTo,
-                                  friFrom: _userSettingsData.friFrom,
-                                  friTo: _userSettingsData.friTo,
-                                  satFrom: _userSettingsData.satFrom,
-                                  satTo: _userSettingsData.satTo,
-                                  sunFrom: _userSettingsData.sunFrom,
-                                  sunTo: _userSettingsData.sunTo}, () => {
+                    this.setState({
+                                    homeWifi: _userSettingsData.homeWifi,
+                                    afterTime: _userSettingsData.afterTime,
+                                    beforeTime: _userSettingsData.beforeTime
+                                  }, () => {
                                         if(this.state.homeWifi.length==0)
                                         {
                                             this.getHomeWiFi();
@@ -345,78 +318,19 @@ static navigationOptions = ({ navigation }) => {
 
   handleDatePicked = (time) =>
   {
+      const _hour = time.getHours()>9? time.getHours():"0"+time.getHours();
+      const _min = time.getMinutes()>9? time.getMinutes(): "0"+time.getMinutes();
 
-    if(this.state.currentDay=='mondayFrom')
-    {
-        this.setState({mondayFrom: time.getHours()+":"+time.getMinutes()});
-        this.setState({tuesdayFrom: time.getHours()+":"+time.getMinutes()});
-        this.setState({wedFrom: time.getHours()+":"+time.getMinutes()});
-        this.setState({thFrom: time.getHours()+":"+time.getMinutes()});
-        this.setState({friFrom: time.getHours()+":"+time.getMinutes()});
-        this.setState({satFrom: time.getHours()+":"+time.getMinutes()});
-        this.setState({sunFrom: time.getHours()+":"+time.getMinutes()});
-    }
-    if(this.state.currentDay=='mondayTo')
-    {
-        this.setState({mondayTo: time.getHours()+":"+time.getMinutes()});
-        this.setState({tuesdayTo: time.getHours()+":"+time.getMinutes()});
-        this.setState({wedTo: time.getHours()+":"+time.getMinutes()});
-        this.setState({thTo: time.getHours()+":"+time.getMinutes()});
-        this.setState({friTo: time.getHours()+":"+time.getMinutes()});
-        this.setState({satTo: time.getHours()+":"+time.getMinutes()});
-        this.setState({sunTo: time.getHours()+":"+time.getMinutes()});
-    }
-    if(this.state.currentDay=='tuesdayFrom')
-    {
-        this.setState({tuesdayFrom: time.getHours()+":"+time.getMinutes()});
-    }
-    if(this.state.currentDay=='tuesdayTo')
-    {
-        this.setState({tuesdayTo: time.getHours()+":"+time.getMinutes()});
-    }
-    if(this.state.currentDay=='wedFrom')
-    {
-        this.setState({wedFrom: time.getHours()+":"+time.getMinutes()});
-    }
-    if(this.state.currentDay=='wedTo')
-    {
-        this.setState({wedTo: time.getHours()+":"+time.getMinutes()});
-    }
-    if(this.state.currentDay=='thFrom')
-    {
-        this.setState({thFrom: time.getHours()+":"+time.getMinutes()});
-    }
-    if(this.state.currentDay=='thTo')
-    {
-        this.setState({thTo: time.getHours()+":"+time.getMinutes()});
-    }
-    if(this.state.currentDay=='friFrom')
-    {
-        this.setState({friFrom: time.getHours()+":"+time.getMinutes()});
-    }
-    if(this.state.currentDay=='friTo')
-    {
-        this.setState({friTo: time.getHours()+":"+time.getMinutes()});
-    }
-    if(this.state.currentDay=='satFrom')
-    {
-        this.setState({satFrom: time.getHours()+":"+time.getMinutes()});
-    }
-    if(this.state.currentDay=='satTo')
-    {
-        this.setState({satTo: time.getHours()+":"+time.getMinutes()});
-    }
-    if(this.state.currentDay=='sunFrom')
-    {
-        this.setState({sunFrom: time.getHours()+":"+time.getMinutes()});
-    }
-    if(this.state.currentDay=='sunTo')
-    {
-        this.setState({sunTo: time.getHours()+":"+time.getMinutes()});
-    }
+      if(this.state.afterTimeSelected)
+      {
+        this.setState({afterTime: _hour+":"+ _min});
+      }
+      else
+      {
+        this.setState({beforeTime: _hour+":"+_min});
+      }
 
-    this.setState({isDateTimePickerVisible:false, stateSaved:false});
-
+      this.setState({isDateTimePickerVisible:false, stateSaved:false});
   }
 
   hideDateTimePicker = () => {
@@ -426,22 +340,10 @@ static navigationOptions = ({ navigation }) => {
   saveSettings()
   {
     _settings={
-        homeWifi: this.state.homeWifi,
-        mondayFrom: this.state.mondayFrom,
-        mondayTo: this.state.mondayTo,
-        tuesdayFrom: this.state.tuesdayFrom,
-        tuesdayTo: this.state.tuesdayTo,
-        wedFrom: this.state.wedFrom,
-        wedTo: this.state.wedTo,
-        thFrom: this.state.thFrom,
-        thTo: this.state.thTo,
-        friFrom: this.state.friFrom,
-        friTo: this.state.friTo,
-        satFrom: this.state.satFrom,
-        satTo: this.state.satTo,
-        sunFrom: this.state.sunFrom,
-        sunTo: this.state.sunTo
-    }
+            homeWifi: this.state.homeWifi,
+            afterTime: this.state.afterTime,
+            beforeTime: this.state.beforeTime,
+        }
     utilities.writeJSONFile(_settings, USER_SETTINGS_FILE_PATH, codeFileName, 'saveSettings');
 
     logger.info(codeFileName, 'saveSettings', 'Saving settings:'+JSON.stringify(_settings))
@@ -489,7 +391,33 @@ static navigationOptions = ({ navigation }) => {
                 while connected to the home WiFi, please indicate it below.
             </Text>
 
+            <Text style={{ margin:10, fontSize:18,textAlign: 'center'}}>
+                Do not show notifications after
+            </Text>
+            <TouchableHighlight style={{borderWidth:.5, padding:5}}
+                onPress= {() => {
+                      this.setState({afterTimeSelected:true,isDateTimePickerVisible:true})
+                }}>
+              <Text style={styles.timeBoxStyle}>{this.state.afterTime}</Text>
+            </TouchableHighlight>
+            <Text style={{ margin:10, fontSize:18,textAlign: 'center'}}>
+                            And before
+            </Text>
+            <TouchableHighlight style={{borderWidth:.5, padding:5}}
+                onPress= {() => {
+                      this.setState({afterTimeSelected:false,isDateTimePickerVisible:true})
+                }}>
+              <Text style={styles.timeBoxStyle}>{this.state.beforeTime}</Text>
+            </TouchableHighlight>
 
+
+
+
+
+
+
+
+            { false &&
             <View style={{flex:1, flexDirection:'column', margin:10, justifyContent: 'space-around', alignItems:'flex-start'}}>
                 <View style={{flex:1, flexDirection:'row', justifyContent:'space-around', alignItems:'center'}}>
                    <Text style={styles.dayLabelStyle}>Monday</Text>
@@ -617,7 +545,10 @@ static navigationOptions = ({ navigation }) => {
                 </View>
 
             </View>
+            }
 
+            <View style={{flex:1, flexDirection:'row', justifyContent:'center', margin:10, paddingTop:30, width:Math.floor(Dimensions.get('window').width*.9),
+                borderBottomColor:'black', borderTopWidth: StyleSheet.hairlineWidth}}>
             <TouchableHighlight style ={[commonStyle.buttonTouchHLStyle]}>
                  <Button title="Save settings"
                      color="#20B2AA"
@@ -648,7 +579,7 @@ static navigationOptions = ({ navigation }) => {
                                     }}
                  />
              </TouchableHighlight>
-
+    </View>
 
          <DateTimePicker
                  isVisible={this.state.isDateTimePickerVisible}
@@ -667,12 +598,14 @@ static navigationOptions = ({ navigation }) => {
 const styles = StyleSheet.create({
   dayLabelStyle: {
           width: 80,
-          margin:5,
-          fontSize:14
+          fontSize:18,
+          marginLeft:5,
+          marginRight:5
   },
   timeBoxStyle:{
-    width:40,
-    fontSize:14,
+    width:60,
+    height:20,
+    fontSize:18,
     textAlign: 'center'
   },
 
