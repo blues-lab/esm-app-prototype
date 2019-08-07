@@ -178,7 +178,7 @@ export default class ServiceDetailsScreen extends React.Component {
     {
         return(
             <TouchableHighlight onPress={ ()=> {this.setState({isAddServiceDialogVisible:true})}}>
-                <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start'}}>
+                <View style={{flex: 1, flexDirection: 'row', padding:5, justifyContent:'flex-start',}}>
                       {
                           item.selected &&
                           <Icon name="checkbox-active" size={20} color="#66cc94" style ={{margin:5}}/>
@@ -187,7 +187,7 @@ export default class ServiceDetailsScreen extends React.Component {
                           !item.selected &&
                           <Icon name="checkbox-passive" size={20} color="grey" style ={{margin:5}}/>
                       }
-                      <Text style={{fontSize:20}}> {item.name} </Text>
+                      <Text style={{flex:1, flexWrap:'wrap', fontSize:20}}> {item.name} </Text>
                 </View>
             </TouchableHighlight>
         );
@@ -195,7 +195,7 @@ export default class ServiceDetailsScreen extends React.Component {
 
       return (
           <TouchableHighlight onPress={this.handleServiceSelection.bind(this, item.name)}>
-              <View style={{flex: 1, flexDirection: 'row'}}>
+              <View style={{flex: 1, flexDirection: 'row', padding:5, justifyContent:'flex-start'}}>
 
               {
                   item.selected &&
@@ -205,9 +205,7 @@ export default class ServiceDetailsScreen extends React.Component {
                   !item.selected &&
                   <Icon name="checkbox-passive" size={20} color="grey" style ={{margin:5}}/>
               }
-                  <Text style={{fontSize:20}}>
-                      {item.name}
-                  </Text>
+                  <Text style={{flex:1, flexWrap:'wrap', fontSize:20}}> {item.name} </Text>
               </View>
           </TouchableHighlight>
       );

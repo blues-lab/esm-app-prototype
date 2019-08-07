@@ -445,21 +445,10 @@ export default class ServiceMenuScreen extends React.Component {
   }
 
   renderListItem = ({item}) => {
-    img= require('../res/unchecked.png');
-    selected=false;
-    if(item.selectedServiceNames.size>0)
-    {
-        img= require('../res/checked.png');
-        selected=true;
-    }
-    else if(item.id=="None")
-    {
-        img=null;
-    }
     return (
         <TouchableHighlight style={{backgroundColor:'lavender'}} onPress={this.openServiceDetailsPage.bind(this, item)}>
           <View style={{flex: 1, flexDirection: 'column'}}>
-            <View style={{flex: 1, flexDirection: 'row'}}>
+            <View style={{flex: 1, flexDirection: 'row', padding:2, justifyContent:'flex-start'}}>
                 {
                     item.id!='None' && item.selectedServiceNames.size===0 &&
                     <Icon name="checkbox-passive" size={20} color="grey" style ={{margin:5}}/>
@@ -472,11 +461,9 @@ export default class ServiceMenuScreen extends React.Component {
                     item.id==='None' &&
                     <Icon name="radio-btn-passive" size={20} color="grey" style ={{margin:5}}/>
                 }
-                <Text style={{fontSize:20}}>
-                    {item.name}
-                </Text>
+                <Text style={{fontSize:20}}> {item.name} </Text>
             </View>
-            <Text numberOfLines={1} ellipsizeMode={'tail'} style={{fontSize:14, fontStyle:'italic', marginLeft:10, marginRight:5}}>
+            <Text numberOfLines={1} ellipsizeMode={'tail'} style={{fontSize:14, fontStyle:'italic', padding:2, marginLeft:10, marginRight:5}}>
                 {Array.from(item.selectedServiceNames).toString()}
             </Text>
           </View>
