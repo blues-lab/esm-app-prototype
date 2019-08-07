@@ -6,9 +6,9 @@ import * as RNFS from 'react-native-fs';
 //import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import { RadioButton } from 'react-native-paper';
 import DialogInput from 'react-native-dialog-input';
-
+import { ProgressDialog } from 'react-native-simple-dialogs';
 import logger from '../controllers/logger';
-
+import utilities from '../controllers/utilities';
 const codeFileName="servicePermission.js";
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
@@ -40,12 +40,17 @@ static navigationOptions = ({ navigation }) => {
     };
   };
 
-  state= {  serviceName:"NO-SERVICE",
+  state= {
+            services: null, //the service list sent from the serviceMenu page
+            currentServiceIdx:0,
             sharingDecision:fullShare,
             whyNoShare: '',
             whyPartShare: '',
             partsToRedact:'',
             value: fullShare,
+            permissionResponses:[],
+            surveyResponseJS: null, // full survey response so far sent from the serviceMenu page
+            saveWaitVisible: false,
          }
 
 
@@ -54,29 +59,86 @@ static navigationOptions = ({ navigation }) => {
     super(props);
   }
 
-  componentDidMount()
+  promisedSetState = (newState) =>
   {
-      const { navigation } = this.props;
-      const _categoryName = navigation.getParam('serviceCategoryName', 'NO-SERVICE');
-      const _serviceName = navigation.getParam('serviceName', 'NO-SERVICE');
-
-    this.setState({categoryName: _categoryName, serviceName: _serviceName});
+        return new Promise((resolve) =>
+        {
+            this.setState(newState, () => {
+                resolve()
+            });
+        });
   }
 
-  saveResponse()
+  async componentDidMount()
   {
-       _permissionResponse= {
-          "ServiceCategory": this.state.categoryName,
-          "ServiceName": this.state.serviceName,
-          "Sharing": this.state.value,
-          "PartsToRedact": this.state.partsToRedact,
-          "WhyPartShare": this.state.whyPartShare,
-          "WhyNoShare": this.state.whyNoShare,
+      const { navigation } = this.props;
+      const _services = navigation.getParam('services', null);
+      const _surveyProgress = navigation.getParam('surveyProgress', 0);
+      const _surveyResponseJS = navigation.getParam('surveyResponseJS', null);
+
+    await this.promisedSetState({services: _services, surveyProgress: _surveyProgress,
+                surveyResponseJS: _surveyResponseJS});
+  }
+
+  async saveResponse()
+  {
+        const _permissionResponse= {
+                  "ServiceCategory": this.state.services[this.state.currentServiceIdx].categoryName,
+                  "ServiceName": this.state.services[this.state.currentServiceIdx].serviceName,
+                  "Sharing": this.state.value,
+                  "PartsToRedact": this.state.partsToRedact,
+                  "WhyPartShare": this.state.whyPartShare,
+                  "WhyNoShare": this.state.whyNoShare,
+               }
+
+        _permissionResponses = this.state.permissionResponses;
+        _permissionResponses.push(_permissionResponse);
+        _surveyResponseJS = this.state.surveyResponseJS;
+        _surveyResponseJS.PermissionResponses = _permissionResponses;
+
+       const _nextServiceIdx = this.state.currentServiceIdx+1;
+       if(_nextServiceIdx < this.state.services.length) //more services remaining
+       {
+            logger.info(codeFileName, 'saveResponse', 'Saving response and going to the next service.');
+            const _surveyProgress = this.state.surveyProgress+Math.floor(40/this.state.services.length);
+            await this.promisedSetState(
+                {
+                    surveyResponseJS: _surveyResponseJS,
+                    currentServiceIdx: _nextServiceIdx,
+                    surveyProgress: _surveyProgress,
+                    whyNoShare: '',
+                    whyPartShare: '',
+                    partsToRedact:'',
+                    value: fullShare,
+                });
        }
-       logger.info(`${codeFileName}`,'saveResponse',"Response: "+JSON.stringify(_permissionResponse));
-       //this.props.callBack(_permissionResponse);
-       this.props.navigation.state.params.permissionResponseHandler(_permissionResponse);
-       this.props.navigation.goBack(null);
+       else //no more service, save and upload permission responses
+       {
+              logger.info(codeFileName, 'saveResponse', 'Uploading partial response and going to ContextualQuestion page.');
+              //upload partial survey response
+                {
+                    await this.promisedSetState({saveWaitVisible:true});
+                    const _appStatus  = await appStatus.loadStatus();
+                    const _uploaded = await utilities.uploadData(
+                            {SurveyID: _appStatus.CurrentSurveyID,
+                             Stage: 'Permission complete.',
+                             PartialResponse: this.state.surveyResponseJS},
+                            _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'saveResponse');
+                     if(!_uploaded)
+                     {
+                        logger.error(codeFileName, 'saveResponse',
+                        `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage:Permission complete. Response: ${JSON.stringify(this.state.surveyResponseJS)}`);
+                     }
+                }
+
+              //go to the contextual question page
+              await this.promisedSetState({saveWaitVisible:false});
+              this.props.navigation.navigate('ContextualQuestion',
+                  {
+                      surveyResponseJS: this.state.surveyResponseJS,
+                      surveyProgress: 80
+                  });
+       }
   }
 
   render() {
@@ -93,36 +155,39 @@ static navigationOptions = ({ navigation }) => {
           backgroundColor:'lavendar',
           }}>
 
-          <Text style={[commonStyle.questionStyle,{fontSize:22}]}>
-
-            Would you allow MiMi to access the relevant parts of
-            the conversation to "{this.state.serviceName.toLowerCase()}"?
-          </Text>
-          <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'flex-start', margin:10}}>
-          <RadioButton.Group
-               onValueChange={value => this.setState({ value})}
-               value={this.state.value}
-             >
-               <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'flex-start'}}>
-                 <RadioButton value='fullShare' />
-                 <Text style={{fontSize:20}}>
-                    Yes, I will allow access to any relevant parts of the conversation.
-                 </Text>
-               </View>
-               <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'flex-start'}}>
-                 <RadioButton value='partialShare'/>
-                 <Text style={{fontSize:20}}>
-                    I will only allow access if I could censor certain parts of the relevant conversation.
-                 </Text>
-               </View>
-               <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'center'}}>
-                <RadioButton value='noShare'/>
-                <Text style={{fontSize:20}}>
-                    No, I will not allow access to any relevant parts of the conversation.
-                </Text>
+          {   this.state.services!=null &&
+              <Text style={[commonStyle.questionStyle,{fontSize:22}]}>
+                Would you allow MiMi to access the relevant parts of
+                the conversation to "{this.state.services[this.state.currentServiceIdx].serviceName.toLowerCase()}"?
+              </Text>
+          }
+          {   this.state.services!=null &&
+              <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'flex-start', margin:10}}>
+                  <RadioButton.Group
+                       onValueChange={value => this.setState({ value})}
+                       value={this.state.value}
+                     >
+                       <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'flex-start'}}>
+                         <RadioButton value='fullShare' />
+                         <Text style={{fontSize:20}}>
+                            Yes, I will allow access to any relevant parts of the conversation.
+                         </Text>
+                       </View>
+                       <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'flex-start'}}>
+                         <RadioButton value='partialShare'/>
+                         <Text style={{fontSize:20}}>
+                            I will only allow access if I could censor certain parts of the relevant conversation.
+                         </Text>
+                       </View>
+                       <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'center'}}>
+                        <RadioButton value='noShare'/>
+                        <Text style={{fontSize:20}}>
+                            No, I will not allow access to any relevant parts of the conversation.
+                        </Text>
+                      </View>
+                  </RadioButton.Group>
               </View>
-          </RadioButton.Group>
-          </View>
+          }
 
           { (this.state.value == partialShare) &&
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -171,7 +236,11 @@ static navigationOptions = ({ navigation }) => {
             />
           </TouchableHighlight>
       </View>
-
+      <ProgressDialog
+        visible={this.state.saveWaitVisible}
+        title="Progress Dialog"
+        message="Saving response. Please, wait..."
+      />
     </ScrollView>
 
     );
