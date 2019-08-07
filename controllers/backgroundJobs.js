@@ -262,6 +262,36 @@ export async function showPrompt()
 
               }
           }
+          else if(_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING)
+          {
+            //if ongoing and app not in 'active' mode, prompt again
+            if(AppState.currentState == 'background')
+            {
+                  logger.info(codeFileName,"showPrompt", "Survey is ongoing but app is in "+AppState.currentState+'. Updating notification.');
+                  const _firstNotificationTime = _appStatus.FirstNotificationTime;
+                  if(_firstNotificationTime==null)
+                  {
+                    logger.error(codeFileName, "showPrompt", "Fatal error: FirstNotificationTime is null. Returning.");
+                    return;
+                  }
+
+                  _minPassed = Math.floor((Date.now() - _firstNotificationTime)/60000);
+                  logger.info(codeFileName,"showPrompt", _minPassed.toString()+" minutes have passed since the last notification date at "+_firstNotificationTime);
+
+                  _remainingTime = PROMPT_DURATION - _minPassed;
+                  if(_remainingTime>0)
+                  {
+                    logger.info(codeFileName, 'showPrompt','Remaining time:'+_remainingTime+ '. Updating notification.');
+
+                    notificationController.cancelNotifications();
+                    notificationController.showNotification("Survey is still available!",
+                                                            "Complete within "+_remainingTime+" minutes to get \u00A220!!!");
+                    logger.info(codeFileName,"showPrompt", "Showing latest notification at: "+new Date());
+                    await appStatus.setLastNotificationTime(new Date());
+                  }
+
+            }
+          }
       }
 }
 
