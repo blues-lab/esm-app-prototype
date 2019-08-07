@@ -28,7 +28,10 @@ class Logger extends Component
         var m = date.getMonth() + 1; //Month from 0 to 11
         var y = date.getFullYear();
 
-        var time = date.getHours() + ":" + date.getMinutes()+ ':' + date.getSeconds()+':'+date.getMilliseconds();
+        const _hour = date.getHours() > 9? date.getHours() : '0'+date.getHours();
+        const _min =   date.getMinutes()>9? date.getMinutes(): '0'+date.getMinutes();
+        const _sec = date.getSeconds()>9?date.getSeconds():'0'+date.getSeconds();
+        var time = _hour + ":" + _min+ ':' + _sec+':'+date.getMilliseconds();
 
         return y+'-'+m+'-'+day+' '+time
     }
