@@ -22,44 +22,55 @@ class ToolBar extends React.Component {
   interval = null;
 
 
+  promisedSetState = (newState) =>
+  {
+        return new Promise((resolve) =>
+        {
+            this.setState(newState, () => {
+                resolve()
+            });
+        });
+  }
+
   async initToolbar()
   {
       const _appStatus  = await appStatus.loadStatus();
 
-      this.setState({surveyStatus: _appStatus.SurveyStatus,
-                       completedSurveys: _appStatus.CompletedSurveys}, ()=>
+      await this.promisedSetState({surveyStatus: _appStatus.SurveyStatus,
+                       completedSurveys: _appStatus.CompletedSurveys});
+
+        logger.info(codeFileName, 'initToolbar', 'Page:'+this.props.title+'. Progress:'+this.props.progress+'. Current appStatus:'+JSON.stringify(_appStatus));
+
+        if(_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING)
         {
-            logger.info(codeFileName, 'initToolbar', 'Page:'+this.props.title+'. Progress:'+this.props.progress+'. Current appStatus:'+JSON.stringify(_appStatus));
-            if(_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING)
+            logger.info(codeFileName, 'initToolbar', 'Survey status is ONGOING so setting up toolbar to show remaining time.')
+            const _firstNotificationTime = _appStatus.FirstNotificationTime;
+
+            if(_firstNotificationTime==null)
             {
-                logger.info(codeFileName, 'initToolbar', 'Survey status is ONGOING so setting up toolbar to show remaining time.')
-                const _firstNotificationTime = _appStatus.FirstNotificationTime;
-
-                if(_firstNotificationTime==null)
-                {
-                    logger.error(codeFileName, 'initToolbar', 'Fatal error: _firstNotificationTime is null. Returning.');
-                    return;
-                }
-
-                const _curTime = new Date();
-
-                logger.info(codeFileName, 'initToolbar', 'curTime:'+_curTime+'. _firstNotificationTime:'+_firstNotificationTime);
-                const _secondsPassed = (_curTime.getTime() - _firstNotificationTime.getTime())/1000;
-                const _secRemaining = PROMPT_DURATION * 60 - _secondsPassed;
-
-                this.setState({minRemaining: Math.floor(_secRemaining/60), secRemaining: Math.floor(_secRemaining%60)});
-
-                if(this.interval==null)
-                {
-                    this.interval = setInterval(()=> this.updateTimeDisplay(), 1000)
-                }
-            }
-            else
-            {
-                logger.info(codeFileName, 'initToolbar', 'No survey is ONGOING. Returning.');
+                logger.error(codeFileName, 'initToolbar', 'Fatal error: _firstNotificationTime is null. Returning.');
                 return;
             }
-        })
+
+            const _curTime = new Date();
+
+            logger.info(codeFileName, 'initToolbar', 'curTime:'+_curTime+'. _firstNotificationTime:'+_firstNotificationTime);
+            const _secondsPassed = (_curTime.getTime() - _firstNotificationTime.getTime())/1000;
+            const _secRemaining = PROMPT_DURATION * 60 - _secondsPassed;
+
+            this.setState({minRemaining: Math.floor(_secRemaining/60), secRemaining: Math.floor(_secRemaining%60)});
+
+            if(this.interval==null)
+            {
+                this.interval = setInterval(()=> this.updateTimeDisplay(), 1000)
+            }
+        }
+        else
+        {
+            logger.info(codeFileName, 'initToolbar', 'No survey is ONGOING. Returning.');
+            return;
+        }
+
   }
 
   async componentDidMount()
@@ -84,6 +95,12 @@ class ToolBar extends React.Component {
   async updateTimeDisplay()
   {
     const _appStatus  = await appStatus.loadStatus();
+    if(_appStatus.SurveyStatus != SURVEY_STATUS.ONGOING)
+    {//if no survey is ongoing, no point in updating time. update self survey state and return.
+        await this.promisedSetState({surveyStatus: _appStatus.SurveyStatus});
+        return;
+    }
+
     const _firstNotificationTime = _appStatus.FirstNotificationTime;
     if(_firstNotificationTime==null)
     {
@@ -98,7 +115,8 @@ class ToolBar extends React.Component {
     _minRemaining= Math.floor(_secRemaining/60);
     _secRemaining = Math.floor(_secRemaining%60);
 
-    this.setState({secRemaining: _secRemaining});
+    await this.promisedSetState({secRemaining: _secRemaining, surveyStatus: _appStatus.SurveyStatus});
+
     if(_secRemaining<=0)
     {
         if(_minRemaining>0)
@@ -106,42 +124,35 @@ class ToolBar extends React.Component {
             _minRemaining = _minRemaining-1;
             _secRemaining=59;
 
-            this.setState({secRemaining: _secRemaining, minRemaining: _minRemaining});
+            await this.promisedSetState({secRemaining: _secRemaining, minRemaining: _minRemaining});
         }
         else
         {
-            if(this.state.surveyStatus == SURVEY_STATUS.ONGOING)
+            //ongoing survey expired, go back to home
+            if(this.interval!=null)
             {
-                //ongoing survey expired, go back to home
+                clearInterval(this.interval);
+            }
 
-                if(this.interval!=null)
-                {
-                    clearInterval(this.interval);
-                }
-                this.setState({surveyStatus:SURVEY_STATUS.NOT_AVAILABLE}, ()=>
-                {
-                    appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE)
-                             .then(()=>
-                             {
-                                    if(this.props.title!="Settings")
-                                    {
-                                        Alert.alert(
-                                                'Survey expired!',
-                                                'Sorry, the current survey is expired. We will notify you once new surveys become available.',
-                                                [
-                                                  {text: 'OK', onPress: () =>
-                                                    {
-                                                      logger.info(codeFileName, "updateTimeDisplay", "Survey expired, exiting app.");
-                                                      notificationController.cancelNotifications();
-                                                      BackHandler.exitApp();
-                                                    }
-                                                  }
-                                                ],
-                                                {cancelable: false},
-                                              );
-                                    }
-                             })
-                })
+            await this.promisedSetState({surveyStatus:SURVEY_STATUS.NOT_AVAILABLE});
+            await appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
+
+            if(this.props.title!="Settings")
+            {
+                Alert.alert(
+                        'Survey expired!',
+                        'Sorry, the current survey is expired. We will notify you once new surveys become available.',
+                        [
+                          {text: 'OK', onPress: () =>
+                            {
+                              logger.info(codeFileName, "updateTimeDisplay", "Survey expired, exiting app.");
+                              notificationController.cancelNotifications();
+                              BackHandler.exitApp();
+                            }
+                          }
+                        ],
+                        {cancelable: false},
+                      );
             }
         }
     }
@@ -164,7 +175,7 @@ class ToolBar extends React.Component {
              </TouchableHighlight>
 
 
-             { (false || this.state.surveyStatus == SURVEY_STATUS.ONGOING) &&
+             {   (this.state.surveyStatus == SURVEY_STATUS.ONGOING) &&
                  <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
                      <Text style={{fontSize:20}}>
                          {this.state.minRemaining>9?this.state.minRemaining:'0'+this.state.minRemaining}:{this.state.secRemaining>9?this.state.secRemaining:'0'+this.state.secRemaining}
