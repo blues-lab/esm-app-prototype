@@ -95,9 +95,11 @@ class ToolBar extends React.Component {
   async updateTimeDisplay()
   {
     const _appStatus  = await appStatus.loadStatus();
+    // update self survey state
+    await this.promisedSetState({surveyStatus: _appStatus.SurveyStatus});
+
     if(_appStatus.SurveyStatus != SURVEY_STATUS.ONGOING)
-    {//if no survey is ongoing, no point in updating time. update self survey state and return.
-        await this.promisedSetState({surveyStatus: _appStatus.SurveyStatus});
+    {//if no survey is ongoing, no point in updating time.
         return;
     }
 
@@ -180,7 +182,7 @@ class ToolBar extends React.Component {
                      <Text style={{fontSize:20}}>
                          {this.state.minRemaining>9?this.state.minRemaining:'0'+this.state.minRemaining}:{this.state.secRemaining>9?this.state.secRemaining:'0'+this.state.secRemaining}
                      </Text>
-
+                     
                      <ProgressBarAnimated
                                  width={120}
                                  value={this.props.progress}
