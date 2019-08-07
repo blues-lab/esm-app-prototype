@@ -59,7 +59,7 @@ class AppStatus
                     this.status.LastSurveyCreationDate = new Date(this.status.LastSurveyCreationDate);
                 }
 
-                logger.info(codeFileName, 'loadStatus', 'Successfully read app status file.');
+                //logger.info(codeFileName, 'loadStatus', 'Successfully read app status file.');
             }
             else
             {
