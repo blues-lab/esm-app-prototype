@@ -111,6 +111,7 @@ static navigationOptions = ({ navigation }) => {
                     partsToRedact:'',
                     value: fullShare,
                 });
+            this.props.navigation.setParams({surveyProgress: _surveyProgress});
        }
        else //no more service, save and upload permission responses
        {
