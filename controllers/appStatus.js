@@ -25,6 +25,7 @@ class AppStatus
                      StudyDuration: 1,
                      UUID:null,
                      LastSurveyCreationDate:null, //date when the last survey was created. Needed to reset counts.
+                     CurrentSurveyID:null,
                  }
     }
 
@@ -71,7 +72,7 @@ class AppStatus
             logger.error(callerClass, "loadStatus", 'Failed to read app status file:'+error.message);
         }
 
-        logger.info(codeFileName, 'loadStatus', 'Returning current app status :'+JSON.stringify(this.status));
+        //logger.info(codeFileName, 'loadStatus', 'Returning current app status :'+JSON.stringify(this.status));
         return this.status;
     }
 
@@ -164,6 +165,14 @@ class AppStatus
         this.status.LastSurveyCreationDate = value;
         logger.info(codeFileName, 'setLastSurveyCreationDate',
                    'Setting LastSurveyCreationDate to '+this.status.LastSurveyCreationDate);
+        await this.saveAppStatus();
+    }
+
+    async setCurrentSurveyID(value)
+    {
+        this.status.CurrentSurveyID = value;
+        logger.info(codeFileName, 'setCurrentSurveyID',
+                   'Setting CurrentSurveyID to '+this.status.CurrentSurveyID);
         await this.saveAppStatus();
     }
 }
