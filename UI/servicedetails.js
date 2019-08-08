@@ -241,27 +241,39 @@ export default class ServiceDetailsScreen extends React.Component {
                   hintInput ={""}
                   submitInput={async (inputText) =>
                     {
-                      _newService = {   id: inputText,
-                                        name: inputText,
-                                        selected: true,
-                                        description: '',
-                                        renderStyle: commonStyles.listItemStyle,
-                                        imgSrc : require('../res/checked.png')
-                                    }
-                      _serviceNames = this.state.serviceNames;
-                      _serviceNames.splice(_serviceNames.length-1, 0, _newService);
-                      //_serviceNames.push(_newService);
+                          if(inputText.length>0)
+                          {
+                              _newService = {
+                                                id: inputText,
+                                                name: inputText,
+                                                selected: true,
+                                                description: '',
+                                                renderStyle: commonStyles.listItemStyle,
+                                            }
+                              _serviceNames = this.state.serviceNames;
+                              _serviceNames.splice(_serviceNames.length-1, 0, _newService);
+                              //_serviceNames.push(_newService);
 
-                      logger.info(codeFileName,"DialogInput.NewService",
-                              `Newly added service name:${inputText}`);
+                              logger.info(codeFileName,"DialogInput.NewService",
+                                      `Newly added service name:${inputText}`);
 
-                      await this.props.navigation.state.params.newServiceHandler(this.state.serviceCategoryName, inputText);
-                      this.setState({serviceNames: _serviceNames, isAddServiceDialogVisible:false});
+                              await this.props.navigation.state.params.newServiceHandler(this.state.serviceCategoryName, inputText);
+                              this.setState({serviceNames: _serviceNames, isAddServiceDialogVisible:false});
+                              if(this.state.serviceNames.length==1) //if the newly added service is the first one, go back to main menu
+                                {
+                                   this.props.navigation.goBack(null);
+                                }
+                          }
                     }
                   }
                   closeDialog={ () => {
                           logger.info(`${codeFileName}`,"DialogInput.NewService.Close",'Canceled' )
-                          this.setState({isAddServiceDialogVisible:false});
+                          this.setState({isAddServiceDialogVisible:false}, ()=>{
+                              if(this.state.serviceNames.length==0) //if no service, go back to main menu
+                              {
+                                 this.props.navigation.goBack(null);
+                              }
+                          })
                       }}>
               </DialogInput>
 
