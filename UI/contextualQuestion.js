@@ -146,21 +146,16 @@ static navigationOptions = ({ navigation }) => {
         "UIID": _appStatus.UIID,
      }
 
-     logger.info(codeFileName, 'saveResponse', 'Saving survey response.');
+     logger.info(codeFileName, 'saveResponse', 'Saving survey response and updating app status variables.');
 
      _surveyResponseJS = this.state.surveyResponseJS;
      _surveyResponseJS.ContextualQuestionResponses = _contextResponseJS;
 
-
-     logger.info(codeFileName, 'saveResponse', 'Updating survey status to "Completed" and removing all notifications.');
-
+     await appStatus.increaseCompletedSurveys();
      await appStatus.setSurveyStatus("Completed");
      notificationController.cancelNotifications();
 
-     logger.info(codeFileName, 'saveResponse', 'Updating completed survey count.');
-     await appStatus.increaseCompletedSurveys();
-
-     logger.info(codeFileName, 'saveResponse', 'Uploading survey response.');
+     logger.info(codeFileName, 'saveResponse', 'Uploading survey response to the server.');
 
      const _uploaded = await utilities.uploadData({SurveyID: _appStatus.CurrentSurveyID,
             Stage: 'Completed.', Response: _surveyResponseJS},

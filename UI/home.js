@@ -40,12 +40,6 @@ export default class HomeScreen extends React.Component {
   }
 
 
-  startNewSurvey = () => //Will be called if participants indicate recent conversation
-  {
-    this.props.navigation.navigate('StartSurvey');
-  }
-
-
     isFirstLaunch = async () => {
       try {
         const value = await AsyncStorage.getItem('@HAS_LAUNCHED')
@@ -75,7 +69,7 @@ export default class HomeScreen extends React.Component {
 //      }
   }
 
-  startSurvey()
+  async startSurvey() //Will be called if participants indicate recent conversation
   {
       Alert.alert(
         'New survey!',
@@ -180,7 +174,7 @@ export default class HomeScreen extends React.Component {
         if (await RNFS.exists(USER_SETTINGS_FILE_PATH))
         {
             RNFS.readFile(USER_SETTINGS_FILE_PATH)
-                .then((_fileContent) =>
+                .then(async (_fileContent) =>
                {
                     _userSettingsData = JSON.parse(_fileContent);
                     logger.info(codeFileName, 'componentDidMount', 'Read user settings file:'+_fileContent);
@@ -195,7 +189,7 @@ export default class HomeScreen extends React.Component {
                         if(_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE)//check if survey is available from app settings
                         {
                             logger.info(codeFileName, 'componentDidMount', "New survey available. Asking for conversation.");
-                            this.startSurvey();
+                            await this.startSurvey();
                         }
                         else
                         {

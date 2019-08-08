@@ -192,7 +192,7 @@ export async function showPrompt()
 
                   if(_createSurvey)
                   {
-                      appStatus.incrementSurveyCountToday();
+                      await appStatus.incrementSurveyCountToday();
                       logger.info(codeFileName,"showPrompt", "Created new survey number:"+_appStatus.SurveyCountToday+". Changing status to AVAILABLE.");
                       await appStatus.setSurveyStatus(SURVEY_STATUS.AVAILABLE);
 
