@@ -99,7 +99,7 @@ export default class SurveyStartScreen extends React.Component {
                                 onPress={ async () => {
                                     if(this.state.conversationTopic.length==0)
                                     {
-                                        Alert.alert("Please insert conversation topic to continue.")
+                                        Alert.alert("Error","Please enter conversation topic to continue.");
                                     }
                                     else
                                     {
