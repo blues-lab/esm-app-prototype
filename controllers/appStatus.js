@@ -20,7 +20,6 @@ class AppStatus
                      FirstNotificationTime: null,
                      LastNotificationTime: null,
                      CompletedSurveys:0,
-                     SurveyProgress:0,
                      InstallationDate: null,
                      StudyDuration: 1,
                      UUID:null,
@@ -63,8 +62,8 @@ class AppStatus
             }
             else
             {
-                logger.info(codeFileName, 'loadStatus', 'App status file does not exist so creating a new one.');
-                await utilities.writeJSONFile(this.status, APP_STATUS_FILE_PATH, codeFileName, 'loadStatus')
+                await logger.info(codeFileName, 'loadStatus', 'App status file does not exist so creating a new one.');
+                await utilities.writeJSONFile(this.status, APP_STATUS_FILE_PATH, codeFileName, 'loadStatus');
             }
         }
         catch(error)
@@ -79,15 +78,8 @@ class AppStatus
 
     async saveAppStatus()
     {
+        //await logger.info(codeFileName, 'saveAppStatus', 'Current app status :'+JSON.stringify(this.status));
         await utilities.writeJSONFile(this.status, APP_STATUS_FILE_PATH, codeFileName, "saveAppStatus");
-    }
-
-    async setMaxNumberNotification(value)
-    {
-        this.status.MaxNumberNotification = value;
-        logger.info(`${codeFileName}`, 'incrementNotificationCount',
-            'Setting max notification number to '+this.status.MaxNumberNotification);
-        await this.saveAppStatus();
     }
 
     async incrementSurveyCountToday()
@@ -142,13 +134,6 @@ class AppStatus
         this.status.InstallationDate = value;
         logger.info(codeFileName, 'setInstallationDate',
                    'Setting installation date to '+this.status.InstallationDate);
-        await this.saveAppStatus();
-    }
-    async setSurveyProgress(value)
-    {
-        this.status.SurveyProgress= date;
-        logger.info(codeFileName, 'setSurveyProgress',
-                   'Setting survey progress to '+this.status.SurveyProgress);
         await this.saveAppStatus();
     }
 
