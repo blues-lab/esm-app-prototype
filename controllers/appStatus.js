@@ -24,6 +24,7 @@ class AppStatus
                      UUID:null,
                      LastSurveyCreationDate:null, //date when the last survey was created. Needed to reset counts.
                      CurrentSurveyID:null,
+                     InvitationCode: null,
                  }
     }
 

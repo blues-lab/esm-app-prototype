@@ -7,7 +7,7 @@ import PushNotificationAndroid from 'react-native-push-notification';
 import notificationController from '../controllers/notificationController';
 import {onAppOpen} from '../controllers/notificationController';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
-
+import Dialog from 'react-native-dialog';
 import logger from '../controllers/logger';
 import UUIDGenerator from 'react-native-uuid-generator';
 import appStatus from '../controllers/appStatus';
@@ -42,7 +42,10 @@ export default class HomeScreen extends React.Component {
   constructor(props)
   {
     super(props);
-    this.state={msg: "Initial state", noSurveyDialogVisible: false};
+    this.state={invitationCodePrompt: "Please enter your invitation code",
+                invitationCodeDialogVisible:false,
+                invitationCode:'',
+                noSurveyDialogVisible: false};
   }
 
 
@@ -132,10 +135,8 @@ export default class HomeScreen extends React.Component {
                     logger.info(codeFileName, 'componentDidMount', "Failed to set flag:"+e.message);
                 }
 
-                logger.info(codeFileName, 'componentDidMount', "Navigating to settings page.");
-                this.props.navigation.navigate('UserSettings', {firstLaunch:true, backCallBack: this.initApp.bind(this)});
-                logger.info(codeFileName, 'componentDidMount', "Setting noSurveyDialogVisible=true.");
-                this.setState({noSurveyDialogVisible: true});
+                logger.info(codeFileName, 'componentDidMount', "Getting invitation code.");
+                this.setState({noSurveyDialogVisible: true, invitationCodeDialogVisible:true});
             }
             else
             {
@@ -288,6 +289,44 @@ export default class HomeScreen extends React.Component {
                     </TouchableHighlight>
                 </View>
            }
+
+             <Dialog.Container visible={this.state.invitationCodeDialogVisible}>
+                   <Dialog.Title>{this.state.invitationCodePrompt}</Dialog.Title>
+                   <Dialog.Input
+                       multiline={true}
+                       numberOfLines={1}
+                       style={{height: 300, borderColor: 'lightgray', borderWidth: 1}}
+                       value={this.state.invitationCode}
+                       onChangeText={(code) => {
+                                 this.setState({invitationCode: code});
+                                 }}
+                   />
+
+                   <Dialog.Button label="Cancel" onPress={ () => {BackHandler.exitApp();}}/>
+                   <Dialog.Button label="Save" onPress={ async () => {
+
+                            //TODO: check validity of the code
+                            _code = this.state.invitationCode;
+                            if(_code.length==2 && _code.toLowerCase().startsWith('i'))
+                            {
+                                logger.info(codeFileName, 'invitationCodeDialog', "Entered invitation code:"+this.state.invitationCode);
+                                _appStatus = await appStatus.loadStatus();
+                                _appStatus.InvitationCode = _code;
+                                await appStatus.setAppStatus(_appStatus);
+
+                                logger.info(codeFileName, 'invitationCodeDialog', "Navigating to settings page.");
+
+                                this.setState({invitationCodeDialogVisible:false});
+                                this.props.navigation.navigate('UserSettings', {firstLaunch:true, backCallBack: this.initApp.bind(this)});
+                            }
+                            else
+                            {
+                                this.setState({invitationCodePrompt: 'The code you entered is invalid. Please try again.'});
+                            }
+
+                       }}/>
+
+                 </Dialog.Container>
 
       </View>
     );
