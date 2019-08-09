@@ -154,7 +154,7 @@ class Utilities extends Component
                       "uid": uuid,
                       "client": VERSION_NUMBER,
                       "key": type,
-                      "value": JSON.stringify(data)
+                      "value": data,
                     }),
                   }
                );
