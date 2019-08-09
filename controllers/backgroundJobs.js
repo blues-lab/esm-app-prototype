@@ -13,86 +13,34 @@ import utilities from '../controllers/utilities';
 import {USER_SETTINGS_FILE_PATH, SURVEY_STATUS,MAX_SURVEY_PER_DAY, LOG_FILE_PATH, PROMPT_DURATION} from './constants';
 
 
-function getFromHour(settings, day)
-{
-     //return min+hour*60
-     time = "11:11";
-//     switch (day)
-//     {
-//       case 0:
-//         time = settings.sunFrom;
-//         break;
-//       case 1:
-//         time = settings.mondayFrom;
-//         break;
-//       case 2:
-//         time = settings.tuesdayFrom;
-//         break;
-//       case 3:
-//         time = settings.wedFrom;
-//         break;
-//       case 4:
-//         time = settings.thFrom;
-//         break;
-//       case 5:
-//         time = settings.friFrom;
-//         break;
-//       case 6:
-//         time = settings.satFrom;
-//         break;
-//     }
-     hr = time.split(':')[0]
-     min = time.split(':')[1]
-     logger.info('Global', 'getFromHour', `day of week: ${day} from time:${hr}:${min}`);
-     return  Number(min)+Number(hr)*60;
-}
-
-function getToHour(settings, day)
-{
-     //return min+hour*60
-     time = "11:11";
-//     switch (day)
-//     {
-//       case 0:
-//         time = settings.sunTo;
-//         break;
-//       case 1:
-//         time = settings.mondayTo;
-//         break;
-//       case 2:
-//         time = settings.tuesdayTo;
-//         break;
-//       case 3:
-//         time = settings.wedTo;
-//         break;
-//       case 4:
-//         time = settings.thTo;
-//         break;
-//       case 5:
-//         time = settings.friTo;
-//         break;
-//       case 6:
-//         time = settings.satTo;
-//         break;
-//     }
-
-     hr = time.split(':')[0]
-     min = time.split(':')[1]
-     logger.info('Global', 'getToHour', `day of week: ${day} from time:${hr}:${min}`);
-     return  Number(min)+Number(hr)*60;
-}
-
-
 function isInDoNotDisturbTime(settings)
 {
+      if(settings.afterTime === settings.beforeTime)//user did not set time, return false
+      {
+        logger.info(codeFileName, 'isInDoNotDisturbTime',
+            'User did not specify time. After time:'+settings.afterTime'. Before time:'+settings.beforeTime+'. Returning false.');
+        return false;
+      }
       const _date = new Date();
-      _current = _date.getHours()+":"+_date.getMinutes();
+      const _hours = _date.getHours()>9?_date.getHours():'0'+_date.getHours();
+      const _min = _date.getMinutes()>9?_date.getMinutes():'0'+_date.getMinutes();
+      const _current =  _hours +':'+ _min;
+
 
       logger.info('Global', 'isInDoNotDisturbTime',
       `Do not disturb afterTime:${settings.afterTime} and beforeTime:${settings.beforeTime}. Current time:${_current}`);
+;
+      _doNotDisturb = false;
+      if(settings.afterTime<settings.beforeTime)
+      {
+        _doNotDisturb = _current>settings.afterTime &&  _current<settings.beforeTime;
+      }
+      else
+      {
+        _doNotDisturb = (_current>settings.afterTime && _current<"23:59") ||
+                        (_current>"00:00" && _current<settings.beforeTime);
+      }
 
-
-      const _doNotDisturb = _current>settings.afterTime &&  _current<settings.beforeTime;
 
       return _doNotDisturb;
 }
@@ -226,7 +174,7 @@ export async function showPrompt()
               }
 
               _minPassed = Math.floor((Date.now() - _firstNotificationTime)/60000);
-              logger.info(codeFileName,"showPrompt", _minPassed.toString()+" minutes have passed since the last notification date at "+_firstNotificationTime);
+              logger.info(codeFileName,"showPrompt", _minPassed.toString()+" minutes have passed since the first notification date at "+_firstNotificationTime);
 
               _remainingTime = PROMPT_DURATION - _minPassed;
               if(_remainingTime<=0) //survey expired, remove all existing notification
@@ -335,7 +283,7 @@ export async function uploadFiles()
                                             'Log', codeFileName, 'uploadFiles');
              if(_uploaded)
              {
-                await RNFS.writeFile(LOG_FILE_PATH,'');
+               // await RNFS.writeFile(LOG_FILE_PATH,'');
                 logger.info(codeFileName, 'uploadFiles', 'Uploaded previous log file content. Replaced with empty file.');
              }
              else
