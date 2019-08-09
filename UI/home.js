@@ -51,22 +51,7 @@ export default class HomeScreen extends React.Component {
 
   handleAppStateChange(currentState)
   {
-//      logger.info(codeFileName, "handleAppStateChange", "Current app state: "+currentState);
-//      if(currentState=='active')
-//      {
-//            logger.info(codeFileName, "handleAppStateChange", "Current app status:"+JSON.stringify(appStatus.getStatus()));
-//
-//            //show appropriate screen based on if survey is available
-//            if(appStatus.getStatus().SurveyStatus == SURVEY_STATUS.AVAILABLE)
-//            {//survey is available, but not ONGOING
-//                //this.setState({noSurveyDialogVisible:false})
-//                //this.startSurvey();
-//            }
-//            else if(appStatus.getStatus().SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE)
-//            {//survey not is available
-//                //this.setState({noSurveyDialogVisible:true})
-//            }
-//      }
+
   }
 
   async startSurvey() //Will be called if participants indicate recent conversation
