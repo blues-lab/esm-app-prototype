@@ -45,9 +45,8 @@ class Utilities extends Component
                 }
                 catch(error)
                 {
-                    logger.error(codeFileName, `${callerFunc}-->writeJSONFile`, 'Failed to write content in new file:'+error.message);
-                    RNFS.copyFile(_backupFileName, fileName);
-                    logger.info(callerClass, `${callerFunc}-->writeJSONFile`, 'Restored backup file.');
+                    logger.error(codeFileName, `${callerFunc}-->writeJSONFile`, 'Failed to write content in new file:'+error.message)+'. Restoring backup file.';
+                    await RNFS.copyFile(_backupFileName, fileName);
                 }
 
             }
