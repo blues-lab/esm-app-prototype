@@ -24,7 +24,7 @@ import utilities from '../controllers/utilities';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-import {USER_SETTINGS_FILE_PATH} from '../controllers/constants';
+import {USER_SETTINGS_FILE_PATH, STUDY_PERIOD} from '../controllers/constants';
 
 export default class HomeScreen extends React.Component {
 
@@ -159,7 +159,7 @@ export default class HomeScreen extends React.Component {
                 _oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
                 _currDate = new Date();
                 _diffDays = Math.round(Math.abs((_currDate.getTime() - _installationDate.getTime())/(_oneDay)));
-                if(_diffDays > _appStatus.StudyDuration)
+                if(_diffDays > STUDY_PERIOD)
                 {
                     logger.info(codeFileName, 'componentDidMount', "Survey period ended. Returning");
                     return;
