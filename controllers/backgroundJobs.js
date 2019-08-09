@@ -18,7 +18,7 @@ function isInDoNotDisturbTime(settings)
       if(settings.afterTime === settings.beforeTime)//user did not set time, return false
       {
         logger.info(codeFileName, 'isInDoNotDisturbTime',
-            'User did not specify time. After time:'+settings.afterTime'. Before time:'+settings.beforeTime+'. Returning false.');
+            'User did not specify time. After time:'+settings.afterTime+'. Before time:'+settings.beforeTime+'. Returning false.');
         return false;
       }
       const _date = new Date();
