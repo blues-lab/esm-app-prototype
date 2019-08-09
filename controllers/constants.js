@@ -15,5 +15,7 @@ export const APP_STATUS_FILE_PATH = RNFS.DocumentDirectoryPath+'/appStatus.js';
 
 export const LOG_FILE_PATH = RNFS.DocumentDirectoryPath+'/log.csv';
 
+export const STUDY_PERIOD = 3; //study will continue over n days
+
 
 export const VERSION_NUMBER = '1.0.0';

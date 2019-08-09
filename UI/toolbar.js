@@ -94,7 +94,7 @@ class ToolBar extends React.Component {
 
   async updateTimeDisplay()
   {
-    const _appStatus  = await appStatus.loadStatus();
+    _appStatus  = await appStatus.loadStatus();
     // update self survey state
     await this.promisedSetState({surveyStatus: _appStatus.SurveyStatus});
 
@@ -137,7 +137,10 @@ class ToolBar extends React.Component {
             }
 
             await this.promisedSetState({surveyStatus:SURVEY_STATUS.NOT_AVAILABLE});
-            await appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
+
+            _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+            _appStatus.CurrentSurveyID = null;
+            await appStatus.setAppStatus(_appStatus);
 
             if(this.props.title!="Settings")
             {

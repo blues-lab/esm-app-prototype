@@ -98,7 +98,7 @@ export default class HomeScreen extends React.Component {
       logger.info(codeFileName, 'componentDidMount', 'Registering to listen app foreground/background transition');
 
       logger.info(codeFileName, "componentDidMount", "Reloading app status.");
-      const _appStatus = await appStatus.loadStatus();
+      _appStatus = await appStatus.loadStatus();
       logger.info(codeFileName, "componentDidMount", "Current app status:"+JSON.stringify(_appStatus));
 
     if(await this.isFirstLaunch()==null)
@@ -111,9 +111,12 @@ export default class HomeScreen extends React.Component {
             const _uuid = await UUIDGenerator.getRandomUUID();
             const _installationDate = new Date();
             logger.info(codeFileName, 'componentDidMount', "Setting installation date:"+_installationDate+" and UUID:"+_uuid);
-            await appStatus.setInstallationDate(_installationDate);
-            await appStatus.setLastSurveyCreationDate(_installationDate);//this should not be a problem, since survey count is still zero.
-            await appStatus.setUUID(_uuid);
+
+            _appStatus.InstallationDate = _installationDate;
+            _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
+            _appStatus.UUID = _uuid;
+
+            await appStatus.setAppStatus(_appStatus);
 
         }
         catch (e)

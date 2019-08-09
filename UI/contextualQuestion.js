@@ -34,6 +34,7 @@ import ToolBar from './toolbar'
 const codeFileName='contextualQuestion.js';
 const surveyResponseFilePath= RNFS.DocumentDirectoryPath+'/Responses.js';
 import utilities from '../controllers/utilities';
+import {SURVEY_STATUS} from '../controllers/constants';
 
 export default class ContextualQuestionScreen extends React.Component {
 
@@ -130,7 +131,7 @@ static navigationOptions = ({ navigation }) => {
 
     this.setState({saveWaitVisible:true});
 
-    const _appStatus = await appStatus.loadStatus();
+    _appStatus = await appStatus.loadStatus();
 
      _contextResponseJS={
         "NumOfPeopleAround": this.state.numOfPeople,
@@ -151,8 +152,11 @@ static navigationOptions = ({ navigation }) => {
      _surveyResponseJS = this.state.surveyResponseJS;
      _surveyResponseJS.ContextualQuestionResponses = _contextResponseJS;
 
-     await appStatus.increaseCompletedSurveys();
-     await appStatus.setSurveyStatus("Completed");
+     _appStatus.CompletedSurveys+=1;
+     _appStatus.SurveyStatus = SURVEY_STATUS.COMPLETED;
+     _appStatus.CurrentSurveyID = null;
+     await appStatus.setAppStatus(_appStatus);
+
      notificationController.cancelNotifications();
 
      logger.info(codeFileName, 'saveResponse', 'Uploading survey response to the server.');

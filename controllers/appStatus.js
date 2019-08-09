@@ -21,7 +21,6 @@ class AppStatus
                      LastNotificationTime: null,
                      CompletedSurveys:0,
                      InstallationDate: null,
-                     StudyDuration: 1,
                      UUID:null,
                      LastSurveyCreationDate:null, //date when the last survey was created. Needed to reset counts.
                      CurrentSurveyID:null,
@@ -75,6 +74,16 @@ class AppStatus
         return this.status;
     }
 
+    async setAppStatus(status)
+    {
+        for(var key in status)
+        {
+            this.status[key] = status[key];
+        }
+
+        await logger.info(codeFileName, 'setAppStatus', 'Current app status :'+JSON.stringify(this.status));
+        await utilities.writeJSONFile(this.status, APP_STATUS_FILE_PATH, codeFileName, "saveAppStatus");
+    }
 
     async saveAppStatus()
     {

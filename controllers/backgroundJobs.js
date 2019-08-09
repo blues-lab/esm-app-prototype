@@ -62,7 +62,7 @@ function before(d1, d2)
 
 export async function showPrompt()
 {
-      const _appStatus = await appStatus.loadStatus();
+      _appStatus = await appStatus.loadStatus();
       logger.info(codeFileName, "showPrompt", "Current app status:"+JSON.stringify(_appStatus));
 
       _userSettingsData = null;
@@ -119,8 +119,10 @@ export async function showPrompt()
           if(_appStatus.LastSurveyCreationDate==null || before(_appStatus.LastSurveyCreationDate, new Date))
           {
             logger.info(codeFileName, 'showPrompt', 'Last survey was created at a previous day:'+_appStatus.setLastNotificationTime+'. Resetting appStatus.SurveyCountToday and setting survey status to NOT_AVAILABLE.')
-            await appStatus.resetSurveyCountToday();
-            await appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
+
+            _appStatus.SurveyCountToday=0;
+            _appStatus.SurveyStatus=SURVEY_STATUS.NOT_AVAILABLE;
+            await appStatus.setAppStatus(_appStatus);
           }
 
           if(_appStatus.SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE)
@@ -140,20 +142,21 @@ export async function showPrompt()
 
                   if(_createSurvey)
                   {
-                      await appStatus.incrementSurveyCountToday();
-                      logger.info(codeFileName,"showPrompt", "Created new survey number:"+_appStatus.SurveyCountToday+". Changing status to AVAILABLE.");
-                      await appStatus.setSurveyStatus(SURVEY_STATUS.AVAILABLE);
-
                       _remainingTime = PROMPT_DURATION;
                       notificationController.cancelNotifications();
                       notificationController.showNotification("New survey available!",
                         "Complete within "+_remainingTime+" minutes to get \u00A220!!!");
 
+                      logger.info(codeFileName,"showPrompt", "Created new survey. Updating app status.");
                       const _currentDate = new Date();
-                      await appStatus.setLastSurveyCreationDate(_currentDate)
-                      await appStatus.setFirstNotificationTime(_currentDate);
-                      await appStatus.setLastNotificationTime(_currentDate );
-                      logger.info(codeFileName,"showPrompt", "Notification for new survey is shown");
+                      _appStatus.SurveyCountToday +=1;
+                      _appStatus.SurveyStatus = SURVEY_STATUS.AVAILABLE;
+                      _appStatus.LastSurveyCreationDate = _currentDate;
+                      _appStatus.FirstNotificationTime = _currentDate;
+                      _appStatus.LastNotificationTime = _currentDate;
+                      await appStatus.setAppStatus(_appStatus);
+
+                      logger.info(codeFileName,"showPrompt", "Notification for new survey is shown.");
                   }
               }
               else
