@@ -35,6 +35,7 @@ static navigationOptions = ({ navigation }) => {
         afterTimeSelected:true, //indicates if the 'after' or 'before' time was selected
         afterTime: '00:00',
         beforeTime:'00:00',
+        backCallBack: null, // a callback function sent by Home screen
       };
 
       this.loadSettings();
@@ -45,6 +46,9 @@ static navigationOptions = ({ navigation }) => {
     componentDidMount()
     {
         logger.info(codeFileName, 'componentDidMount', 'Setting event handlers.');
+
+        this.setState({backCallBack:this.props.navigation.getParam('backCallBack', null)});
+
         this.props.navigation.setParams({ backHandler: this.handleBackNavigation.bind(this)});
         this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
           BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
@@ -156,6 +160,12 @@ static navigationOptions = ({ navigation }) => {
               {text: 'NO', onPress: () =>
                 {
                     logger.info(codeFileName, 'handleBackNavigation', "Declined to save settings, going to previous page.");
+                    if(this.state.backCallBack!=null)
+                    {
+                        logger.info(codeFileName, 'handleBackNavigation', 'Calling backCallBack.')
+                        this.state.backCallBack();
+                    }
+
                     this.props.navigation.goBack(null);
                 }},
               {text: 'YES', onPress: () =>
@@ -170,6 +180,11 @@ static navigationOptions = ({ navigation }) => {
     else
     {
         logger.info(codeFileName, 'handleBackNavigation', "Back button pressed, nothing to save, going to previous page.");
+        if(this.state.backCallBack!=null)
+        {
+            logger.info(codeFileName, 'handleBackNavigation', 'Calling backCallBack.')
+            this.state.backCallBack();
+        }
         this.props.navigation.goBack(null);
     }
 

@@ -168,9 +168,11 @@ class ToolBar extends React.Component {
     return (
     <View style={{flex:1, flexDirection:'row', justifyContent:'space-between', alignItems:'stretch', margin:5}}>
 
-             <TouchableHighlight style={{height: 30, width:30
-                                         }}
-                 onPress={() => this.props.navigation.navigate('UserSettings',{firstLaunch:false})}>
+             <TouchableHighlight style={{height: 30, width:30}}
+                 onPress={() => {
+                        _backCallBack = this.props.navigation.getParam('backCallBack', null);//back button callback sent from Home
+                        this.props.navigation.navigate('UserSettings',{firstLaunch:false, backCallBack:_backCallBack})
+                      }}>
 
                  <Image
                   style={{width: '100%',

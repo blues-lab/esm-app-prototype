@@ -8,7 +8,13 @@ var PushNotification = require('react-native-push-notification');
 
 import logger from './logger';
 
-const codeFileName='notificationController.js'
+const codeFileName='notificationController.js';
+
+export function onAppOpen()
+{
+    logger.info(codeFileName, 'onAppOpen','Calling backCallBack.');
+    onAppOpen.backCallBack();
+}
 
 class NotificationController
 {
@@ -74,7 +80,8 @@ class NotificationController
           },
 
           // (required) Called when a remote or local notification is opened or received
-          onNotification: function(notification) {
+          onNotification: function(notification)
+          {
               logger.info(`${codeFileName}`,'onNotification','App opened from notification.');
 
               // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
@@ -82,6 +89,7 @@ class NotificationController
               {
                 notification.finish(PushNotificationIOS.FetchResult.NoData);
               }
+              onAppOpen();
 
           },
 

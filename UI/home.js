@@ -5,6 +5,7 @@ import wifi from 'react-native-android-wifi';
 import * as RNFS from 'react-native-fs';
 import PushNotificationAndroid from 'react-native-push-notification';
 import notificationController from '../controllers/notificationController';
+import {onAppOpen} from '../controllers/notificationController';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
 
 import logger from '../controllers/logger';
@@ -28,10 +29,15 @@ import {USER_SETTINGS_FILE_PATH, STUDY_PERIOD} from '../controllers/constants';
 
 export default class HomeScreen extends React.Component {
 
-  static navigationOptions = {
+
+  static navigationOptions = ({ navigation }) => {
+    return {
         headerLeft: null,
-        headerTitle: <ToolBar title="Home" progress={0} showProgress={false}/>
-      };
+        headerTitle: <ToolBar title="Home" progress={0} showProgress={false}
+                                    backCallBack={navigation.getParam('backCallBack')}/>
+    };
+  };
+
 
   constructor(props)
   {
@@ -92,114 +98,117 @@ export default class HomeScreen extends React.Component {
   }
 
 
-  async componentDidMount()
+  initApp = async () =>
   {
-      AppState.addEventListener('change', this.handleAppStateChange.bind(this));
-      logger.info(codeFileName, 'componentDidMount', 'Registering to listen app foreground/background transition');
+       if(this.props.navigation.state.routeName == 'Home')
+       {
+              AppState.addEventListener('change', this.handleAppStateChange.bind(this));
+              logger.info(codeFileName, 'componentDidMount', 'Registering to listen app foreground/background transition');
 
-      logger.info(codeFileName, "componentDidMount", "Reloading app status.");
-      _appStatus = await appStatus.loadStatus();
-      logger.info(codeFileName, "componentDidMount", "Current app status:"+JSON.stringify(_appStatus));
+              logger.info(codeFileName, "componentDidMount", "Reloading app status.");
+              _appStatus = await appStatus.loadStatus();
+              logger.info(codeFileName, "componentDidMount", "Current app status:"+JSON.stringify(_appStatus));
 
-    if(await this.isFirstLaunch()==null)
-    {
-        //first launch
-        logger.info(codeFileName, 'componentDidMount', "First time app launch. Trying to set flag.");
-        try
-        {
-            await AsyncStorage.setItem('@HAS_LAUNCHED', 'true');
-            const _uuid = await UUIDGenerator.getRandomUUID();
-            const _installationDate = new Date();
-            logger.info(codeFileName, 'componentDidMount', "Setting installation date:"+_installationDate+" and UUID:"+_uuid);
-
-            _appStatus.InstallationDate = _installationDate;
-            _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
-            _appStatus.UUID = _uuid;
-
-            await appStatus.setAppStatus(_appStatus);
-
-        }
-        catch (e)
-        {
-            logger.info(codeFileName, 'componentDidMount', "Failed to set flag:"+e.message);
-        }
-
-        logger.info(codeFileName, 'componentDidMount', "Navigating to settings page.");
-        this.props.navigation.navigate('UserSettings', {firstLaunch:true});
-        logger.info(codeFileName, 'componentDidMount', "Setting noSurveyDialogVisible=true.");
-        this.setState({noSurveyDialogVisible: true});
-    }
-    else
-    {
-        //TODO: check for home wifi set and connected, and the current survey (if available) was created today
-        logger.info(codeFileName, 'componentDidMount', "Nth time app launch");
-
-        //Check if study period has ended
-        {
-            _installationDate = _appStatus.InstallationDate;
-            logger.info(codeFileName, 'componentDidMount', 'Checking if study period has ended. _installationDate:'+_installationDate)
-            if(_installationDate==null)
+            if(await this.isFirstLaunch()==null)
             {
-                logger.error(codeFileName, 'componentDidMount', 'Fatal error: installation date is null!!!')
+                //first launch
+                logger.info(codeFileName, 'componentDidMount', "First time app launch. Trying to set flag.");
+                try
+                {
+                    await AsyncStorage.setItem('@HAS_LAUNCHED', 'true');
+                    const _uuid = await UUIDGenerator.getRandomUUID();
+                    const _installationDate = new Date();
+                    logger.info(codeFileName, 'componentDidMount', "Setting installation date:"+_installationDate+" and UUID:"+_uuid);
+
+                    _appStatus.InstallationDate = _installationDate;
+                    _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
+                    _appStatus.UUID = _uuid;
+
+                    await appStatus.setAppStatus(_appStatus);
+
+                }
+                catch (e)
+                {
+                    logger.info(codeFileName, 'componentDidMount', "Failed to set flag:"+e.message);
+                }
+
+                logger.info(codeFileName, 'componentDidMount', "Navigating to settings page.");
+                this.props.navigation.navigate('UserSettings', {firstLaunch:true, backCallBack: this.initApp.bind(this)});
+                logger.info(codeFileName, 'componentDidMount', "Setting noSurveyDialogVisible=true.");
+                this.setState({noSurveyDialogVisible: true});
             }
             else
             {
-                _oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-                _currDate = new Date();
-                _diffDays = Math.round(Math.abs((_currDate.getTime() - _installationDate.getTime())/(_oneDay)));
-                if(_diffDays > STUDY_PERIOD)
+                //TODO: check for home wifi set and connected, and the current survey (if available) was created today
+                logger.info(codeFileName, 'componentDidMount', "Nth time app launch");
+
+                //Check if study period has ended
                 {
-                    logger.info(codeFileName, 'componentDidMount', "Survey period ended. Returning");
-                    return;
+                    _installationDate = _appStatus.InstallationDate;
+                    logger.info(codeFileName, 'componentDidMount', 'Checking if study period has ended. _installationDate:'+_installationDate)
+                    if(_installationDate==null)
+                    {
+                        logger.error(codeFileName, 'componentDidMount', 'Fatal error: installation date is null!!!')
+                    }
+                    else
+                    {
+                        _oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+                        _currDate = new Date();
+                        _diffDays = Math.round(Math.abs((_currDate.getTime() - _installationDate.getTime())/(_oneDay)));
+                        if(_diffDays > STUDY_PERIOD)
+                        {
+                            logger.info(codeFileName, 'componentDidMount', "Survey period ended. Returning");
+                            return;
+                        }
+                        else
+                        {
+                            logger.info(codeFileName, 'componentDidMount', "Still in survey period. "+_diffDays+' days have passed.');
+                        }
+                    }
+
+                }
+                if (await RNFS.exists(USER_SETTINGS_FILE_PATH))
+                {
+                    RNFS.readFile(USER_SETTINGS_FILE_PATH)
+                        .then(async (_fileContent) =>
+                       {
+                            _userSettingsData = JSON.parse(_fileContent);
+                            logger.info(codeFileName, 'componentDidMount', 'Read user settings file:'+_fileContent);
+
+                            if(_userSettingsData.homeWifi.length==0)
+                            {
+                                 logger.info(codeFileName, 'componentDidMount', 'Home Wifi not set. Navigating to settings page.');
+                                 this.props.navigation.navigate('UserSettings');
+                            }
+                            else
+                            {
+                                if(_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE)//check if survey is available from app settings
+                                {
+                                    logger.info(codeFileName, 'componentDidMount', "New survey available. Asking for conversation.");
+                                    this.setState({noSurveyDialogVisible:false});
+                                    await this.startSurvey();
+                                }
+                                else
+                                {
+                                    logger.info(codeFileName, 'componentDidMount', "No survey available.");
+                                    this.setState({noSurveyDialogVisible:true});
+                                }
+                            }
+                       })
+                       .catch( (error) =>
+                        {
+                            logger.error(codeFileName, 'componentDidMount', 'Error reading user settings file:'+error.message);
+                        }
+                       )
                 }
                 else
                 {
-                    logger.info(codeFileName, 'componentDidMount', "Still in survey period. "+_diffDays+' days have passed.');
+                    logger.info(codeFileName, 'componentDidMount', 'Settings file not found. Navigating to settings page.');
+                    this.props.navigation.navigate('UserSettings');
                 }
             }
 
         }
-        if (await RNFS.exists(USER_SETTINGS_FILE_PATH))
-        {
-            RNFS.readFile(USER_SETTINGS_FILE_PATH)
-                .then(async (_fileContent) =>
-               {
-                    _userSettingsData = JSON.parse(_fileContent);
-                    logger.info(codeFileName, 'componentDidMount', 'Read user settings file:'+_fileContent);
-
-                    if(_userSettingsData.homeWifi.length==0)
-                    {
-                         logger.info(codeFileName, 'componentDidMount', 'Home Wifi not set. Navigating to settings page.');
-                         this.props.navigation.navigate('UserSettings');
-                    }
-                    else
-                    {
-                        if(_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE)//check if survey is available from app settings
-                        {
-                            logger.info(codeFileName, 'componentDidMount', "New survey available. Asking for conversation.");
-                            await this.startSurvey();
-                        }
-                        else
-                        {
-                            logger.info(codeFileName, 'componentDidMount', "No survey available.");
-                            this.setState({noSurveyDialogVisible:true})
-                        }
-                    }
-               })
-               .catch( (error) =>
-                {
-                    logger.error(codeFileName, 'componentDidMount', 'Error reading user settings file:'+error.message);
-                }
-               )
-        }
-        else
-        {
-            logger.info(codeFileName, 'componentDidMount', 'Settings file not found. Navigating to settings page.');
-            this.props.navigation.navigate('UserSettings');
-        }
-    }
-
-      //this.setState({noSurveyDialogVisible: true})
 
       this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
             BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
@@ -209,7 +218,13 @@ export default class HomeScreen extends React.Component {
               'didBlur',
               payload => {}
             );
+  }
 
+  async componentDidMount()
+  {
+      this.props.navigation.setParams({ backCallBack: this.initApp.bind(this)});
+      onAppOpen.backCallBack = this.initApp.bind(this);
+      await this.initApp();
   }
 
   UpdateWifiState()
