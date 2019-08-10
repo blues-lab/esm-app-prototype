@@ -26,9 +26,17 @@ class Utilities extends Component
 
     async writeJSONFile(content, fileName, callerClass, callerFunc)
     {
-        //NOTE: send JSON object to write, DO NOT stringify
         try
-        {   const _fileExists = await RNFS.exists(fileName); //if there is an existing file, create a backup first
+        {
+            //content = data;
+            if(typeof(content) == "object")
+            {
+                //logger.info(callerClass, `${callerFunc}-->writeJSONFile`, 'Converting content.');
+                content = JSON.stringify(content);
+            }
+
+            //logger.info(callerClass, `${callerFunc}-->writeJSONFile`, 'content:'+content);
+            const _fileExists = await RNFS.exists(fileName); //if there is an existing file, create a backup first
             if(_fileExists)
             {
                 logger.info(callerClass, `${callerFunc}-->writeJSONFile`, fileName+' already exists. Creating backup.');
@@ -38,7 +46,7 @@ class Utilities extends Component
                 try
                 {
                     logger.info(callerClass, `${callerFunc}-->writeJSONFile`, 'Creating new file with content.');
-                    await RNFS.writeFile(fileName, JSON.stringify(content));
+                    await RNFS.writeFile(fileName, content);
                     logger.info(callerClass, `${callerFunc}-->writeJSONFile`, 'Deleting backup file.');
                     await RNFS.unlink(_backupFileName);
                 }
@@ -53,7 +61,7 @@ class Utilities extends Component
             else
             {
                 logger.info(callerClass, `${callerFunc}-->writeJSONFile`, fileName+' does not exist. Writing content in new file.');
-                await RNFS.writeFile(fileName, JSON.stringify(content));
+                await RNFS.writeFile(fileName, content);
             }
         }
         catch(error)
