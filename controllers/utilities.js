@@ -27,7 +27,6 @@ class Utilities extends Component
     async writeJSONFile(content, fileName, callerClass, callerFunc)
     {
         //NOTE: send JSON object to write, DO NOT stringify
-
         try
         {   const _fileExists = await RNFS.exists(fileName); //if there is an existing file, create a backup first
             if(_fileExists)
@@ -47,6 +46,7 @@ class Utilities extends Component
                 {
                     logger.error(codeFileName, `${callerFunc}-->writeJSONFile`, 'Failed to write content in new file:'+error.message)+'. Restoring backup file.';
                     await RNFS.copyFile(_backupFileName, fileName);
+                    return false;
                 }
 
             }
@@ -59,7 +59,9 @@ class Utilities extends Component
         catch(error)
         {
             logger.error(codeFileName, `${callerFunc}-->writeJSONFile`, 'Failed to write file:'+error.message);
+            return false;
         }
+        return true;
  }
 
     async readJSONFile(filePath, callerClass, callerFunc)

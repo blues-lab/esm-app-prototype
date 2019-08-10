@@ -10,7 +10,9 @@ const codeFileName = 'backgroundJobs.js';
 import appStatus from '../controllers/appStatus';
 
 import utilities from '../controllers/utilities';
-import {USER_SETTINGS_FILE_PATH, SURVEY_STATUS,MAX_SURVEY_PER_DAY, LOG_FILE_PATH, PROMPT_DURATION} from './constants';
+import {USER_SETTINGS_FILE_PATH, SURVEY_STATUS,
+    INVITATION_CODE_FILE_PATH, MAX_SURVEY_PER_DAY, LOG_FILE_PATH,
+    PROMPT_DURATION} from './constants';
 
 
 function isInDoNotDisturbTime(settings)
@@ -236,7 +238,7 @@ export async function showPrompt()
 
 export async function uploadFiles()
 {
-    //TODO: check if app in background, otherwise return
+    // check if app in background, otherwise return
     if(AppState.currentState=='active')
     {
         logger.info('Global','uploadFiles', 'Current app state is '+AppState.currentState+'. Returning.');
@@ -253,6 +255,24 @@ export async function uploadFiles()
         if((_ssid.length>0)  && (_ssid != '<unknown ssid>'))
         {
             logger.info('Global', 'uploadFiles', 'Obtained  SSID:'+_ssid+'.');
+
+            //send the invitation code file
+            const _fileExists = await RNFS.exists(INVITATION_CODE_FILE_PATH);
+            if(_fileExists)
+            {
+                const _fileContent = await RNFS.readFile(INVITATION_CODE_FILE_PATH);
+                const _uploaded = await utilities.uploadData( _fileContent, _appStatus.UUID,
+                                                'InvitationCode', codeFileName, 'uploadFiles');
+                 if(_uploaded)
+                 {
+                    logger.info(codeFileName, 'uploadFiles', 'Uploaded invitation code file content.');
+                    await RNFS.unlink(INVITATION_CODE_FILE_PATH);
+                 }
+                 else
+                 {
+                    logger.error(codeFileName, 'uploadFiles', 'Failed to upload invitation file content:'+JSON.stringify(_fileContent));
+                 }
+            }
 
             //check if there is any survey response files, if so, upload them
             const _files = await RNFS.readdir(RNFS.DocumentDirectoryPath);

@@ -11,6 +11,8 @@ export const PROMPT_DURATION = 60; //60 minutes
 
 export const USER_SETTINGS_FILE_PATH = RNFS.DocumentDirectoryPath+'/usersettings.js';
 
+export const INVITATION_CODE_FILE_PATH = RNFS.DocumentDirectoryPath+"/invitationCode.js";
+
 export const APP_STATUS_FILE_PATH = RNFS.DocumentDirectoryPath+'/appStatus.js';
 
 export const LOG_FILE_PATH = RNFS.DocumentDirectoryPath+'/log.csv';

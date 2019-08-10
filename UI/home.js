@@ -25,7 +25,7 @@ import utilities from '../controllers/utilities';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-import {USER_SETTINGS_FILE_PATH, STUDY_PERIOD} from '../controllers/constants';
+import {USER_SETTINGS_FILE_PATH, STUDY_PERIOD, INVITATION_CODE_FILE_PATH} from '../controllers/constants';
 
 export default class HomeScreen extends React.Component {
 
@@ -309,15 +309,23 @@ export default class HomeScreen extends React.Component {
                             _code = this.state.invitationCode;
                             if(_code.length==2 && _code.toLowerCase().startsWith('i'))
                             {
-                                logger.info(codeFileName, 'invitationCodeDialog', "Entered invitation code:"+this.state.invitationCode);
-                                _appStatus = await appStatus.loadStatus();
-                                _appStatus.InvitationCode = _code;
-                                await appStatus.setAppStatus(_appStatus);
+                                logger.info(codeFileName, 'invitationCodeDialog', "Entered invitation code:"+this.state.invitationCode+'. Writing it to file.');
+                                const _written = await utilities.writeJSONFile({InvitationCode:_code},
+                                                                INVITATION_CODE_FILE_PATH,
+                                                                codeFileName, "invitationCodeDialog");
+                                if(_written)
+                                {
+                                    logger.info(codeFileName, 'invitationCodeDialog', "Navigating to settings page.");
 
-                                logger.info(codeFileName, 'invitationCodeDialog', "Navigating to settings page.");
-
-                                this.setState({invitationCodeDialogVisible:false});
-                                this.props.navigation.navigate('UserSettings', {firstLaunch:true, backCallBack: this.initApp.bind(this)});
+                                    this.setState({invitationCodeDialogVisible:false});
+                                    this.props.navigation.navigate('UserSettings', {firstLaunch:true, backCallBack: this.initApp.bind(this)});
+                                }
+                                else
+                                {
+                                    logger.error(codeFileName, 'invitationCodeDialog', 'Error saving invitation code. Asking to try again.');
+                                    Alert.alert('Error','There was an error saving invitation code. Please try again later.');
+                                    BackHandler.exitApp();
+                                }
                             }
                             else
                             {
