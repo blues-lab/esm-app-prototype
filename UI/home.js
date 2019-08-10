@@ -46,7 +46,7 @@ export default class HomeScreen extends React.Component {
                 invitationCodeDialogVisible:false,
                 invitationCode:'',
                 noSurveyDialogVisible: false,
-                invitationCodeValid: false};
+                };
   }
 
 
@@ -118,28 +118,6 @@ export default class HomeScreen extends React.Component {
                 //first launch
                 logger.info(codeFileName, 'componentDidMount', "First time app launch. Getting invitation code.");
                 this.setState({noSurveyDialogVisible: true, invitationCodeDialogVisible:true});
-                if(this.state.invitationCodeValid)
-                {
-                    try
-                    {
-                        await AsyncStorage.setItem('@HAS_LAUNCHED', 'true');
-                        const _uuid = await UUIDGenerator.getRandomUUID();
-                        const _installationDate = new Date();
-                        logger.info(codeFileName, 'componentDidMount', "Setting installation date:"+_installationDate+" and UUID:"+_uuid);
-
-                        _appStatus.InstallationDate = _installationDate;
-                        _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
-                        _appStatus.UUID = _uuid;
-
-                        await appStatus.setAppStatus(_appStatus);
-
-                    }
-                    catch (e)
-                    {
-                        logger.info(codeFileName, 'componentDidMount', "Failed to set flag:"+e.message);
-                    }
-                }
-
             }
             else
             {
@@ -318,9 +296,28 @@ export default class HomeScreen extends React.Component {
                                                                 codeFileName, "invitationCodeDialog");
                                 if(_written)
                                 {
-                                    logger.info(codeFileName, 'invitationCodeDialog', "Navigating to settings page.");
+                                    try
+                                    {
+                                        await AsyncStorage.setItem('@HAS_LAUNCHED', 'true');
+                                        const _uuid = await UUIDGenerator.getRandomUUID();
+                                        const _installationDate = new Date();
 
-                                    this.setState({invitationCodeDialogVisible:false, invitationCodeValid: true});
+                                        _appStatus = appStatus.loadStatus();
+                                        _appStatus.InstallationDate = _installationDate;
+                                        _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
+                                        _appStatus.UUID = _uuid;
+
+                                        logger.info(codeFileName, 'invitationCodeDialog', "Setting app status properties.");
+                                        await appStatus.setAppStatus(_appStatus);
+
+                                    }
+                                    catch (e)
+                                    {
+                                        logger.error(codeFileName, 'invitationCodeDialog', "Failed to set installation flag:"+e.message);
+                                    }
+
+                                    this.setState({invitationCodeDialogVisible:false});
+                                    logger.info(codeFileName, 'invitationCodeDialog', "Navigating to settings page.");
                                     this.props.navigation.navigate('UserSettings', {firstLaunch:true, backCallBack: this.initApp.bind(this)});
                                 }
                                 else
