@@ -26,12 +26,13 @@ import ContextualQuestionScreen from './UI/contextualQuestion'
 import UserSettingsScreen from './UI/userSettings';
 import {UserSettingsEntity}from './UI/userSettings';
 import AlvaPromptScreen from './UI/alvaPrompt';
-
+import utilities from './controllers/utilities';
 import BackgroundJob from 'react-native-background-job';
 
 import backgroundJobs from './controllers/backgroundJobs';
 import notificationController from './controllers/notificationController';
-import {USER_SETTINGS_FILE_PATH,SURVEY_STATUS, MAX_NOTIFICATION_NUM} from './controllers/constants'
+import {USER_SETTINGS_FILE_PATH,SURVEY_STATUS,
+        MAX_NOTIFICATION_NUM, SERVICE_FILE_ASSET, SERVICE_FILE_LOCAL} from './controllers/constants'
 const codeFileName="App.js";
 
 import {showPrompt, uploadFiles} from './controllers/backgroundJobs';
@@ -110,53 +111,36 @@ const AppNavigator = createStackNavigator(
 
 const AppContainer = createAppContainer(AppNavigator);
 
-const serviceFileAsset= 'services.js';
-const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
-const appStatusFileAsset= 'appStatus.js';
-const appStatusFileLocal = RNFS.DocumentDirectoryPath+'/appStatus.js';
-
-
 export default class App extends Component<Props> 
 {
 
   state = {};
 
-  async generateInitialFiles(assetFile, localFile)
+  async generateInitialFiles()
   {
-    if(await RNFS.exists(localFile))
+    logger.info(codeFileName, 'generateInitialFiles', 'Writing initial files.')
+    if(!await RNFS.exists(USER_SETTINGS_FILE_PATH))//write default settings
     {
-        //do nothing
-    }
-    else
-    {
-        RNFS.readFileAssets(assetFile)
-            .then((res) =>
-            {
-                  RNFS.writeFile(localFile, res)
-                  .then((success) =>
-                  {
-                    logger.info(`${codeFileName}`, 'generateInitialFiles', 'Writing '+localFile);
-                  })
-                  .catch((err) =>
-                  {
-                    logger.error(`${codeFileName}`, 'generateInitialFiles'
-                      ,'Failed to write '+localFile+'. Error code:'+err.code+', Error: '+err.message);
+        const _settings={ homeWifi: '', afterTime: '00:00',beforeTime: '00:00'};
 
-                  })
-            })
-            .catch((err) => {
-              logger.error(`${codeFileName}`, 'generateInitialFiles'
-                     ,'Failed to read '+assetFile+'. Error: '+err.message);
-            })
+        await utilities.writeJSONFile(_settings, USER_SETTINGS_FILE_PATH,
+                                        codeFileName, 'generateInitialFiles');
+    }
+    if(!await RNFS.exists(SERVICE_FILE_LOCAL)) //write service file
+    {
+        const _fileContent = await RNFS.readFileAssets(SERVICE_FILE_ASSET);
+        await utilities.writeJSONFile(_fileContent, SERVICE_FILE_LOCAL,
+                                     codeFileName, 'generateInitialFiles');
     }
   }
 
 
   async componentDidMount()
   {
-    await this.generateInitialFiles(serviceFileAsset, serviceFileLocal);
+    await this.generateInitialFiles();
 
     //uploadFiles();
+    //setTimeout(uploadFiles, 20*1000);
     //setTimeout(showPrompt, 10*1000);
   }
 

@@ -1,5 +1,8 @@
 import * as RNFS from 'react-native-fs';
 
+export const SERVICE_FILE_ASSET = 'services.js';
+export const SERVICE_FILE_LOCAL = RNFS.DocumentDirectoryPath+'/services.js';
+
 
 export const SURVEY_STATUS =  {NOT_AVAILABLE: "NOT_AVAILABLE", AVAILABLE:"AVAILABLE", ONGOING:"ONGOING", COMPLETED:"COMPLETED"}
 
