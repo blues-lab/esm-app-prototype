@@ -106,7 +106,7 @@ static navigationOptions = ({ navigation }) => {
           {
             logger.info(codeFileName, 'getHomeWiFi', 'WiFi is not enabled or connected. Will check again later.')
             Alert.alert("Home WiFi", 'We will only send surveys when you are connected to your home WiFi.'+
-                                     ' We wil ask about it again when you are connected to WiFi.');
+                                     ' We will ask about it again when you are connected to WiFi.');
           }
       }
       catch(error)

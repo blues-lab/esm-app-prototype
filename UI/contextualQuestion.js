@@ -184,13 +184,6 @@ static navigationOptions = ({ navigation }) => {
                ],
                {cancelable: false}
              )});
-
-
-
-
-     //https://mimi.research.icsi.institute/save
-
-     //{parameters}
    }
 
 
