@@ -52,7 +52,7 @@ class Utilities extends Component
             }
             else
             {
-                logger.info(callerClass, `${callerFunc}-->writeJSONFile`, 'File did not exist. Writing content in new file.');
+                logger.info(callerClass, `${callerFunc}-->writeJSONFile`, fileName+' does not exist. Writing content in new file.');
                 await RNFS.writeFile(fileName, JSON.stringify(content));
             }
         }
