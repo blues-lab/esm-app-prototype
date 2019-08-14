@@ -102,11 +102,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.alva"
+        applicationId "edu.berkeley.cs.blues.alva"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName "2019.8.10"
     }
     splits {
         abi {
