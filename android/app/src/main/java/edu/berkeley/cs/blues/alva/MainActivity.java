@@ -1,4 +1,4 @@
-package com.alva;
+package edu.berkeley.cs.blues.alva;
 
 import com.facebook.react.ReactActivity;
 
