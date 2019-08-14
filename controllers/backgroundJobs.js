@@ -317,7 +317,7 @@ export async function uploadFiles()
         }
         else
         {
-            logger.error(codeFileName, 'uploadFiles', 'Obtained empty SSID:'+_ssid+'. Returning');
+            logger.error(codeFileName, 'uploadFiles', 'Invalid SSID:'+_ssid+'. Not connected to internet. Returning');
             return;
         }
     }
