@@ -10,7 +10,7 @@ const codeFileName='toolbar.js';
 import {SURVEY_STATUS, PROMPT_DURATION} from '../controllers/constants'
 import notificationController from '../controllers/notificationController';
 import commonStyles from './Style';
-
+import Icon from 'react-native-vector-icons/Feather';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 
 import { ProgressBar, Colors } from 'react-native-paper';
@@ -168,17 +168,13 @@ class ToolBar extends React.Component {
     return (
     <View style={{flex:1, flexDirection:'row', justifyContent:'space-between', alignItems:'stretch', margin:5}}>
 
-             <TouchableHighlight style={{height: 30, width:30}}
+             <TouchableHighlight style={{height: 30}}
                  onPress={() => {
                         _backCallBack = this.props.navigation.getParam('backCallBack', null);//back button callback sent from Home
                         this.props.navigation.navigate('UserSettings',{firstLaunch:false, backCallBack:_backCallBack})
                       }}>
 
-                 <Image
-                  style={{width: '100%',
-                         height:25, resizeMode : 'contain'}}
-                  source={require('../res/settings-icon.png')}
-                 />
+                 <Icon name="settings" size={30} color="black" style ={{margin:5}}/>
              </TouchableHighlight>
 
 
