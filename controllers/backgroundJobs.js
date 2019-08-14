@@ -29,7 +29,7 @@ function isInDoNotDisturbTime(settings)
       const _current =  _hours +':'+ _min;
 
 
-      logger.info('Global', 'isInDoNotDisturbTime',
+      logger.info(codeFileName, 'isInDoNotDisturbTime',
       `Do not disturb afterTime:${settings.afterTime} and beforeTime:${settings.beforeTime}. Current time:${_current}`);
 ;
       _doNotDisturb = false;
@@ -241,11 +241,11 @@ export async function uploadFiles()
     // check if app in background, otherwise return
     if(AppState.currentState=='active')
     {
-        logger.info('Global','uploadFiles', 'Current app state is '+AppState.currentState+'. Returning.');
+        logger.info(codeFileName,'uploadFiles', 'Current app state is '+AppState.currentState+'. Returning.');
         return;
     }
 
-    logger.info('Global','uploadFiles', 'Current app state is '+AppState.currentState+'. Attempting to upload files.');
+    logger.info(codeFileName,'uploadFiles', 'Current app state is '+AppState.currentState+'. Attempting to upload files.');
 
     const _appStatus = await appStatus.loadStatus();
     try
@@ -254,7 +254,7 @@ export async function uploadFiles()
         const _ssid = await WifiManager.getCurrentWifiSSID();
         if((_ssid.length>0)  && (_ssid != '<unknown ssid>'))
         {
-            logger.info('Global', 'uploadFiles', 'Obtained  SSID:'+_ssid+'.');
+            logger.info(codeFileName, 'uploadFiles', 'Obtained  SSID:'+_ssid+'.');
 
             //send the invitation code file
             const _fileExists = await RNFS.exists(INVITATION_CODE_FILE_PATH);
@@ -276,13 +276,13 @@ export async function uploadFiles()
 
             //check if there is any survey response files, if so, upload them
             const _files = await RNFS.readdir(RNFS.DocumentDirectoryPath);
-            logger.info('Global', 'uploadFiles', 'Uploading survey response files. Existing files:'+_files.toString());
+            logger.info(codeFileName, 'uploadFiles', 'Uploading survey response files. Existing files:'+_files.toString());
             for(i =0; i< _files.length; i++)
             {
                 const _file = _files[i];
                 if(_file.startsWith('survey--response--'))
                 {
-                    logger.info('Global','uploadFiles', 'Uploading survey response file:'+_file);
+                    logger.info(codeFileName,'uploadFiles', 'Uploading survey response file:'+_file);
                     const _filePath = RNFS.DocumentDirectoryPath+'/'+_file;
                     const _fileContent = await RNFS.readFile(_filePath);
                     const _uploaded = await utilities.uploadData( _fileContent, _appStatus.UUID,
@@ -300,7 +300,7 @@ export async function uploadFiles()
             }
 
             //upload log file
-            logger.info('Global', 'uploadFiles', 'Attempting to upload log file.');
+            logger.info(codeFileName, 'uploadFiles', 'Attempting to upload log file.');
             const _fileContent = await RNFS.readFile(LOG_FILE_PATH);
             const _uploaded = await utilities.uploadData( _fileContent, _appStatus.UUID,
                                             'Log', codeFileName, 'uploadFiles');
@@ -317,13 +317,13 @@ export async function uploadFiles()
         }
         else
         {
-            logger.error('Global', 'uploadFiles', 'Obtained empty SSID:'+_ssid+'. Returning');
+            logger.error(codeFileName, 'uploadFiles', 'Obtained empty SSID:'+_ssid+'. Returning');
             return;
         }
     }
     catch(error)
     {
-        logger.error('Global', 'uploadFiles', 'Failed to upload files: '+error);
+        logger.error(codeFileName, 'uploadFiles', 'Failed to upload files: '+error);
         return;
     }
 
