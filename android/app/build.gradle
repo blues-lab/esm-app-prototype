@@ -105,8 +105,8 @@ android {
         applicationId "edu.berkeley.cs.blues.alva"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "2019.8.10"
+        versionCode 2
+        versionName "2019.8.15"
     }
     splits {
         abi {
