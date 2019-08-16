@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, AsyncStorage, Alert} from 'react-native';
 import * as RNFS from 'react-native-fs';
 import logger from './logger';
-
 import {VERSION_NUMBER} from './constants'
 
 const codeFileName = 'utilities.js';
@@ -197,8 +196,6 @@ class Utilities extends Component
 
         return y+'-'+m+'-'+day+' '+time
     }
-
-
 }
 const utilities = new Utilities();
 export default utilities;

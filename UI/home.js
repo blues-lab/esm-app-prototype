@@ -47,6 +47,9 @@ export default class HomeScreen extends React.Component {
                 invitationCode:'',
                 noSurveyDialogVisible: false,
                 };
+
+    this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
+            BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPress.bind(this)));
   }
 
 
@@ -101,6 +104,11 @@ export default class HomeScreen extends React.Component {
       );
   }
 
+  onBackButtonPress =  ()=>
+  {
+    this.props.navigation.goBack(null);
+    return true;
+  }
 
   initApp = async () =>
   {
@@ -113,15 +121,13 @@ export default class HomeScreen extends React.Component {
               _appStatus = await appStatus.loadStatus();
               logger.info(codeFileName, "componentDidMount", "Current app status:"+JSON.stringify(_appStatus));
 
-            if(await this.isFirstLaunch()==null)
+            if(await this.isFirstLaunch()==null) //first launch
             {
-                //first launch
                 logger.info(codeFileName, 'componentDidMount', "First time app launch. Getting invitation code.");
                 this.setState({noSurveyDialogVisible: true, invitationCodeDialogVisible:true});
             }
-            else
+            else //not first launch
             {
-                //TODO: check for home wifi set and connected, and the current survey (if available) was created today
                 logger.info(codeFileName, 'componentDidMount', "Nth time app launch");
 
                 //Check if study period has ended
@@ -149,13 +155,17 @@ export default class HomeScreen extends React.Component {
                     }
 
                 }
-                if (await RNFS.exists(USER_SETTINGS_FILE_PATH))
+
+                //still in study period, check wifi status and if there is any survey
+                try
                 {
-                    try
+                    if (await RNFS.exists(USER_SETTINGS_FILE_PATH))
                     {
                         const _fileContent = await RNFS.readFile(USER_SETTINGS_FILE_PATH);
                         const _userSettingsData = JSON.parse(_fileContent);
                         logger.info(codeFileName, 'componentDidMount', 'Read user settings file:'+_fileContent);
+
+                        //Check if home wifi is set
                         if(_userSettingsData.homeWifi.length==0)
                         {
                              logger.info(codeFileName, 'componentDidMount', 'Home Wifi not set. Navigating to settings page.');
@@ -169,35 +179,34 @@ export default class HomeScreen extends React.Component {
                                 this.setState({noSurveyDialogVisible:false});
                                 await this.startSurvey();
                             }
+                            else if(_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING)//Survey is ongoing
+                            {
+                                logger.info(codeFileName, 'componentDidMount', "Survey is ongoing. Returning");
+                                this.setState({noSurveyDialogVisible:false});
+                                return;
+                            }
                             else
                             {
                                 logger.info(codeFileName, 'componentDidMount', "No survey available.");
                                 this.setState({noSurveyDialogVisible:true});
                             }
                         }
+
                     }
-                    catch(error)
+                    else
                     {
-                        logger.error(codeFileName, 'componentDidMount', 'Error reading user settings file:'+error.message);
+                        logger.info(codeFileName, 'componentDidMount', 'Settings file not found. Navigating to settings page.');
+                        this.props.navigation.navigate('UserSettings');
                     }
                 }
-                else
+                catch(error)
                 {
-                    logger.info(codeFileName, 'componentDidMount', 'Settings file not found. Navigating to settings page.');
-                    this.props.navigation.navigate('UserSettings');
+                    logger.error(codeFileName, 'componentDidMount', 'Error reading user settings file:'+error.message);
                 }
             }
 
         }
 
-      this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
-            BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-      );
-
-      this.didFocusSubscription= this.props.navigation.addListener(
-              'didBlur',
-              payload => {}
-            );
   }
 
   async componentDidMount()

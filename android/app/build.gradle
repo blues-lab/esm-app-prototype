@@ -108,6 +108,14 @@ android {
         versionCode 1
         versionName "2019.8.10"
     }
+    signingConfigs {
+        release {
+            storeFile file(MYAPP_RELEASE_STORE_FILE)
+            storePassword MYAPP_RELEASE_STORE_PASSWORD
+            keyAlias MYAPP_RELEASE_KEY_ALIAS
+            keyPassword MYAPP_RELEASE_KEY_PASSWORD
+        }
+    }
     splits {
         abi {
             reset()
@@ -120,6 +128,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -138,7 +147,7 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-wifi')
+    implementation project(':react-native-android-wifi')
     implementation project(':react-native-uuid-generator')
     implementation project(':@react-native-community_async-storage')
     implementation project(':react-native-vector-icons')

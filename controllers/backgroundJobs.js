@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert, AppState} from 'react-native';
 import * as RNFS from 'react-native-fs';
-import WifiManager from 'react-native-wifi';
 
 import logger from './logger';
 import notificationController from './notificationController';
-
+import wifi from 'react-native-android-wifi';
 const codeFileName = 'backgroundJobs.js';
 import appStatus from '../controllers/appStatus';
 
@@ -89,19 +88,41 @@ export async function showPrompt()
          return;
       }
 
-      //TODO: clear existing notifications if home wifi not set or not connected
-      if(_userSettingsData.homeWifi.length==0)
+      //check if home wifi is set and connected to home wifi
+      wifi.isEnabled((isEnabled) =>
       {
-         logger.info(codeFileName, 'showPrompt', 'Home Wifi not set. Returning.');
-         return;
-      }
+          if (isEnabled)
+          {
+              wifi.connectionStatus((isConnected) =>
+              {
+                if (isConnected)
+                {
+                    wifi.getSSID((ssid) =>
+                    {
+                          if(_userSettingsData.homeWifi.length==0 || ssid != _userSettingsData.homeWifi)
+                          {
+                            logger.info(codeFileName, 'showPrompt', `Current SSID: ${_ssid}. Home Wifi: ${_userSettingsData.homeWifi} . Returning.`);
+                            notificationController.cancelNotifications();
+                            return;
+                          }
 
-      const _ssid = await WifiManager.getCurrentWifiSSID();
-      if(_ssid != _userSettingsData.homeWifi)
-      {
-        logger.info(codeFileName, 'showPrompt', `Current SSID: ${_ssid}. Home Wifi: ${_userSettingsData.homeWifi} . Returning.`);
-        return;
-      }
+                    });
+                }
+                else
+                {
+                    logger.info(codeFileName, 'showPrompt', `WiFi not connected. Returning.`);
+                    notificationController.cancelNotifications();
+                    return;
+                }
+              });
+          }
+          else
+          {
+            logger.info(codeFileName, 'showPrompt', `WiFi not enabled. Returning.`);
+            notificationController.cancelNotifications();
+            return;
+          }
+      });
 
       //Check if in "Don't disturb" times (Sunday is 0, Monday is 1)
       _doNotDisturb = isInDoNotDisturbTime(_userSettingsData);
