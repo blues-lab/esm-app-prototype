@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert} from 'react-native';
 import * as RNFS from 'react-native-fs';
-import wifi from 'react-native-android-wifi';
 
 import logger from './logger';
 const codeFileName = 'appStatus.js'
