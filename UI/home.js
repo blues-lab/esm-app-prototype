@@ -115,28 +115,28 @@ export default class HomeScreen extends React.Component {
        if(this.props.navigation.state.routeName == 'Home')
        {
               AppState.addEventListener('change', this.handleAppStateChange.bind(this));
-              logger.info(codeFileName, 'componentDidMount', 'Registering to listen app foreground/background transition');
+              logger.info(codeFileName, 'initApp', 'Registering to listen app foreground/background transition');
 
-              logger.info(codeFileName, "componentDidMount", "Reloading app status.");
+              logger.info(codeFileName, "initApp", "Reloading app status.");
               _appStatus = await appStatus.loadStatus();
-              logger.info(codeFileName, "componentDidMount", "Current app status:"+JSON.stringify(_appStatus));
+              logger.info(codeFileName, "initApp", "Current app status:"+JSON.stringify(_appStatus));
 
             if(await this.isFirstLaunch()==null) //first launch
             {
-                logger.info(codeFileName, 'componentDidMount', "First time app launch. Getting invitation code.");
+                logger.info(codeFileName, 'initApp', "First time app launch. Getting invitation code.");
                 this.setState({noSurveyDialogVisible: true, invitationCodeDialogVisible:true});
             }
             else //not first launch
             {
-                logger.info(codeFileName, 'componentDidMount', "Nth time app launch");
+                logger.info(codeFileName, 'initApp', "Nth time app launch");
 
                 //Check if study period has ended
                 {
                     _installationDate = _appStatus.InstallationDate;
-                    logger.info(codeFileName, 'componentDidMount', 'Checking if study period has ended. _installationDate:'+_installationDate)
+                    logger.info(codeFileName, 'initApp', 'Checking if study period has ended. _installationDate:'+_installationDate)
                     if(_installationDate==null)
                     {
-                        logger.error(codeFileName, 'componentDidMount', 'Fatal error: installation date is null!!!')
+                        logger.error(codeFileName, 'initApp', 'Fatal error: installation date is null!!!')
                     }
                     else
                     {
@@ -145,12 +145,12 @@ export default class HomeScreen extends React.Component {
                         _diffDays = Math.round(Math.abs((_currDate.getTime() - _installationDate.getTime())/(_oneDay)));
                         if(_diffDays > STUDY_PERIOD)
                         {
-                            logger.info(codeFileName, 'componentDidMount', "Survey period ended. Returning");
+                            logger.info(codeFileName, 'initApp', "Survey period ended. Returning");
                             return;
                         }
                         else
                         {
-                            logger.info(codeFileName, 'componentDidMount', "Still in survey period. "+_diffDays+' days have passed.');
+                            logger.info(codeFileName, 'initApp', "Still in survey period. "+_diffDays+' days have passed.');
                         }
                     }
 
@@ -163,31 +163,31 @@ export default class HomeScreen extends React.Component {
                     {
                         const _fileContent = await RNFS.readFile(USER_SETTINGS_FILE_PATH);
                         const _userSettingsData = JSON.parse(_fileContent);
-                        logger.info(codeFileName, 'componentDidMount', 'Read user settings file:'+_fileContent);
+                        logger.info(codeFileName, 'initApp', 'Read user settings file:'+_fileContent);
 
                         //Check if home wifi is set
                         if(_userSettingsData.homeWifi.length==0)
                         {
-                             logger.info(codeFileName, 'componentDidMount', 'Home Wifi not set. Navigating to settings page.');
+                             logger.info(codeFileName, 'initApp', 'Home Wifi not set. Navigating to settings page.');
                              this.props.navigation.navigate('UserSettings');
                         }
                         else
                         {
                             if(_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE)//check if survey is available from app settings
                             {
-                                logger.info(codeFileName, 'componentDidMount', "New survey available. Asking for conversation.");
+                                logger.info(codeFileName, 'initApp', "New survey available. Asking for conversation.");
                                 this.setState({noSurveyDialogVisible:false});
                                 await this.startSurvey();
                             }
                             else if(_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING)//Survey is ongoing
                             {
-                                logger.info(codeFileName, 'componentDidMount', "Survey is ongoing. Returning");
+                                logger.info(codeFileName, 'initApp', "Survey is ongoing. Returning");
                                 this.setState({noSurveyDialogVisible:false});
                                 return;
                             }
                             else
                             {
-                                logger.info(codeFileName, 'componentDidMount', "No survey available.");
+                                logger.info(codeFileName, 'initApp', "No survey available.");
                                 this.setState({noSurveyDialogVisible:true});
                             }
                         }
@@ -195,13 +195,13 @@ export default class HomeScreen extends React.Component {
                     }
                     else
                     {
-                        logger.info(codeFileName, 'componentDidMount', 'Settings file not found. Navigating to settings page.');
+                        logger.info(codeFileName, 'initApp', 'Settings file not found. Navigating to settings page.');
                         this.props.navigation.navigate('UserSettings');
                     }
                 }
                 catch(error)
                 {
-                    logger.error(codeFileName, 'componentDidMount', 'Error reading user settings file:'+error.message);
+                    logger.error(codeFileName, 'initApp', 'Error reading user settings file:'+error.message);
                 }
             }
 
