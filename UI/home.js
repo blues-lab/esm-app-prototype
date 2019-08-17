@@ -295,7 +295,7 @@ export default class HomeScreen extends React.Component {
 
                             //TODO: check validity of the code
                             _code = this.state.invitationCode;
-                            if(_code.length==2 && _code.toLowerCase().startsWith('i'))
+                            if(_code.length>=2 && _code.toLowerCase().startsWith('i'))
                             {
                                 logger.info(codeFileName, 'invitationCodeDialog', "Entered invitation code:"+this.state.invitationCode+'. Writing it to file.');
                                 const _written = await utilities.writeJSONFile({InvitationCode:_code},
