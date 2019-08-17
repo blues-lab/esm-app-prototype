@@ -47,9 +47,6 @@ export default class HomeScreen extends React.Component {
                 invitationCode:'',
                 noSurveyDialogVisible: false,
                 };
-
-    this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
-            BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPress.bind(this)));
   }
 
 
@@ -106,8 +103,7 @@ export default class HomeScreen extends React.Component {
 
   onBackButtonPress =  ()=>
   {
-    this.props.navigation.goBack(null);
-    return true;
+    //BackHandler.exitApp();
   }
 
   initApp = async () =>
@@ -211,6 +207,10 @@ export default class HomeScreen extends React.Component {
 
   async componentDidMount()
   {
+      if (Platform.OS == "android")
+      {
+        BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPress.bind(this));
+      }
       this.props.navigation.setParams({ backCallBack: this.initApp.bind(this)});
       onAppOpen.backCallBack = this.initApp.bind(this);
       await this.initApp();
@@ -349,9 +349,12 @@ export default class HomeScreen extends React.Component {
 
     componentWillUnmount()
     {
-      AppState.removeEventListener('change', this.handleAppStateChange);
-      this._didFocusSubscription && this._didFocusSubscription.remove();
       logger.info(codeFileName, 'componentWillUnmount', 'Removing listeners and event handlers');
+      AppState.removeEventListener('change', this.handleAppStateChange);
+      if(Platform.OS == 'android')
+      {
+        BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPress);
+      }
     }
 
 }

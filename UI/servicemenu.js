@@ -574,7 +574,7 @@ export default class ServiceMenuScreen extends React.Component {
 
       <ProgressDialog
         visible={this.state.saveWaitVisible}
-        title="Progress Dialog"
+        title="MiMi"
         message="Saving response. Please, wait..."
       />
 

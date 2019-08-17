@@ -160,7 +160,7 @@ export default class SurveyStartScreen extends React.Component {
           </View>
               <ProgressDialog
                   visible={this.state.saveWaitVisible}
-                  title="Progress Dialog"
+                  title="MiMi"
                   message="Saving response. Please, wait..."
               />
       </View>

@@ -322,7 +322,7 @@ static navigationOptions = ({ navigation }) => {
 
       <ProgressDialog
           visible={this.state.saveWaitVisible}
-          title="Progress Dialog"
+          title="MiMi"
           message="Saving response. Please, wait..."
       />
       </ScrollView>
