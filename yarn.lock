@@ -5343,11 +5343,6 @@ react-native-vector-icons@^6.6.0:
     prop-types "^15.6.2"
     yargs "^13.2.2"
 
-react-native-wifi@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-wifi/-/react-native-wifi-1.0.1.tgz#0ff4d71a80d617a47ad5fb8689671fed65689ffb"
-  integrity sha512-j/Fdjhpdbsw+PjsnBsaD0sVtADUAQReu+t91rAmiqtBaWTmwLK8aiz7YOiyAuQUxawvUv81QhFgAKkmRKRwZOA==
-
 react-native@0.59.9:
   version "0.59.9"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.59.9.tgz#c94ee4fa35121720c05235a2dd6cdd2784bf5177"

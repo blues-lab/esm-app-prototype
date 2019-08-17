@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert,
 DeviceEventEmitter, Image, TouchableHighlight, Modal, BackHandler, AppState} from 'react-native';
-import wifi from 'react-native-android-wifi';
 import * as RNFS from 'react-native-fs';
 import PushNotificationAndroid from 'react-native-push-notification';
 import notificationController from '../controllers/notificationController';
@@ -26,6 +25,7 @@ import utilities from '../controllers/utilities';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import {USER_SETTINGS_FILE_PATH, STUDY_PERIOD, INVITATION_CODE_FILE_PATH} from '../controllers/constants';
+
 
 export default class HomeScreen extends React.Component {
 
@@ -216,29 +216,29 @@ export default class HomeScreen extends React.Component {
       await this.initApp();
   }
 
-  UpdateWifiState()
-  {
-    wifi.isEnabled((isEnabled) => {
-    if (isEnabled)
-      {
-        wifi.connectionStatus((isConnected) => {
-          if (isConnected) {
-              wifi.getSSID((ssid) => {
-                this.setState({msg: "Connected: "+ssid});
-              });
-            } else {
-              this.setState({msg: "Not connected!"});
-          }
-        });
-
-        this.setState({msg: "Wifi is enabled!"});
-      }
-      else
-      {
-        this.setState({msg: "Wifi not enabled!"});
-      }
-    });
-  }
+//  UpdateWifiState()
+//  {
+//    wifi.isEnabled((isEnabled) => {
+//    if (isEnabled)
+//      {
+//        wifi.connectionStatus((isConnected) => {
+//          if (isConnected) {
+//              wifi.getSSID((ssid) => {
+//                this.setState({msg: "Connected: "+ssid});
+//              });
+//            } else {
+//              this.setState({msg: "Not connected!"});
+//          }
+//        });
+//
+//        this.setState({msg: "Wifi is enabled!"});
+//      }
+//      else
+//      {
+//        this.setState({msg: "Wifi not enabled!"});
+//      }
+//    });
+//  }
 
   render() {
 

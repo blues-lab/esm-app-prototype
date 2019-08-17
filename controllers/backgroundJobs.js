@@ -4,7 +4,6 @@ import * as RNFS from 'react-native-fs';
 
 import logger from './logger';
 import notificationController from './notificationController';
-import wifi from 'react-native-android-wifi';
 const codeFileName = 'backgroundJobs.js';
 import appStatus from '../controllers/appStatus';
 
@@ -13,6 +12,10 @@ import {USER_SETTINGS_FILE_PATH, SURVEY_STATUS,
     INVITATION_CODE_FILE_PATH, MAX_SURVEY_PER_DAY, LOG_FILE_PATH,
     PROMPT_DURATION} from './constants';
 
+
+if (Platform.OS == 'android') {
+    wifi = require('react-native-android-wifi');
+}
 
 function isInDoNotDisturbTime(settings)
 {
@@ -89,7 +92,9 @@ export async function showPrompt()
       }
 
       //check if home wifi is set and connected to home wifi
-      wifi.isEnabled((isEnabled) =>
+      if(Platform.OS=='android')
+      {
+        wifi.isEnabled((isEnabled) =>
       {
           if (isEnabled)
           {
@@ -123,7 +128,7 @@ export async function showPrompt()
             return;
           }
       });
-
+      }
       //Check if in "Don't disturb" times (Sunday is 0, Monday is 1)
       _doNotDisturb = isInDoNotDisturbTime(_userSettingsData);
 
@@ -317,18 +322,8 @@ async function _uploadFiles()
      }
 }
 
-export async function uploadFiles()
+async function uploadFilesAndroid()
 {
-    // check if app in background, otherwise return
-    if(AppState.currentState=='active')
-    {
-        logger.info(codeFileName,'uploadFiles', 'Current app state is '+AppState.currentState+'. Returning.');
-        return;
-    }
-
-    logger.info(codeFileName,'uploadFiles', 'Current app state is '+AppState.currentState+'. Attempting to upload files.');
-
-    const _appStatus = await appStatus.loadStatus();
     try
     {
         //check if WiFi is connected.
@@ -372,5 +367,22 @@ export async function uploadFiles()
         logger.error(codeFileName, 'uploadFiles', 'Failed to upload files: '+error);
         return;
     }
+}
 
+export async function uploadFiles()
+{
+    // check if app in background, otherwise return
+    if(AppState.currentState=='active')
+    {
+        logger.info(codeFileName,'uploadFiles', 'Current app state is '+AppState.currentState+'. Returning.');
+        return;
+    }
+
+    logger.info(codeFileName,'uploadFiles', 'Current app state is '+AppState.currentState+'. Attempting to upload files.');
+
+    const _appStatus = await appStatus.loadStatus();
+    if(Platform.OS=='android')
+    {
+        await uploadFilesAndroid();
+    }
 }

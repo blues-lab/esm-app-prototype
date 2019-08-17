@@ -3,7 +3,6 @@ package edu.berkeley.cs.blues.alva;;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.reactlibrary.RNWifiPackage;
 import com.devstepbcn.wifi.AndroidWifiPackage;
 import io.github.traviskn.rnuuidgenerator.RNUUIDGeneratorPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
@@ -33,7 +32,6 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNWifiPackage(),
             new AndroidWifiPackage(),
             new RNUUIDGeneratorPackage(),
             new AsyncStoragePackage(),

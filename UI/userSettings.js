@@ -8,7 +8,10 @@ import commonStyle from './Style'
 import utilities from '../controllers/utilities';
 import {USER_SETTINGS_FILE_PATH} from '../controllers/constants'
 const codeFileName="userSettings.js"
-import wifi from 'react-native-android-wifi';
+
+if (Platform.OS == 'android') {
+    wifi = require('react-native-android-wifi');
+}
 
 export default class UserSettingsScreen extends React.Component {
 
@@ -41,8 +44,6 @@ static navigationOptions = ({ navigation }) => {
 
     async componentDidMount()
     {
-        //await this.askPermission();
-
         logger.info(codeFileName, 'componentDidMount', 'Setting event handlers.');
 
         this.setState({backCallBack:this.props.navigation.getParam('backCallBack', null)});
@@ -75,91 +76,104 @@ static navigationOptions = ({ navigation }) => {
         return true;
     }
 
-   async getHomeWiFi()
-   {
-     try
-          {
-                const _granted = await PermissionsAndroid.request(
-                  PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                  {
-                    'title': 'Wifi networks',
-                    'message': 'We need your permission in order to find wifi networks.'
-                  }
-                )
-                if (_granted === PermissionsAndroid.RESULTS.GRANTED)
-                {
-                  logger.info(codeFileName, 'getHomeWiFi', 'Wifi permission granted.');
-                }
-                else
-                {
-                  logger.error(codeFileName, 'getHomeWiFi', 'Did not get wifi permission. Exiting.');
-                  BackHandler.exitApp();
-                }
-          } catch (err)
-          {
-                logger.error(codeFileName, 'getHomeWiFi', 'Error:'+err.message);
-          }
-      try
-      {
-            _ssid = '';
-
-            wifi.isEnabled((isEnabled) => {
-            if (isEnabled)
+    async askWifiAndroid()
+    {
+        try
               {
-                logger.info(codeFileName, 'getHomeWiFi', 'Wifi is enabled.');
-                wifi.connectionStatus((isConnected) => {
-                  if (isConnected) {
-                        logger.info(codeFileName, 'getHomeWiFi', 'Wifi is connected.');
-                        wifi.getSSID((ssid) => {
-                        logger.info(codeFileName, 'getHomeWiFi', 'SSID:'+ssid);
-                        _ssid = ssid;
-                           if((_ssid.length>0)  && (_ssid != '<unknown ssid>'))
-                                  {
-                                      logger.info(codeFileName, 'getHomeWiFi', `Connected WiFi:${_ssid}. Asking if this the is Home WiFi.`);
-                                      Alert.alert(
-                                      'Home WiFi',
-                                        'We will only send surveys when you are connected to the home WiFi.\nIs "'+_ssid+'" your home wifi?',
-                                        [
-                                          { text: 'NO', onPress: () => {
-                                                Alert.alert("We'll try to ask again, when you connect to another network");
-                                                logger.info(codeFileName, 'getHomeWiFi', 'Not connected to home WiFi. Will ask again');
-                                          }},
-                                          {
-                                            text: 'YES', onPress: () => {
-                                                logger.info(codeFileName, 'getHomeWiFi', 'Connected to home WiFi. Saving home WiFi:'+_ssid);
-                                                this.setState({homeWifi: _ssid}, ()=>this.saveSettings());
-                                          }},
-                                        ],
-                                        {cancelable: false}
-                                      );
-                                  }
-                                  else
-                                  {
-                                    logger.info(codeFileName, 'getHomeWiFi', 'WiFi is not enabled or connected. Will check again later.')
-                                    Alert.alert("Home WiFi", 'We will only send surveys when you are connected to your home WiFi.'+
-                                                             ' We will ask about it again when you are connected to WiFi.');
-                                  }
-                      });
+                    const _granted = await PermissionsAndroid.request(
+                      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                      {
+                        'title': 'Wifi networks',
+                        'message': 'We need your permission in order to find wifi networks.'
+                      }
+                    )
+                    if (_granted === PermissionsAndroid.RESULTS.GRANTED)
+                    {
+                      logger.info(codeFileName, 'getHomeWiFi', 'Wifi permission granted.');
+                    }
+                    else
+                    {
+                      logger.error(codeFileName, 'getHomeWiFi', 'Did not get wifi permission. Exiting.');
+                      BackHandler.exitApp();
+                    }
+              } catch (err)
+              {
+                    logger.error(codeFileName, 'getHomeWiFi', 'Error:'+err.message);
+              }
+    }
+
+    async getHomeWiFiAndroid()
+    {
+          try
+          {
+                _ssid = '';
+
+                wifi.isEnabled((isEnabled) => {
+                if (isEnabled)
+                  {
+                    logger.info(codeFileName, 'getHomeWiFi', 'Wifi is enabled.');
+                    wifi.connectionStatus((isConnected) => {
+                      if (isConnected) {
+                            logger.info(codeFileName, 'getHomeWiFi', 'Wifi is connected.');
+                            wifi.getSSID((ssid) => {
+                            logger.info(codeFileName, 'getHomeWiFi', 'SSID:'+ssid);
+                            _ssid = ssid;
+                               if((_ssid.length>0)  && (_ssid != '<unknown ssid>'))
+                                      {
+                                          logger.info(codeFileName, 'getHomeWiFi', `Connected WiFi:${_ssid}. Asking if this the is Home WiFi.`);
+                                          Alert.alert(
+                                          'Home WiFi',
+                                            'We will only send surveys when you are connected to the home WiFi.\nIs "'+_ssid+'" your home wifi?',
+                                            [
+                                              { text: 'NO', onPress: () => {
+                                                    Alert.alert("We'll try to ask again, when you connect to another network");
+                                                    logger.info(codeFileName, 'getHomeWiFi', 'Not connected to home WiFi. Will ask again');
+                                              }},
+                                              {
+                                                text: 'YES', onPress: () => {
+                                                    logger.info(codeFileName, 'getHomeWiFi', 'Connected to home WiFi. Saving home WiFi:'+_ssid);
+                                                    this.setState({homeWifi: _ssid}, ()=>this.saveSettings());
+                                              }},
+                                            ],
+                                            {cancelable: false}
+                                          );
+                                      }
+                                      else
+                                      {
+                                        logger.info(codeFileName, 'getHomeWiFi', 'WiFi is not enabled or connected. Will check again later.')
+                                        Alert.alert("Home WiFi", 'We will only send surveys when you are connected to your home WiFi.'+
+                                                                 ' We will ask about it again when you are connected to WiFi.');
+                                      }
+                          });
+                      }
+                      else
+                      {
+                        logger.info(codeFileName, 'getHomeWiFi', 'Wifi is not connected.');
+                      }
+                    });
                   }
                   else
                   {
-                    logger.info(codeFileName, 'getHomeWiFi', 'Wifi is not connected.');
+                    logger.info(codeFileName, 'getHomeWiFi', 'Wifi is not enabled.');
                   }
                 });
-              }
-              else
-              {
-                logger.info(codeFileName, 'getHomeWiFi', 'Wifi is not enabled.');
-              }
-            });
 
 
 
-      }
-      catch(error)
-      {
-        logger.error(codeFileName, 'getHomeWiFi', 'Failed to get WiFi information:'+error);
-      }
+          }
+          catch(error)
+          {
+            logger.error(codeFileName, 'getHomeWiFi', 'Failed to get WiFi information:'+error);
+          }
+    }
+
+   async getHomeWiFi()
+   {
+        if(Platform.OS=='android')
+        {
+            await this.askWifiAndroid();
+            await this.getHomeWiFiAndroid();
+        }
    }
 
    async loadSettings()
