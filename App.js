@@ -121,7 +121,7 @@ export default class App extends Component<Props>
     logger.info(codeFileName, 'generateInitialFiles', 'Writing initial files.')
     if(!await RNFS.exists(USER_SETTINGS_FILE_PATH))//write default settings
     {
-        const _settings={ homeWifi: '', afterTime: '00:00',beforeTime: '00:00'};
+        const _settings={ homeWifi: '', askWifi:true, afterTime: '00:00',beforeTime: '00:00'};
 
         await utilities.writeJSONFile(_settings, USER_SETTINGS_FILE_PATH,
                                         codeFileName, 'generateInitialFiles');
@@ -140,10 +140,17 @@ export default class App extends Component<Props>
     await this.generateInitialFiles();
 
     //uploadFiles();
-    //setTimeout(uploadFiles, 20*1000);
-    //setTimeout(showPrompt, 10*1000);
+//    this.tu=null;
+//    this.sp=null;
+//    this.tu = setTimeout(uploadFiles, 30*1000);
+//    this.sp = setTimeout(showPrompt, 20*1000);
   }
 
+  componentWillUnmount()
+  {
+//    this.tu && clearInterval(this.tu);
+//    this.sp && clearInterval(this.sp);
+  }
 
   render() {
 

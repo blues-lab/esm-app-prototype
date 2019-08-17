@@ -32,6 +32,7 @@ static navigationOptions = ({ navigation }) => {
 
       this.state = {
         homeWifi:'',
+        askWifi:true,
         isDateTimePickerVisible:false,
         stateSaved: true,
         afterTimeSelected:true, //indicates if the 'after' or 'before' time was selected
@@ -90,6 +91,7 @@ static navigationOptions = ({ navigation }) => {
                     if (_granted === PermissionsAndroid.RESULTS.GRANTED)
                     {
                       logger.info(codeFileName, 'getHomeWiFi', 'Wifi permission granted.');
+                      this.setState({askWifi:false});
                     }
                     else
                     {
@@ -171,7 +173,10 @@ static navigationOptions = ({ navigation }) => {
    {
         if(Platform.OS=='android')
         {
-            await this.askWifiAndroid();
+            if(this.state.askWifi)
+            {
+                await this.askWifiAndroid();
+            }
             await this.getHomeWiFiAndroid();
         }
    }
@@ -188,7 +193,8 @@ static navigationOptions = ({ navigation }) => {
                     this.setState({
                                     homeWifi: _userSettingsData.homeWifi,
                                     afterTime: _userSettingsData.afterTime,
-                                    beforeTime: _userSettingsData.beforeTime
+                                    beforeTime: _userSettingsData.beforeTime,
+                                    askWifi: _userSettingsData.askWifi
                                   }, () => {
                                         if(this.state.homeWifi.length==0)
                                         {
@@ -278,6 +284,7 @@ static navigationOptions = ({ navigation }) => {
   {
     _settings={
             homeWifi: this.state.homeWifi,
+            askWifi: this.state.askWifi,
             afterTime: this.state.afterTime,
             beforeTime: this.state.beforeTime,
         }
