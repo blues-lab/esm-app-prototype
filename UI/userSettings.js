@@ -75,9 +75,30 @@ static navigationOptions = ({ navigation }) => {
         return true;
     }
 
-    getHomeWiFi()
+   async getHomeWiFi()
    {
-
+     try
+          {
+                const _granted = await PermissionsAndroid.request(
+                  PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                  {
+                    'title': 'Wifi networks',
+                    'message': 'We need your permission in order to find wifi networks.'
+                  }
+                )
+                if (_granted === PermissionsAndroid.RESULTS.GRANTED)
+                {
+                  logger.info(codeFileName, 'getHomeWiFi', 'Wifi permission granted.');
+                }
+                else
+                {
+                  logger.error(codeFileName, 'getHomeWiFi', 'Did not get wifi permission. Exiting.');
+                  BackHandler.exitApp();
+                }
+          } catch (err)
+          {
+                logger.error(codeFileName, 'getHomeWiFi', 'Error:'+err.message);
+          }
       try
       {
             _ssid = '';
