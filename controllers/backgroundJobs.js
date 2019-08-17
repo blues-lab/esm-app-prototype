@@ -101,7 +101,7 @@ export async function showPrompt()
                     {
                           if(_userSettingsData.homeWifi.length==0 || ssid != _userSettingsData.homeWifi)
                           {
-                            logger.info(codeFileName, 'showPrompt', `Current SSID: ${_ssid}. Home Wifi: ${_userSettingsData.homeWifi} . Returning.`);
+                            logger.info(codeFileName, 'showPrompt', `Current SSID: ${ssid}. Home Wifi: ${_userSettingsData.homeWifi} . Returning.`);
                             notificationController.cancelNotifications();
                             return;
                           }
@@ -256,6 +256,66 @@ export async function showPrompt()
 }
 
 
+async function _uploadFiles()
+{
+    //send the invitation code file
+    const _fileExists = await RNFS.exists(INVITATION_CODE_FILE_PATH);
+    if(_fileExists)
+    {
+        const _fileContent = await RNFS.readFile(INVITATION_CODE_FILE_PATH);
+        const _uploaded = await utilities.uploadData( _fileContent, _appStatus.UUID,
+                                        'InvitationCode', codeFileName, 'uploadFiles');
+         if(_uploaded)
+         {
+            logger.info(codeFileName, 'uploadFiles', 'Uploaded invitation code file content.');
+            await RNFS.unlink(INVITATION_CODE_FILE_PATH);
+         }
+         else
+         {
+            logger.error(codeFileName, 'uploadFiles', 'Failed to upload invitation file content:'+JSON.stringify(_fileContent));
+         }
+    }
+
+    //check if there is any survey response files, if so, upload them
+    const _files = await RNFS.readdir(RNFS.DocumentDirectoryPath);
+    logger.info(codeFileName, 'uploadFiles', 'Uploading survey response files. Existing files:'+_files.toString());
+    for(i =0; i< _files.length; i++)
+    {
+        const _file = _files[i];
+        if(_file.startsWith('survey--response--'))
+        {
+            logger.info(codeFileName,'uploadFiles', 'Uploading survey response file:'+_file);
+            const _filePath = RNFS.DocumentDirectoryPath+'/'+_file;
+            const _fileContent = await RNFS.readFile(_filePath);
+            const _uploaded = await utilities.uploadData( _fileContent, _appStatus.UUID,
+                                            'SurveyResponse', codeFileName, 'uploadFiles');
+             if(_uploaded)
+             {
+                logger.info(codeFileName, 'uploadFiles', 'Uploaded file content for:'+_file+'. Removing file.');
+                await RNFS.unlink(_filePath);
+             }
+             else
+             {
+                logger.error(codeFileName, 'uploadFiles', 'Failed to upload file:'+_file);
+             }
+        }
+    }
+
+    //upload log file
+    logger.info(codeFileName, 'uploadFiles', 'Attempting to upload log file.');
+    const _fileContent = await RNFS.readFile(LOG_FILE_PATH);
+    const _uploaded = await utilities.uploadData( _fileContent, _appStatus.UUID,
+                                    'Log', codeFileName, 'uploadFiles');
+     if(_uploaded)
+     {
+       // await RNFS.writeFile(LOG_FILE_PATH,'');
+        logger.info(codeFileName, 'uploadFiles', 'Uploaded previous log file content. Replaced with empty file.');
+     }
+     else
+     {
+        logger.error(codeFileName, 'uploadFiles', 'Failed to upload log file.');
+     }
+}
 
 export async function uploadFiles()
 {
@@ -272,75 +332,40 @@ export async function uploadFiles()
     try
     {
         //check if WiFi is connected.
-        const _ssid = await WifiManager.getCurrentWifiSSID();
-        if((_ssid.length>0)  && (_ssid != '<unknown ssid>'))
-        {
-            logger.info(codeFileName, 'uploadFiles', 'Obtained  SSID:'+_ssid+'.');
+          wifi.isEnabled((isEnabled) =>
+          {
+              if (isEnabled)
+              {
+                  wifi.connectionStatus((isConnected) =>
+                  {
+                      if (isConnected)
+                      {
+                            wifi.getSSID((ssid) =>
+                            {
+                                if((ssid.length>0)  && (ssid != '<unknown ssid>'))
+                                {
+                                    logger.info(codeFileName, 'uploadFiles', 'Obtained  SSID:'+ssid+'. Starting to upload files.');
+                                    _uploadFiles();
+                                }
+                                else
+                                {
+                                    logger.error(codeFileName, 'uploadFiles', 'Invalid SSID:'+ssid+'.');
+                                    return;
+                                }
+                            });
+                      }
+                      else
+                      {
+                        logger.error(codeFileName, 'uploadFiles', 'Not connected to internet.');
+                      }
+                    });
+              }
+              else
+              {
+                logger.error(codeFileName, 'uploadFiles', 'Wifi not enabled.');
+              }
+            });
 
-            //send the invitation code file
-            const _fileExists = await RNFS.exists(INVITATION_CODE_FILE_PATH);
-            if(_fileExists)
-            {
-                const _fileContent = await RNFS.readFile(INVITATION_CODE_FILE_PATH);
-                const _uploaded = await utilities.uploadData( _fileContent, _appStatus.UUID,
-                                                'InvitationCode', codeFileName, 'uploadFiles');
-                 if(_uploaded)
-                 {
-                    logger.info(codeFileName, 'uploadFiles', 'Uploaded invitation code file content.');
-                    await RNFS.unlink(INVITATION_CODE_FILE_PATH);
-                 }
-                 else
-                 {
-                    logger.error(codeFileName, 'uploadFiles', 'Failed to upload invitation file content:'+JSON.stringify(_fileContent));
-                 }
-            }
-
-            //check if there is any survey response files, if so, upload them
-            const _files = await RNFS.readdir(RNFS.DocumentDirectoryPath);
-            logger.info(codeFileName, 'uploadFiles', 'Uploading survey response files. Existing files:'+_files.toString());
-            for(i =0; i< _files.length; i++)
-            {
-                const _file = _files[i];
-                if(_file.startsWith('survey--response--'))
-                {
-                    logger.info(codeFileName,'uploadFiles', 'Uploading survey response file:'+_file);
-                    const _filePath = RNFS.DocumentDirectoryPath+'/'+_file;
-                    const _fileContent = await RNFS.readFile(_filePath);
-                    const _uploaded = await utilities.uploadData( _fileContent, _appStatus.UUID,
-                                                    'SurveyResponse', codeFileName, 'uploadFiles');
-                     if(_uploaded)
-                     {
-                        logger.info(codeFileName, 'uploadFiles', 'Uploaded file content for:'+_file+'. Removing file.');
-                        await RNFS.unlink(_filePath);
-                     }
-                     else
-                     {
-                        logger.error(codeFileName, 'uploadFiles', 'Failed to upload file:'+_file);
-                     }
-                }
-            }
-
-            //upload log file
-            logger.info(codeFileName, 'uploadFiles', 'Attempting to upload log file.');
-            const _fileContent = await RNFS.readFile(LOG_FILE_PATH);
-            const _uploaded = await utilities.uploadData( _fileContent, _appStatus.UUID,
-                                            'Log', codeFileName, 'uploadFiles');
-             if(_uploaded)
-             {
-               // await RNFS.writeFile(LOG_FILE_PATH,'');
-                logger.info(codeFileName, 'uploadFiles', 'Uploaded previous log file content. Replaced with empty file.');
-             }
-             else
-             {
-                logger.error(codeFileName, 'uploadFiles', 'Failed to upload log file.');
-             }
-
-        }
-        else
-        {
-            logger.error(codeFileName, 'uploadFiles', 'Invalid SSID:'+_ssid+'. Not connected to internet. Returning');
-            return;
-        }
     }
     catch(error)
     {
