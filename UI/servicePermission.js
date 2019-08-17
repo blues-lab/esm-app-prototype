@@ -76,8 +76,13 @@ static navigationOptions = ({ navigation }) => {
       const _surveyProgress = navigation.getParam('surveyProgress', 0);
       const _surveyResponseJS = navigation.getParam('surveyResponseJS', null);
 
-    await this.promisedSetState({services: _services, surveyProgress: _surveyProgress,
+      await this.promisedSetState({services: _services, surveyProgress: _surveyProgress,
                 surveyResponseJS: _surveyResponseJS});
+
+      if (Platform.OS == "android")
+      {
+            BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid.bind(this));
+      }
   }
 
   async saveResponse()
@@ -246,6 +251,19 @@ static navigationOptions = ({ navigation }) => {
 
     );
   }
+
+    componentWillUnmount()
+    {
+        if(Platform.OS == 'android')
+        {
+            BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid);
+        }
+    }
+
+      onBackButtonPressAndroid = () =>
+      {
+          return true;
+      }
 }
 
 const styles = StyleSheet.create({

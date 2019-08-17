@@ -39,11 +39,6 @@ import {SURVEY_STATUS} from '../controllers/constants';
 export default class ContextualQuestionScreen extends React.Component {
 
 
-//  static navigationOptions = {
-//      headerTitle: <ToolBar title="Contextual questions" progress={80}/>,
-//      headerLeft: null
-//    };
-
 static navigationOptions = ({ navigation }) => {
     return {
         headerLeft: null,
@@ -65,10 +60,6 @@ static navigationOptions = ({ navigation }) => {
                    surrounding:true, //Questions about surrounding people VS participating people
                    saveWaitVisible: false, //show progress dialog while saving survey response
                  };
-
-    this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
-          BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-        );
   }
 
   componentDidMount() {
@@ -77,15 +68,10 @@ static navigationOptions = ({ navigation }) => {
 
     this.setState({surveyResponseJS: _surveyResponseJS,
                    surveyProgress: navigation.getParam('surveyProgress', 0)});
-
-//    this.setState({surveyResponseJS: _surveyResponseJS}, ()=>
-//                    Alert.alert("surveyResponseJS", JSON.stringify(this.state.surveyResponseJS)));
-
-
-
-    this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
-      BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-    );
+    if (Platform.OS == "android")
+    {
+        BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid.bind(this));
+    }
   }
 
   onBackButtonPressAndroid = () => {
@@ -93,8 +79,10 @@ static navigationOptions = ({ navigation }) => {
   };
 
   componentWillUnmount() {
-    this._didFocusSubscription && this._didFocusSubscription.remove();
-    this._willBlurSubscription && this._willBlurSubscription.remove();
+    if(Platform.OS == 'android')
+    {
+        BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid);
+    }
   }
 
 

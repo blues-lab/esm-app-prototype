@@ -49,10 +49,6 @@ export default class ServiceDetailsScreen extends React.Component {
   constructor(props) 
   {
     super(props);
-
-    this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
-                BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPress)
-        );
   }
 
 
@@ -120,12 +116,20 @@ export default class ServiceDetailsScreen extends React.Component {
                  serviceCategoryName: _serviceCategory.name,
                  serviceNames: this.parseServiceNames(_serviceCategory)}, ()=>
                     this.setState({isAddServiceDialogVisible: this.state.serviceNames.length==0}));
+
+
+    if (Platform.OS == "android")
+    {
+        BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPress.bind(this));
+    }
   }
 
   componentWillUnmount()
   {
-      this._didFocusSubscription && this._didFocusSubscription.remove();
-      this._willBlurSubscription && this._willBlurSubscription.remove();
+      if(Platform.OS == 'android')
+      {
+          BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPress);
+      }
   }
 
   onBackButtonPress= () =>

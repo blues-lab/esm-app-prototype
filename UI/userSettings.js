@@ -50,14 +50,11 @@ static navigationOptions = ({ navigation }) => {
         this.setState({backCallBack:this.props.navigation.getParam('backCallBack', null)});
 
         this.props.navigation.setParams({ backHandler: this.handleBackNavigation.bind(this)});
-        this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
-          BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-        );
 
-        this._didFocusSubscription = this.props.navigation.addListener('didFocus', payload =>
-                    BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-                  );
-
+        if (Platform.OS == "android")
+        {
+            BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid.bind(this));
+        }
 
         await this.loadSettings();
 
@@ -65,10 +62,11 @@ static navigationOptions = ({ navigation }) => {
 
     componentWillUnmount()
     {
-        logger.info(codeFileName, 'componentDidMount', 'Removing event handlers.')
-        this._didFocusSubscription && this._didFocusSubscription.remove();
-        this._willBlurSubscription && this._willBlurSubscription.remove();
-// this.backHandler.remove();
+        logger.info(codeFileName, 'componentDidMount', 'Removing event handlers.');
+        if(Platform.OS == 'android')
+        {
+            BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid);
+        }
     }
 
     onBackButtonPressAndroid = () =>

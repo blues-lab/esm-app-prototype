@@ -281,10 +281,6 @@ export default class ServiceMenuScreen extends React.Component {
   constructor(props) 
   {
     super(props);
-
-    this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
-                BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-        );
   }
 
   componentDidMount()
@@ -299,9 +295,10 @@ export default class ServiceMenuScreen extends React.Component {
 
     this.loadServices();
 
-    this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
-              BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-            );
+    if (Platform.OS == "android")
+    {
+        BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid.bind(this));
+    }
   }
 
   flatListItemSeparator = () =>
@@ -585,17 +582,16 @@ export default class ServiceMenuScreen extends React.Component {
 
   componentWillUnmount()
   {
-    this._didFocusSubscription && this._didFocusSubscription.remove();
-    this._willBlurSubscription && this._willBlurSubscription.remove();
+      if(Platform.OS == 'android')
+      {
+          BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid);
+      }
   }
 
-onBackButtonPressAndroid = () =>
-{
-    //this.handleBackNavigation();
-    //Alert.alert("Back pressed!");
-    //this.props.navigation.goBack(null);
-    return true;
-};
+    onBackButtonPressAndroid = () =>
+    {
+        return true;
+    }
 }
 
 

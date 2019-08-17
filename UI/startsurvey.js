@@ -25,26 +25,26 @@ export default class SurveyStartScreen extends React.Component {
     this.state = {  conversationTopic: '', noSurveyDialogVisible: false,
                     saveWaitVisible: false, //show progress dialog while saving survey response
                  };
-
-    this._didFocusSubscription = props.navigation.addListener('didFocus', payload =>
-          BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-        );
   }
 
   componentDidMount()
   {
-      this._willBlurSubscription = this.props.navigation.addListener('willBlur', payload =>
-      BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
-    );
+      if (Platform.OS == "android")
+      {
+          BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid.bind(this));
+      }
   }
 
   onBackButtonPressAndroid = () => {
+    //BackHandler.exitApp();
     return true; //make it true to prevent going back
   };
 
   componentWillUnmount() {
-    this._didFocusSubscription && this._didFocusSubscription.remove();
-    this._willBlurSubscription && this._willBlurSubscription.remove();
+    if(Platform.OS == 'android')
+    {
+        BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid);
+    }
   }
 
 

@@ -39,21 +39,26 @@ export default class AlvaPromptScreen extends React.Component {
         const { navigation } = this.props;
         const _topic = navigation.getParam('conversationTopic', '');
         this.props.navigation.setParams({ backHandler: this.onBackButtonPress.bind(this)});
-        this.setState({conversationTopic:_topic})
+        this.setState({conversationTopic:_topic});
+        if (Platform.OS == "android")
+        {
+            BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPress.bind(this));
+        }
    }
 
      onBackButtonPress= () =>
      {
-         //this.handleBackNavigation();
-         //Alert.alert("Back pressed!");
          this.props.navigation.goBack(null);
          return true;
      };
 
   componentWillUnmount()
   {
-      this._didFocusSubscription && this._didFocusSubscription.remove();
-      this._willBlurSubscription && this._willBlurSubscription.remove();
+      logger.info(codeFileName, 'componentWillUnmount', 'Removing event listeners.');
+      if(Platform.OS == 'android')
+      {
+          BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPress);
+      }
   }
 
   render() {

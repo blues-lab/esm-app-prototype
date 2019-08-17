@@ -106,7 +106,7 @@ class ToolBar extends React.Component {
     const _firstNotificationTime = _appStatus.FirstNotificationTime;
     if(_firstNotificationTime==null)
     {
-        logger.error(codeFileName, 'initToolbar', 'Fatal error: _firstNotificationTime is null. Returning.');
+        logger.error(codeFileName, 'updateTimeDisplay', 'Fatal error: _firstNotificationTime is null. Returning.');
         return;
     }
     const _curTime = new Date();
