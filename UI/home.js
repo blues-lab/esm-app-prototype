@@ -10,8 +10,8 @@ import Dialog from 'react-native-dialog';
 import logger from '../controllers/logger';
 import UUIDGenerator from 'react-native-uuid-generator';
 import appStatus from '../controllers/appStatus';
-import {SURVEY_STATUS} from '../controllers/constants'
-
+import {SURVEY_STATUS} from '../controllers/constants';
+import DialogInput from 'react-native-dialog-input';
 //Import UIs
 import SurveyStartScreen from './startsurvey';
 import commonStyles from './Style'
@@ -103,7 +103,7 @@ export default class HomeScreen extends React.Component {
 
   onBackButtonPress =  ()=>
   {
-    //BackHandler.exitApp();
+    BackHandler.exitApp();
   }
 
   initApp = async () =>
@@ -216,6 +216,16 @@ export default class HomeScreen extends React.Component {
       await this.initApp();
   }
 
+  promisedSetState = (newState) =>
+  {
+       return new Promise((resolve) =>
+       {
+           this.setState(newState, () => {
+               resolve()
+           });
+       });
+  }
+
 //  UpdateWifiState()
 //  {
 //    wifi.isEnabled((isEnabled) => {
@@ -323,15 +333,21 @@ export default class HomeScreen extends React.Component {
                                         logger.error(codeFileName, 'invitationCodeDialog', "Failed to set installation flag:"+e.message);
                                     }
 
-                                    this.setState({invitationCodeDialogVisible:false});
+                                    await this.promisedSetState({invitationCodeDialogVisible:false});
                                     logger.info(codeFileName, 'invitationCodeDialog', "Navigating to settings page.");
                                     this.props.navigation.navigate('UserSettings', {firstLaunch:true, backCallBack: this.initApp.bind(this)});
                                 }
                                 else
                                 {
                                     logger.error(codeFileName, 'invitationCodeDialog', 'Error saving invitation code. Asking to try again.');
-                                    Alert.alert('Error','There was an error saving invitation code. Please try again later.');
-                                    BackHandler.exitApp();
+                                      Alert.alert(
+                                              'Error',
+                                              'There was an error saving invitation code. Please try again later.',
+                                              [
+                                                {text: 'OK', onPress: () => BackHandler.exitApp()}
+                                              ],
+                                              {cancelable: false},
+                                            );
                                 }
                             }
                             else
@@ -342,6 +358,7 @@ export default class HomeScreen extends React.Component {
                        }}/>
 
                  </Dialog.Container>
+
 
       </View>
     );
