@@ -33,9 +33,12 @@ import notificationController from './controllers/notificationController';
 import {USER_SETTINGS_FILE_PATH,SURVEY_STATUS,
         MAX_NOTIFICATION_NUM, SERVICE_FILE_ASSET,
         SERVICE_FILE_LOCAL, SERVICES} from './controllers/constants'
-const codeFileName="App.js";
 import {showPrompt, uploadFiles} from './controllers/backgroundJobs';
+import Permissions from 'react-native-permissions';
 
+
+
+const codeFileName="App.js";
 
 if(false && Platform.OS=='android')
 {
@@ -138,6 +141,22 @@ export default class App extends Component<Props>
 
   async componentDidMount()
   {
+    if(Platform.OS=='ios')
+    {
+        logger.info(codeFileName, 'componentDidMount', 'Checking if notification permission is granted.');
+        const _response = await Permissions.check('notification');
+        if(_response != 'authorized')
+        {
+            logger.info(codeFileName, 'componentDidMount', 'Notification permission is not granted. Asking for permission.');
+            const response = await Permissions.request('notification');
+            if(response != 'authorized')
+            {
+                logger.info(codeFileName, 'componentDidMount', 'Notification permission denied. Exiting app.');
+                BackHandler.exitApp();
+            }
+        }
+    }
+
     await this.generateInitialFiles();
 
     BackgroundFetch.configure({
