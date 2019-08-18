@@ -27,19 +27,20 @@ import UserSettingsScreen from './UI/userSettings';
 import {UserSettingsEntity}from './UI/userSettings';
 import AlvaPromptScreen from './UI/alvaPrompt';
 import utilities from './controllers/utilities';
-import BackgroundJob from 'react-native-background-job';
-
+import BackgroundFetch from "react-native-background-fetch";
 import backgroundJobs from './controllers/backgroundJobs';
 import notificationController from './controllers/notificationController';
 import {USER_SETTINGS_FILE_PATH,SURVEY_STATUS,
-        MAX_NOTIFICATION_NUM, SERVICE_FILE_ASSET, SERVICE_FILE_LOCAL} from './controllers/constants'
+        MAX_NOTIFICATION_NUM, SERVICE_FILE_ASSET,
+        SERVICE_FILE_LOCAL, SERVICES} from './controllers/constants'
 const codeFileName="App.js";
-
 import {showPrompt, uploadFiles} from './controllers/backgroundJobs';
 
 
+if(false && Platform.OS=='android')
+{
+BackgroundJob = require('react-native-background-job');
 //----- set up job for showing periodic survey prompts --------//
-
 //// define the job
 const backgroundJobPrompt = {
     jobKey: "showNotification",
@@ -89,7 +90,7 @@ BackgroundJob.schedule(notificationSchedulePrompt)
       .catch(err => logger.error(`${codeFileName}`,'Global',"Error in scheduling job for file upload:"+err.message));
 
 //----- set up job for periodic file upload --------//
-
+}
 
 //The main navigation controller
 const AppNavigator = createStackNavigator(
@@ -128,8 +129,8 @@ export default class App extends Component<Props>
     }
     if(!await RNFS.exists(SERVICE_FILE_LOCAL)) //write service file
     {
-        const _fileContent = await RNFS.readFileAssets(SERVICE_FILE_ASSET);
-        await utilities.writeJSONFile(_fileContent, SERVICE_FILE_LOCAL,
+//        const _fileContent = await RNFS.readFileAssets(SERVICE_FILE_ASSET);
+        await utilities.writeJSONFile(SERVICES, SERVICE_FILE_LOCAL,
                                      codeFileName, 'generateInitialFiles');
     }
   }
@@ -139,17 +140,48 @@ export default class App extends Component<Props>
   {
     await this.generateInitialFiles();
 
+    BackgroundFetch.configure({
+          minimumFetchInterval: 15, // <-- minutes (15 is minimum allowed)
+          stopOnTerminate: false,   // <-- Android-only,
+          startOnBoot: true         // <-- Android-only
+        }, () => {
+          logger.info(codeFileName, 'componentDidMount',"Starting background tasks.")
+          uploadFiles();
+          showPrompt();
+          // Required: Signal completion of your task to native code
+          // If you fail to do this, the OS can terminate your app
+          // or assign battery-blame for consuming too much background-time
+          BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA);
+        }, (error) => {
+          logger.error(codeFileName, 'componentDidMount', "RNBackgroundFetch failed to start.");
+        });
+
+        BackgroundFetch.status((status) => {
+              switch(status) {
+                case BackgroundFetch.STATUS_RESTRICTED:
+                  logger.warn(codeFileName,'componentDidMount',"BackgroundFetch restricted");
+                  break;
+                case BackgroundFetch.STATUS_DENIED:
+                  logger.warn(codeFileName,'componentDidMount',"BackgroundFetch denied");
+                  break;
+                case BackgroundFetch.STATUS_AVAILABLE:
+                  logger.warn(codeFileName,'componentDidMount',"BackgroundFetch enabled");
+                  break;
+              }
+            });
+
+
     //uploadFiles();
-//    this.tu=null;
-//    this.sp=null;
+    this.tu=null;
+    this.sp=null;
 //    this.tu = setTimeout(uploadFiles, 30*1000);
-//    this.sp = setTimeout(showPrompt, 20*1000);
+    //this.sp = setTimeout(showPrompt, 20*1000);
   }
 
   componentWillUnmount()
   {
-//    this.tu && clearInterval(this.tu);
-//    this.sp && clearInterval(this.sp);
+    this.tu && clearInterval(this.tu);
+    this.sp && clearInterval(this.sp);
   }
 
   render() {
