@@ -298,7 +298,8 @@ export default class HomeScreen extends React.Component {
                             if(_code.length>=2 && _code.toLowerCase().startsWith('i'))
                             {
                                 logger.info(codeFileName, 'invitationCodeDialog', "Entered invitation code:"+this.state.invitationCode+'. Writing it to file.');
-                                const _written = await utilities.writeJSONFile({InvitationCode:_code},
+                                const _appStatus = appStatus.loadStatus();
+                                const _written = await utilities.writeJSONFile({InvitationCode:_code, UUID:_appStatus.UUID},
                                                                 INVITATION_CODE_FILE_PATH,
                                                                 codeFileName, "invitationCodeDialog");
                                 if(_written)
