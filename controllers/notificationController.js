@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert} from 'react-native';
 import * as RNFS from 'react-native-fs';
-import PushNotificationAndroid from 'react-native-push-notification';
-import { PushNotificationIOS } from 'react-native';
+//import PushNotificationAndroid from 'react-native-push-notification';
+//import { PushNotificationIOS } from 'react-native';
 var PushNotification = require('react-native-push-notification');
 
 import logger from './logger';
@@ -86,7 +86,7 @@ class NotificationController
               // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
               if (Platform.OS === 'ios')
               {
-                notification.finish(PushNotificationIOS.FetchResult.NoData);
+                //notification.finish(PushNotificationIOS.FetchResult.NoData);
               }
               onAppOpen();
 
