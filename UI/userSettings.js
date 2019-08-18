@@ -6,8 +6,9 @@ import logger from '../controllers/logger';
 import * as RNFS from 'react-native-fs';
 import commonStyle from './Style'
 import utilities from '../controllers/utilities';
-import {USER_SETTINGS_FILE_PATH} from '../controllers/constants'
-const codeFileName="userSettings.js"
+import {USER_SETTINGS_FILE_PATH,WIFI_PERMISSION_MSG} from '../controllers/constants';
+const codeFileName="userSettings.js";
+import Dialog from 'react-native-dialog';
 
 if (Platform.OS == 'android') {
     wifi = require('react-native-android-wifi');
@@ -39,6 +40,7 @@ static navigationOptions = ({ navigation }) => {
         afterTime: '00:00',
         beforeTime:'00:00',
         backCallBack: null, // a callback function sent by Home screen
+        wifiPermissionDialogVisible:false,
       };
 
 }
@@ -75,15 +77,16 @@ static navigationOptions = ({ navigation }) => {
         return true;
     }
 
-    async askWifiAndroid()
+    async askWifiPermissionAndroid()
     {
+        Alert.alert("Wifi networks", WIFI_PERMISSION_MSG);
         try
               {
                     const _granted = await PermissionsAndroid.request(
                       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
                       {
                         'title': 'Wifi networks',
-                        'message': 'We need your permission in order to find wifi networks.'
+                        'message': WIFI_PERMISSION_MSG,
                       }
                     )
                     if (_granted === PermissionsAndroid.RESULTS.GRANTED)
@@ -173,11 +176,25 @@ static navigationOptions = ({ navigation }) => {
         {
             if(this.state.askWifi)
             {
-                await this.askWifiAndroid();
+                await this.promisedSetState({wifiPermissionDialogVisible: true});
             }
-            await this.getHomeWiFiAndroid();
+            else
+            {
+                await this.getHomeWiFiAndroid();
+            }
+
         }
    }
+
+   promisedSetState = (newState) =>
+     {
+             return new Promise((resolve) =>
+             {
+                 this.setState(newState, () => {
+                     resolve()
+                 });
+             });
+     }
 
    async loadSettings()
    {
@@ -529,6 +546,27 @@ static navigationOptions = ({ navigation }) => {
                  onCancel={this.hideDateTimePicker}
                  mode='time'
                />
+
+         <Dialog.Container visible={this.state.wifiPermissionDialogVisible}>
+            <Dialog.Title>WiFi permission</Dialog.Title>
+            <Dialog.Description>
+                {WIFI_PERMISSION_MSG}
+            </Dialog.Description>
+            <Dialog.Button label="Cancel" onPress={ async () => {
+                         await this.promisedSetState({wifiPermissionDialogVisible: false,});
+                         BackHandler.exitApp();
+                     }}
+            />
+            <Dialog.Button label="Allow" onPress={ async () => {
+                         await this.promisedSetState({wifiPermissionDialogVisible: false,});
+                         if(Platform.OS=='android')
+                         {
+                            await this.askWifiPermissionAndroid();
+                            await this.getHomeWiFiAndroid();
+                         }
+                     }}
+            />
+         </Dialog.Container>
        </View>
 
     );
