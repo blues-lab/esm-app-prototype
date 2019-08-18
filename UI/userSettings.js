@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert, TextInput,
-Picker, ScrollView,TouchableHighlight, BackHandler, Dimensions, PermissionsAndroid} from 'react-native';
+        Picker, ScrollView,TouchableHighlight, BackHandler, Dimensions,
+        PermissionsAndroid} from 'react-native';
 import DateTimePicker from "react-native-modal-datetime-picker";
 import logger from '../controllers/logger';
 import * as RNFS from 'react-native-fs';
@@ -9,7 +10,8 @@ import utilities from '../controllers/utilities';
 import {USER_SETTINGS_FILE_PATH,WIFI_PERMISSION_MSG} from '../controllers/constants';
 const codeFileName="userSettings.js";
 import Dialog from 'react-native-dialog';
-
+import Permissions from 'react-native-permissions';
+import { NetworkInfo } from "react-native-network-info";
 if (Platform.OS == 'android') {
     wifi = require('react-native-android-wifi');
 }
@@ -49,7 +51,7 @@ static navigationOptions = ({ navigation }) => {
     {
         logger.info(codeFileName, 'componentDidMount', 'Setting event handlers.');
 
-        this.setState({backCallBack:this.props.navigation.getParam('backCallBack', null)});
+        await this.promisedSetState({backCallBack:this.props.navigation.getParam('backCallBack', null)});
 
         this.props.navigation.setParams({ backHandler: this.handleBackNavigation.bind(this)});
 
@@ -58,13 +60,12 @@ static navigationOptions = ({ navigation }) => {
             BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid.bind(this));
         }
 
-        await this.loadSettings();
-
+        this.loadSettings();
     }
 
     componentWillUnmount()
     {
-        logger.info(codeFileName, 'componentDidMount', 'Removing event handlers.');
+        logger.info(codeFileName, 'componentWillUnmount', 'Removing event handlers.');
         if(Platform.OS == 'android')
         {
             BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid);
@@ -77,112 +78,187 @@ static navigationOptions = ({ navigation }) => {
         return true;
     }
 
-    async askWifiPermissionAndroid()
-    {
-        Alert.alert("Wifi networks", WIFI_PERMISSION_MSG);
-        try
-              {
-                    const _granted = await PermissionsAndroid.request(
-                      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                      {
-                        'title': 'Wifi networks',
-                        'message': WIFI_PERMISSION_MSG,
-                      }
-                    )
-                    if (_granted === PermissionsAndroid.RESULTS.GRANTED)
-                    {
-                      logger.info(codeFileName, 'getHomeWiFi', 'Wifi permission granted.');
-                      this.setState({askWifi:false});
-                    }
-                    else
-                    {
-                      logger.error(codeFileName, 'getHomeWiFi', 'Did not get wifi permission. Exiting.');
-                      BackHandler.exitApp();
-                    }
-              } catch (err)
-              {
-                    logger.error(codeFileName, 'getHomeWiFi', 'Error:'+err.message);
-              }
-    }
+//    async askWifiPermissionAndroid()
+//    {
+//        Alert.alert("Wifi networks", WIFI_PERMISSION_MSG);
+//        try
+//              {
+//                    const _granted = await PermissionsAndroid.request(
+//                      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+//                      {
+//                        'title': 'Wifi networks',
+//                        'message': WIFI_PERMISSION_MSG,
+//                      }
+//                    )
+//                    if (_granted === PermissionsAndroid.RESULTS.GRANTED)
+//                    {
+//                      logger.info(codeFileName, 'getHomeWiFi', 'Wifi permission granted.');
+//                      this.setState({askWifi:false});
+//                    }
+//                    else
+//                    {
+//                      logger.error(codeFileName, 'getHomeWiFi', 'Did not get wifi permission. Exiting.');
+//                      BackHandler.exitApp();
+//                    }
+//              } catch (err)
+//              {
+//                    logger.error(codeFileName, 'getHomeWiFi', 'Error:'+err.message);
+//              }
+//    }
 
-    async getHomeWiFiAndroid()
+//    async getHomeWiFiAndroid()
+//    {
+//          try
+//          {
+//                _ssid = '';
+//
+//                wifi.isEnabled((isEnabled) => {
+//                if (isEnabled)
+//                  {
+//                    logger.info(codeFileName, 'getHomeWiFi', 'Wifi is enabled.');
+//                    wifi.connectionStatus((isConnected) => {
+//                      if (isConnected) {
+//                            logger.info(codeFileName, 'getHomeWiFi', 'Wifi is connected.');
+//                            wifi.getSSID((ssid) => {
+//                            logger.info(codeFileName, 'getHomeWiFi', 'SSID:'+ssid);
+//                            _ssid = ssid;
+//                               if((_ssid.length>0)  && (_ssid != '<unknown ssid>'))
+//                                      {
+//                                          logger.info(codeFileName, 'getHomeWiFi', `Connected WiFi:${_ssid}. Asking if this the is Home WiFi.`);
+//                                          Alert.alert(
+//                                          'Home WiFi',
+//                                            'We will only send surveys when you are connected to the home WiFi.\nIs "'+_ssid+'" your home wifi?',
+//                                            [
+//                                              { text: 'NO', onPress: () => {
+//                                                    Alert.alert("We'll try to ask again, when you connect to another network");
+//                                                    logger.info(codeFileName, 'getHomeWiFi', 'Not connected to home WiFi. Will ask again');
+//                                              }},
+//                                              {
+//                                                text: 'YES', onPress: () => {
+//                                                    logger.info(codeFileName, 'getHomeWiFi', 'Connected to home WiFi. Saving home WiFi:'+_ssid);
+//                                                    this.setState({homeWifi: _ssid}, ()=>this.saveSettings());
+//                                              }},
+//                                            ],
+//                                            {cancelable: false}
+//                                          );
+//                                      }
+//                                      else
+//                                      {
+//                                        logger.info(codeFileName, 'getHomeWiFi', 'WiFi is not enabled or connected. Will check again later.')
+//                                        Alert.alert("Home WiFi", 'We will only send surveys when you are connected to your home WiFi.'+
+//                                                                 ' We will ask about it again when you are connected to WiFi.');
+//                                      }
+//                          });
+//                      }
+//                      else
+//                      {
+//                        logger.info(codeFileName, 'getHomeWiFi', 'Wifi is not connected.');
+//                      }
+//                    });
+//                  }
+//                  else
+//                  {
+//                    logger.info(codeFileName, 'getHomeWiFi', 'Wifi is not enabled.');
+//                  }
+//                });
+//
+//
+//
+//          }
+//          catch(error)
+//          {
+//            logger.error(codeFileName, 'getHomeWiFi', 'Failed to get WiFi information:'+error);
+//          }
+//    }
+
+
+    async getHomeSSID()
     {
           try
           {
-                _ssid = '';
-
-                wifi.isEnabled((isEnabled) => {
-                if (isEnabled)
-                  {
-                    logger.info(codeFileName, 'getHomeWiFi', 'Wifi is enabled.');
-                    wifi.connectionStatus((isConnected) => {
-                      if (isConnected) {
-                            logger.info(codeFileName, 'getHomeWiFi', 'Wifi is connected.');
-                            wifi.getSSID((ssid) => {
-                            logger.info(codeFileName, 'getHomeWiFi', 'SSID:'+ssid);
-                            _ssid = ssid;
-                               if((_ssid.length>0)  && (_ssid != '<unknown ssid>'))
-                                      {
-                                          logger.info(codeFileName, 'getHomeWiFi', `Connected WiFi:${_ssid}. Asking if this the is Home WiFi.`);
-                                          Alert.alert(
-                                          'Home WiFi',
-                                            'We will only send surveys when you are connected to the home WiFi.\nIs "'+_ssid+'" your home wifi?',
-                                            [
-                                              { text: 'NO', onPress: () => {
-                                                    Alert.alert("We'll try to ask again, when you connect to another network");
-                                                    logger.info(codeFileName, 'getHomeWiFi', 'Not connected to home WiFi. Will ask again');
-                                              }},
-                                              {
-                                                text: 'YES', onPress: () => {
-                                                    logger.info(codeFileName, 'getHomeWiFi', 'Connected to home WiFi. Saving home WiFi:'+_ssid);
-                                                    this.setState({homeWifi: _ssid}, ()=>this.saveSettings());
-                                              }},
-                                            ],
-                                            {cancelable: false}
-                                          );
-                                      }
-                                      else
-                                      {
-                                        logger.info(codeFileName, 'getHomeWiFi', 'WiFi is not enabled or connected. Will check again later.')
-                                        Alert.alert("Home WiFi", 'We will only send surveys when you are connected to your home WiFi.'+
-                                                                 ' We will ask about it again when you are connected to WiFi.');
-                                      }
-                          });
-                      }
-                      else
+              const _ssid = await NetworkInfo.getSSID();
+              logger.info(codeFileName, 'getHomeSSID', 'SSID:'+_ssid);
+              if( (_ssid!=null) &&  (_ssid.length>0)  && (_ssid != '<unknown ssid>'))
+              {
+                  logger.info(codeFileName, 'getHomeSSID', `Connected WiFi:${_ssid}. Asking if this the is Home WiFi.`);
+                  Alert.alert(
+                  'Home WiFi',
+                    'Is "'+_ssid+'" your home wifi?',
+                    [
+                      { text: 'NO', onPress: () => {
+                            Alert.alert("Home WiFi","We'll try to ask again, when you connect to another network.");
+                            logger.info(codeFileName, 'getHomeSSID', 'Not connected to home WiFi. Will ask again.');
+                      }},
                       {
-                        logger.info(codeFileName, 'getHomeWiFi', 'Wifi is not connected.');
-                      }
-                    });
-                  }
-                  else
-                  {
-                    logger.info(codeFileName, 'getHomeWiFi', 'Wifi is not enabled.');
-                  }
-                });
-
-
-
+                        text: 'YES', onPress: () => {
+                            logger.info(codeFileName, 'getHomeSSID', 'Connected to home WiFi. Saving home WiFi:'+_ssid);
+                            this.setState({homeWifi: _ssid}, ()=>this.saveSettings());
+                      }},
+                    ],
+                    {cancelable: false}
+                  );
+              }
+              else
+              {
+                logger.info(codeFileName, 'getHomeSSID', 'WiFi is not enabled or connected. Will check again later.')
+                Alert.alert("Home WiFi", 'We will only send surveys when you are connected to your home WiFi.'+
+                                         ' We will ask about it again when you are connected to WiFi.');
+              }
           }
           catch(error)
           {
-            logger.error(codeFileName, 'getHomeWiFi', 'Failed to get WiFi information:'+error);
+            logger.error(codeFileName, 'getHomeSSID', 'Failed to get WiFi information:'+error);
           }
     }
 
+
    async getHomeWiFi()
    {
-        if(Platform.OS=='android')
-        {
-            if(this.state.askWifi)
-            {
-                await this.promisedSetState({wifiPermissionDialogVisible: true});
-            }
-            else
-            {
-                await this.getHomeWiFiAndroid();
-            }
+//        if(Platform.OS=='android')
+//        {
+//            if(this.state.askWifi)
+//            {
+//                await this.promisedSetState({wifiPermissionDialogVisible: true});
+//            }
+//            else
+//            {
+//                await this.getHomeWiFiAndroid();
+//            }
+//        }
+//        else if(Platform.OS =='ios')
+//        {
+//            Permissions.check('location').then(response => {
+//                  // Response is one of: 'authorized', 'denied', 'restricted', or 'undetermined'
+//                  this.setState({photoPermission: response});
+//                });
+//        }
 
+        logger.info(codeFileName, 'getHomeWiFi', 'Checking if location permission is already granted.');
+        const _response = await Permissions.check('location');// ['authorized', 'denied', 'restricted', or 'undetermined']
+        if(_response == 'authorized')
+        {
+            logger.info(codeFileName, 'getHomeWiFi', 'Location permission is already granted. Asking for home wifi name.');
+            await this.getHomeSSID();
+        }
+        else
+        {
+            logger.info(codeFileName, 'getHomeWiFi', 'Location permission is not granted. Asking for permission.');
+            await this.promisedSetState({wifiPermissionDialogVisible: true});
+
+//            Alert.alert(
+//              'Alert Title',
+//              'My Alert Msg',
+//              [
+//                {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
+//                {
+//                  text: 'Cancel',
+//                  onPress: () => {logger.info(codeFileName,'abc','canceled');console.log('Cancel Pressed');},
+//                  style: 'cancel',
+//                },
+//                {text: 'OK', onPress: () => console.log('OK Pressed')},
+//              ],
+//              {cancelable: false},
+//            );
         }
    }
 
@@ -200,32 +276,26 @@ static navigationOptions = ({ navigation }) => {
    {
         if (await RNFS.exists(USER_SETTINGS_FILE_PATH))
         {
-            RNFS.readFile(USER_SETTINGS_FILE_PATH)
-                .then((_fileContent) => {
+            const _fileContent = await RNFS.readFile(USER_SETTINGS_FILE_PATH);
+            logger.info(`${codeFileName}`, 'loadSettings', 'Successfully loaded settings file.');
+            const _userSettingsData = JSON.parse(_fileContent);
+            await this.promisedSetState({
+                            homeWifi: _userSettingsData.homeWifi,
+                            afterTime: _userSettingsData.afterTime,
+                            beforeTime: _userSettingsData.beforeTime,
+                            askWifi: _userSettingsData.askWifi
+                         });
 
-                    logger.info(`${codeFileName}`, 'loadSettings', 'Successfully read file.');
-                    _userSettingsData = JSON.parse(_fileContent);
-                    this.setState({
-                                    homeWifi: _userSettingsData.homeWifi,
-                                    afterTime: _userSettingsData.afterTime,
-                                    beforeTime: _userSettingsData.beforeTime,
-                                    askWifi: _userSettingsData.askWifi
-                                  }, () => {
-                                        if(this.state.homeWifi.length==0)
-                                        {
-                                            this.getHomeWiFi();
-                                        }
-                                    });
-                })
-                .catch( (error)=>{
-                    logger.error(`${codeFileName}`, 'loadSettings', 'Failed to read file:'+error.message);
-                  })
-
+            if(this.state.homeWifi.length==0)
+            {
+                logger.info(`${codeFileName}`, 'loadSettings', 'Home wifi is not set yet.');
+                await this.getHomeWiFi();
+            }
         }
         else
         {
             this.saveSettings(); //save the default settings
-            this.getHomeWiFi();
+            await this.getHomeWiFi();
         }
 
    }
@@ -511,31 +581,31 @@ static navigationOptions = ({ navigation }) => {
             <TouchableHighlight style ={[commonStyle.buttonTouchHLStyle]}>
                  <Button title="Save settings"
                      color="#20B2AA"
-                     onPress={() => {
-                                        this.saveSettings();
-                                        this.setState({stateSaved:true});
-                                        const _firstLaunch = this.props.navigation.getParam('firstLaunch', false);
-                                        if(_firstLaunch)
-                                        {
-                                            Alert.alert("Thank you!","Your settings have been saved. We will prompt you when a new survey becomes available.");
+                     onPress={async() => {
+                            this.saveSettings();
+                            this.setState({stateSaved:true});
+                            const _firstLaunch = this.props.navigation.getParam('firstLaunch', false);
+                            if(_firstLaunch)
+                            {
+                                Alert.alert("Thank you!","Your settings have been saved. We will prompt you when a new survey becomes available.");
 
-                                            Alert.alert(
-                                              'Thank you!',
-                                                "Your settings have been saved. We will prompt you when a new survey becomes available.",
-                                                [
-                                                  { text: 'OK', onPress: () => {
-                                                    logger.info(codeFileName, 'SaveButtonClick', 'Settings saved. Since this is first launch exiting app.')
-                                                    BackHandler.exitApp();
-                                                  }}
-                                                ],
-                                                {cancelable: false}
-                                              );
-                                        }
-                                        else
-                                        {
-                                            Alert.alert("Settings saved.");
-                                        }
-                                    }}
+                                Alert.alert(
+                                  'Thank you!',
+                                    "Your settings have been saved. We will prompt you when a new survey becomes available.",
+                                    [
+                                      { text: 'OK', onPress: () => {
+                                        logger.info(codeFileName, 'SaveButtonClick', 'Settings saved. Since this is first launch exiting app.')
+                                        BackHandler.exitApp();
+                                      }}
+                                    ],
+                                    {cancelable: false}
+                                  );
+                            }
+                            else
+                            {
+                                Alert.alert("Settings saved.");
+                            }
+                        }}
                  />
              </TouchableHighlight>
     </View>
@@ -553,17 +623,29 @@ static navigationOptions = ({ navigation }) => {
                 {WIFI_PERMISSION_MSG}
             </Dialog.Description>
             <Dialog.Button label="Cancel" onPress={ async () => {
+                         logger.info(codeFileName, 'LocationPermissionDialog', 'Pressed cancel. Exiting app.');
                          await this.promisedSetState({wifiPermissionDialogVisible: false,});
                          BackHandler.exitApp();
                      }}
             />
             <Dialog.Button label="Allow" onPress={ async () => {
-                         await this.promisedSetState({wifiPermissionDialogVisible: false,});
-                         if(Platform.OS=='android')
-                         {
-                            await this.askWifiPermissionAndroid();
-                            await this.getHomeWiFiAndroid();
-                         }
+                            logger.info(codeFileName, 'LocationPermissionDialog', 'Pressed allow. Asking for actual permission.');
+                            await this.promisedSetState({wifiPermissionDialogVisible: false,});
+                            const response = await Permissions.request('location');
+                              if(response != 'authorized')
+                              {
+                                logger.info(codeFileName, 'LocationPermissionDialog', 'Location permission denied. Exiting app.');
+                                BackHandler.exitApp();
+                              }
+                              else
+                              {
+                                 logger.info(codeFileName, 'LocationPermissionDialog', 'Location permission granted. Asking home wifi name.');
+//                                 if(Platform.OS=='android')
+//                                 {
+//                                    await this.getHomeWiFiAndroid();
+//                                 }
+                                  await this.getHomeSSID();
+                              }
                      }}
             />
          </Dialog.Container>
