@@ -93,43 +93,15 @@ export async function showPrompt()
       }
 
       //check if home wifi is set and connected to home wifi
-      if(Platform.OS=='android')
+      const _ssid = await NetworkInfo.getSSID();
+      if(_userSettingsData.homeWifi.length==0 || _ssid != _userSettingsData.homeWifi)
       {
-        wifi.isEnabled((isEnabled) =>
-      {
-          if (isEnabled)
-          {
-              wifi.connectionStatus((isConnected) =>
-              {
-                if (isConnected)
-                {
-                    wifi.getSSID((ssid) =>
-                    {
-                          if(_userSettingsData.homeWifi.length==0 || ssid != _userSettingsData.homeWifi)
-                          {
-                            logger.info(codeFileName, 'showPrompt', `Current SSID: ${ssid}. Home Wifi: ${_userSettingsData.homeWifi} . Returning.`);
-                            notificationController.cancelNotifications();
-                            return;
-                          }
-
-                    });
-                }
-                else
-                {
-                    logger.info(codeFileName, 'showPrompt', `WiFi not connected. Returning.`);
-                    notificationController.cancelNotifications();
-                    return;
-                }
-              });
-          }
-          else
-          {
-            logger.info(codeFileName, 'showPrompt', `WiFi not enabled. Returning.`);
-            notificationController.cancelNotifications();
-            return;
-          }
-      });
+        logger.info(codeFileName, 'showPrompt', `Current SSID: ${_ssid}. Home Wifi: ${_userSettingsData.homeWifi} . Returning.`);
+        notificationController.cancelNotifications();
+        return;
       }
+      logger.info(codeFileName, 'showPrompt', 'Obtained wifi:'+_ssid+'.');
+
       //Check if in "Don't disturb" times (Sunday is 0, Monday is 1)
       _doNotDisturb = isInDoNotDisturbTime(_userSettingsData);
 
