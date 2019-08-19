@@ -184,7 +184,7 @@ export default class App extends Component<Props>
                   logger.warn(codeFileName,'componentDidMount',"BackgroundFetch denied");
                   break;
                 case BackgroundFetch.STATUS_AVAILABLE:
-                  logger.warn(codeFileName,'componentDidMount',"BackgroundFetch enabled");
+                  logger.info(codeFileName,'componentDidMount',"BackgroundFetch enabled");
                   break;
               }
             });
