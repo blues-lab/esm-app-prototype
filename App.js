@@ -141,6 +141,16 @@ export default class App extends Component<Props>
 
   async componentDidMount()
   {
+    const _logFileCreated = await logger.setup();
+    if(_logFileCreated!='created')
+    {
+        Alert.alert("Error creating log file.",_logFileCreated);
+    }
+    else
+    {
+        Alert.alert("Success",'Log file created:'+_logFileCreated);
+    }
+
     if(Platform.OS=='ios')
     {
         logger.info(codeFileName, 'componentDidMount', 'Checking if notification permission is granted.');
@@ -193,7 +203,7 @@ export default class App extends Component<Props>
     this.tu=null;
     this.sp=null;
 //    this.tu = setTimeout(uploadFiles, 30*1000);
-    //this.sp = setTimeout(showPrompt, 20*1000);
+    this.sp = setTimeout(showPrompt, 30*1000);
   }
 
   componentWillUnmount()
