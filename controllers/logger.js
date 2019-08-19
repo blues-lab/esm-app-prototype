@@ -10,16 +10,17 @@ class Logger extends Component
     {
         try
         {
-            //if(await !RNFS.exists(LOG_FILE_PATH))
-            //{
+            if(await !RNFS.exists(LOG_FILE_PATH))
+            {
                 await RNFS.writeFile(LOG_FILE_PATH,'Type,File,Function,Message,Time\n');
                 return 'created';
-            //}
+            }
         }
         catch(error)
         {
             return error.message;
         }
+
     }
 
     getDateTime()

@@ -7,14 +7,14 @@ import logger from '../controllers/logger';
 import * as RNFS from 'react-native-fs';
 import commonStyle from './Style'
 import utilities from '../controllers/utilities';
-import {USER_SETTINGS_FILE_PATH,WIFI_PERMISSION_MSG} from '../controllers/constants';
+import {LOG_FILE_PATH,USER_SETTINGS_FILE_PATH,WIFI_PERMISSION_MSG} from '../controllers/constants';
 const codeFileName="userSettings.js";
 import Dialog from 'react-native-dialog';
 import Permissions from 'react-native-permissions';
 import { NetworkInfo } from "react-native-network-info";
-if (Platform.OS == 'android') {
-    wifi = require('react-native-android-wifi');
-}
+//if (Platform.OS == 'android') {
+//    wifi = require('react-native-android-wifi');
+//}
 
 export default class UserSettingsScreen extends React.Component {
 
@@ -514,6 +514,18 @@ static navigationOptions = ({ navigation }) => {
                         }}
                  />
              </TouchableHighlight>
+             <Button title="Show log" onPress={async() => {
+                try
+                {
+                    const _fileContent = await RNFS.readFile(LOG_FILE_PATH);
+                    Alert.alert("Log", _fileContent);
+                }
+                catch(error)
+                {
+                    Alert.alert("Error reading log file.", error.message);
+                }
+
+             }}/>
     </View>
 
          <DateTimePicker
