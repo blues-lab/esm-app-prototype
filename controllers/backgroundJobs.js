@@ -12,10 +12,11 @@ import {USER_SETTINGS_FILE_PATH, SURVEY_STATUS,
     INVITATION_CODE_FILE_PATH, MAX_SURVEY_PER_DAY, LOG_FILE_PATH,
     PROMPT_DURATION} from './constants';
 
+import { NetworkInfo } from "react-native-network-info";
 
-if (Platform.OS == 'android') {
-    wifi = require('react-native-android-wifi');
-}
+//if (Platform.OS == 'android') {
+//    wifi = require('react-native-android-wifi');
+//}
 
 function isInDoNotDisturbTime(settings)
 {
@@ -326,41 +327,18 @@ async function uploadFilesAndroid()
 {
     try
     {
-        //check if WiFi is connected.
-          wifi.isEnabled((isEnabled) =>
-          {
-              if (isEnabled)
-              {
-                  wifi.connectionStatus((isConnected) =>
-                  {
-                      if (isConnected)
-                      {
-                            wifi.getSSID((ssid) =>
-                            {
-                                if((ssid.length>0)  && (ssid != '<unknown ssid>'))
-                                {
-                                    logger.info(codeFileName, 'uploadFiles', 'Obtained  SSID:'+ssid+'. Starting to upload files.');
-                                    _uploadFiles();
-                                }
-                                else
-                                {
-                                    logger.error(codeFileName, 'uploadFiles', 'Invalid SSID:'+ssid+'.');
-                                    return;
-                                }
-                            });
-                      }
-                      else
-                      {
-                        logger.error(codeFileName, 'uploadFiles', 'Not connected to internet.');
-                      }
-                    });
-              }
-              else
-              {
-                logger.error(codeFileName, 'uploadFiles', 'Wifi not enabled.');
-              }
-            });
+        const _ssid = await NetworkInfo.getSSID();
 
+        if( (_ssid!=null) &&  (_ssid.length>0)  && (_ssid != '<unknown ssid>'))
+        {
+            logger.info(codeFileName, 'uploadFiles', 'Obtained  SSID:'+ssid+'. Starting to upload files.');
+            _uploadFiles();
+        }
+        else
+        {
+            logger.error(codeFileName, 'uploadFiles', 'Invalid SSID:'+ssid+'.');
+            return;
+        }
     }
     catch(error)
     {
