@@ -40,7 +40,7 @@ import Permissions from 'react-native-permissions';
 
 const codeFileName="App.js";
 
-if(false && Platform.OS=='android')
+if(Platform.OS=='android')
 {
 BackgroundJob = require('react-native-background-job');
 //----- set up job for showing periodic survey prompts --------//
@@ -155,40 +155,39 @@ export default class App extends Component<Props>
                 BackHandler.exitApp();
             }
         }
+
+        logger.info(codeFileName, 'componentDidMount',"Configuring background tasks for iOS.")
+        BackgroundFetch.configure({
+              minimumFetchInterval: 15, // <-- minutes (15 is minimum allowed)
+              stopOnTerminate: false,   // <-- Android-only,
+              startOnBoot: true         // <-- Android-only
+            }, () => {
+              uploadFiles();
+              showPrompt();
+              // Required: Signal completion of your task to native code
+              // If you fail to do this, the OS can terminate your app
+              // or assign battery-blame for consuming too much background-time
+              BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA);
+            }, (error) => {
+              logger.error(codeFileName, 'componentDidMount', "RNBackgroundFetch failed to start.");
+            });
+
+            BackgroundFetch.status((status) => {
+                  switch(status) {
+                    case BackgroundFetch.STATUS_RESTRICTED:
+                      logger.warn(codeFileName,'componentDidMount',"BackgroundFetch restricted");
+                      break;
+                    case BackgroundFetch.STATUS_DENIED:
+                      logger.warn(codeFileName,'componentDidMount',"BackgroundFetch denied");
+                      break;
+                    case BackgroundFetch.STATUS_AVAILABLE:
+                      logger.info(codeFileName,'componentDidMount',"BackgroundFetch enabled");
+                      break;
+                  }
+                });
     }
 
     await this.generateInitialFiles();
-
-    BackgroundFetch.configure({
-          minimumFetchInterval: 15, // <-- minutes (15 is minimum allowed)
-          stopOnTerminate: false,   // <-- Android-only,
-          startOnBoot: true         // <-- Android-only
-        }, () => {
-          logger.info(codeFileName, 'componentDidMount',"Starting background tasks.")
-          uploadFiles();
-          showPrompt();
-          // Required: Signal completion of your task to native code
-          // If you fail to do this, the OS can terminate your app
-          // or assign battery-blame for consuming too much background-time
-          BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA);
-        }, (error) => {
-          logger.error(codeFileName, 'componentDidMount', "RNBackgroundFetch failed to start.");
-        });
-
-        BackgroundFetch.status((status) => {
-              switch(status) {
-                case BackgroundFetch.STATUS_RESTRICTED:
-                  logger.warn(codeFileName,'componentDidMount',"BackgroundFetch restricted");
-                  break;
-                case BackgroundFetch.STATUS_DENIED:
-                  logger.warn(codeFileName,'componentDidMount',"BackgroundFetch denied");
-                  break;
-                case BackgroundFetch.STATUS_AVAILABLE:
-                  logger.info(codeFileName,'componentDidMount',"BackgroundFetch enabled");
-                  break;
-              }
-            });
-
 
     //uploadFiles();
     this.tu=null;

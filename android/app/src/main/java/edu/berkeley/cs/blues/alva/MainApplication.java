@@ -5,7 +5,6 @@ import android.app.Application;
 import com.facebook.react.ReactApplication;
 import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
-import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
 import com.devstepbcn.wifi.AndroidWifiPackage;
 import io.github.traviskn.rnuuidgenerator.RNUUIDGeneratorPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
@@ -34,7 +33,7 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),            
+          new MainReactPackage(),
             new RNNetworkInfoPackage(),
             new RNBackgroundFetchPackage(),
             new AndroidWifiPackage(),

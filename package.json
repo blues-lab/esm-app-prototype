@@ -11,6 +11,7 @@
     "file-exists": "^5.0.1",
     "fs": "^0.0.1-security",
     "install": "^0.13.0",
+    "ios-deploy": "^1.9.4",
     "react": "16.8.3",
     "react-native": "0.59.9",
     "react-native-android-local-notification": "^2.0.0",
