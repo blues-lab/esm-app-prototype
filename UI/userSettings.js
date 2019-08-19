@@ -310,9 +310,13 @@ static navigationOptions = ({ navigation }) => {
 
             {   this.state.homeWifi.length>0 &&
                        <Text style={{textAlign: 'center',borderBottomColor:'black', borderBottomWidth: StyleSheet.hairlineWidth, color:'black', marginTop:10, marginBottom:10, fontSize:20, width:Math.floor(Dimensions.get('window').width*.9)}}>
-                           <Text style={{marginBottom:10, paddingBottom:10}}> Your home WiFi: </Text>
-                               <Text style={{color:'blue', fontSize:20, margin:0, textDecorationLine:'underline'}} onPress={this.changeWifi}>
+                           <Text style={{marginBottom:10, fontSize:16, paddingBottom:10}}> Your home WiFi: </Text>
+                               <Text style={{fontSize:20, margin:0}}>
                                  {this.state.homeWifi}
+                               </Text>
+                               <Text>{"\n"}</Text>
+                               <Text style={{color:'blue', fontSize:16, margin:0, textDecorationLine:'underline'}} onPress={this.changeWifi}>
+                                Change
                                </Text>
                                <Text>{"\n"}</Text>
                        </Text>
