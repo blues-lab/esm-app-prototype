@@ -27,11 +27,13 @@ export const VERSION_NUMBER = '1.0.0';
 
 
 //****************String constants ********************//
+export const MIMI_ADVERTISEMENT="Advertisement/reminder for MIMI and suggestion to come back later."
+
 export const WIFI_PERMISSION_MSG = "We will send surveys only when you are connected to your home WiFi."+
                             " To check for WiFi connection, we will need permission to access your location."+
                             " Your location data will never be collected.";
 
-export const permissionOptions =
+export const PERMISSION_OPTIONS=
                [
                  'Yes, I will allow access to any relevant parts of the conversation.',
                  'I will only allow access if I could censor certain parts of the relevant conversation.',
@@ -39,7 +41,9 @@ export const permissionOptions =
                ];
 
 export const HOME_WIFI_NOT_CONNECTED = 'We will only send surveys when you are connected to your home WiFi.'+
-                                       ' We will ask about it again when you are connected to WiFi.'
+                                       ' We will ask about it again when you are connected to WiFi.';
+
+export const INVITATION_CODE_FAIL = 'There was an error saving invitation code. Please try again later.';
 //****************String constants ********************//
 
 

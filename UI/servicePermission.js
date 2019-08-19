@@ -9,6 +9,7 @@ import DialogInput from 'react-native-dialog-input';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import logger from '../controllers/logger';
 import utilities from '../controllers/utilities';
+import {PERMISSION_OPTIONS} from '../controllers/constants';
 const codeFileName="servicePermission.js";
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
@@ -176,19 +177,19 @@ static navigationOptions = ({ navigation }) => {
                        <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'flex-start'}}>
                          <RadioButton value='fullShare' />
                          <Text style={{fontSize:20}}>
-                            Yes, I will allow access to any relevant parts of the conversation.
+                            {PERMISSION_OPTIONS[0]}
                          </Text>
                        </View>
                        <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'flex-start'}}>
                          <RadioButton value='partialShare'/>
                          <Text style={{fontSize:20}}>
-                            I will only allow access if I could censor certain parts of the relevant conversation.
+                            {PERMISSION_OPTIONS[1]}
                          </Text>
                        </View>
                        <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'center'}}>
                         <RadioButton value='noShare'/>
                         <Text style={{fontSize:20}}>
-                            No, I will not allow access to any relevant parts of the conversation.
+                            {PERMISSION_OPTIONS[2]}
                         </Text>
                       </View>
                   </RadioButton.Group>
