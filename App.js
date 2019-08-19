@@ -203,7 +203,7 @@ export default class App extends Component<Props>
     this.tu=null;
     this.sp=null;
 //    this.tu = setTimeout(uploadFiles, 30*1000);
-    this.sp = setTimeout(showPrompt, 30*1000);
+    //this.sp = setTimeout(showPrompt, 30*1000);
   }
 
   componentWillUnmount()
