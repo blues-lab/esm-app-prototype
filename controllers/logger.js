@@ -13,12 +13,11 @@ class Logger extends Component
             if(await !RNFS.exists(LOG_FILE_PATH))
             {
                 await RNFS.writeFile(LOG_FILE_PATH,'Type,File,Function,Message,Time\n');
-                return 'created';
             }
         }
         catch(error)
         {
-            return error.message;
+            Alert.alert('Error',error.message);
         }
 
     }

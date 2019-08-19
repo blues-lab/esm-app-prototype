@@ -141,16 +141,6 @@ export default class App extends Component<Props>
 
   async componentDidMount()
   {
-    const _logFileCreated = await logger.setup();
-    if(_logFileCreated!='created')
-    {
-        Alert.alert("Error creating log file.",_logFileCreated);
-    }
-    else
-    {
-        Alert.alert("Success",'Log file created:'+_logFileCreated);
-    }
-
     if(Platform.OS=='ios')
     {
         logger.info(codeFileName, 'componentDidMount', 'Checking if notification permission is granted.');

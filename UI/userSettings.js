@@ -7,7 +7,7 @@ import logger from '../controllers/logger';
 import * as RNFS from 'react-native-fs';
 import commonStyle from './Style'
 import utilities from '../controllers/utilities';
-import {LOG_FILE_PATH,USER_SETTINGS_FILE_PATH,WIFI_PERMISSION_MSG} from '../controllers/constants';
+import {LOG_FILE_PATH,USER_SETTINGS_FILE_PATH,WIFI_PERMISSION_MSG,HOME_WIFI_NOT_CONNECTED} from '../controllers/constants';
 const codeFileName="userSettings.js";
 import Dialog from 'react-native-dialog';
 import Permissions from 'react-native-permissions';
@@ -107,8 +107,7 @@ static navigationOptions = ({ navigation }) => {
               else
               {
                 logger.info(codeFileName, 'getHomeSSID', 'WiFi is not enabled or connected. Will check again later.')
-                Alert.alert("Home WiFi", 'We will only send surveys when you are connected to your home WiFi.'+
-                                         ' We will ask about it again when you are connected to WiFi.');
+                Alert.alert("Home WiFi", HOME_WIFI_NOT_CONNECTED);
               }
           }
           catch(error)
@@ -514,18 +513,6 @@ static navigationOptions = ({ navigation }) => {
                         }}
                  />
              </TouchableHighlight>
-             <Button title="Show log" onPress={async() => {
-                try
-                {
-                    const _fileContent = await RNFS.readFile(LOG_FILE_PATH);
-                    Alert.alert("Log", _fileContent);
-                }
-                catch(error)
-                {
-                    Alert.alert("Error reading log file.", error.message);
-                }
-
-             }}/>
     </View>
 
          <DateTimePicker
