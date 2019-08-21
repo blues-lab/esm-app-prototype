@@ -322,12 +322,12 @@ async function uploadFilesAndroid()
 export async function uploadFiles()
 {
     // check if app in background, otherwise return
-    if(AppState.currentState=='active')
+    const _appStatus = await appStatus.loadStatus();
+    if(_appStatus.SURVEY_STATUS==SURVEY_STATUS.ONGOING)
     {
-        logger.info(codeFileName,'uploadFiles', 'Current app state is '+AppState.currentState+'. Returning.');
+        logger.info(codeFileName,'uploadFiles', 'A survey is ongoing. Returning.');
         return;
     }
-
     logger.info(codeFileName,'uploadFiles', 'Current app state is '+AppState.currentState+'. Attempting to upload files.');
 
     try
