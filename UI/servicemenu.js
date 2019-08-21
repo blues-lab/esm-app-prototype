@@ -393,16 +393,16 @@ export default class ServiceMenuScreen extends React.Component {
           _surveyResponseJS.SelectedServices = this.getSelectedServices();
           const _appStatus  = await appStatus.loadStatus();
 
-          const _uploaded = await utilities.uploadData(
+          const _uploaded =  utilities.uploadData(
                   {SurveyID: _appStatus.CurrentSurveyID,
                    Stage: 'Services selected.',
                    PartialResponse: _surveyResponseJS},
                   _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'showPermissionPage');
-           if(!_uploaded)
-           {
-              logger.error(codeFileName, 'showPermissionPage',
-              `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage: Services selected. Response: ${JSON.stringify(_surveyResponseJS)}`);
-           }
+//           if(!_uploaded)
+//           {
+//              logger.error(codeFileName, 'showPermissionPage',
+//              `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage: Services selected. Response: ${JSON.stringify(_surveyResponseJS)}`);
+//           }
 
            logger.info(codeFileName, 'showPermissionPage', 'Navigating to permission page')
            await this.promisedSetState({saveWaitVisible:false, surveyResponseJS: _surveyResponseJS, surveyProgress:40});

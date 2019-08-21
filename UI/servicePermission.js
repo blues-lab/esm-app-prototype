@@ -126,16 +126,16 @@ static navigationOptions = ({ navigation }) => {
                 {
                     await this.promisedSetState({saveWaitVisible:true});
                     const _appStatus  = await appStatus.loadStatus();
-                    const _uploaded = await utilities.uploadData(
+                    const _uploaded = utilities.uploadData(
                             {SurveyID: _appStatus.CurrentSurveyID,
                              Stage: 'Permission complete.',
                              PartialResponse: this.state.surveyResponseJS},
                             _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'saveResponse');
-                     if(!_uploaded)
-                     {
-                        logger.error(codeFileName, 'saveResponse',
-                        `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage:Permission complete. Response: ${JSON.stringify(this.state.surveyResponseJS)}`);
-                     }
+//                     if(!_uploaded)
+//                     {
+//                        logger.error(codeFileName, 'saveResponse',
+//                        `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage:Permission complete. Response: ${JSON.stringify(this.state.surveyResponseJS)}`);
+//                     }
                 }
 
               //go to the contextual question page

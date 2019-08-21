@@ -108,16 +108,16 @@ export default class SurveyStartScreen extends React.Component {
                                             this.setState({saveWaitVisible:true});
                                             const _appStatus  = await appStatus.loadStatus();
                                             logger.info(codeFileName, 'NextButtonPress', 'Uploading conversation topic and going to AlvaPrompt.');
-                                            const _uploaded = await utilities.uploadData(
+                                            const _uploaded = utilities.uploadData(
                                                     {SurveyID: _appStatus.CurrentSurveyID,
                                                     Stage: 'Conversation topic.',
                                                     PartialResponse: this.state.conversationTopic},
                                                     _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'NextButtonPress');
-                                             if(!_uploaded)
-                                             {
-                                                logger.error(codeFileName, 'NextButtonPress',
-                                                `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage:Conversation topic. Response: ${this.state.conversationTopic}`);
-                                             }
+//                                             if(!_uploaded)
+//                                             {
+//                                                logger.error(codeFileName, 'NextButtonPress',
+//                                                `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage:Conversation topic. Response: ${this.state.conversationTopic}`);
+//                                             }
 
                                             this.setState({saveWaitVisible:false});
                                         }
