@@ -30,8 +30,9 @@ export const VERSION_NUMBER = '1.0.0';
 export const MIMI_ADVERTISEMENT="Advertisement/reminder for MIMI and suggestion to come back later."
 
 export const WIFI_PERMISSION_MSG = "We will send surveys only when you are connected to your home WiFi."+
-                            " To check for WiFi connection, we will need permission to access your location."+
-                            " Your location data will never be collected.";
+                            " To check for WiFi connection, the app requires your location permission and location sharing "+
+                            "enabled."
+                            " However, we will neither collect nor store this location information.";
 
 export const PERMISSION_OPTIONS=
                [
@@ -44,6 +45,9 @@ export const HOME_WIFI_NOT_CONNECTED = 'We will only send surveys when you are c
                                        ' We will ask about it again when you are connected to WiFi.';
 
 export const INVITATION_CODE_FAIL = 'There was an error saving invitation code. Please try again later.';
+
+export const DONT_DISTURB = 'If there is specific time of the day you do not want to receive surveys,'  +
+                                             ' while connected to the home WiFi, please indicate it below.'
 //****************String constants ********************//
 
 

@@ -7,7 +7,8 @@ import logger from '../controllers/logger';
 import * as RNFS from 'react-native-fs';
 import commonStyle from './Style'
 import utilities from '../controllers/utilities';
-import {LOG_FILE_PATH,USER_SETTINGS_FILE_PATH,WIFI_PERMISSION_MSG,HOME_WIFI_NOT_CONNECTED} from '../controllers/constants';
+import {LOG_FILE_PATH,USER_SETTINGS_FILE_PATH,WIFI_PERMISSION_MSG,
+DONT_DISTURB,HOME_WIFI_NOT_CONNECTED} from '../controllers/constants';
 const codeFileName="userSettings.js";
 import Dialog from 'react-native-dialog';
 import Permissions from 'react-native-permissions';
@@ -325,8 +326,7 @@ static navigationOptions = ({ navigation }) => {
 
 
             <Text style={{color:'black', margin:10, fontSize:20,textAlign: 'center'}}>
-                If there is specific time of the day you do not want to receive surveys,
-                while connected to the home WiFi, please indicate it below.
+                {DONT_DISTURB}
             </Text>
 
             <Text style={{ margin:10, fontSize:18,textAlign: 'center'}}>
