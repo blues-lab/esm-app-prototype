@@ -12,7 +12,7 @@ class Logger extends Component
         {
             if(await !RNFS.exists(LOG_FILE_PATH))
             {
-                await RNFS.writeFile(LOG_FILE_PATH,'Type,File,Function,Message,Time\n');
+                await RNFS.writeFile(LOG_FILE_PATH,'\n');
             }
         }
         catch(error)
@@ -42,7 +42,8 @@ class Logger extends Component
        const _time = this.getDateTime();
        try
        {
-            await  RNFS.appendFile(LOG_FILE_PATH, type +','+ className+','+ funcName+','+ message+','+_time+'\n');
+            const _log = {Type:type, File: className, Function: funcName, Message: message, Time:_time}
+            await  RNFS.appendFile(LOG_FILE_PATH, JSON.stringify(_log)+'\n');
        }
        catch(error)
        {
