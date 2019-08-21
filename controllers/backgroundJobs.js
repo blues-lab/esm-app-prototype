@@ -330,9 +330,24 @@ export async function uploadFiles()
 
     logger.info(codeFileName,'uploadFiles', 'Current app state is '+AppState.currentState+'. Attempting to upload files.');
 
-    const _appStatus = await appStatus.loadStatus();
-    if(Platform.OS=='android')
+    try
     {
-        await uploadFilesAndroid();
+        const _ssid = await NetworkInfo.getSSID();
+
+        if( (_ssid!=null) &&  (_ssid.length>0)  && (_ssid != '<unknown ssid>'))
+        {
+            logger.info(codeFileName, 'uploadFiles', 'Obtained  SSID:'+_ssid+'. Starting to upload files.');
+            _uploadFiles();
+        }
+        else
+        {
+            logger.error(codeFileName, 'uploadFiles', 'Invalid SSID:'+_ssid+'.');
+            return;
+        }
+    }
+    catch(error)
+    {
+        logger.error(codeFileName, 'uploadFiles', 'Failed to upload files: '+error);
+        return;
     }
 }
