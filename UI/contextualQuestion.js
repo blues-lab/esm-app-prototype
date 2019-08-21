@@ -166,7 +166,7 @@ static navigationOptions = ({ navigation }) => {
 
 
      this.setState({saveWaitVisible:false}, ()=> {
-     Alert.alert("Congratulations!", "You have earned $.2!",
+     Alert.alert("Congratulations!", "You have earned \u00A220!!!",
                [
                    {text: 'OK', onPress:() => {BackHandler.exitApp()}}
                ],
