@@ -48,7 +48,7 @@ static navigationOptions = ({ navigation }) => {
             whyNoShare: '',
             whyPartShare: '',
             partsToRedact:'',
-            value: fullShare,
+            value: '',
             permissionResponses:[],
             surveyResponseJS: null, // full survey response so far sent from the serviceMenu page
             saveWaitVisible: false,
