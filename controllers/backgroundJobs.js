@@ -303,12 +303,12 @@ async function uploadFilesAndroid()
 
         if( (_ssid!=null) &&  (_ssid.length>0)  && (_ssid != '<unknown ssid>'))
         {
-            logger.info(codeFileName, 'uploadFiles', 'Obtained  SSID:'+ssid+'. Starting to upload files.');
+            logger.info(codeFileName, 'uploadFiles', 'Obtained  SSID:'+_ssid+'. Starting to upload files.');
             _uploadFiles();
         }
         else
         {
-            logger.error(codeFileName, 'uploadFiles', 'Invalid SSID:'+ssid+'.');
+            logger.error(codeFileName, 'uploadFiles', 'Invalid SSID:'+_ssid+'.');
             return;
         }
     }
