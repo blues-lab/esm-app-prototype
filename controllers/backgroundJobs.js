@@ -294,21 +294,21 @@ async function _uploadFiles()
         logger.error(codeFileName, 'uploadFiles', 'Failed to upload log file.');
      }
 }
-
-async function uploadFilesAndroid()
-{
-    try
-    {
-        const _ssid = await NetworkInfo.getSSID();
-        logger.info(codeFileName, 'uploadFiles', 'SSID:'+_ssid+'. Attempting to upload files.');
-        _uploadFiles();
-    }
-    catch(error)
-    {
-        logger.error(codeFileName, 'uploadFiles', 'Failed to upload files: '+error);
-        return;
-    }
-}
+//
+//async function uploadFilesAndroid()
+//{
+//    try
+//    {
+//        const _ssid = await NetworkInfo.getSSID();
+//        logger.info(codeFileName, 'uploadFiles', 'SSID:'+_ssid+'. Attempting to upload files.');
+//        _uploadFiles();
+//    }
+//    catch(error)
+//    {
+//        logger.error(codeFileName, 'uploadFiles', 'Failed to upload files: '+error);
+//        return;
+//    }
+//}
 
 export async function uploadFiles()
 {
@@ -324,17 +324,8 @@ export async function uploadFiles()
     try
     {
         const _ssid = await NetworkInfo.getSSID();
-
-        if( (_ssid!=null) &&  (_ssid.length>0)  && (_ssid != '<unknown ssid>'))
-        {
-            logger.info(codeFileName, 'uploadFiles', 'Obtained  SSID:'+_ssid+'. Starting to upload files.');
-            _uploadFiles();
-        }
-        else
-        {
-            logger.error(codeFileName, 'uploadFiles', 'Invalid SSID:'+_ssid+'.');
-            return;
-        }
+        logger.info(codeFileName, 'uploadFiles', 'SSID:'+_ssid+'. Attempting to upload files.');
+        _uploadFiles();
     }
     catch(error)
     {
