@@ -31,7 +31,7 @@ export const MIMI_ADVERTISEMENT="Advertisement/reminder for MIMI and suggestion 
 
 export const WIFI_PERMISSION_MSG = "We will not collect or store your location data."+
                             " However, for the app to send you surveys only when you are at home, you are required to:\n"+
-                            " • grant the app location permission, and \n"+
+                            " • grant the app location permission\n"+
                             " • keep the location sharing enabled at home throughout the study.";
 
 
