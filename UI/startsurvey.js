@@ -7,7 +7,8 @@ import ServiceMenuScreen from './servicemenu';
 import commonStyles from './Style';
 import appStatus from '../controllers/appStatus';
 const codeFileName = 'startsurvey.js';
-import ToolBar from './toolbar'
+import ToolBar from './toolbar';
+import * as RNFS from 'react-native-fs';
 import utilities from '../controllers/utilities';
 
 export default class SurveyStartScreen extends React.Component {
@@ -47,6 +48,19 @@ export default class SurveyStartScreen extends React.Component {
     }
   }
 
+  fileUploadCallBack(success, error=null, data=null)
+  {
+    if(!success)
+    {
+        logger.error(codeFileName, 'fileUploadCallBack',
+        `Failed to upload partial response. Stage:Conversation topic. Saving in file: ${data!=null}`);
+        if(data!=null)
+        {
+            utilities.writeJSONFile(data, RNFS.DocumentDirectoryPath+"/partial-survey--response--"+ Date.now().toString()+'.js',
+                                        codeFileName, "fileUploadCallBack");
+        }
+    }
+  }
 
   render() {
     return (
@@ -107,17 +121,13 @@ export default class SurveyStartScreen extends React.Component {
                                         {
                                             this.setState({saveWaitVisible:true});
                                             const _appStatus  = await appStatus.loadStatus();
-                                            logger.info(codeFileName, 'NextButtonPress', 'Uploading conversation topic and going to AlvaPrompt.');
-                                            const _uploaded = utilities.uploadData(
+                                            logger.info(codeFileName, 'NextButtonPress', 'Uploading partial response and navigating to AlvaPrompt.');
+                                            utilities.uploadData(
                                                     {SurveyID: _appStatus.CurrentSurveyID,
                                                     Stage: 'Conversation topic.',
                                                     PartialResponse: this.state.conversationTopic},
-                                                    _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'NextButtonPress');
-//                                             if(!_uploaded)
-//                                             {
-//                                                logger.error(codeFileName, 'NextButtonPress',
-//                                                `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage:Conversation topic. Response: ${this.state.conversationTopic}`);
-//                                             }
+                                                    _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'NextButtonPress',
+                                                    this.fileUploadCallBack.bind(this));
 
                                             this.setState({saveWaitVisible:false});
                                         }

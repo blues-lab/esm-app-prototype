@@ -86,6 +86,20 @@ static navigationOptions = ({ navigation }) => {
       }
   }
 
+    fileUploadCallBack(success, error=null, data=null)
+    {
+      if(!success)
+      {
+          logger.error(codeFileName, 'fileUploadCallBack',
+          `Failed to upload partial response. Stage:Permission complete. Saving in file: ${data!=null}`);
+          if(data!=null)
+          {
+              utilities.writeJSONFile(data, RNFS.DocumentDirectoryPath+"/partial-survey--response--"+ Date.now().toString()+'.js',
+                                          codeFileName, "fileUploadCallBack");
+          }
+      }
+    }
+
   async saveResponse()
   {
         if(this.state.value.length==0)
@@ -151,16 +165,12 @@ static navigationOptions = ({ navigation }) => {
                 {
                     await this.promisedSetState({saveWaitVisible:true});
                     const _appStatus  = await appStatus.loadStatus();
-                    const _uploaded = utilities.uploadData(
+                    utilities.uploadData(
                             {SurveyID: _appStatus.CurrentSurveyID,
                              Stage: 'Permission complete.',
                              PartialResponse: this.state.surveyResponseJS},
-                            _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'saveResponse');
-//                     if(!_uploaded)
-//                     {
-//                        logger.error(codeFileName, 'saveResponse',
-//                        `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage:Permission complete. Response: ${JSON.stringify(this.state.surveyResponseJS)}`);
-//                     }
+                            _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'saveResponse',
+                            this.fileUploadCallBack.bind(this));
                 }
 
               //go to the contextual question page
@@ -191,7 +201,7 @@ static navigationOptions = ({ navigation }) => {
               <Text style={[commonStyle.questionStyle,{fontSize:22}]}>
                 Would you allow MiMi to access the relevant parts of
                 the conversation you just had to
-                <Text style={{fontWeight:'bold'}}>
+                    <Text style={{fontWeight:'bold'}}>
                 "{this.state.services[this.state.currentServiceIdx].serviceName.toLowerCase()}"
                 </Text>
                 <Text>?</Text>

@@ -353,6 +353,20 @@ export default class ServiceMenuScreen extends React.Component {
       return a;
   }
 
+  fileUploadCallBack(success, error=null, data=null)
+  {
+    if(!success)
+    {
+        logger.error(codeFileName, 'fileUploadCallBack',
+        `Failed to upload partial response. Stage:Services selected. Saving in file: ${data!=null}`);
+        if(data!=null)
+        {
+            utilities.writeJSONFile(data, RNFS.DocumentDirectoryPath+"/partial-survey--response--"+ Date.now().toString()+'.js',
+                                        codeFileName, "fileUploadCallBack");
+        }
+    }
+  }
+
   async showPermissionPage()
   {
     //After service selection is done, show permission page for at most 3 selected services
@@ -393,18 +407,14 @@ export default class ServiceMenuScreen extends React.Component {
           _surveyResponseJS.SelectedServices = this.getSelectedServices();
           const _appStatus  = await appStatus.loadStatus();
 
-          const _uploaded =  utilities.uploadData(
-                  {SurveyID: _appStatus.CurrentSurveyID,
-                   Stage: 'Services selected.',
-                   PartialResponse: _surveyResponseJS},
-                  _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'showPermissionPage');
-//           if(!_uploaded)
-//           {
-//              logger.error(codeFileName, 'showPermissionPage',
-//              `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage: Services selected. Response: ${JSON.stringify(_surveyResponseJS)}`);
-//           }
+          utilities.uploadData(
+              {SurveyID: _appStatus.CurrentSurveyID,
+               Stage: 'Services selected.',
+               PartialResponse: _surveyResponseJS},
+              _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'showPermissionPage',
+              this.fileUploadCallBack.bind(this));
 
-           logger.info(codeFileName, 'showPermissionPage', 'Navigating to permission page')
+           logger.info(codeFileName, 'showPermissionPage', 'Navigating to permission page.')
            await this.promisedSetState({saveWaitVisible:false, surveyResponseJS: _surveyResponseJS, surveyProgress:40});
       }
 
@@ -547,17 +557,15 @@ export default class ServiceMenuScreen extends React.Component {
                           this.setState({saveWaitVisible:true});
                           const _appStatus  = await appStatus.loadStatus();
                           logger.info(codeFileName, 'NoRelevantService.SaveButton.onPress', 'Uploading partial response.');
-                          const _uploaded = await utilities.uploadData(
-                                  {SurveyID: _appStatus.CurrentSurveyID,
-                                   Stage: 'No relevant service selected.',
-                                   PartialResponse: _surveyResponseJS},
-                                  _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'NextButtonPress');
-                           if(!_uploaded)
-                           {
-                              logger.error(codeFileName, 'NoRelevantService.SaveButton.onPress',
-                              `Failed to upload partial response. SurveyID:${_appStatus.CurrentSurveyID}. Stage: No relevant service selected. Response: ${JSON.stringify(_surveyResponseJS)}`);
-                           }
-                           this.setState({saveWaitVisible:false});
+
+                          utilities.uploadData(
+                                        {SurveyID: _appStatus.CurrentSurveyID,
+                                         Stage: 'No relevant service selected.',
+                                         PartialResponse: _surveyResponseJS},
+                                        _appStatus.UUID, 'PartialSurveyResponse', codeFileName, 'NextButtonPress',
+                                        this.fileUploadCallBack.bind(this));
+
+                          this.setState({saveWaitVisible:false});
                       }
 
                     logger.info(codeFileName,'NextButtonPress','Navigating to ContextualQuestion page.')

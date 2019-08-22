@@ -142,13 +142,20 @@ class Utilities extends Component
 
     }
 
-    async uploadData(data, uuid, type, callerClass, callerFunc)
+    async uploadData(data, uuid, type, callerClass, callerFunc, callBackFunc = null)
     {
 
           logger.info(callerClass, callerFunc+"-->uploadData", 'Uploading data. UUID:'+uuid);
-
+          _body = {}
           try
           {
+               _body = JSON.stringify(
+                             {
+                               "uid": uuid,
+                               "client": VERSION_NUMBER,
+                               "key": type,
+                               "value": data,
+                             });
                let response = await fetch
                (
                   'https://mimi.research.icsi.institute/save/',
@@ -158,13 +165,7 @@ class Utilities extends Component
                       Accept: 'application/json',
                       'Content-Type': 'application/json',
                   },
-                  body: JSON.stringify(
-                    {
-                      "uid": uuid,
-                      "client": VERSION_NUMBER,
-                      "key": type,
-                      "value": data,
-                    }),
+                  body: _body,
                   }
                );
 
@@ -173,16 +174,37 @@ class Utilities extends Component
                 if (!response.ok)
                 {
                     logger.error(callerClass, callerFunc+"-->uploadData", 'Error uploading data:'+response.statusText);
-                    return false;
+                    if(callBackFunc!=null)
+                    {
+                        callBackFunc(true);
+                    }
+                    else
+                    {
+                        return true;
+                    }
                 }
           }
           catch (error)
           {
             logger.error(callerClass, callerFunc+"-->uploadData", 'Error uploading data:'+error.message);
-            return false;
+            if(callBackFunc!=null)
+            {
+                callBackFunc(false, error, _body);
+            }
+            else
+            {
+                return false;
+            }
           }
 
-          return true;
+          if(callBackFunc!=null)
+          {
+              callBackFunc(true);
+          }
+          else
+          {
+              return true;
+          }
     }
 
     getDateTime()

@@ -138,7 +138,7 @@ export async function showPrompt()
                     logger.info(codeFileName,"showPrompt", "Survey not completed today. Already "+_appStatus.SurveyCountToday+' surveys were created. Returning');
                     return;
                   }
-                  _createSurvey = (Math.floor(Math.random() * 100) + 1)%2==0;
+                  _createSurvey = true;//(Math.floor(Math.random() * 100) + 1)%2==0;
                   logger.info(codeFileName,"showPrompt", "Randomly creating survey:"+_createSurvey);
 
                   if(_createSurvey)
@@ -146,7 +146,7 @@ export async function showPrompt()
                       _remainingTime = PROMPT_DURATION;
                       notificationController.cancelNotifications();
                       notificationController.showNotification("New survey available!",
-                        "Complete within "+_remainingTime+" minutes to get \u00A220!!!");
+                        "Complete within "+_remainingTime+" minutes to get $1!!!");
 
                       logger.info(codeFileName,"showPrompt", "Created new survey. Updating app status.");
                       const _currentDate = new Date();
@@ -194,7 +194,7 @@ export async function showPrompt()
 
                   notificationController.cancelNotifications();
                   notificationController.showNotification("New survey available!",
-                                                          "Complete within "+_remainingTime+" minutes to get \u00A220!!!");
+                                                          "Complete within "+_remainingTime+" minutes to get $1!!!");
                   logger.info(codeFileName,"showPrompt", "Showing latest notification at: "+new Date());
                   await appStatus.setLastNotificationTime(new Date());
 
@@ -223,7 +223,7 @@ export async function showPrompt()
 
                     notificationController.cancelNotifications();
                     notificationController.showNotification("Survey is still available!",
-                                                            "Complete within "+_remainingTime+" minutes to get \u00A220!!!");
+                                                            "Complete within "+_remainingTime+" minutes to get $1!!!");
                     logger.info(codeFileName,"showPrompt", "Showing latest notification at: "+new Date());
                     await appStatus.setLastNotificationTime(new Date());
                   }
@@ -233,6 +233,33 @@ export async function showPrompt()
       }
 }
 
+
+async function uploadFilesInDir(dirName, fileNamePattern)
+{
+    const _files = await RNFS.readdir(dirName);
+    logger.info(codeFileName, 'uploadFilesInDir', 'Directory:'+dirName+'. Files:'+_files.toString());
+    for(i =0; i< _files.length; i++)
+    {
+        const _file = _files[i];
+        if(_file.startsWith(fileNamePattern))
+        {
+            logger.info(codeFileName,'uploadFilesInDir', 'Uploading survey response file:'+_file);
+            const _filePath = RNFS.DocumentDirectoryPath+'/'+_file;
+            const _fileContent = await RNFS.readFile(_filePath);
+            const _uploaded = await utilities.uploadData( _fileContent, _appStatus.UUID,
+                                            'SurveyResponse', codeFileName, 'uploadFiles');
+             if(_uploaded)
+             {
+                logger.info(codeFileName, 'uploadFilesInDir', 'Uploaded file content for:'+_file+'. Removing file.');
+                await RNFS.unlink(_filePath);
+             }
+             else
+             {
+                logger.error(codeFileName, 'uploadFilesInDir', 'Failed to upload file:'+_file);
+             }
+        }
+    }
+}
 
 async function _uploadFiles()
 {
@@ -254,30 +281,12 @@ async function _uploadFiles()
          }
     }
 
-    //check if there is any survey response files, if so, upload them
-    const _files = await RNFS.readdir(RNFS.DocumentDirectoryPath);
-    logger.info(codeFileName, 'uploadFiles', 'Uploading survey response files. Existing files:'+_files.toString());
-    for(i =0; i< _files.length; i++)
-    {
-        const _file = _files[i];
-        if(_file.startsWith('survey--response--'))
-        {
-            logger.info(codeFileName,'uploadFiles', 'Uploading survey response file:'+_file);
-            const _filePath = RNFS.DocumentDirectoryPath+'/'+_file;
-            const _fileContent = await RNFS.readFile(_filePath);
-            const _uploaded = await utilities.uploadData( _fileContent, _appStatus.UUID,
-                                            'SurveyResponse', codeFileName, 'uploadFiles');
-             if(_uploaded)
-             {
-                logger.info(codeFileName, 'uploadFiles', 'Uploaded file content for:'+_file+'. Removing file.');
-                await RNFS.unlink(_filePath);
-             }
-             else
-             {
-                logger.error(codeFileName, 'uploadFiles', 'Failed to upload file:'+_file);
-             }
-        }
-    }
+    //check if there is any survey/partial survey response files, if so, upload them
+    logger.info(codeFileName, 'uploadFiles', 'Attempting to upload survey response files.');
+    await uploadFilesInDir(RNFS.DocumentDirectoryPath,'survey--response--');
+    logger.info(codeFileName, 'uploadFiles', 'Attempting to upload partial survey response files.');
+    await uploadFilesInDir(RNFS.DocumentDirectoryPath,'partial-survey--response--');
+
 
     //upload log file
     logger.info(codeFileName, 'uploadFiles', 'Attempting to upload log file.');
@@ -286,7 +295,7 @@ async function _uploadFiles()
                                     'Log', codeFileName, 'uploadFiles');
      if(_uploaded)
      {
-       // await RNFS.writeFile(LOG_FILE_PATH,'');
+        await RNFS.writeFile(LOG_FILE_PATH,'');
         logger.info(codeFileName, 'uploadFiles', 'Uploaded previous log file content. Replaced with empty file.');
      }
      else
@@ -312,7 +321,7 @@ async function _uploadFiles()
 
 export async function uploadFiles()
 {
-    // check if app in background, otherwise return
+    //return if any survey is ongoing
     const _appStatus = await appStatus.loadStatus();
     if(_appStatus.SURVEY_STATUS==SURVEY_STATUS.ONGOING)
     {
