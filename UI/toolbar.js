@@ -94,7 +94,8 @@ class ToolBar extends React.Component {
 
   async updateTimeDisplay()
   {
-    _appStatus  = await appStatus.loadStatus();
+    try
+    {_appStatus  = await appStatus.loadStatus();
     // update self survey state
     await this.promisedSetState({surveyStatus: _appStatus.SurveyStatus});
 
@@ -161,6 +162,11 @@ class ToolBar extends React.Component {
             }
         }
     }
+    }
+    catch(error)
+    {
+        logger.error(codeFileName, 'updateTimeDisplay', 'Page:'+this.props.title+'. Error:'+error);
+    }
   }
 
   render() {
@@ -197,7 +203,7 @@ class ToolBar extends React.Component {
             }
 
             <Text style={{color:'green',fontSize:20, marginRight:10}}>
-                ${(this.state.completedSurveys * 0.2).toFixed(2)}
+                ${(this.state.completedSurveys * 1).toFixed(1)}
             </Text>
     </View>
 
