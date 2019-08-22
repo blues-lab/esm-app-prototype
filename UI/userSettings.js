@@ -523,6 +523,7 @@ static navigationOptions = ({ navigation }) => {
                  isVisible={this.state.isDateTimePickerVisible}
                  onConfirm={this.handleDatePicked}
                  onCancel={this.hideDateTimePicker}
+                 is24Hour={false}
                  mode='time'
                />
 
