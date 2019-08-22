@@ -228,7 +228,7 @@ static navigationOptions = ({ navigation }) => {
           { (this.state.value == partialShare) &&
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={commonStyle.questionStyle}>
-                    Why would you restrict the access device to access these parts?
+                    Why would you restrict the device to access these parts?
                 </Text>
                 <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
                     onChangeText={(text) => this.setState({ whyPartShare: text })}
