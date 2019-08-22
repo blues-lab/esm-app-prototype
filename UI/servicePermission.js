@@ -91,11 +91,27 @@ static navigationOptions = ({ navigation }) => {
         if(this.state.value.length==0)
         {
             Alert.alert("Error", "Please select an option to continue.");
+            logger.info(codeFileName, 'saveResponse', 'No permission option selected. Returning');
             return;
         }
-
-        //TODO: make the text inputs mandatory
-        //TODO: am-pm in settings page
+        if(this.state.value == partialShare)
+        {
+            if(this.state.whyPartShare.length==0 || this.state.partsToRedact.length==0)
+            {
+                Alert.alert("Error", "Please answer all questions to continue.");
+                logger.info(codeFileName, 'saveResponse', 'Not all questions regarding partial share is answered. Returning');
+                return;
+            }
+        }
+        if(this.state.value == noShare)
+        {
+            if(this.state.whyNoShare.length==0)
+            {
+                Alert.alert("Error", "Please answer all questions to continue.");
+                logger.info(codeFileName, 'saveResponse', 'Not all questions regarding no share is answered. Returning');
+                return;
+            }
+        }
 
         const _permissionResponse= {
                   "ServiceCategory": this.state.services[this.state.currentServiceIdx].categoryName,
