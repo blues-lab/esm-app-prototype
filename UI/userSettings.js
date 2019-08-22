@@ -261,6 +261,25 @@ static navigationOptions = ({ navigation }) => {
 
   }
 
+  convertTime(time)
+  {
+    _hour = Number(time.split(":")[0])
+    _min = time.split(":")[1]
+
+    if(_hour==12)
+    {
+        return (_hour).toString()+":"+_min+" pm";
+    }
+    else if(_hour>=13)
+    {
+        return (_hour - 12).toString()+":"+_min+" pm";
+    }
+    else
+    {
+        return (_hour).toString()+":"+_min+" am";
+    }
+  }
+
   render() {
 
     return (
@@ -301,7 +320,7 @@ static navigationOptions = ({ navigation }) => {
                 onPress= {() => {
                       this.setState({afterTimeSelected:true,isDateTimePickerVisible:true})
                 }}>
-              <Text style={styles.timeBoxStyle}>{this.state.afterTime}</Text>
+              <Text style={styles.timeBoxStyle}>{this.convertTime(this.state.afterTime)}</Text>
             </TouchableHighlight>
             <Text style={{ margin:10, fontSize:18,textAlign: 'center'}}>
                             And before
@@ -310,7 +329,7 @@ static navigationOptions = ({ navigation }) => {
                 onPress= {() => {
                       this.setState({afterTimeSelected:false,isDateTimePickerVisible:true})
                 }}>
-              <Text style={styles.timeBoxStyle}>{this.state.beforeTime}</Text>
+              <Text style={styles.timeBoxStyle}>{this.convertTime(this.state.beforeTime)}</Text>
             </TouchableHighlight>
 
 
@@ -598,7 +617,7 @@ const styles = StyleSheet.create({
           marginRight:5
   },
   timeBoxStyle:{
-    width:60,
+    width:80,
     height:20,
     fontSize:18,
     textAlign: 'center'
