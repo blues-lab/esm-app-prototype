@@ -95,6 +95,7 @@ export default class SurveyStartScreen extends React.Component {
                                    borderColor: 'gray',
                                    borderWidth: 1.5,
                                    margin:5,
+                                   textAlignVertical: 'top'
                               }}
                         onChangeText={(text) =>
                                 this.setState({ conversationTopic: text })

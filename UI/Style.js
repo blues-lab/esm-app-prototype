@@ -88,6 +88,7 @@ export default StyleSheet.create({
         paddingBottom:10,
         marginTop:5,
         backgroundColor:'white',
+        textAlignVertical: 'top'
       },
     buttonViewStyle: {
       flex: 1,
