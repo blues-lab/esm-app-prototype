@@ -618,7 +618,7 @@ const styles = StyleSheet.create({
   },
   timeBoxStyle:{
     width:80,
-    height:20,
+    height:25,
     fontSize:18,
     textAlign: 'center'
   },
