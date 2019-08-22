@@ -29,16 +29,17 @@ export const VERSION_NUMBER = '1.0.0';
 //****************String constants ********************//
 export const MIMI_ADVERTISEMENT="Advertisement/reminder for MIMI and suggestion to come back later."
 
-export const WIFI_PERMISSION_MSG = "We will send surveys only when you are connected to your home WiFi."+
-                            " To check for WiFi connection, the app requires your location permission and location sharing "+
-                            "enabled."
-                            " However, we will neither collect nor store this location information.";
+export const WIFI_PERMISSION_MSG = "We will not collect or store your location data."+
+                            " However, for the app to send you surveys only when you are at home, you are required to:\n"+
+                            " • grant the app location permission \n"+
+                            " • keep the location sharing enabled at home throughout the study";
+
 
 export const PERMISSION_OPTIONS=
                [
-                 'Yes, I will allow access to any relevant parts of the conversation.',
-                 'I will only allow access if I could censor certain parts of the relevant conversation.',
-                 'No, I will not allow access to any relevant parts of the conversation.'
+                 'Yes, I will allow access to any relevant parts of the conversation.', // bold: "allow" and "any"
+                 'I will partially restrict access to certain parts of the relevant conversation.', // bold: "partially restrict" and "certain"
+                 'No, I will deny access to any relevant parts of the conversation.' // bold: "deny" and "any"
                ];
 
 export const HOME_WIFI_NOT_CONNECTED = 'We will only send surveys when you are connected to your home WiFi.'+

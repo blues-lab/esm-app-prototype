@@ -88,6 +88,15 @@ static navigationOptions = ({ navigation }) => {
 
   async saveResponse()
   {
+        if(this.state.value.length==0)
+        {
+            Alert.alert("Error", "Please select an option to continue.");
+            return;
+        }
+
+        //TODO: make the text inputs mandatory
+        //TODO: am-pm in settings page
+
         const _permissionResponse= {
                   "ServiceCategory": this.state.services[this.state.currentServiceIdx].categoryName,
                   "ServiceName": this.state.services[this.state.currentServiceIdx].serviceName,
@@ -115,7 +124,7 @@ static navigationOptions = ({ navigation }) => {
                     whyNoShare: '',
                     whyPartShare: '',
                     partsToRedact:'',
-                    value: fullShare,
+                    value: '',
                 });
             this.props.navigation.setParams({surveyProgress: _surveyProgress});
        }
@@ -165,7 +174,11 @@ static navigationOptions = ({ navigation }) => {
           {   this.state.services!=null &&
               <Text style={[commonStyle.questionStyle,{fontSize:22}]}>
                 Would you allow MiMi to access the relevant parts of
-                the conversation to "{this.state.services[this.state.currentServiceIdx].serviceName.toLowerCase()}"?
+                the conversation you just had to
+                <Text style={{fontWeight:'bold'}}>
+                "{this.state.services[this.state.currentServiceIdx].serviceName.toLowerCase()}"
+                </Text>
+                <Text>?</Text>
               </Text>
           }
           {   this.state.services!=null &&
@@ -177,19 +190,19 @@ static navigationOptions = ({ navigation }) => {
                        <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'flex-start'}}>
                          <RadioButton value='fullShare' />
                          <Text style={{fontSize:20}}>
-                            {PERMISSION_OPTIONS[0]}
+                            Yes, I will <Text style={{fontWeight:'bold'}}>allow access</Text><Text> to any relevant parts of the conversation.</Text>
                          </Text>
                        </View>
                        <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'flex-start'}}>
                          <RadioButton value='partialShare'/>
                          <Text style={{fontSize:20}}>
-                            {PERMISSION_OPTIONS[1]}
+                            I will <Text style={{fontWeight:'bold'}}>partially restrict</Text> access to <Text style={{fontWeight:'bold'}}>certain parts</Text> of the relevant conversation.
                          </Text>
                        </View>
                        <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'center'}}>
                         <RadioButton value='noShare'/>
                         <Text style={{fontSize:20}}>
-                            {PERMISSION_OPTIONS[2]}
+                            No, I will <Text style={{fontWeight:'bold'}}>deny</Text> access to <Text style={{fontWeight:'bold'}}>any</Text> relevant parts of the conversation.
                         </Text>
                       </View>
                   </RadioButton.Group>
@@ -199,27 +212,29 @@ static navigationOptions = ({ navigation }) => {
           { (this.state.value == partialShare) &&
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={commonStyle.questionStyle}>
-                    What parts would you not allow the device to access?
+                    Why would you restrict the access device to access these parts?
+                </Text>
+                <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
+                    onChangeText={(text) => this.setState({ whyPartShare: text })}
+                    value={this.state.whyPartShare}
+                />
+
+                <Text style={commonStyle.questionStyle}>
+                    Based on what conditions the access should be restricted?
                 </Text>
                 <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
                     onChangeText={(text) => this.setState({ partsToRedact: text })}
                     value={this.state.partsToRedact}
                 />
 
-                <Text style={commonStyle.questionStyle}>
-                    Why would you not allow the device to access these parts?
-                </Text>
-                 <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
-                    onChangeText={(text) => this.setState({ whyPartShare: text })}
-                    value={this.state.whyPartShare}
-                />
+
             </View>
           }
 
           { (this.state.value == noShare) &&
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={commonStyle.questionStyle}>
-                    Why would you not allow to access the relevant conversation?
+                    Why would you completely deny access to the conversation?
                 </Text>
                 <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
                     onChangeText={(text) => this.setState({ whyNoShare: text })}

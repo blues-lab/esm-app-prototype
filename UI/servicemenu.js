@@ -455,7 +455,9 @@ export default class ServiceMenuScreen extends React.Component {
 
 
             <Text style={commonStyles.questionStyle}>
-              What services could MiMi offer based on your conversation?
+              What services could MiMi offer
+                <Text style={{fontWeight:'500'}}> based on the conversation you just had</Text>
+                <Text>?</Text>
             </Text>
 
 

@@ -197,8 +197,11 @@ static navigationOptions = ({ navigation }) => {
             this.state.surrounding &&
             <View style={styles.verticalViewStyle}>
                 <View style={commonStyle.dividerStyle}>
-                    <Text style={commonStyle.questionStyle}>
-                        Where were you talking? Select all that apply.
+                    <Text style={[commonStyle.questionStyle]}>
+                        <Text>Answer a few questions about the conversion you just had.</Text>
+                        <Text>{"\n"}</Text><Text>{"\n"}</Text>
+                        <Text>Where were you talking?</Text><Text>{"\n"}</Text>
+                        <Text>Select all that apply.</Text>
                     </Text>
                     <Locations locationSelectionHandler={this.locationSelectionHandler.bind(this)} />
                 </View>
@@ -237,7 +240,7 @@ static navigationOptions = ({ navigation }) => {
 
                     <View style={commonStyle.dividerStyle}>
                         <Text style={commonStyle.questionStyle}>
-                            Among people who were talking, were there:
+                            Of the people who were talking, were there:
                         </Text>
                         <View style= {styles.horizontalViewStyle}>
                             <Text style={{margin:10, fontSize:18}}> Children (0-12 years old):</Text>
@@ -258,7 +261,7 @@ static navigationOptions = ({ navigation }) => {
                     <View style={commonStyle.dividerStyle}>
 
                         <Text style={commonStyle.questionStyle}>
-                            Was everyone talking physically present?
+                            Was everyone talking physically present (e.g., rather than talking over the phone)?
                         </Text>
                         <View style= {styles.horizontalViewStyle}>
                             <Text style={{margin:10, fontSize:18}}>No</Text>
