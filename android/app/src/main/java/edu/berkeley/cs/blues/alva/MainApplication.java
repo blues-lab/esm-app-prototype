@@ -3,6 +3,7 @@ package edu.berkeley.cs.blues.alva;;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
 import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
 import com.devstepbcn.wifi.AndroidWifiPackage;
@@ -34,6 +35,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new LocationServicesDialogBoxPackage(),
             new RNNetworkInfoPackage(),
             new RNBackgroundFetchPackage(),
             new AndroidWifiPackage(),
