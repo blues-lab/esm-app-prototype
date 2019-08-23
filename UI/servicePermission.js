@@ -9,7 +9,6 @@ import DialogInput from 'react-native-dialog-input';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import logger from '../controllers/logger';
 import utilities from '../controllers/utilities';
-import {PERMISSION_OPTIONS} from '../controllers/constants';
 const codeFileName="servicePermission.js";
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
