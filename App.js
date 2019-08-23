@@ -31,8 +31,9 @@ import BackgroundFetch from "react-native-background-fetch";
 import backgroundJobs from './controllers/backgroundJobs';
 import notificationController from './controllers/notificationController';
 import {USER_SETTINGS_FILE_PATH,SURVEY_STATUS,
-        MAX_NOTIFICATION_NUM, SERVICE_FILE_ASSET,
-        SERVICE_FILE_LOCAL, SERVICES} from './controllers/constants'
+  MAX_NOTIFICATION_NUM, SERVICE_FILE_ASSET,
+  SERVICE_FILE_LOCAL} from './controllers/constants'
+import {SERVICES} from './controllers/strings'
 import {showPrompt, uploadFiles} from './controllers/backgroundJobs';
 import Permissions from 'react-native-permissions';
 

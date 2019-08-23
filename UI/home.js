@@ -10,7 +10,8 @@ import Dialog from 'react-native-dialog';
 import logger from '../controllers/logger';
 import UUIDGenerator from 'react-native-uuid-generator';
 import appStatus from '../controllers/appStatus';
-import {SURVEY_STATUS, MIMI_ADVERTISEMENT} from '../controllers/constants';
+import {SURVEY_STATUS} from '../controllers/constants';
+import {MIMI_ADVERTISEMENT} from '../controllers/strings'
 import DialogInput from 'react-native-dialog-input';
 //Import UIs
 import SurveyStartScreen from './startsurvey';
@@ -24,7 +25,8 @@ import utilities from '../controllers/utilities';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-import {USER_SETTINGS_FILE_PATH, STUDY_PERIOD, INVITATION_CODE_FILE_PATH, INVITATION_CODE_FAIL} from '../controllers/constants';
+import {USER_SETTINGS_FILE_PATH, STUDY_PERIOD, INVITATION_CODE_FILE_PATH} from '../controllers/constants';
+import {INVITATION_CODE_FAIL} from '../controllers/strings'
 
 
 export default class HomeScreen extends React.Component {

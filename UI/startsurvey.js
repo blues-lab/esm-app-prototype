@@ -10,6 +10,7 @@ const codeFileName = 'startsurvey.js';
 import ToolBar from './toolbar';
 import * as RNFS from 'react-native-fs';
 import utilities from '../controllers/utilities';
+import { TALKING_ABOUT, TALKING_ABOUT_SKIP_HINT, SAVING_WAIT } from '../controllers/strings';
 
 export default class SurveyStartScreen extends React.Component {
 
@@ -81,7 +82,7 @@ export default class SurveyStartScreen extends React.Component {
                         }}>
 
                         <Text style={commonStyles.questionStyle}>
-                          What were you talking about?
+                            {TALKING_ABOUT}
                         </Text>
 
 
@@ -104,7 +105,7 @@ export default class SurveyStartScreen extends React.Component {
                     />
 
                     <Text style={{fontSize:14, fontStyle:'italic', margin:10}}>
-                        Enter 'Prefer not to answer' to skip
+                        {TALKING_ABOUT_SKIP_HINT}
                     </Text>
 
                     <View style={commonStyles.buttonViewStyle}>
@@ -172,7 +173,7 @@ export default class SurveyStartScreen extends React.Component {
               <ProgressDialog
                   visible={this.state.saveWaitVisible}
                   title="MiMi"
-                  message="Saving response. Please, wait..."
+                  message={SAVING_WAIT}
               />
       </View>
     );

@@ -7,8 +7,8 @@ import logger from '../controllers/logger';
 import * as RNFS from 'react-native-fs';
 import commonStyle from './Style'
 import utilities from '../controllers/utilities';
-import {LOG_FILE_PATH,USER_SETTINGS_FILE_PATH,WIFI_PERMISSION_MSG,
-DONT_DISTURB,HOME_WIFI_NOT_CONNECTED} from '../controllers/constants';
+import {USER_SETTINGS_FILE_PATH} from '../controllers/constants';
+import {WIFI_PERMISSION_MSG, DONT_DISTURB, HOME_WIFI_NOT_CONNECTED, HOME_WIFI_PROMPT, NOT_HOME_WIFI, SAVE_CHANGES_PROMPT} from '../controllers/strings';
 const codeFileName="userSettings.js";
 import Dialog from 'react-native-dialog';
 import Permissions from 'react-native-permissions';
@@ -89,10 +89,10 @@ static navigationOptions = ({ navigation }) => {
                   logger.info(codeFileName, 'getHomeSSID', `Connected WiFi:${_ssid}. Asking if this the is Home WiFi.`);
                   Alert.alert(
                   'Home WiFi',
-                    'Is "'+_ssid+'" your home wifi?',
+                    HOME_WIFI_PROMPT(_ssid),
                     [
                       { text: 'NO', onPress: () => {
-                            Alert.alert("Home WiFi","We'll try to ask again, when you connect to another network.");
+                            Alert.alert("Home WiFi", NOT_HOME_WIFI);
                             logger.info(codeFileName, 'getHomeSSID', 'Not connected to home WiFi. Will ask again.');
                       }},
                       {
@@ -177,7 +177,7 @@ static navigationOptions = ({ navigation }) => {
     {
         logger.info(codeFileName, 'handleBackNavigation', "Back button pressed, asking to save settings.");
         Alert.alert(
-          'Do you want to save changes?',
+            SAVE_CHANGES_PROMPT,
             '',
             [
               {text: 'NO', onPress: () =>

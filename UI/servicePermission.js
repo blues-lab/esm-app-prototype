@@ -9,23 +9,17 @@ import DialogInput from 'react-native-dialog-input';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import logger from '../controllers/logger';
 import utilities from '../controllers/utilities';
-import {PERMISSION_OPTIONS} from '../controllers/constants';
 const codeFileName="servicePermission.js";
 const serviceFileAsset= 'services.js';
 const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
 import commonStyle from './Style'
 import ToolBar from './toolbar'
+import { ANSWER_TO_CONTINUE, RESTRICT_WHICH, WHY_DENY, SAVING_WAIT, WOULD_ALLOW_1, RESTRICT_WHY } from '../controllers/strings';
 
 const fullShare= 'fullShare';
 const partialShare= 'partialShare';
 const noShare = 'noShare';
-
- var radioOptions = [
-    {label: 'Yes, I will allow access to any relevant parts of the conversation', value: fullShare },
-    {label: 'I will only allow access if I could censor certain parts of the relevant conversation', value: partialShare },
-    {label: 'No, I will not allow access to any relevant parts of the conversation', value: noShare}
-  ];
 
 export default class ServicePermissionScreen extends React.Component
 {
@@ -112,7 +106,7 @@ static navigationOptions = ({ navigation }) => {
         {
             if(this.state.whyPartShare.length==0 || this.state.partsToRedact.length==0)
             {
-                Alert.alert("Error", "Please answer all questions to continue.");
+                Alert.alert("Error", ANSWER_TO_CONTINUE);
                 logger.info(codeFileName, 'saveResponse', 'Not all questions regarding partial share is answered. Returning');
                 return;
             }
@@ -121,7 +115,7 @@ static navigationOptions = ({ navigation }) => {
         {
             if(this.state.whyNoShare.length==0)
             {
-                Alert.alert("Error", "Please answer all questions to continue.");
+                Alert.alert("Error", ANSWER_TO_CONTINUE);
                 logger.info(codeFileName, 'saveResponse', 'Not all questions regarding no share is answered. Returning');
                 return;
             }
@@ -199,8 +193,7 @@ static navigationOptions = ({ navigation }) => {
 
           {   this.state.services!=null &&
               <Text style={[commonStyle.questionStyle,{fontSize:22}]}>
-                Would you allow MiMi to access the relevant parts of
-                the conversation you just had to <Text> {'"'}</Text>
+                {WOULD_ALLOW_1} <Text> {'"'}</Text>
                     <Text style={{fontWeight:'bold'}}>
                 {this.state.services[this.state.currentServiceIdx].serviceName.trim().toLowerCase()}
                 </Text>
@@ -216,19 +209,19 @@ static navigationOptions = ({ navigation }) => {
                        <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'flex-start'}}>
                          <RadioButton value='fullShare' />
                          <Text style={{fontSize:20}}>
-                            Yes, I will <Text style={{fontWeight:'bold'}}>allow access</Text><Text> to any relevant parts of the conversation.</Text>
+                            Yes, I would <Text style={{fontWeight:'bold'}}>allow access</Text><Text> to any relevant parts of the conversation.</Text>
                          </Text>
                        </View>
                        <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'flex-start'}}>
                          <RadioButton value='partialShare'/>
                          <Text style={{fontSize:20}}>
-                            I will <Text style={{fontWeight:'bold'}}>partially restrict</Text> access to <Text style={{fontWeight:'bold'}}>certain parts</Text> of the relevant conversation.
+                            I would <Text style={{fontWeight:'bold'}}>partially restrict</Text> access to <Text style={{fontWeight:'bold'}}>certain parts</Text> of the relevant conversation.
                          </Text>
                        </View>
                        <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'center'}}>
                         <RadioButton value='noShare'/>
                         <Text style={{fontSize:20}}>
-                            No, I will <Text style={{fontWeight:'bold'}}>deny</Text> access to <Text style={{fontWeight:'bold'}}>any</Text> relevant parts of the conversation.
+                            No, I would <Text style={{fontWeight:'bold'}}>deny</Text> access to <Text style={{fontWeight:'bold'}}>any</Text> relevant parts of the conversation.
                         </Text>
                       </View>
                   </RadioButton.Group>
@@ -238,7 +231,7 @@ static navigationOptions = ({ navigation }) => {
           { (this.state.value == partialShare) &&
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={commonStyle.questionStyle}>
-                    Why would you restrict the device to access these parts?
+                    {RESTRICT_WHY}
                 </Text>
                 <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
                     onChangeText={(text) => this.setState({ whyPartShare: text })}
@@ -246,7 +239,7 @@ static navigationOptions = ({ navigation }) => {
                 />
 
                 <Text style={commonStyle.questionStyle}>
-                    To which specific parts of your conversation you would restrict MiMi's access?
+                    {RESTRICT_WHICH}
                 </Text>
                 <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
                     onChangeText={(text) => this.setState({ partsToRedact: text })}
@@ -260,7 +253,7 @@ static navigationOptions = ({ navigation }) => {
           { (this.state.value == noShare) &&
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={commonStyle.questionStyle}>
-                    Why would you completely deny access to the conversation?
+                    {WHY_DENY}
                 </Text>
                 <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
                     onChangeText={(text) => this.setState({ whyNoShare: text })}
@@ -287,7 +280,7 @@ static navigationOptions = ({ navigation }) => {
       <ProgressDialog
         visible={this.state.saveWaitVisible}
         title="MiMi"
-        message="Saving response. Please, wait..."
+        message={SAVING_WAIT}
       />
     </ScrollView>
 
