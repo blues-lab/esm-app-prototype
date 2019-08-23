@@ -246,7 +246,7 @@ static navigationOptions = ({ navigation }) => {
                 />
 
                 <Text style={commonStyle.questionStyle}>
-                    Based on what conditions the access should be restricted?
+                    To which specific parts of your conversation you would restrict MiMi's access?
                 </Text>
                 <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
                     onChangeText={(text) => this.setState({ partsToRedact: text })}

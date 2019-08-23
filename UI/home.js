@@ -270,8 +270,8 @@ export default class HomeScreen extends React.Component {
                                 alignItems: 'center',
                                 backgroundColor:'lavender',
                                 margin:20}}>
-                    <Text style={{margin:15, fontSize:20, borderBottomColor:'black', borderBottomWidth: StyleSheet.hairlineWidth, padding:5}}>
-                        Sorry, no survey available!
+                    <Text style={{margin:5, fontSize:18, borderBottomColor:'black', borderBottomWidth: StyleSheet.hairlineWidth, padding:5}}>
+                        No survey available yet. Hang tight!
                     </Text>
                     <Text style={{fontSize:16, margin:10, marginTop:10}}>
                         {MIMI_ADVERTISEMENT}
