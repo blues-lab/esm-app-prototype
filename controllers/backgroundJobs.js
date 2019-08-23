@@ -138,7 +138,7 @@ export async function showPrompt()
                     logger.info(codeFileName,"showPrompt", "Survey not completed today. Already "+_appStatus.SurveyCountToday+' surveys were created. Returning');
                     return;
                   }
-                  _createSurvey = true;//(Math.floor(Math.random() * 100) + 1)%2==0;
+                  _createSurvey = (Math.floor(Math.random() * 100) + 1)%2==0;
                   logger.info(codeFileName,"showPrompt", "Randomly creating survey:"+_createSurvey);
 
                   if(_createSurvey)
