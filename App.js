@@ -192,12 +192,14 @@ export default class App extends Component<Props>
     //uploadFiles();
     this.tu=null;
     this.sp=null;
-//    this.tu = setTimeout(uploadFiles, 30*1000);
-    //this.sp = setTimeout(showPrompt, 30*1000);
+    //this.tu = setTimeout(uploadFiles, 60*1000);
+    //this.sp = setTimeout(showPrompt, 20*1000);
+
   }
 
   componentWillUnmount()
   {
+    logger.info(codeFileName, 'componentWillUnmount', 'Removing event listeners.')
     this.tu && clearInterval(this.tu);
     this.sp && clearInterval(this.sp);
   }
