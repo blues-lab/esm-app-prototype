@@ -21,12 +21,20 @@ export const HOME_WIFI_NOT_CONNECTED =
   "We will only send surveys when you are connected to your home WiFi." +
   " We will check again when you are connected to WiFi network.";
 
+export const HOME_WIFI_PROMPT = wifiName =>
+  'Is "' + wifiName + '" your home WiFi?';
+
+export const NOT_HOME_WIFI =
+  "Got it. We'll ask again when you connect to another network.";
+
 export const INVITATION_CODE_FAIL =
   "There was an error saving your invitation code. Please try again later.";
 
 export const DONT_DISTURB =
   "If there is a specific time of day you don't want to receive surveys, " +
   "please indicate it below.";
+
+export const SAVE_CHANGES_PROMPT = "Do you want to save changes?";
 
 export const SERVICES = [
   {
