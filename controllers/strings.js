@@ -11,12 +11,6 @@ export const WIFI_PERMISSION_MSG =
   " • grant the app location permission\n" +
   " • keep location sharing enabled at home throughout the study.";
 
-export const PERMISSION_OPTIONS = [
-  "Yes, I would allow access to any relevant parts of the conversation.", // bold: "allow" and "any"
-  "I would restrict access to certain parts of the relevant conversation.", // bold: "partially restrict" and "certain"
-  "No, I would deny access to any relevant parts of the conversation." // bold: "deny" and "any"
-];
-
 export const HOME_WIFI_NOT_CONNECTED =
   "We will only send surveys when you are connected to your home WiFi." +
   " We will check again when you are connected to WiFi network.";
@@ -51,7 +45,8 @@ export const WOULD_ALLOW_1 =
 
 export const RESTRICT_WHICH =
   "To which specific parts of your conversation would you restrict MiMi's access?";
-export const RESTRICT_WHY = "Why would you restrict the device's access to these parts of your conversation?"
+export const RESTRICT_WHY =
+  "Why would you restrict the device's access to these parts of your conversation?";
 
 export const WHY_DENY =
   "Why would you completely deny access to the conversation?";
