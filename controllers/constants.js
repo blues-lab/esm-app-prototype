@@ -20,14 +20,19 @@ export const APP_STATUS_FILE_PATH = RNFS.DocumentDirectoryPath+'/appStatus.js';
 
 export const LOG_FILE_PATH = RNFS.DocumentDirectoryPath+'/log.csv';
 
-export const STUDY_PERIOD = 3; //study will continue over n days
+export const STUDY_PERIOD = 7; //study will continue over n days
 
 
 export const VERSION_NUMBER = '1.0.0';
 
 
 //****************String constants ********************//
-export const MIMI_ADVERTISEMENT="Advertisement/reminder for MIMI and suggestion to come back later."
+export const MIMI_ADVERTISEMENT="MiMi is an always-listening voice assistant, which is always ready" +
+                    " to help and provide services/suggestions" +
+                    " based on conversations you have with other people at your home without waiting for a wake-word.\n\n" +
+                    "The surveys in this app help to improve MiMi's design."+
+                    " You'll receive a notification when a new surveys becomes available."
+
 
 export const WIFI_PERMISSION_MSG = "We will not collect or store your location data."+
                             " However, for the app to send you surveys only when you are at home, you are required to:\n"+
