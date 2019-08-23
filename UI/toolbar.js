@@ -111,7 +111,10 @@ class ToolBar extends React.Component {
 
     _appStatus  = await appStatus.loadStatus();
     // update self survey state
-    await this.promisedSetState({surveyStatus: _appStatus.SurveyStatus});
+    if(this._isMounted)
+    {
+        await this.promisedSetState({surveyStatus: _appStatus.SurveyStatus});
+    }
 
     if(_appStatus.SurveyStatus != SURVEY_STATUS.ONGOING)
     {//if no survey is ongoing, no point in updating time.
@@ -132,7 +135,10 @@ class ToolBar extends React.Component {
     _minRemaining= Math.floor(_secRemaining/60);
     _secRemaining = Math.floor(_secRemaining%60);
 
-    await this.promisedSetState({secRemaining: _secRemaining, surveyStatus: _appStatus.SurveyStatus});
+    if(this._isMounted)
+    {
+        await this.promisedSetState({secRemaining: _secRemaining, surveyStatus: _appStatus.SurveyStatus});
+    }
 
     if(_secRemaining<=0)
     {
@@ -141,7 +147,10 @@ class ToolBar extends React.Component {
             _minRemaining = _minRemaining-1;
             _secRemaining=59;
 
-            await this.promisedSetState({secRemaining: _secRemaining, minRemaining: _minRemaining});
+            if(this._isMounted)
+            {
+                await this.promisedSetState({secRemaining: _secRemaining, minRemaining: _minRemaining});
+            }
         }
         else
         {
@@ -150,8 +159,10 @@ class ToolBar extends React.Component {
             {
                 clearInterval(this.interval);
             }
-
-            await this.promisedSetState({surveyStatus:SURVEY_STATUS.NOT_AVAILABLE});
+            if(this._isMounted)
+            {
+                await this.promisedSetState({surveyStatus:SURVEY_STATUS.NOT_AVAILABLE});
+            }
 
             _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
             _appStatus.CurrentSurveyID = null;
