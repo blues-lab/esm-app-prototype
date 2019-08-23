@@ -7,7 +7,7 @@ import logger from '../controllers/logger';
 import * as RNFS from 'react-native-fs';
 import commonStyle from './Style'
 import utilities from '../controllers/utilities';
-import {USER_SETTINGS_FILE_PATH,WIFI_PERMISSION_MSG, DONT_DISTURB,HOME_WIFI_NOT_CONNECTED} from '../controllers/constants';
+import {USER_SETTINGS_FILE_PATH} from '../controllers/constants';
 import {WIFI_PERMISSION_MSG, DONT_DISTURB, HOME_WIFI_NOT_CONNECTED, HOME_WIFI_PROMPT, NOT_HOME_WIFI, SAVE_CHANGES_PROMPT} from '../controllers/strings';
 const codeFileName="userSettings.js";
 import Dialog from 'react-native-dialog';
