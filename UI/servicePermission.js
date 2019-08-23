@@ -209,19 +209,19 @@ static navigationOptions = ({ navigation }) => {
                        <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'flex-start'}}>
                          <RadioButton value='fullShare' />
                          <Text style={{fontSize:20}}>
-                            Yes, I will <Text style={{fontWeight:'bold'}}>allow access</Text><Text> to any relevant parts of the conversation.</Text>
+                            Yes, I would <Text style={{fontWeight:'bold'}}>allow access</Text><Text> to any relevant parts of the conversation.</Text>
                          </Text>
                        </View>
                        <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'flex-start'}}>
                          <RadioButton value='partialShare'/>
                          <Text style={{fontSize:20}}>
-                            I will <Text style={{fontWeight:'bold'}}>partially restrict</Text> access to <Text style={{fontWeight:'bold'}}>certain parts</Text> of the relevant conversation.
+                            I would <Text style={{fontWeight:'bold'}}>partially restrict</Text> access to <Text style={{fontWeight:'bold'}}>certain parts</Text> of the relevant conversation.
                          </Text>
                        </View>
                        <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start',alignItems:'center'}}>
                         <RadioButton value='noShare'/>
                         <Text style={{fontSize:20}}>
-                            No, I will <Text style={{fontWeight:'bold'}}>deny</Text> access to <Text style={{fontWeight:'bold'}}>any</Text> relevant parts of the conversation.
+                            No, I would <Text style={{fontWeight:'bold'}}>deny</Text> access to <Text style={{fontWeight:'bold'}}>any</Text> relevant parts of the conversation.
                         </Text>
                       </View>
                   </RadioButton.Group>
