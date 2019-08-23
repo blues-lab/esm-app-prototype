@@ -2,31 +2,31 @@ export const MIMI_ADVERTISEMENT =
   "MiMi is an always-listening voice assistant, which is always ready" +
   " to help and provide services/suggestions" +
   " based on conversations you have with other people at your home without waiting for a wake-word.\n\n" +
-  "The surveys in this app help to improve MiMi's design." +
-  " You'll receive a notification when a new surveys becomes available.";
+  "The surveys in this app help improve MiMi's design." +
+  " You'll receive a notification when a new survey becomes available.";
 
 export const WIFI_PERMISSION_MSG =
   "We will not collect or store your location data." +
-  " However, for the app to send you surveys only when you are at home, you are required to:\n" +
+  " However, for the app to send you surveys only when you are at home, we need you to:\n" +
   " • grant the app location permission\n" +
-  " • keep the location sharing enabled at home throughout the study.";
+  " • keep location sharing enabled at home throughout the study.";
 
 export const PERMISSION_OPTIONS = [
-  "Yes, I will allow access to any relevant parts of the conversation.", // bold: "allow" and "any"
-  "I will partially restrict access to certain parts of the relevant conversation.", // bold: "partially restrict" and "certain"
-  "No, I will deny access to any relevant parts of the conversation." // bold: "deny" and "any"
+  "Yes, I would allow access to any relevant parts of the conversation.", // bold: "allow" and "any"
+  "I would restrict access to certain parts of the relevant conversation.", // bold: "partially restrict" and "certain"
+  "No, I would deny access to any relevant parts of the conversation." // bold: "deny" and "any"
 ];
 
 export const HOME_WIFI_NOT_CONNECTED =
   "We will only send surveys when you are connected to your home WiFi." +
-  " We will ask about it again when you are connected to WiFi.";
+  " We will check again when you are connected to WiFi network.";
 
 export const INVITATION_CODE_FAIL =
-  "There was an error saving invitation code. Please try again later.";
+  "There was an error saving your invitation code. Please try again later.";
 
 export const DONT_DISTURB =
-  "If there is specific time of the day you do not want to receive surveys," +
-  " while connected to the home WiFi, please indicate it below.";
+  "If there is a specific time of day you don't want to receive surveys, " +
+  "please indicate it below.";
 
 export const SERVICES = [
   {
