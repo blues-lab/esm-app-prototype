@@ -200,11 +200,11 @@ static navigationOptions = ({ navigation }) => {
           {   this.state.services!=null &&
               <Text style={[commonStyle.questionStyle,{fontSize:22}]}>
                 Would you allow MiMi to access the relevant parts of
-                the conversation you just had to <Text> </Text>
+                the conversation you just had to <Text> {'"'}</Text>
                     <Text style={{fontWeight:'bold'}}>
-                "{this.state.services[this.state.currentServiceIdx].serviceName.toLowerCase()}"
+                {this.state.services[this.state.currentServiceIdx].serviceName.trim().toLowerCase()}
                 </Text>
-                <Text> ?</Text>
+                <Text>{'"'}?</Text>
               </Text>
           }
           {   this.state.services!=null &&
