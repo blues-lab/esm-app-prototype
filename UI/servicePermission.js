@@ -20,12 +20,6 @@ const fullShare= 'fullShare';
 const partialShare= 'partialShare';
 const noShare = 'noShare';
 
- var radioOptions = [
-    {label: 'Yes, I will allow access to any relevant parts of the conversation', value: fullShare },
-    {label: 'I will only allow access if I could censor certain parts of the relevant conversation', value: partialShare },
-    {label: 'No, I will not allow access to any relevant parts of the conversation', value: noShare}
-  ];
-
 export default class ServicePermissionScreen extends React.Component
 {
 
