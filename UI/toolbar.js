@@ -36,25 +36,28 @@ class ToolBar extends React.Component {
   {
       const _appStatus  = await appStatus.loadStatus();
 
-      await this.promisedSetState({surveyStatus: _appStatus.SurveyStatus,
+      if(this._isMounted)
+      {
+        await this.promisedSetState({surveyStatus: _appStatus.SurveyStatus,
                        completedSurveys: _appStatus.CompletedSurveys});
+      }
 
-        logger.info(codeFileName, 'initToolbar', 'Page:'+this.props.title+'. Progress:'+this.props.progress+'. Current appStatus:'+JSON.stringify(_appStatus));
+        await logger.info(codeFileName, 'initToolbar', 'Page:'+this.props.title+'. Progress:'+this.props.progress+'. Current appStatus:'+JSON.stringify(_appStatus));
 
         if(_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING)
         {
-            logger.info(codeFileName, 'initToolbar', 'Survey status is ONGOING so setting up toolbar to show remaining time.')
+            await logger.info(codeFileName, 'initToolbar', 'Page:'+this.props.title+'. Survey status is ONGOING, setting up toolbar to show remaining time.')
             const _firstNotificationTime = _appStatus.FirstNotificationTime;
 
             if(_firstNotificationTime==null)
             {
-                logger.error(codeFileName, 'initToolbar', 'Fatal error: _firstNotificationTime is null. Returning.');
+                await logger.error(codeFileName, 'initToolbar', 'Page:'+this.props.title+'. Fatal error: _firstNotificationTime is null. Returning.');
                 return;
             }
 
             const _curTime = new Date();
 
-            logger.info(codeFileName, 'initToolbar', 'curTime:'+_curTime+'. _firstNotificationTime:'+_firstNotificationTime);
+            await logger.info(codeFileName, 'initToolbar', 'Page:'+this.props.title+', curTime:'+_curTime+', _firstNotificationTime:'+_firstNotificationTime);
             const _secondsPassed = (_curTime.getTime() - _firstNotificationTime.getTime())/1000;
             const _secRemaining = PROMPT_DURATION * 60 - _secondsPassed;
 
@@ -62,12 +65,17 @@ class ToolBar extends React.Component {
 
             if(this.interval==null)
             {
+                await logger.info(codeFileName, 'initToolbar', 'Page:'+this.props.title+'. Starting timer to update remaining time.');
                 this.interval = setInterval(()=> this.updateTimeDisplay(), 1000)
+            }
+            else
+            {
+                await logger.info(codeFileName, 'initToolbar', 'Page:'+this.props.title+'. Timer to update remaining time is already running.');
             }
         }
         else
         {
-            logger.info(codeFileName, 'initToolbar', 'No survey is ONGOING. Returning.');
+            await logger.info(codeFileName, 'initToolbar', 'Page:'+this.props.title+'. No survey is ONGOING. Returning.');
             return;
         }
 
@@ -75,12 +83,14 @@ class ToolBar extends React.Component {
 
   async componentDidMount()
   {
-     logger.info(codeFileName, 'componentDidMount', 'Page:'+this.props.title+'. Initializing toolbar.');
+     this._isMounted = true;
+     await logger.info(codeFileName, 'componentDidMount', 'Page:'+this.props.title+'. Initializing toolbar.');
      await this.initToolbar();
   }
 
   componentWillUnmount()
   {
+    this._isMounted = false;
     logger.info(codeFileName, 'componentWillUnmount', 'Page:'+this.props.title+'. Removing event listeners.');
     if(this.interval!=null)
     {
@@ -91,12 +101,15 @@ class ToolBar extends React.Component {
   constructor(props)
   {
     super(props);
+    this._isMounted = false;
   }
 
   async updateTimeDisplay()
   {
-    try
-    {_appStatus  = await appStatus.loadStatus();
+    if(this._isMounted)
+    {
+
+    _appStatus  = await appStatus.loadStatus();
     // update self survey state
     await this.promisedSetState({surveyStatus: _appStatus.SurveyStatus});
 
@@ -108,7 +121,7 @@ class ToolBar extends React.Component {
     const _firstNotificationTime = _appStatus.FirstNotificationTime;
     if(_firstNotificationTime==null)
     {
-        await logger.error(codeFileName, 'updateTimeDisplay', 'Fatal error: _firstNotificationTime is null. Returning.');
+        await logger.error(codeFileName, 'updateTimeDisplay', 'Page:'+this.props.title+'. Fatal error: _firstNotificationTime is null. Returning.');
         return;
     }
     const _curTime = new Date();
@@ -150,9 +163,9 @@ class ToolBar extends React.Component {
                         'Survey expired!',
                         'Sorry, the current survey is expired. We will notify you once new surveys become available.',
                         [
-                          {text: 'OK', onPress: () =>
+                          {text: 'OK', onPress: async () =>
                             {
-                              logger.info(codeFileName, "updateTimeDisplay", "Survey expired, exiting app.");
+                              await logger.info(codeFileName, "updateTimeDisplay", 'Page:'+this.props.title+". Survey expired, exiting app.");
                               notificationController.cancelNotifications();
                               BackHandler.exitApp();
                             }
@@ -164,10 +177,7 @@ class ToolBar extends React.Component {
         }
     }
     }
-    catch(error)
-    {
-        await logger.error(codeFileName, 'updateTimeDisplay', 'Page:'+this.props.title+'. Error:'+error);
-    }
+
   }
 
   render() {
