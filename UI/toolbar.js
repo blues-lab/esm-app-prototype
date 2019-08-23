@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 
 import { ProgressBar, Colors } from 'react-native-paper';
+import { SURVEY_EXPIRED } from '../controllers/strings';
 
 class ToolBar extends React.Component {
 
@@ -172,7 +173,7 @@ class ToolBar extends React.Component {
             {
                 Alert.alert(
                         'Survey expired!',
-                        'Sorry, the current survey is expired. We will notify you once new surveys become available.',
+                        SURVEY_EXPIRED,
                         [
                           {text: 'OK', onPress: async () =>
                             {

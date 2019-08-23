@@ -36,6 +36,25 @@ export const DONT_DISTURB =
 
 export const SAVE_CHANGES_PROMPT = "Do you want to save changes?";
 
+export const SURVEY_EXPIRED =
+  "Sorry, the current survey expired. We will notify you once new surveys become available.";
+
+export const TALKING_ABOUT = "What were you talking about?";
+export const TALKING_ABOUT_SKIP_HINT = "Enter 'Prefer not to answer' to skip";
+
+export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
+
+export const SAVING_WAIT = "Saving response. Please wait...";
+
+export const WOULD_ALLOW_1 =
+  "Would you allow MiMi to access the relevant parts of the conversation you just had to";
+
+export const RESTRICT_WHICH =
+  "To which specific parts of your conversation would you restrict MiMi's access?";
+export const RESTRICT_WHY = "Why would you restrict the device's access to these parts of your conversation?"
+
+export const WHY_DENY =
+  "Why would you completely deny access to the conversation?";
 export const SERVICES = [
   {
     services: [

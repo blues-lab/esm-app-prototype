@@ -15,6 +15,7 @@ const serviceFileLocal = RNFS.DocumentDirectoryPath+'/services.js';
 
 import commonStyle from './Style'
 import ToolBar from './toolbar'
+import { ANSWER_TO_CONTINUE, RESTRICT_WHICH, WHY_DENY, SAVING_WAIT, WOULD_ALLOW_1, RESTRICT_WHY } from '../controllers/strings';
 
 const fullShare= 'fullShare';
 const partialShare= 'partialShare';
@@ -105,7 +106,7 @@ static navigationOptions = ({ navigation }) => {
         {
             if(this.state.whyPartShare.length==0 || this.state.partsToRedact.length==0)
             {
-                Alert.alert("Error", "Please answer all questions to continue.");
+                Alert.alert("Error", ANSWER_TO_CONTINUE);
                 logger.info(codeFileName, 'saveResponse', 'Not all questions regarding partial share is answered. Returning');
                 return;
             }
@@ -114,7 +115,7 @@ static navigationOptions = ({ navigation }) => {
         {
             if(this.state.whyNoShare.length==0)
             {
-                Alert.alert("Error", "Please answer all questions to continue.");
+                Alert.alert("Error", ANSWER_TO_CONTINUE);
                 logger.info(codeFileName, 'saveResponse', 'Not all questions regarding no share is answered. Returning');
                 return;
             }
@@ -192,8 +193,7 @@ static navigationOptions = ({ navigation }) => {
 
           {   this.state.services!=null &&
               <Text style={[commonStyle.questionStyle,{fontSize:22}]}>
-                Would you allow MiMi to access the relevant parts of
-                the conversation you just had to <Text> {'"'}</Text>
+                {WOULD_ALLOW_1} <Text> {'"'}</Text>
                     <Text style={{fontWeight:'bold'}}>
                 {this.state.services[this.state.currentServiceIdx].serviceName.trim().toLowerCase()}
                 </Text>
@@ -231,7 +231,7 @@ static navigationOptions = ({ navigation }) => {
           { (this.state.value == partialShare) &&
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={commonStyle.questionStyle}>
-                    Why would you restrict the device to access these parts?
+                    {RESTRICT_WHY}
                 </Text>
                 <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
                     onChangeText={(text) => this.setState({ whyPartShare: text })}
@@ -239,7 +239,7 @@ static navigationOptions = ({ navigation }) => {
                 />
 
                 <Text style={commonStyle.questionStyle}>
-                    To which specific parts of your conversation you would restrict MiMi's access?
+                    {RESTRICT_WHICH}
                 </Text>
                 <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
                     onChangeText={(text) => this.setState({ partsToRedact: text })}
@@ -253,7 +253,7 @@ static navigationOptions = ({ navigation }) => {
           { (this.state.value == noShare) &&
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={commonStyle.questionStyle}>
-                    Why would you completely deny access to the conversation?
+                    {WHY_DENY}
                 </Text>
                 <TextInput multiline={true} numberOfLines={4} style={commonStyle.inputStyle}
                     onChangeText={(text) => this.setState({ whyNoShare: text })}
@@ -280,7 +280,7 @@ static navigationOptions = ({ navigation }) => {
       <ProgressDialog
         visible={this.state.saveWaitVisible}
         title="MiMi"
-        message="Saving response. Please, wait..."
+        message={SAVING_WAIT}
       />
     </ScrollView>
 
