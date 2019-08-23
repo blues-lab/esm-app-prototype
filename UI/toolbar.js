@@ -75,12 +75,13 @@ class ToolBar extends React.Component {
 
   async componentDidMount()
   {
-     logger.info(codeFileName, 'componentDidMount', 'Initializing toolbar.');
+     logger.info(codeFileName, 'componentDidMount', 'Page:'+this.props.title+'. Initializing toolbar.');
      await this.initToolbar();
   }
 
   componentWillUnmount()
   {
+    logger.info(codeFileName, 'componentWillUnmount', 'Page:'+this.props.title+'. Removing event listeners.');
     if(this.interval!=null)
     {
         clearInterval(this.interval);
@@ -107,7 +108,7 @@ class ToolBar extends React.Component {
     const _firstNotificationTime = _appStatus.FirstNotificationTime;
     if(_firstNotificationTime==null)
     {
-        logger.error(codeFileName, 'updateTimeDisplay', 'Fatal error: _firstNotificationTime is null. Returning.');
+        await logger.error(codeFileName, 'updateTimeDisplay', 'Fatal error: _firstNotificationTime is null. Returning.');
         return;
     }
     const _curTime = new Date();
@@ -165,7 +166,7 @@ class ToolBar extends React.Component {
     }
     catch(error)
     {
-        logger.error(codeFileName, 'updateTimeDisplay', 'Page:'+this.props.title+'. Error:'+error);
+        await logger.error(codeFileName, 'updateTimeDisplay', 'Page:'+this.props.title+'. Error:'+error);
     }
   }
 
