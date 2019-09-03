@@ -121,17 +121,9 @@ static navigationOptions = ({ navigation }) => {
         "UIID": _appStatus.UIID,
      }
 
-     logger.info(codeFileName, 'saveResponse', 'Saving survey response and updating app status variables.');
-
      _surveyResponseJS = this.state.surveyResponseJS;
      _surveyResponseJS.ContextualQuestionResponses = _contextResponseJS;
 
-     _appStatus.CompletedSurveys+=1;
-     _appStatus.SurveyStatus = SURVEY_STATUS.COMPLETED;
-     _appStatus.CurrentSurveyID = null;
-     await appStatus.setAppStatus(_appStatus);
-
-     notificationController.cancelNotifications();
 
      logger.info(codeFileName, 'saveResponse', 'Uploading survey response to the server.');
 
@@ -140,7 +132,7 @@ static navigationOptions = ({ navigation }) => {
             _appStatus.UUID, 'SurveyResponse', codeFileName, 'saveResponse');
      if(_uploaded)
      {
-        logger.info(codeFileName, 'saveResponse', 'All done!');
+        logger.info(codeFileName, 'saveResponse', 'Uploading survey response done!');
      }
      else
      {
@@ -149,6 +141,13 @@ static navigationOptions = ({ navigation }) => {
         await utilities.writeJSONFile(_surveyResponseJS, RNFS.DocumentDirectoryPath+"/survey--response--"+ _time+'.js',
                                 codeFileName, "saveResponse");
      }
+
+     logger.info(codeFileName, 'saveResponse', 'Updating app status and cancelling all notifications.');
+     _appStatus.CompletedSurveys+=1;
+     _appStatus.SurveyStatus = SURVEY_STATUS.COMPLETED;
+     _appStatus.CurrentSurveyID = null;
+     await appStatus.setAppStatus(_appStatus);
+     notificationController.cancelNotifications();
 
 
      this.setState({saveWaitVisible:false}, ()=> {
