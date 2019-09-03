@@ -86,32 +86,18 @@ static navigationOptions = ({ navigation }) => {
   }
 
 
-   relationSelectionHandler(selectedRelation, checked)
+   relationSelectionHandler(selectedRelations)
    {
-      if (checked)
-      {
-        this.setState({ selectedRelations: this.state.selectedRelations.add(selectedRelation) });
-      }
-      else
-      {
-        _selectedRelations = this.state.selectedRelations;
-        _selectedRelations.delete(selectedRelation);
-        this.setState({ selectedRelations: _selectedRelations});
-      }
+        this.setState({ selectedRelations: selectedRelations});
+        logger.info(codeFileName, 'relationSelectionHandler',
+            'Currently selected relations:'+Array.from(selectedRelations));
    }
 
-  locationSelectionHandler(selectedLocation, checked)
+  locationSelectionHandler(selectedLocations)
   {
-     if (checked)
-     {
-       this.setState({ selectedLocations: this.state.selectedLocations.add(selectedLocation) });
-     }
-     else
-     {
-       _selectedLocations = this.state.selectedLocations;
-       _selectedLocations.delete(selectedLocation);
-       this.setState({selectedLocations: _selectedLocations});
-     }
+    this.setState({ selectedLocations: selectedLocations});
+    logger.info(codeFileName, 'locationSelectionHandler',
+        'Currently selected locations:'+Array.from(selectedLocations));
   }
 
    async saveResponse()

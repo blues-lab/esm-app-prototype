@@ -32,7 +32,8 @@ export default class Locations extends React.Component {
                  {name: "Bathroom", renderStyle: styles.unselectedStyle, iconName : "checkbox-passive",  selected: false},
                  {name: "Patio/balcony/terrace", renderStyle: styles.unselectedStyle, iconName : "checkbox-passive",  selected: false},
                  {name: "Other", renderStyle: styles.unselectedStyle, iconName : "checkbox-passive",  selected: false},
-             ]
+             ],
+         otherLocationName: '',
         }
 
   constructor(props) 
@@ -73,25 +74,28 @@ export default class Locations extends React.Component {
 
     this.setState({locationNames: _locationNames});
 
-    if(_name != 'Other')
-    {
-        this.props.locationSelectionHandler(_name, _selected);
-    }
-    else
-    {
-        this.props.locationSelectionHandler(this.state.otherLocationName, _selected);
-    }
+    const _selectedLocations = this.getSelectedLocations();
+    logger.info(codeFileName, 'handleSelectionChange',
+        'Invoking call back, selected locations:'+ Array.from(_selectedLocations));
+    this.props.locationSelectionHandler(_selectedLocations);
   }
 
-  unselectOther()
+  getSelectedLocations()
   {
-    //When other is selected but nothing entered, un-select the option
     _locationNames = this.state.locationNames;
-    _locationNames[_locationNames.length-1].selected=false;
-    _locationNames[_locationNames.length-1].renderStyle=styles.unselectedStyle;
-    this.setState({locationNames: _locationNames})
+    _selectedLocations = new Set([]);
+    for(i=0; i<_locationNames.length; i++)
+    {
+        if(_locationNames[i].selected)
+        {
+            if(_locationNames[i].name!='Other')
+            {
+                _selectedLocations.add(_locationNames[i].name);
+            }
+        }
+    }
+    return _selectedLocations;
   }
-
 
 
   render() {
@@ -200,22 +204,38 @@ export default class Locations extends React.Component {
                   hintInput ={""}
                   multiline={true}
                   numberOfLines={4}
+                  initValueTextInput = {this.state.otherLocationName}
                   submitInput={ (inputText) =>
                   {
                         if(inputText.length>0)
                         {
-                            this.props.locationSelectionHandler(inputText,true);
+                            logger.info(codeFileName, 'OtherLocationInputDialog',
+                                'Other location entered:'+inputText);
+                            _selectedLocations = this.getSelectedLocations();
+                            _selectedLocations.add(inputText);
+                            logger.info(codeFileName, 'OtherLocationInputDialog',
+                                'Invoking call back, selected locations:'+ Array.from(_selectedLocations));
+                            this.props.locationSelectionHandler(_selectedLocations);
+
+                            this.setState({otherLocationName: inputText, otherDialogVisible: false});
                         }
-                        else
-                        {
-                            this.unselectOther();
-                        }
-                        this.setState({otherLocationName: inputText, otherDialogVisible: false});
                     }
                   }
                   closeDialog={ () => {
-                     this.unselectOther();
-                    this.setState({otherDialogVisible:false})}
+                    logger.info(codeFileName, 'OtherLocationInputDialog',
+                                            'Other location ('+this.state.otherLocationName+') removed.');
+                    _selectedLocations = this.getSelectedLocations();
+                    _selectedLocations.delete(this.state.otherLocationName);
+                    logger.info(codeFileName, 'OtherLocationInputDialog',
+                        'Invoking call back, selected locations:'+ Array.from(_selectedLocations));
+                    this.props.locationSelectionHandler(_selectedLocations);
+
+                    //Un-select the UI option
+                    _locationNames = this.state.locationNames;
+                    _locationNames[_locationNames.length-1].selected=false;
+                    _locationNames[_locationNames.length-1].iconName="checkbox-passive";
+
+                    this.setState({otherDialogVisible:false, otherLocationName: '', locationNames: _locationNames})}
                    }>
               </DialogInput>
         </View>

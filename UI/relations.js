@@ -74,27 +74,30 @@ export default class Relations extends React.Component {
 
     this.setState({relationNames: _relationNames});
 
-    if(_name != 'Other')
-    {
-        this.props.relationSelectionHandler(_name, _selected);
-    }
-    else
-    {
-        this.props.relationSelectionHandler(this.state.otherRelationName, _selected);
-    }
+    const _selectedRelations = this.getSelectedRelations();
+    logger.info(codeFileName, 'handleSelectionChange',
+        'Invoking call back, selected relations:'+ Array.from(_selectedRelations));
+    this.props.relationSelectionHandler(_selectedRelations);
 
   }
 
-    unselectOther()
+
+  getSelectedRelations()
+  {
+    _relationNames = this.state.relationNames;
+    _selectedRelations = new Set([]);
+    for(i=0; i<_relationNames.length; i++)
     {
-      //When other is selected but nothing entered, un-select the option
-      _relationNames = this.state.relationNames;
-      _relationNames[_relationNames.length-1].selected=false;
-      _relationNames[_relationNames.length-1].renderStyle=styles.unselectedStyle;
-      this.setState({relationNames: _relationNames})
+        if(_relationNames[i].selected)
+        {
+            if(_relationNames[i].name!='Other')
+            {
+                _selectedRelations.add(_relationNames[i].name);
+            }
+        }
     }
-
-
+    return _selectedRelations;
+  }
 
 
   render() {
@@ -211,18 +214,34 @@ export default class Relations extends React.Component {
                   submitInput={ (inputText) => {
                         if(inputText.length>0)
                         {
-                            this.props.relationSelectionHandler(inputText,true);
+                            logger.info(codeFileName, 'OtherRelationInputDialog',
+                                'Other relation entered:'+inputText);
+                            _selectedRelations = this.getSelectedRelations();
+                            _selectedRelations.add(inputText);
+                            logger.info(codeFileName, 'OtherRelationInputDialog',
+                                'Invoking call back, selected relations:'+ Array.from(_selectedRelations));
+                            this.props.relationSelectionHandler(_selectedRelations);
+
+                            this.setState({otherRelationName: inputText, otherDialogVisible: false});
                         }
-                        else
-                        {
-                            this.unselectOther();
-                        }
-                        this.setState({otherRelationName: inputText, otherDialogVisible: false});
                     }
                   }
                   closeDialog={ () => {
-                        this.unselectOther();
-                        this.setState({otherDialogVisible:false});
+                      logger.info(codeFileName, 'OtherRelationInputDialog',
+                            'Other relation ('+this.state.otherRelationName+') removed.');
+
+                      _selectedRelations = this.getSelectedRelations();
+                      _selectedRelations.delete(this.state.otherRelationName);
+                      logger.info(codeFileName, 'OtherRelationInputDialog',
+                          'Invoking call back, selected relations:'+ Array.from(_selectedRelations));
+                      this.props.relationSelectionHandler(_selectedRelations);
+
+                      //Un-select the UI option
+                      _relationNames = this.state.relationNames;
+                      _relationNames[_relationNames.length-1].selected=false;
+                      _relationNames[_relationNames.length-1].iconName="checkbox-passive";
+
+                      this.setState({otherDialogVisible:false, relationNames: _relationNames, otherRelationName:''});
                     }}>
             </DialogInput>
 
