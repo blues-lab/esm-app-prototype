@@ -25,7 +25,7 @@ import utilities from '../controllers/utilities';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-import {USER_SETTINGS_FILE_PATH, STUDY_PERIOD, INVITATION_CODE_FILE_PATH} from '../controllers/constants';
+import {USER_SETTINGS_FILE_PATH, INVITATION_CODE_FILE_PATH} from '../controllers/constants';
 import {INVITATION_CODE_FAIL} from '../controllers/strings'
 
 
@@ -48,6 +48,7 @@ export default class HomeScreen extends React.Component {
                 invitationCodeDialogVisible:false,
                 invitationCode:'',
                 noSurveyDialogVisible: false,
+                studyPeriodEnded: false,
                 };
   }
 
@@ -76,7 +77,7 @@ export default class HomeScreen extends React.Component {
               logger.info(`${codeFileName}`, "'Yes' to recent conversation", " Setting survey status to ONGOING and navigating to StartSurvey");
 
               const _surveyID = 'SurveyID-'+Date.now();
-
+              logger.info(codeFileName, "startSurvey", "Starting new survey with id: "+_surveyID);
               appStatus.setCurrentSurveyID(_surveyID)
                        .then(() =>
                        {
@@ -130,28 +131,16 @@ export default class HomeScreen extends React.Component {
 
                 //Check if study period has ended
                 {
-                    _installationDate = _appStatus.InstallationDate;
-                    logger.info(codeFileName, 'initApp', 'Checking if study period has ended. _installationDate:'+_installationDate)
-                    if(_installationDate==null)
+                    if(utilities.surveyPeriodEnded(_appStatus))
                     {
-                        logger.error(codeFileName, 'initApp', 'Fatal error: installation date is null!!!')
+                        logger.info(codeFileName, 'initApp', "Study period ended. Returning.");
+                        this.setState({studyPeriodEnded:true});
+                        return;
                     }
                     else
                     {
-                        _oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-                        _currDate = new Date();
-                        _diffDays = Math.round(Math.abs((_currDate.getTime() - _installationDate.getTime())/(_oneDay)));
-                        if(_diffDays > STUDY_PERIOD)
-                        {
-                            logger.info(codeFileName, 'initApp', "Survey period ended. Returning");
-                            return;
-                        }
-                        else
-                        {
-                            logger.info(codeFileName, 'initApp', "Still in survey period. "+_diffDays+' days have passed.');
-                        }
+                        logger.info(codeFileName, 'initApp', "Still in study period.");
                     }
-
                 }
 
                 //still in study period, check wifi status and if there is any survey
@@ -288,6 +277,28 @@ export default class HomeScreen extends React.Component {
                           }}/>
                     </TouchableHighlight>
                 </View>
+           }
+
+           { this.state.studyPeriodEnded &&
+               <View style={{  flex: 1,
+                               flexDirection: 'column',
+                               justifyContent: 'flex-start',
+                               alignItems: 'center',
+                               backgroundColor:'lavender',
+                               margin:20}}>
+                   <Text style={{margin:5, fontSize:18, borderBottomColor:'black', borderBottomWidth: StyleSheet.hairlineWidth, padding:5}}>
+                       Study period has ended.
+                   </Text>
+
+                      <TouchableHighlight style ={[commonStyles.buttonTouchHLStyle]}>
+                         <Button title="Close app"
+                             color="#20B2AA"
+                           onPress={() => {
+                             logger.info(codeFileName, "Study ended modal", "Closing app");
+                             BackHandler.exitApp();
+                         }}/>
+                   </TouchableHighlight>
+               </View>
            }
 
              <Dialog.Container visible={this.state.invitationCodeDialogVisible}>

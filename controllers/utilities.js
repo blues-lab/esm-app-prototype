@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, AsyncStorage, Alert} from 'react-native';
 import * as RNFS from 'react-native-fs';
 import logger from './logger';
-import {VERSION_NUMBER} from './constants'
+import {VERSION_NUMBER, STUDY_PERIOD} from './constants'
 
 const codeFileName = 'utilities.js';
 
@@ -205,6 +205,28 @@ class Utilities extends Component
           {
               return true;
           }
+    }
+
+    surveyPeriodEnded(appStatus)
+    {
+        _installationDate = appStatus.InstallationDate;
+        logger.info(codeFileName, 'surveyPeriodEnded', 'Checking if study period has ended. _installationDate:'+_installationDate)
+        if(_installationDate==null)
+        {
+            logger.error(codeFileName, 'surveyPeriodEnded', 'Fatal error: installation date is null!!!');
+            return true;
+        }
+        else
+        {
+            _oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+            _currDate = new Date();
+            _daysPassed = Math.round(Math.abs((_currDate.getTime() - _installationDate.getTime())/(_oneDay)));
+            if(_daysPassed >= STUDY_PERIOD)
+            {
+               return true;
+            }
+        }
+        return false;
     }
 
     getDateTime()

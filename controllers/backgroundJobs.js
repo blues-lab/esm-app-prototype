@@ -70,6 +70,19 @@ export async function showPrompt()
       _appStatus = await appStatus.loadStatus();
       logger.info(codeFileName, "showPrompt", "Current app status:"+JSON.stringify(_appStatus));
 
+      //Check if study period has ended
+      {
+          if(utilities.surveyPeriodEnded(_appStatus))
+          {
+              logger.info(codeFileName, 'showPrompt', "Study period ended. Returning.");
+              return;
+          }
+          else
+          {
+              logger.info(codeFileName, 'showPrompt', "Still in survey period.");
+          }
+      }
+
       _userSettingsData = null;
       try
       {
