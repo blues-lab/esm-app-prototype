@@ -47,7 +47,7 @@ export default class HomeScreen extends React.Component {
     this.state={invitationCodePrompt: "Please enter your invitation code",
                 invitationCodeDialogVisible:false,
                 invitationCode:'',
-                noSurveyDialogVisible: false,
+                noSurveyDialogVisible: true,
                 studyPeriodEnded: false,
                 };
   }
@@ -134,7 +134,7 @@ export default class HomeScreen extends React.Component {
                     if(utilities.surveyPeriodEnded(_appStatus))
                     {
                         logger.info(codeFileName, 'initApp', "Study period ended. Returning.");
-                        this.setState({studyPeriodEnded:true});
+                        this.setState({studyPeriodEnded:true, noSurveyDialogVisible:false});
                         return;
                     }
                     else
