@@ -480,8 +480,6 @@ static navigationOptions = ({ navigation }) => {
                             const _firstLaunch = this.props.navigation.getParam('firstLaunch', false);
                             if(_firstLaunch)
                             {
-                                Alert.alert("Thank you!","Your settings have been saved. We will prompt you when a new survey becomes available.");
-
                                 Alert.alert(
                                   'Thank you!',
                                     "Your settings have been saved. We will prompt you when a new survey becomes available.",
