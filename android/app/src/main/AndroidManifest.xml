@@ -2,6 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="edu.berkeley.cs.blues.alva">
 
+    <!-- Needed for foreground services starting in SDK 28, see https://stackoverflow.com/q/52382710 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- < Only if you're using GCM or localNotificationSchedule() > -->
@@ -58,16 +61,6 @@
             </intent-filter>
         </service>
         <!-- </ Only if you're using GCM or localNotificationSchedule() > -->
-
-        <!-- < Else > -->
-        <service
-            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-        <!-- </Else> -->
 
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
     </application>

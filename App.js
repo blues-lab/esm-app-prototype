@@ -11,7 +11,8 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, AppState, Alert} from 'react-native';
 import * as RNFS from 'react-native-fs';
-import { createStackNavigator, createAppContainer } from 'react-navigation';
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 
 import appStatus from './controllers/appStatus'
 import logger from './controllers/logger';
