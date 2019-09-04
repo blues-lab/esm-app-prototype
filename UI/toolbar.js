@@ -226,7 +226,7 @@ class ToolBar extends React.Component {
             }
 
             <Text style={{color:'green',fontSize:20, marginRight:10}}>
-                ${(this.state.completedSurveys * 1).toFixed(1)}
+                ${(this.state.completedSurveys * 1)}
             </Text>
     </View>
 
