@@ -261,10 +261,10 @@ static navigationOptions = ({ navigation }) => {
 
   }
 
-  convertTime=function(time)
+  convertTime(time)
   {
-    _hour = Number(time.split(":")[0])
-    _min = time.split(":")[1]
+    _hour = Number(time.split(":")[0]);
+    _min = time.split(":")[1];
 
     if(_hour==12)
     {
@@ -282,7 +282,7 @@ static navigationOptions = ({ navigation }) => {
     }
     else
     {
-        return _hour>9?_hour.toString():"0"+_hour.toString()+":"+_min+" am";
+        return (_hour>9?_hour.toString():"0"+_hour.toString()) +":"+_min+" am";
     }
   }
 

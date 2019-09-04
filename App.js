@@ -127,7 +127,7 @@ export default class App extends Component<Props>
     logger.info(codeFileName, 'generateInitialFiles', 'Writing initial files.')
     if(!await RNFS.exists(USER_SETTINGS_FILE_PATH))//write default settings
     {
-        const _settings={ homeWifi: '', askWifi:true, afterTime: '00:00',beforeTime: '00:00'};
+        const _settings={ homeWifi: '', askWifi:true, afterTime: '23:59',beforeTime: '00:01'};
 
         await utilities.writeJSONFile(_settings, USER_SETTINGS_FILE_PATH,
                                         codeFileName, 'generateInitialFiles');
