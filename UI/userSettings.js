@@ -39,8 +39,8 @@ static navigationOptions = ({ navigation }) => {
         isDateTimePickerVisible:false,
         stateSaved: true,
         afterTimeSelected:true, //indicates if the 'after' or 'before' time was selected
-        afterTime: '00:00',
-        beforeTime:'00:00',
+        afterTime: '23:59',
+        beforeTime:'00:01',
         backCallBack: null, // a callback function sent by Home screen
         wifiPermissionDialogVisible:false,
       };
@@ -261,7 +261,7 @@ static navigationOptions = ({ navigation }) => {
 
   }
 
-  convertTime(time)
+  convertTime=function(time)
   {
     _hour = Number(time.split(":")[0])
     _min = time.split(":")[1]
@@ -270,13 +270,19 @@ static navigationOptions = ({ navigation }) => {
     {
         return (_hour).toString()+":"+_min+" pm";
     }
+    else if(_hour==0)
+    {
+        return "12:"+_min+" am";
+    }
     else if(_hour>=13)
     {
-        return (_hour - 12).toString()+":"+_min+" pm";
+        _hour = _hour-12;
+        _hour = _hour>9?_hour.toString():"0"+_hour.toString();
+        return _hour+":"+_min+" pm";
     }
     else
     {
-        return (_hour).toString()+":"+_min+" am";
+        return _hour>9?_hour.toString():"0"+_hour.toString()+":"+_min+" am";
     }
   }
 
