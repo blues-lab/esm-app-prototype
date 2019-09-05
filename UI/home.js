@@ -14,7 +14,6 @@ import {
   AppState
 } from "react-native";
 import * as RNFS from "react-native-fs";
-import PushNotificationAndroid from "react-native-push-notification";
 import notificationController from "../controllers/notificationController";
 import { onAppOpen } from "../controllers/notificationController";
 import AnimatedProgressWheel from "react-native-progress-wheel";
