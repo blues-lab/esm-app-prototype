@@ -6,7 +6,6 @@ import com.facebook.react.ReactApplication;
 import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
 import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
-import com.devstepbcn.wifi.AndroidWifiPackage;
 import io.github.traviskn.rnuuidgenerator.RNUUIDGeneratorPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.staltz.reactnativeandroidlocalnotification.NotificationPackage;
@@ -38,7 +37,6 @@ public class MainApplication extends Application implements ReactApplication {
             new LocationServicesDialogBoxPackage(),
             new RNNetworkInfoPackage(),
             new RNBackgroundFetchPackage(),
-            new AndroidWifiPackage(),
             new RNUUIDGeneratorPackage(),
             new AsyncStoragePackage(),
             new NotificationPackage(),

@@ -156,7 +156,6 @@ dependencies {
     implementation project(':react-native-android-location-services-dialog-box')
     implementation project(':react-native-background-fetch')
     implementation project(':react-native-network-info')
-    implementation project(':react-native-android-wifi')
     implementation project(':react-native-uuid-generator')
     implementation project(':@react-native-community_async-storage')
     implementation project(':react-native-vector-icons')
