@@ -370,6 +370,19 @@ export default class UserSettingsScreen extends React.Component {
           backgroundColor: "lavender"
         }}
       >
+        <Button
+          title="Take the exit survey"
+          color="#20B2AA"
+          onPress={() => {
+            logger.info(
+              codeFileName,
+              "Study ended modal",
+              "Starting exit survey."
+            );
+            this.props.navigation.navigate("ExitSurvey");
+          }}
+        />
+
         {this.state.homeWifi.length > 0 && (
           <Text
             style={{
