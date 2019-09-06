@@ -32,6 +32,7 @@ import ToolBar from "./toolbar";
 
 import logger from "../controllers/logger";
 import utilities from "../controllers/utilities";
+import { SELECTED_SERVICES_FILE } from "../controllers/constants";
 
 const codeFileName = "servicemenu.js";
 
@@ -430,6 +431,33 @@ export default class ServiceMenuScreen extends React.Component {
     _services = this.shuffle(_services);
     _services = _services.slice(0, 3);
 
+    const _selectedServices = this.getSelectedServices();
+    logger.info(
+      codeFileName,
+      "showPermissionPage",
+      "Saving selected services to use in the exit survey."
+    );
+
+    try {
+      if (await !RNFS.exists(SELECTED_SERVICES_FILE)) {
+        await RNFS.writeFile(
+          SELECTED_SERVICES_FILE,
+          JSON.stringify(_selectedServices) + "\n"
+        );
+      } else {
+        RNFS.appendFile(
+          SELECTED_SERVICES_FILE,
+          JSON.stringify(_selectedServices) + "\n"
+        );
+      }
+    } catch (error) {
+      logger.error(
+        codeFileName,
+        "showPermissionPage",
+        "Failed to save selected services: " + error.message
+      );
+    }
+
     logger.info(
       codeFileName,
       "showPermissionPage",
@@ -439,7 +467,7 @@ export default class ServiceMenuScreen extends React.Component {
     {
       await this.promisedSetState({ saveWaitVisible: true });
       _surveyResponseJS = this.state.surveyResponseJS;
-      _surveyResponseJS.SelectedServices = this.getSelectedServices();
+      _surveyResponseJS.SelectedServices = _selectedServices;
       const _appStatus = await appStatus.loadStatus();
 
       utilities.uploadData(

@@ -22,7 +22,7 @@ import logger from "../controllers/logger";
 import UUIDGenerator from "react-native-uuid-generator";
 import appStatus from "../controllers/appStatus";
 import { SURVEY_STATUS } from "../controllers/constants";
-import { MIMI_ADVERTISEMENT } from "../controllers/strings";
+import { MIMI_ADVERTISEMENT, EXIT_SURVEY_INTRO } from "../controllers/strings";
 import DialogInput from "react-native-dialog-input";
 //Import UIs
 import SurveyStartScreen from "./startsurvey";
@@ -64,7 +64,8 @@ export default class HomeScreen extends React.Component {
       invitationCodeDialogVisible: false,
       invitationCode: "",
       noSurveyDialogVisible: true,
-      studyPeriodEnded: false
+      studyPeriodEnded: false,
+      exitSurveyDone: false
     };
   }
 
@@ -174,10 +175,12 @@ export default class HomeScreen extends React.Component {
             logger.info(
               codeFileName,
               "initApp",
-              "Study period ended. Returning."
+              "ESM period ended. Exit survey was done? " +
+                _appStatus.ExitSurveyDone
             );
             this.setState({
               studyPeriodEnded: true,
+              exitSurveyDone: _appStatus.ExitSurveyDone,
               noSurveyDialogVisible: false
             });
             return;
@@ -358,28 +361,80 @@ export default class HomeScreen extends React.Component {
               margin: 20
             }}
           >
-            <Text
-              style={{
-                margin: 5,
-                fontSize: 18,
-                borderBottomColor: "black",
-                borderBottomWidth: StyleSheet.hairlineWidth,
-                padding: 5
-              }}
-            >
-              Study period has ended.
-            </Text>
-
-            <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
-              <Button
-                title="Close app"
-                color="#20B2AA"
-                onPress={() => {
-                  logger.info(codeFileName, "Study ended modal", "Closing app");
-                  BackHandler.exitApp();
+            {!this.state.exitSurveyDone && (
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "column",
+                  alignItems: "center"
                 }}
-              />
-            </TouchableHighlight>
+              >
+                <Text
+                  style={{
+                    margin: 5,
+                    fontSize: 18,
+                    borderBottomColor: "black",
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                    padding: 5
+                  }}
+                >
+                  {EXIT_SURVEY_INTRO}
+                </Text>
+
+                {
+                  <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
+                    <Button
+                      title="Take the exit survey"
+                      color="#20B2AA"
+                      onPress={() => {
+                        logger.info(
+                          codeFileName,
+                          "Study ended modal",
+                          "Starting exit survey."
+                        );
+                        this.props.navigation.navigate("ExitSurvey");
+                      }}
+                    />
+                  </TouchableHighlight>
+                }
+              </View>
+            )}
+
+            {this.state.exitSurveyDone && (
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "column",
+                  alignItems: "center"
+                }}
+              >
+                <Text
+                  style={{
+                    margin: 5,
+                    fontSize: 18,
+                    borderBottomColor: "black",
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                    padding: 5
+                  }}
+                >
+                  Thank you for participating in our study!
+                </Text>
+                <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
+                  <Button
+                    title="Close app"
+                    color="#20B2AA"
+                    onPress={() => {
+                      logger.info(
+                        codeFileName,
+                        "Study ended modal",
+                        "Closing app"
+                      );
+                      BackHandler.exitApp();
+                    }}
+                  />
+                </TouchableHighlight>
+              </View>
+            )}
           </View>
         )}
 

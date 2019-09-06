@@ -32,6 +32,7 @@ class ToolBar extends React.Component {
     secRemaining: null,
     surveyStatus: null,
     completedSurveys: 0,
+    exitSurveyDone: 0,
     appState: AppState.currentState
   };
 
@@ -51,7 +52,8 @@ class ToolBar extends React.Component {
     if (this._isMounted) {
       await this.promisedSetState({
         surveyStatus: _appStatus.SurveyStatus,
-        completedSurveys: _appStatus.CompletedSurveys
+        completedSurveys: _appStatus.CompletedSurveys,
+        exitSurveyDone: Number(_appStatus.ExitSurveyDone)
       });
     }
 
@@ -315,7 +317,7 @@ class ToolBar extends React.Component {
         )}
 
         <Text style={{ color: "green", fontSize: 20, marginRight: 10 }}>
-          ${this.state.completedSurveys * 1}
+          ${this.state.completedSurveys * 1 + this.state.exitSurveyDone}
         </Text>
       </View>
     );

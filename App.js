@@ -32,6 +32,7 @@ import ServiceMenuScreen from "./UI/servicemenu";
 import ServiceDetailsScreen from "./UI/servicedetails";
 import ServicePermissionScreen from "./UI/servicePermission";
 import ContextualQuestionScreen from "./UI/contextualQuestion";
+import ExitSurveyScreen from "./UI/exitSurvey";
 import UserSettingsScreen from "./UI/userSettings";
 import { UserSettingsEntity } from "./UI/userSettings";
 import AlvaPromptScreen from "./UI/alvaPrompt";
@@ -140,7 +141,8 @@ const AppNavigator = createStackNavigator(
     ServiceDetails: ServiceDetailsScreen,
     ServicePermission: ServicePermissionScreen,
     ContextualQuestion: ContextualQuestionScreen,
-    UserSettings: UserSettingsScreen
+    UserSettings: UserSettingsScreen,
+    ExitSurvey: ExitSurveyScreen
   },
   {
     initialRouteName: "Home"

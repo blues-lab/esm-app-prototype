@@ -50,13 +50,24 @@ export const RESTRICT_WHY =
 
 export const WHY_DENY =
   "Why would you completely deny access to the conversation?";
+
+export const EXIT_SURVEY_INTRO =
+  "Thank you for participating in the daily surveys!\n" +
+  "There is one more survey you can take and earn $1!!!";
+
+export const EXIT_SURVEY_CONSENT =
+  "Welcome to the final part of the study! \n\n" +
+  "In this survey, we will ask questions about the importance of " +
+  "the services that you have selected in the past weeks.\n\n" +
+  "This survey will take 8-10 minutes and you will receive $1 for completing it.";
+
 export const SERVICES = [
   {
     services: [
       { serviceName: "Call doctor/hospital" },
       { serviceName: "Call the police/emergency service" },
       { serviceName: "Call/text/email a family member/friend" },
-      { serviceName: "Call/text/email a collegue" },
+      { serviceName: "Call/text/email a colleague" },
       { serviceName: "Call a store/restaurant/office" }
     ],
     categoryName: "Call/email/text"

@@ -19,7 +19,8 @@ class AppStatus {
       InstallationDate: null,
       UUID: null,
       LastSurveyCreationDate: null, //date when the last survey was created. Needed to reset counts.
-      CurrentSurveyID: null
+      CurrentSurveyID: null,
+      ExitSurveyDone: false
     };
   }
 
