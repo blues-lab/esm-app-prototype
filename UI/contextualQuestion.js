@@ -239,7 +239,8 @@ export default class ContextualQuestionScreen extends React.Component {
                 <View style={commonStyle.dividerStyle}>
                   <Text style={[commonStyle.questionStyle]}>
                     <Text>
-                      Answer a few questions about the conversion you just had.
+                      Answer a few questions about the conversation you just
+                      had.
                     </Text>
                     <Text>{"\n"}</Text>
                     <Text>{"\n"}</Text>
