@@ -245,7 +245,7 @@ export default class ServicePermissionScreen extends React.Component {
         >
           {this.state.services != null && (
             <Text style={[commonStyle.questionStyle, { fontSize: 22 }]}>
-              {WOULD_ALLOW_1} <Text> {'"'}</Text>
+              {WOULD_ALLOW_1} <Text>{'"'}</Text>
               <Text style={{ fontWeight: "bold" }}>
                 {this.state.services[this.state.currentServiceIdx].serviceName
                   .trim()
@@ -314,7 +314,7 @@ export default class ServicePermissionScreen extends React.Component {
                   <Text style={{ fontSize: 20 }}>
                     No, I would <Text style={{ fontWeight: "bold" }}>deny</Text>{" "}
                     access to <Text style={{ fontWeight: "bold" }}>any</Text>{" "}
-                    relevant parts of the conversation.
+                    relevant part of the conversation.
                   </Text>
                 </View>
               </RadioButton.Group>
