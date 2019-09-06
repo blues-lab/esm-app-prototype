@@ -111,9 +111,9 @@ export default class AlvaPromptScreen extends React.Component {
                 { fontSize: 24, backgroundColor: "lavender" }
               ]}
             >
-              <Text>Imagine an </Text>
+              <Text>Imagine an</Text>
               <Text style={{ fontWeight: "bold" }}>
-                always-listening voice assistant, 'MiMi,'{" "}
+                always-listening voice assistant, MiMi,{" "}
               </Text>
               <Text>was able to offer you services that were </Text>
               <Text style={{ fontWeight: "bold" }}>relevant </Text>

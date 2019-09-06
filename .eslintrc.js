@@ -21,8 +21,9 @@ module.exports = {
     "lines-between-class-members": 1,
     "import/first": 1,
     "spaced-comment": 0,
-    "prefer-template": 1,
-    "react/jsx-filename-extension": 0
+    "prefer-template": 0,
+    "react/jsx-filename-extension": 0,
+    "react/jsx-one-expression-per-line": 0
   },
   parser: "babel-eslint"
 };
