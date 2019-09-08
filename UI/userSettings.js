@@ -816,27 +816,6 @@ export default class UserSettingsScreen extends React.Component {
                   "Location permission granted. Checking if location sharing is enabled."
                 );
                 if (Platform.OS == "android") {
-                  //                                     LocationServicesDialogBox.checkLocationServicesIsEnabled({
-                  //                                         message: "<h2>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
-                  //                                         ok: "YES",
-                  //                                         cancel: "NO",
-                  //                                         enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => GPS OR NETWORK PROVIDER
-                  //                                         showDialog: true, // false => Opens the Location access page directly
-                  //                                         openLocationServices: true, // false => Directly catch method is called if location services are turned off
-                  //                                         preventOutSideTouch: false, // true => To prevent the location services window from closing when it is clicked outside
-                  //                                         preventBackClick: false, // true => To prevent the location services popup from closing when it is clicked back button
-                  //                                         providerListener: false // true ==> Trigger locationProviderStatusChange listener when the location state changes
-                  //                                     }).then(async function(success) {
-                  //                                         // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
-                  //                                         logger.info(codeFileName, 'LocationPermissionDialog', 'Location sharing is:'+JSON.stringify(success)+'. Getting home wifi name.');
-                  //                                         await this.getHomeSSID();
-                  //                                     }).catch(async (error) => {
-                  //                                         // error.message => "disabled"
-                  //                                         await logger.error(codeFileName, 'LocationPermissionDialog', 'Error:'+error);
-                  //                                         //send log data to the server
-                  //                                         await uploadFiles();
-                  //                                     });
-
                   try {
                     const _locationEnabled = await LocationServicesDialogBox.checkLocationServicesIsEnabled(
                       {
