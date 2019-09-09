@@ -301,31 +301,49 @@ export default class ContextualQuestionScreen extends React.Component {
                       <Text style={commonStyle.questionStyle}>
                         Of the people who were talking, were there:
                       </Text>
-                      <View style={styles.horizontalViewStyle}>
+                      <View style={{ flex: 1, flexDirection: "row" }}>
                         <Text style={{ margin: 10, fontSize: 18 }}>
                           {" "}
                           Children (0-12 years old):
                         </Text>
-                        <Switch
-                          style={{ marginLeft: 10 }}
-                          value={this.state.childrenPresent}
-                          onValueChange={val =>
-                            this.setState({ childrenPresent: val })
-                          }
-                        />
+                        <View
+                          style={{
+                            flex: 1,
+                            flexDirection: "row",
+                            justifyContent: "flex-end",
+                            marginRight: 20
+                          }}
+                        >
+                          <Switch
+                            style={{ marginLeft: 10 }}
+                            value={this.state.childrenPresent}
+                            onValueChange={val =>
+                              this.setState({ childrenPresent: val })
+                            }
+                          />
+                        </View>
                       </View>
-                      <View style={styles.horizontalViewStyle}>
+                      <View style={{ flex: 1, flexDirection: "row" }}>
                         <Text style={{ margin: 10, fontSize: 18 }}>
                           {" "}
                           Adolescents (13-17 years old):
                         </Text>
-                        <Switch
-                          style={{ marginLeft: 10 }}
-                          value={this.state.adolescentPresent}
-                          onValueChange={val =>
-                            this.setState({ adolescentPresent: val })
-                          }
-                        />
+                        <View
+                          style={{
+                            flex: 1,
+                            flexDirection: "row",
+                            justifyContent: "flex-end",
+                            marginRight: 20
+                          }}
+                        >
+                          <Switch
+                            style={{ marginLeft: 10 }}
+                            value={this.state.adolescentPresent}
+                            onValueChange={val =>
+                              this.setState({ adolescentPresent: val })
+                            }
+                          />
+                        </View>
                       </View>
                     </View>
 
