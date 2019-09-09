@@ -79,7 +79,7 @@ export default class ContextualQuestionScreen extends React.Component {
       numOfPeopleCanHear: 0,
       childrenPresent: false,
       adolescentPresent: false,
-      remoteConversation: false,
+      remoteConversation: true,
       contextResponseJS: {}, //holds responses to the contextual questions
       surveyResponseJS: {}, //whole survey response passed by parent
       surrounding: true, //Questions about surrounding people VS participating people
