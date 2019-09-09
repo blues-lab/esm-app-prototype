@@ -92,21 +92,11 @@ export default class HomeScreen extends React.Component {
             logger.info(
               `${codeFileName}`,
               "'Yes' to recent conversation",
-              " Setting survey status to ONGOING and navigating to StartSurvey"
+              "Navigating to StartSurvey page."
             );
 
-            const _surveyID = "SurveyID-" + Date.now();
-            logger.info(
-              codeFileName,
-              "startSurvey",
-              "Starting new survey with id: " + _surveyID
-            );
-            appStatus.setCurrentSurveyID(_surveyID).then(() => {
-              appStatus.setSurveyStatus(SURVEY_STATUS.ONGOING).then(() => {
-                notificationController.cancelNotifications();
-                this.props.navigation.navigate("StartSurvey");
-              });
-            });
+            this.props.navigation.navigate("StartSurvey");
+            notificationController.cancelNotifications();
           }
         },
         {

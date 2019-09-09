@@ -26,6 +26,7 @@ import {
   TALKING_ABOUT_SKIP_HINT,
   SAVING_WAIT
 } from "../controllers/strings";
+import { SURVEY_STATUS } from "../controllers/constants";
 
 export default class SurveyStartScreen extends React.Component {
   _didFocusSubscription;
@@ -45,7 +46,7 @@ export default class SurveyStartScreen extends React.Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     logger.info(codeFileName, "componentDidMount", "Setting event handlers.");
 
     if (Platform.OS == "android") {
@@ -54,6 +55,18 @@ export default class SurveyStartScreen extends React.Component {
         this.onBackButtonPressAndroid.bind(this)
       );
     }
+
+    const _surveyID = "SurveyID-" + Date.now();
+
+    _appStatus = await appStatus.loadStatus();
+    _appStatus.CurrentSurveyID = _surveyID;
+    _appStatus.SurveyStatus = SURVEY_STATUS.ONGOING;
+    await appStatus.setAppStatus(_appStatus);
+    logger.info(
+      codeFileName,
+      "componentDidMount",
+      "Starting new survey with id: " + _surveyID
+    );
   }
 
   onBackButtonPressAndroid = () => {
