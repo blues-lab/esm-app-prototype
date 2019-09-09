@@ -66,7 +66,8 @@ export default class ServicePermissionScreen extends React.Component {
     value: "",
     permissionResponses: [],
     surveyResponseJS: null, // full survey response so far sent from the serviceMenu page
-    saveWaitVisible: false
+    saveWaitVisible: false,
+    followUpQuestions: false
   };
 
   constructor(props) {
@@ -192,7 +193,8 @@ export default class ServicePermissionScreen extends React.Component {
         whyNoShare: "",
         whyPartShare: "",
         partsToRedact: "",
-        value: ""
+        value: "",
+        followUpQuestions: false
       });
       this.props.navigation.setParams({ surveyProgress: _surveyProgress });
     } //no more service, save and upload permission responses
@@ -243,85 +245,105 @@ export default class ServicePermissionScreen extends React.Component {
             backgroundColor: "lavendar"
           }}
         >
-          {this.state.services != null && (
-            <Text style={[commonStyle.questionStyle, { fontSize: 22 }]}>
-              {WOULD_ALLOW_1} <Text>{'"'}</Text>
-              <Text style={{ fontWeight: "bold" }}>
-                {this.state.services[this.state.currentServiceIdx].serviceName
-                  .trim()
-                  .toLowerCase()}
+          {!this.state.followUpQuestions && this.state.services != null && (
+            <View>
+              <Text style={[commonStyle.questionStyle, { fontSize: 22 }]}>
+                {WOULD_ALLOW_1} <Text>{'"'}</Text>
+                <Text style={{ fontWeight: "bold" }}>
+                  {this.state.services[this.state.currentServiceIdx].serviceName
+                    .trim()
+                    .toLowerCase()}
+                </Text>
+                <Text>{'"'}?</Text>
               </Text>
-              <Text>{'"'}?</Text>
-            </Text>
-          )}
-          {this.state.services != null && (
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "flex-start",
-                margin: 10
-              }}
-            >
-              <RadioButton.Group
-                onValueChange={value => this.setState({ value })}
-                value={this.state.value}
+
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
+                  margin: 10
+                }}
               >
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    justifyContent: "flex-start",
-                    alignItems: "flex-start"
+                <RadioButton.Group
+                  onValueChange={value => {
+                    this.setState({ value: value });
                   }}
+                  value={this.state.value}
                 >
-                  <RadioButton value="fullShare" />
-                  <Text style={{ fontSize: 20 }}>
-                    Yes, I would{" "}
-                    <Text style={{ fontWeight: "bold" }}>allow access</Text>
-                    <Text> to any relevant parts of the conversation.</Text>
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    justifyContent: "flex-start",
-                    alignItems: "flex-start"
-                  }}
-                >
-                  <RadioButton value="partialShare" />
-                  <Text style={{ fontSize: 20 }}>
-                    I would{" "}
-                    <Text style={{ fontWeight: "bold" }}>
-                      partially restrict
-                    </Text>{" "}
-                    access to{" "}
-                    <Text style={{ fontWeight: "bold" }}>certain parts</Text> of
-                    the relevant conversation.
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    justifyContent: "flex-start",
-                    alignItems: "center"
-                  }}
-                >
-                  <RadioButton value="noShare" />
-                  <Text style={{ fontSize: 20 }}>
-                    No, I would <Text style={{ fontWeight: "bold" }}>deny</Text>{" "}
-                    access to <Text style={{ fontWeight: "bold" }}>any</Text>{" "}
-                    relevant part of the conversation.
-                  </Text>
-                </View>
-              </RadioButton.Group>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start"
+                    }}
+                  >
+                    <RadioButton value="fullShare" />
+                    <Text style={{ fontSize: 20 }}>
+                      Yes, I would{" "}
+                      <Text style={{ fontWeight: "bold" }}>allow access</Text>
+                      <Text> to any relevant parts of the conversation.</Text>
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start"
+                    }}
+                  >
+                    <RadioButton value="partialShare" />
+                    <Text style={{ fontSize: 20 }}>
+                      I would{" "}
+                      <Text style={{ fontWeight: "bold" }}>
+                        partially restrict
+                      </Text>{" "}
+                      access to{" "}
+                      <Text style={{ fontWeight: "bold" }}>certain parts</Text>{" "}
+                      of the relevant conversation.
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      justifyContent: "flex-start",
+                      alignItems: "center"
+                    }}
+                  >
+                    <RadioButton value="noShare" />
+                    <Text style={{ fontSize: 20 }}>
+                      No, I would{" "}
+                      <Text style={{ fontWeight: "bold" }}>deny</Text> access to{" "}
+                      <Text style={{ fontWeight: "bold" }}>any</Text> relevant
+                      part of the conversation.
+                    </Text>
+                  </View>
+                </RadioButton.Group>
+              </View>
+              <View style={commonStyle.buttonViewStyle}>
+                <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
+                  <Button
+                    onPress={() => {
+                      if (this.state.value == fullShare) {
+                        this.saveResponse();
+                      } else {
+                        this.setState({ followUpQuestions: true });
+                      }
+                    }}
+                    title="Next"
+                    color="#20B2AA"
+                    accessibilityLabel="Next"
+                  />
+                </TouchableHighlight>
+              </View>
             </View>
           )}
 
-          {this.state.value == partialShare && (
+          {this.state.followUpQuestions && this.state.value == partialShare && (
             <View
               style={{
                 flex: 1,
@@ -348,8 +370,7 @@ export default class ServicePermissionScreen extends React.Component {
               />
             </View>
           )}
-
-          {this.state.value == noShare && (
+          {this.state.followUpQuestions && this.state.value == noShare && (
             <View
               style={{
                 flex: 1,
@@ -369,19 +390,21 @@ export default class ServicePermissionScreen extends React.Component {
           )}
         </View>
 
-        <View style={commonStyle.buttonViewStyle}>
-          <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
-            <Button
-              onPress={() => {
-                this.saveResponse();
-                //this.props.navigation.goBack();
-              }}
-              title="Next"
-              color="#20B2AA"
-              accessibilityLabel="Next"
-            />
-          </TouchableHighlight>
-        </View>
+        {this.state.followUpQuestions && (
+          <View style={commonStyle.buttonViewStyle}>
+            <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
+              <Button
+                onPress={() => {
+                  this.saveResponse();
+                }}
+                title="Next"
+                color="#20B2AA"
+                accessibilityLabel="Next"
+              />
+            </TouchableHighlight>
+          </View>
+        )}
+
         <ProgressDialog
           visible={this.state.saveWaitVisible}
           title="MiMi"
