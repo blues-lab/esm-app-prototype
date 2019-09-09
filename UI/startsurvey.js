@@ -46,6 +46,8 @@ export default class SurveyStartScreen extends React.Component {
   }
 
   componentDidMount() {
+    logger.info(codeFileName, "componentDidMount", "Setting event handlers.");
+
     if (Platform.OS == "android") {
       BackHandler.addEventListener(
         "hardwareBackPress",
@@ -60,6 +62,11 @@ export default class SurveyStartScreen extends React.Component {
   };
 
   componentWillUnmount() {
+    logger.info(
+      codeFileName,
+      "componentWillUnmount",
+      "Removing event handlers."
+    );
     if (Platform.OS == "android") {
       BackHandler.removeEventListener(
         "hardwareBackPress",
