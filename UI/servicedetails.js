@@ -30,12 +30,12 @@ import Icon from "react-native-vector-icons/Fontisto";
 export default class ServiceDetailsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
-      title: "Save and return",
+      title: "",
       headerLeft: (
-        <TouchableHighlight>
-          <Button title="<" onPress={navigation.getParam("backHandler")}>
-            {" "}
-          </Button>
+        <TouchableHighlight onPress={navigation.getParam("backHandler")}>
+          <Text style={{ marginLeft: 5, fontSize: 22, color: "blue" }}>
+            {"< Save and return"}
+          </Text>
         </TouchableHighlight>
       )
     };
