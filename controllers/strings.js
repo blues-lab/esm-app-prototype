@@ -67,7 +67,7 @@ export const SERVICES = [
       { serviceName: "Call doctor/hospital" },
       { serviceName: "Call the police/emergency service" },
       { serviceName: "Call/text/email a family member/friend" },
-      { serviceName: "Call/text/email a colleague" },
+      { serviceName: "Call/text/email a collegue" },
       { serviceName: "Call a store/restaurant/office" }
     ],
     categoryName: "Call/email/text"
@@ -128,7 +128,7 @@ export const SERVICES = [
           "Search for health/disease/medical condition related information"
       },
       { serviceName: "Search for the nearest hospital/pharmacy" },
-      { serviceName: "Search for the nearest restaurant/library" },
+      { serviceName: "Search for the nearest restaurant" },
       { serviceName: "Search for food recipe" },
       { serviceName: "Search for song/artist/lyric" },
       {
@@ -141,6 +141,7 @@ export const SERVICES = [
       { serviceName: "Search for job opportunities" },
       { serviceName: "Search for travel info (flights/hotels/rental cars)" },
       { serviceName: "Search for weather information at a location" },
+      { serviceName: "Search for the nearest library" },
       { serviceName: "Search for meanings of a word/term/phrase" }
     ],
     categoryName: "Search for information"
