@@ -329,15 +329,6 @@ export default class ServicePermissionScreen extends React.Component {
                 justifyContent: "center"
               }}
             >
-              <Text style={commonStyle.questionStyle}>{RESTRICT_WHY}</Text>
-              <TextInput
-                multiline={true}
-                numberOfLines={4}
-                style={commonStyle.inputStyle}
-                onChangeText={text => this.setState({ whyPartShare: text })}
-                value={this.state.whyPartShare}
-              />
-
               <Text style={commonStyle.questionStyle}>{RESTRICT_WHICH}</Text>
               <TextInput
                 multiline={true}
@@ -345,6 +336,15 @@ export default class ServicePermissionScreen extends React.Component {
                 style={commonStyle.inputStyle}
                 onChangeText={text => this.setState({ partsToRedact: text })}
                 value={this.state.partsToRedact}
+              />
+
+              <Text style={commonStyle.questionStyle}>{RESTRICT_WHY}</Text>
+              <TextInput
+                multiline={true}
+                numberOfLines={4}
+                style={commonStyle.inputStyle}
+                onChangeText={text => this.setState({ whyPartShare: text })}
+                value={this.state.whyPartShare}
               />
             </View>
           )}
