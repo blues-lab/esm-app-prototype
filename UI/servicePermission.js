@@ -23,6 +23,8 @@ import utilities from "../controllers/utilities";
 const codeFileName = "servicePermission.js";
 const serviceFileAsset = "services.js";
 const serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
+import commonStyles from "./Style";
+import Icon from "react-native-vector-icons/Fontisto";
 
 import commonStyle from "./Style";
 import ToolBar from "./toolbar";
@@ -59,11 +61,10 @@ export default class ServicePermissionScreen extends React.Component {
   state = {
     services: null, //the service list sent from the serviceMenu page
     currentServiceIdx: 0,
-    sharingDecision: fullShare,
+    sharingDecision: "",
     whyNoShare: "",
     whyPartShare: "",
     partsToRedact: "",
-    value: "",
     permissionResponses: [],
     surveyResponseJS: null, // full survey response so far sent from the serviceMenu page
     saveWaitVisible: false,
@@ -72,6 +73,49 @@ export default class ServicePermissionScreen extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this.permissionOptions = [
+      {
+        key: fullShare,
+        value: (
+          <View style={{}}>
+            <Text style={{ fontSize: 20, marginRight: 10, marginBottom: 5 }}>
+              Yes, I would{" "}
+              <Text style={{ fontWeight: "bold" }}>allow access</Text>
+              <Text> to any relevant parts of the conversation.</Text>
+            </Text>
+          </View>
+        )
+      },
+      {
+        key: partialShare,
+        value: (
+          <View>
+            <Text style={{ fontSize: 20, marginRight: 10 }}>
+              I would{" "}
+              <Text style={{ fontWeight: "bold" }}>partially restrict</Text>{" "}
+              access to{" "}
+              <Text style={{ fontWeight: "bold" }}>certain parts</Text> of the
+              relevant conversation.
+            </Text>
+          </View>
+        )
+      },
+      {
+        key: noShare,
+        value: (
+          <View>
+            <Text style={{ fontSize: 20, marginRight: 10 }}>
+              I would{" "}
+              <Text style={{ fontWeight: "bold" }}>partially restrict</Text>{" "}
+              access to{" "}
+              <Text style={{ fontWeight: "bold" }}>certain parts</Text> of the
+              relevant conversation.
+            </Text>
+          </View>
+        )
+      }
+    ];
   }
 
   promisedSetState = newState => {
@@ -124,8 +168,12 @@ export default class ServicePermissionScreen extends React.Component {
     }
   }
 
+  permissionSelectionChangedHandler = async item => {
+    this.setState({ sharingDecision: item.key });
+  };
+
   async saveResponse() {
-    if (this.state.value.length == 0) {
+    if (this.state.sharingDecision.length == 0) {
       Alert.alert("Error", "Please select an option to continue.");
       logger.info(
         codeFileName,
@@ -133,8 +181,14 @@ export default class ServicePermissionScreen extends React.Component {
         "No permission option selected. Returning"
       );
       return;
+    } else {
+      logger.info(
+        codeFileName,
+        "saveResponse",
+        `service:${this.state.services[this.state.currentServiceIdx].serviceName}, sharingDecision:${this.state.sharingDecision}`
+      );
     }
-    if (this.state.value == partialShare) {
+    if (this.state.sharingDecision == partialShare) {
       if (
         this.state.whyPartShare.length == 0 ||
         this.state.partsToRedact.length == 0
@@ -148,7 +202,7 @@ export default class ServicePermissionScreen extends React.Component {
         return;
       }
     }
-    if (this.state.value == noShare) {
+    if (this.state.sharingDecision == noShare) {
       if (this.state.whyNoShare.length == 0) {
         Alert.alert("Error", ANSWER_TO_CONTINUE);
         logger.info(
@@ -165,7 +219,7 @@ export default class ServicePermissionScreen extends React.Component {
         .categoryName,
       ServiceName: this.state.services[this.state.currentServiceIdx]
         .serviceName,
-      Sharing: this.state.value,
+      Sharing: this.state.sharingDecision,
       PartsToRedact: this.state.partsToRedact,
       WhyPartShare: this.state.whyPartShare,
       WhyNoShare: this.state.whyNoShare
@@ -193,7 +247,7 @@ export default class ServicePermissionScreen extends React.Component {
         whyNoShare: "",
         whyPartShare: "",
         partsToRedact: "",
-        value: "",
+        sharingDecision: "",
         followUpQuestions: false
       });
       this.props.navigation.setParams({ surveyProgress: _surveyProgress });
@@ -230,6 +284,48 @@ export default class ServicePermissionScreen extends React.Component {
       });
     }
   }
+  flatListItemSeparator = () => {
+    return (
+      <View style={{ height: 0.5, width: "100%", backgroundColor: "grey" }} />
+    );
+  };
+
+  renderListItem = ({ item }) => {
+    return (
+      <TouchableHighlight
+        style={{ backgroundColor: "lavender" }}
+        onPress={this.permissionSelectionChangedHandler.bind(this, item)}
+      >
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            padding: 2,
+            justifyContent: "flex-start"
+          }}
+        >
+          {item.key == this.state.sharingDecision && (
+            <Icon
+              name="radio-btn-active"
+              size={20}
+              color="grey"
+              style={{ margin: 5 }}
+            />
+          )}
+          {item.key != this.state.sharingDecision && (
+            <Icon
+              name="radio-btn-passive"
+              size={20}
+              color="grey"
+              style={{ margin: 5 }}
+            />
+          )}
+
+          <View>{item.value}</View>
+        </View>
+      </TouchableHighlight>
+    );
+  };
 
   render() {
     return (
@@ -257,83 +353,20 @@ export default class ServicePermissionScreen extends React.Component {
                 <Text>{'"'}?</Text>
               </Text>
 
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "flex-start",
-                  margin: 10
-                }}
-              >
-                <RadioButton.Group
-                  onValueChange={value => {
-                    logger.info(
-                      codeFileName,
-                      "RadioButtonClicked",
-                      `Service: ${this.state.services[this.state.currentServiceIdx].serviceName}, permission: ${value} `
-                    );
-                    this.setState({ value: value });
-                  }}
-                  value={this.state.value}
-                >
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      justifyContent: "flex-start",
-                      alignItems: "flex-start"
-                    }}
-                  >
-                    <RadioButton value="fullShare" />
-                    <Text style={{ fontSize: 20 }}>
-                      Yes, I would{" "}
-                      <Text style={{ fontWeight: "bold" }}>allow access</Text>
-                      <Text> to any relevant parts of the conversation.</Text>
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      justifyContent: "flex-start",
-                      alignItems: "flex-start"
-                    }}
-                  >
-                    <RadioButton value="partialShare" />
-                    <Text style={{ fontSize: 20 }}>
-                      I would{" "}
-                      <Text style={{ fontWeight: "bold" }}>
-                        partially restrict
-                      </Text>{" "}
-                      access to{" "}
-                      <Text style={{ fontWeight: "bold" }}>certain parts</Text>{" "}
-                      of the relevant conversation.
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      justifyContent: "flex-start",
-                      alignItems: "center"
-                    }}
-                  >
-                    <RadioButton value="noShare" />
-                    <Text style={{ fontSize: 20 }}>
-                      No, I would{" "}
-                      <Text style={{ fontWeight: "bold" }}>deny</Text> access to{" "}
-                      <Text style={{ fontWeight: "bold" }}>any</Text> relevant
-                      part of the conversation.
-                    </Text>
-                  </View>
-                </RadioButton.Group>
+              <View style={commonStyles.listContainerStyle}>
+                <FlatList
+                  data={this.permissionOptions}
+                  ItemSeparatorComponent={this.flatListItemSeparator}
+                  renderItem={this.renderListItem}
+                  keyExtractor={(item, index) => index.toString()}
+                  extraData={this.state}
+                />
               </View>
               <View style={commonStyle.buttonViewStyle}>
                 <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
                   <Button
                     onPress={() => {
-                      if (this.state.value == fullShare) {
+                      if (this.state.sharingDecision == fullShare) {
                         this.saveResponse();
                       } else {
                         this.setState({ followUpQuestions: true });
@@ -348,51 +381,53 @@ export default class ServicePermissionScreen extends React.Component {
             </View>
           )}
 
-          {this.state.followUpQuestions && this.state.value == partialShare && (
-            <View
-              style={{
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center"
-              }}
-            >
-              <Text style={commonStyle.questionStyle}>{RESTRICT_WHICH}</Text>
-              <TextInput
-                multiline={true}
-                numberOfLines={4}
-                style={commonStyle.inputStyle}
-                onChangeText={text => this.setState({ partsToRedact: text })}
-                value={this.state.partsToRedact}
-              />
+          {this.state.followUpQuestions &&
+            this.state.sharingDecision == partialShare && (
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                <Text style={commonStyle.questionStyle}>{RESTRICT_WHICH}</Text>
+                <TextInput
+                  multiline={true}
+                  numberOfLines={4}
+                  style={commonStyle.inputStyle}
+                  onChangeText={text => this.setState({ partsToRedact: text })}
+                  value={this.state.partsToRedact}
+                />
 
-              <Text style={commonStyle.questionStyle}>{RESTRICT_WHY}</Text>
-              <TextInput
-                multiline={true}
-                numberOfLines={4}
-                style={commonStyle.inputStyle}
-                onChangeText={text => this.setState({ whyPartShare: text })}
-                value={this.state.whyPartShare}
-              />
-            </View>
-          )}
-          {this.state.followUpQuestions && this.state.value == noShare && (
-            <View
-              style={{
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center"
-              }}
-            >
-              <Text style={commonStyle.questionStyle}>{WHY_DENY}</Text>
-              <TextInput
-                multiline={true}
-                numberOfLines={4}
-                style={commonStyle.inputStyle}
-                onChangeText={text => this.setState({ whyNoShare: text })}
-                value={this.state.whyNoShare}
-              />
-            </View>
-          )}
+                <Text style={commonStyle.questionStyle}>{RESTRICT_WHY}</Text>
+                <TextInput
+                  multiline={true}
+                  numberOfLines={4}
+                  style={commonStyle.inputStyle}
+                  onChangeText={text => this.setState({ whyPartShare: text })}
+                  value={this.state.whyPartShare}
+                />
+              </View>
+            )}
+          {this.state.followUpQuestions &&
+            this.state.sharingDecision == noShare && (
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                <Text style={commonStyle.questionStyle}>{WHY_DENY}</Text>
+                <TextInput
+                  multiline={true}
+                  numberOfLines={4}
+                  style={commonStyle.inputStyle}
+                  onChangeText={text => this.setState({ whyNoShare: text })}
+                  value={this.state.whyNoShare}
+                />
+              </View>
+            )}
         </View>
 
         {this.state.followUpQuestions && (
