@@ -112,7 +112,9 @@ export default class HomeScreen extends React.Component {
               {
                 text: "OK",
                 onPress: () => {
-                  BackHandler.exitApp();
+                  if (Platform.OS == "android") {
+                    BackHandler.exitApp();
+                  }
                 }
               }
             ]);
@@ -322,21 +324,23 @@ export default class HomeScreen extends React.Component {
             <Text style={{ fontSize: 16, margin: 10, marginTop: 10 }}>
               {MIMI_ADVERTISEMENT}
             </Text>
-            <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
-              <Button
-                title="Ok, try later!"
-                color="#20B2AA"
-                onPress={() => {
-                  logger.info(
-                    `${codeFileName}`,
-                    "No survey modal",
-                    "Closing app"
-                  );
-                  this.setState({ noSurveyDialogVisible: false });
-                  BackHandler.exitApp();
-                }}
-              />
-            </TouchableHighlight>
+            {Platform.OS == "android" && (
+              <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
+                <Button
+                  title="Ok, try later!"
+                  color="#20B2AA"
+                  onPress={() => {
+                    logger.info(
+                      `${codeFileName}`,
+                      "No survey modal",
+                      "Closing app"
+                    );
+                    this.setState({ noSurveyDialogVisible: false });
+                    BackHandler.exitApp();
+                  }}
+                />
+              </TouchableHighlight>
+            )}
           </View>
         )}
 
@@ -409,20 +413,22 @@ export default class HomeScreen extends React.Component {
                 >
                   Thank you for participating in our study!
                 </Text>
-                <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
-                  <Button
-                    title="Close app"
-                    color="#20B2AA"
-                    onPress={() => {
-                      logger.info(
-                        codeFileName,
-                        "Study ended modal",
-                        "Closing app"
-                      );
-                      BackHandler.exitApp();
-                    }}
-                  />
-                </TouchableHighlight>
+                {Platform.OS == "android" && (
+                  <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
+                    <Button
+                      title="Close app"
+                      color="#20B2AA"
+                      onPress={() => {
+                        logger.info(
+                          codeFileName,
+                          "Study ended modal",
+                          "Closing app"
+                        );
+                        BackHandler.exitApp();
+                      }}
+                    />
+                  </TouchableHighlight>
+                )}
               </View>
             )}
           </View>
@@ -439,13 +445,14 @@ export default class HomeScreen extends React.Component {
               this.setState({ invitationCode: code });
             }}
           />
-
-          <Dialog.Button
-            label="Cancel"
-            onPress={() => {
-              BackHandler.exitApp();
-            }}
-          />
+          {Platform.OS == "android" && (
+            <Dialog.Button
+              label="Cancel"
+              onPress={() => {
+                BackHandler.exitApp();
+              }}
+            />
+          )}
           <Dialog.Button
             label="Save"
             onPress={async () => {
