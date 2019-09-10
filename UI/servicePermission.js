@@ -268,6 +268,11 @@ export default class ServicePermissionScreen extends React.Component {
               >
                 <RadioButton.Group
                   onValueChange={value => {
+                    logger.info(
+                      codeFileName,
+                      "RadioButtonClicked",
+                      `Service: ${this.state.services[this.state.currentServiceIdx].serviceName}, permission: ${value} `
+                    );
                     this.setState({ value: value });
                   }}
                   value={this.state.value}
