@@ -131,19 +131,10 @@ export default class SurveyStartScreen extends React.Component {
           }}
         >
           <Text style={commonStyles.questionStyle}>{TALKING_ABOUT}</Text>
-
           <TextInput
             multiline={true}
             numberOfLines={4}
-            style={{
-              backgroundColor: "white",
-              height: 150,
-              width: Math.round(Dimensions.get("window").width) - 30,
-              borderColor: "gray",
-              borderWidth: 1.5,
-              margin: 5,
-              textAlignVertical: "top"
-            }}
+            style={commonStyles.inputStyle}
             onChangeText={text => this.setState({ conversationTopic: text })}
             value={this.state.conversationTopic}
           />
