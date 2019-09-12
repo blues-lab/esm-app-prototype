@@ -22,8 +22,6 @@ import RadioForm, {
 } from "react-native-simple-radio-button";
 import { ProgressDialog } from "react-native-simple-dialogs";
 
-import DialogInput from "react-native-dialog-input";
-
 import CustomNumericInput from "./customNumericInput";
 
 import { CheckBox } from "react-native-elements";
