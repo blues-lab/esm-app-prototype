@@ -434,103 +434,97 @@ export default class HomeScreen extends React.Component {
           </View>
         )}
 
-        <Dialog.Container visible={this.state.invitationCodeDialogVisible}>
-          <Dialog.Title>{this.state.invitationCodePrompt}</Dialog.Title>
-          <Dialog.Input
-            multiline={true}
-            numberOfLines={1}
-            style={{ height: 300, borderColor: "lightgray", borderWidth: 1 }}
-            value={this.state.invitationCode}
-            onChangeText={code => {
-              this.setState({ invitationCode: code });
-            }}
-          />
-          {Platform.OS == "android" && (
-            <Dialog.Button
-              label="Cancel"
-              onPress={() => {
-                BackHandler.exitApp();
-              }}
-            />
-          )}
-          <Dialog.Button
-            label="Save"
-            onPress={async () => {
-              //TODO: check validity of the code
-              _code = this.state.invitationCode;
-              if (_code.length >= 2 && _code.toLowerCase().startsWith("i")) {
-                logger.info(
-                  codeFileName,
-                  "invitationCodeDialog",
-                  "Entered invitation code:" +
-                    this.state.invitationCode +
-                    ". Writing it to file."
-                );
-                const _written = await utilities.writeJSONFile(
-                  { InvitationCode: _code },
-                  INVITATION_CODE_FILE_PATH,
-                  codeFileName,
-                  "invitationCodeDialog"
-                );
-                if (_written) {
-                  try {
-                    await AsyncStorage.setItem("@HAS_LAUNCHED", "true");
-                    const _uuid = await UUIDGenerator.getRandomUUID();
-                    const _installationDate = new Date();
+        <DialogInput
+          isDialogVisible={this.state.invitationCodeDialogVisible}
+          title={this.state.invitationCodePrompt}
+          submitInput={async code => {
+            await this.promisedSetState({ invitationCode: code });
+            //TODO: check validity of the code
+            _code = this.state.invitationCode;
+            if (_code.length >= 2 && _code.toLowerCase().startsWith("i")) {
+              logger.info(
+                codeFileName,
+                "invitationCodeDialog",
+                "Entered invitation code:" +
+                  this.state.invitationCode +
+                  ". Writing it to file."
+              );
+              const _written = await utilities.writeJSONFile(
+                { InvitationCode: _code },
+                INVITATION_CODE_FILE_PATH,
+                codeFileName,
+                "invitationCodeDialog"
+              );
+              if (_written) {
+                try {
+                  await AsyncStorage.setItem("@HAS_LAUNCHED", "true");
+                  const _uuid = await UUIDGenerator.getRandomUUID();
+                  const _installationDate = new Date();
 
-                    _appStatus = appStatus.loadStatus();
-                    _appStatus.InstallationDate = _installationDate;
-                    _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
-                    _appStatus.UUID = _uuid;
+                  _appStatus = appStatus.loadStatus();
+                  _appStatus.InstallationDate = _installationDate;
+                  _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
+                  _appStatus.UUID = _uuid;
 
-                    logger.info(
-                      codeFileName,
-                      "invitationCodeDialog",
-                      "Setting app status properties."
-                    );
-                    await appStatus.setAppStatus(_appStatus);
-                  } catch (e) {
-                    logger.error(
-                      codeFileName,
-                      "invitationCodeDialog",
-                      "Failed to set installation flag:" + e.message
-                    );
-                  }
-
-                  await this.promisedSetState({
-                    invitationCodeDialogVisible: false
-                  });
                   logger.info(
                     codeFileName,
                     "invitationCodeDialog",
-                    "Navigating to settings page."
+                    "Setting app status properties."
                   );
-                  this.props.navigation.navigate("UserSettings", {
-                    firstLaunch: true,
-                    backCallBack: this.initApp.bind(this)
-                  });
-                } else {
+                  await appStatus.setAppStatus(_appStatus);
+                } catch (e) {
                   logger.error(
                     codeFileName,
                     "invitationCodeDialog",
-                    "Error saving invitation code. Asking to try again."
-                  );
-                  Alert.alert(
-                    "Error",
-                    INVITATION_CODE_FAIL,
-                    [{ text: "OK", onPress: () => BackHandler.exitApp() }],
-                    { cancelable: false }
+                    "Failed to set installation flag:" + e.message
                   );
                 }
-              } else {
-                this.setState({
-                  invitationCodePrompt:
-                    "The code you entered is invalid. Please try again."
+
+                await this.promisedSetState({
+                  invitationCodeDialogVisible: false
                 });
+                logger.info(
+                  codeFileName,
+                  "invitationCodeDialog",
+                  "Navigating to settings page."
+                );
+
+                this.props.navigation.navigate("UserSettings", {
+                  firstLaunch: true,
+                  backCallBack: this.initApp.bind(this)
+                });
+              } else {
+                logger.error(
+                  codeFileName,
+                  "invitationCodeDialog",
+                  "Error saving invitation code. Asking to try again."
+                );
+                Alert.alert(
+                  "Error",
+                  INVITATION_CODE_FAIL,
+                  [{ text: "OK", onPress: () => BackHandler.exitApp() }],
+                  { cancelable: false }
+                );
               }
-            }}
-          />
-        </Dialog.Container>
+            } else {
+              this.setState({
+                invitationCodePrompt:
+                  "The code you entered is invalid. Please try again."
+              });
+            }
+          }}
+          closeDialog={async () => {
+            await this.promisedSetState({ invitationCodeDialogVisible: false });
+            if (Platform.OS == "android") {
+              logger.warn(
+                codeFileName,
+                "invitationCodeDialog.Cancel",
+                "Invalid invitation code. Exiting app."
+              );
+              BackHandler.exitApp();
+            }
+          }}
+        ></DialogInput>
       </View>
     );
   }
