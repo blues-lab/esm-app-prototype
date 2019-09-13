@@ -28,18 +28,19 @@ class Logger extends Component {
       date.getSeconds() > 9 ? date.getSeconds() : "0" + date.getSeconds();
     var time = _hour + ":" + _min + ":" + _sec + ":" + date.getMilliseconds();
 
-    return y + "-" + m + "-" + day + " " + time;
+    return { UTCTime: date, LocalTime: y + "-" + m + "-" + day + " " + time };
   }
 
   async writeLog(type, className, funcName, message) {
-    const _time = this.getDateTime();
+    const dates = this.getDateTime();
     try {
       const _log = {
         Type: type,
         File: className,
         Function: funcName,
         Message: message,
-        Time: _time
+        Time: dates.LocalTime,
+        UTCTime: dates.UTCTime
       };
       await RNFS.appendFile(LOG_FILE_PATH, JSON.stringify(_log) + "\n");
     } catch (error) {
