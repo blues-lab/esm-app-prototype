@@ -65,7 +65,8 @@ export default class HomeScreen extends React.Component {
       invitationCode: "",
       noSurveyDialogVisible: true,
       studyPeriodEnded: false,
-      exitSurveyDone: false
+      exitSurveyDone: false,
+      invitationCodeObtained: false
     };
   }
 
@@ -481,7 +482,8 @@ export default class HomeScreen extends React.Component {
                 }
 
                 await this.promisedSetState({
-                  invitationCodeDialogVisible: false
+                  invitationCodeDialogVisible: false,
+                  invitationCodeObtained: true
                 });
                 logger.info(
                   codeFileName,
@@ -514,14 +516,15 @@ export default class HomeScreen extends React.Component {
             }
           }}
           closeDialog={async () => {
-            await this.promisedSetState({ invitationCodeDialogVisible: false });
-            if (Platform.OS == "android") {
-              logger.warn(
-                codeFileName,
-                "invitationCodeDialog.Cancel",
-                "Invalid invitation code. Exiting app."
-              );
-              BackHandler.exitApp();
+            if (this.state.invitationCodeObtained) {
+              await this.promisedSetState({
+                invitationCodeDialogVisible: false
+              });
+            } else {
+              await this.promisedSetState({
+                invitationCodePrompt:
+                  "An invitation code is required to continue."
+              });
             }
           }}
         ></DialogInput>
