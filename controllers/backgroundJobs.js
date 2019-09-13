@@ -359,7 +359,7 @@ export async function showPrompt() {
           "Changing survey status to NOT_AVAILABLE."
         );
         await appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
-      } else {
+      } else if (_remainingTime >= 15) {
         logger.info(
           codeFileName,
           "showPrompt",
@@ -377,6 +377,14 @@ export async function showPrompt() {
           "Showing latest notification at: " + new Date()
         );
         await appStatus.setLastNotificationTime(new Date());
+      } else {
+        logger.info(
+          codeFileName,
+          "showPrompt",
+          "Remaining time:" +
+            _remainingTime +
+            ". Not showing any new notification."
+        );
       }
     } else if (_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING) {
       //if ongoing and app not in 'active' mode, prompt again
