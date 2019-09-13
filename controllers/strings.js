@@ -61,6 +61,9 @@ export const EXIT_SURVEY_CONSENT =
   "the services that you have selected in the past weeks.\n\n" +
   "This survey will take 8-10 minutes and you will receive $1 for completing it.";
 
+export const LOCATION_SHARE_PROMPT =
+  "To receive survey, please enable location sharing.";
+
 export const SERVICES = [
   {
     services: [

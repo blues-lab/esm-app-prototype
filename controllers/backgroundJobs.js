@@ -25,6 +25,8 @@ import {
   PROMPT_DURATION
 } from "./constants";
 
+import { LOCATION_SHARE_PROMPT } from "./strings";
+
 import { NetworkInfo } from "react-native-network-info";
 
 //if (Platform.OS == 'android') {
@@ -136,6 +138,76 @@ export async function showPrompt() {
 
   //check if home wifi is set and connected to home wifi
   const _ssid = await NetworkInfo.getSSID();
+  if (_ssid == null || _ssid.length == 0 || _ssid == "<unknown ssid>") {
+    logger.info(
+      codeFileName,
+      "showPrompt",
+      "Obtained ssid: " + _ssid + ". Checking if location sharing is enabled."
+    );
+    try {
+      const _locationEnabled = await LocationServicesDialogBox.checkLocationServicesIsEnabled(
+        {
+          showDialog: false, // false => Opens the Location access page directly
+          openLocationServices: false // false => Directly catch method is called if location services are turned off
+        }
+      );
+      logger.info(codeFileName, "showPrompt", JSON.stringify(_locationEnabled));
+      _appStatus.LastLocationAccess = new Date();
+      await appStatus.setAppStatus(_appStatus);
+    } catch (error) {
+      logger.error(
+        codeFileName,
+        "showPrompt",
+        "Error in getting location. May not be enabled."
+      );
+      logger.info(
+        codeFileName,
+        "showPrompt",
+        "AppState:" + AppState.currentState
+      );
+      _showPrompt = false;
+      if (_appStatus.LastLocationAccess == null) {
+        logger.info(
+          codeFileName,
+          "showPrompt",
+          "Last location access time is null."
+        );
+        _showPrompt = true;
+      } else {
+        _hourPassed = Math.floor(
+          (Date.now() - _appStatus.LastLocationAccess) / (60 * 60000)
+        );
+        if (_hourPassed >= 24) {
+          _showPrompt = true;
+        }
+        logger.info(
+          codeFileName,
+          "showPrompt",
+          "Last location access time:" +
+            _appStatus.LastLocationAccess +
+            ". Hours passed:" +
+            _hourPassed
+        );
+      }
+      if (_showPrompt) {
+        logger.info(
+          codeFileName,
+          "showPrompt",
+          "Showing prompt to enable location sharing and returning."
+        );
+        notificationController.cancelNotifications();
+        notificationController.showNotification(
+          "Location",
+          LOCATION_SHARE_PROMPT
+        );
+
+        _appStatus.LastLocationAccess = new Date();
+        await appStatus.setAppStatus(_appStatus);
+        return;
+      }
+    }
+  }
+
   if (
     _userSettingsData.homeWifi.length == 0 ||
     _ssid != _userSettingsData.homeWifi

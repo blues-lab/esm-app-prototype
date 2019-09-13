@@ -20,7 +20,8 @@ class AppStatus {
       UUID: null,
       LastSurveyCreationDate: null, //date when the last survey was created. Needed to reset counts.
       CurrentSurveyID: null,
-      ExitSurveyDone: false
+      ExitSurveyDone: false,
+      LastLocationAccess: null //when was the last time location sharing was enabled.
     };
   }
 
