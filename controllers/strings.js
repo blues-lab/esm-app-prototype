@@ -64,6 +64,29 @@ export const EXIT_SURVEY_CONSENT =
 export const LOCATION_SHARE_PROMPT =
   "To receive survey, please enable location sharing.";
 
+export const MODEL1_FEATURES = [
+  "• used to provide the relevant services",
+  "• stored until the relevant service is provided",
+  "• processed and analyzed directly on the device",
+  "• processed and analyzed by algorithms"
+];
+
+export const MODEL2_FEATURES = [
+  "• used to provide the relevant services and personalized offers from companies other than the manufacturer of the device",
+  "• stored forever",
+  "• processed and analyzed after being sent over the Internet to the manufacturer’s server",
+  "• processed and analyzed by humans"
+];
+
+export const SINGLE_MODEL_INTRO_TEXT =
+  "Suppose you could actually buy a real version of MiMi, which " +
+  "offered the services you suggested during the past week. It would also have additional features." +
+  " To provide them, audio recordings are:";
+export const BOTH_MODEL_INTRO_TEXT =
+  "Suppose you could actually buy a real version of MiMi, which" +
+  " offered the services you suggested during the past week as well as additional features. Imagine" +
+  " there are two models of MiMi.";
+
 export const SERVICES = [
   {
     services: [

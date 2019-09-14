@@ -15,13 +15,19 @@ import {
   BackHandler
 } from "react-native";
 import * as RNFS from "react-native-fs";
-
+import Icon from "react-native-vector-icons/Fontisto";
 import { ProgressDialog } from "react-native-simple-dialogs";
 
 import commonStyle from "./Style";
 import { RadioButton } from "react-native-paper";
 
-import { EXIT_SURVEY_CONSENT } from "../controllers/strings.js";
+import {
+  EXIT_SURVEY_CONSENT,
+  MODEL1_FEATURES,
+  MODEL2_FEATURES,
+  SINGLE_MODEL_INTRO_TEXT,
+  BOTH_MODEL_INTRO_TEXT
+} from "../controllers/strings.js";
 
 import logger from "../controllers/logger";
 
@@ -32,11 +38,13 @@ const codeFileName = "exitSurvey.js";
 import utilities from "../controllers/utilities";
 import { SELECTED_SERVICES_FILE } from "../controllers/constants";
 
-const notUseful = "notUseful";
-const slightUseful = "slightUseful";
-const moderateUseful = "moderateUseful";
-const useful = "useful";
-const veryUseful = "veryUseful";
+const usefulnessOptions = [
+  "Not useful at all",
+  "Slightly useful",
+  "Moderately useful",
+  "Useful",
+  "Very useful"
+];
 
 export default class ExitSurveyScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -50,10 +58,10 @@ export default class ExitSurveyScreen extends React.Component {
     super(props);
 
     this.state = {
-      value: -1,
+      usefulness: "",
       curServiceIdx: 0,
-      consent: true,
-      serviceQuestions: false,
+      consent: false,
+      serviceQuestions: true,
       priceQuestions: false,
       priceCondition: 0,
       selectedServices: [],
@@ -231,6 +239,108 @@ export default class ExitSurveyScreen extends React.Component {
     return !isNaN(num) && !isNaN(parseFloat(num));
   }
 
+  handleUsefulnessSelection = async item => {
+    this.setState({ usefulness: item });
+  };
+
+  renderListItemUsefulness = ({ item }) => {
+    return (
+      <TouchableHighlight
+        style={{ backgroundColor: "lavender" }}
+        onPress={this.handleUsefulnessSelection.bind(this, item)}
+      >
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            padding: 2,
+            justifyContent: "flex-start"
+          }}
+        >
+          {item == this.state.usefulness && (
+            <Icon
+              name="radio-btn-active"
+              size={20}
+              color="grey"
+              style={{ margin: 5 }}
+            />
+          )}
+          {item != this.state.usefulness && (
+            <Icon
+              name="radio-btn-passive"
+              size={20}
+              color="grey"
+              style={{ margin: 5 }}
+            />
+          )}
+
+          <Text style={{ fontSize: 18 }}>{item}</Text>
+        </View>
+      </TouchableHighlight>
+    );
+  };
+
+  flatListItemSeparator = () => {
+    return (
+      <View style={{ height: 0, width: "100%", backgroundColor: "grey" }} />
+    );
+  };
+  renderListItem = ({ item }) => {
+    return <Text style={{ fontSize: 18 }}>{item}</Text>;
+  };
+
+  getModelText(model) {
+    if (model == 2) {
+      return (
+        <View>
+          <Text style={{ fontSize: 20 }}> {BOTH_MODEL_INTRO_TEXT}</Text>
+          <Text style={{ fontSize: 20 }}>
+            To provide them, in
+            <Text style={{ fontWeight: "bold" }}> Model 1</Text>, audio
+            recordings are:{" "}
+          </Text>
+          <View style={commonStyle.listContainerStyle}>
+            <FlatList
+              data={MODEL1_FEATURES}
+              renderItem={this.renderListItem}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
+
+          <Text style={{ fontSize: 20 }}>
+            {"\n"}To provide the similar services, in
+            <Text style={{ fontWeight: "bold" }}> Model 2</Text>, audio
+            recordings are:{" "}
+          </Text>
+          <View style={commonStyle.listContainerStyle}>
+            <FlatList
+              data={MODEL2_FEATURES}
+              renderItem={this.renderListItem}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
+        </View>
+      );
+    } else {
+      model_features = MODEL1_FEATURES;
+      if (model == 1) {
+        model_features = MODEL2_FEATURES;
+      }
+      return (
+        <View>
+          <Text style={{ fontSize: 20 }}> {SINGLE_MODEL_INTRO_TEXT}</Text>
+          <View style={commonStyle.listContainerStyle}>
+            <FlatList
+              data={model_features}
+              renderItem={this.renderListItem}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
+        </View>
+      );
+    }
+  }
+
   render() {
     return (
       <ScrollView contentContainerStyle={{ backgroundColor: "lavender" }}>
@@ -275,87 +385,21 @@ export default class ExitSurveyScreen extends React.Component {
               <Text>to you?</Text>
             </Text>
 
-            <RadioButton.Group
-              onValueChange={value => this.setState({ value })}
-              value={this.state.value}
-            >
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  alignItems: "flex-start"
-                }}
-              >
-                <RadioButton value={notUseful} />
-                <Text style={{ fontSize: 20 }}>Not useful at all</Text>
-              </View>
-
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  alignItems: "flex-start"
-                }}
-              >
-                <RadioButton value={slightUseful} />
-                <Text style={{ fontSize: 20 }}>Slightly useful</Text>
-              </View>
-
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  alignItems: "flex-start"
-                }}
-              >
-                <RadioButton value={useful} />
-                <Text style={{ fontSize: 20 }}>Useful</Text>
-              </View>
-
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  alignItems: "flex-start"
-                }}
-              >
-                <RadioButton value={moderateUseful} />
-                <Text style={{ fontSize: 20 }}>Moderately useful</Text>
-              </View>
-
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  alignItems: "flex-start"
-                }}
-              >
-                <RadioButton value={veryUseful} />
-                <Text style={{ fontSize: 20 }}>Very useful</Text>
-              </View>
-            </RadioButton.Group>
+            <View style={commonStyle.listContainerStyle}>
+              <FlatList
+                data={usefulnessOptions}
+                ItemSeparatorComponent={this.flatListItemSeparator}
+                renderItem={this.renderListItemUsefulness}
+                keyExtractor={(item, index) => index.toString()}
+                extraData={this.state}
+              />
+            </View>
           </View>
         )}
 
         {this.state.priceQuestions && this.state.priceCondition == 0 && (
           <View style={{ margin: 10 }}>
-            <Text style={{ fontSize: 20 }}>
-              Suppose you could actually buy a real version of MiMi, which
-              offered the services you suggested during the past week. It would
-              also have the following features:
-              <Text style={{ fontSize: 18 }}>
-                {"\n"}• Uses audio recordings to provide the relevant services{" "}
-                {"\n"}• Stores the audio recording until the relevant service is
-                provided {"\n"}• Processes and analyzes audio recordings
-                directly on the device{"\n"}• Audio recordings are processed and
-                analyzed by algorithms{"\n"}
-              </Text>
-            </Text>
+            {this.getModelText(this.state.priceCondition)}
 
             <Text style={{ fontSize: 20 }}>
               What is the maximum price you would be willing to pay for this
@@ -383,19 +427,7 @@ export default class ExitSurveyScreen extends React.Component {
 
         {this.state.priceQuestions && this.state.priceCondition == 1 && (
           <View style={{ margin: 10 }}>
-            <Text style={{ fontSize: 20 }}>
-              Suppose you could actually buy a real version of MiMi, which
-              offered the services you suggested during the past week. It would
-              also have the following features:{"\n"}
-              <Text style={{ fontSize: 18 }}>
-                • Uses audio recordings to provide the relevant services and
-                personalized offers from companies other than the manufacturer
-                of the device{"\n"}• Stores the audio recording forever {"\n"}•
-                Processes and analyzes audio recordings after being sent over
-                the Internet to the manufacturer’s server{"\n"}• Audio
-                recordings are processed and analyzed by humans {"\n"}
-              </Text>
-            </Text>
+            {this.getModelText(this.state.priceCondition)}
             <Text style={{ fontSize: 20 }}>
               What is the maximum price you would be willing to pay for this
               device?{"\n"}
@@ -422,28 +454,8 @@ export default class ExitSurveyScreen extends React.Component {
 
         {this.state.priceQuestions && this.state.priceCondition == 2 && (
           <View style={{ margin: 10 }}>
-            <Text style={{ fontSize: 20 }}>
-              Suppose you could actually buy a real version of MiMi, which
-              offered the services you suggested during the past week. Imagine
-              there are two models of MiMi. Model 1 has the following features:
-              {"\n"}
-              <Text style={{ fontSize: 18 }}>
-                • Uses audio recordings to provide the relevant services {"\n"}•
-                Stores the audio recording until the relevant service is
-                provided {"\n"}• Processes and analyzes audio recordings
-                directly on the device{"\n"}• Audio recordings are processed and
-                analyzed by algorithms{"\n"}
-              </Text>
-              {"\n"}And model 2 has the following features:{"\n"}
-              <Text style={{ fontSize: 18 }}>
-                • Uses audio recordings to provide the relevant services and
-                personalized offers from companies other than the manufacturer
-                of the device{"\n"}• Stores the audio recording forever {"\n"}•
-                Processes and analyzes audio recordings after being sent over
-                the Internet to the manufacturer’s server{"\n"}• Audio
-                recordings are processed and analyzed by humans {"\n"}
-              </Text>
-            </Text>
+            {this.getModelText(this.state.priceCondition)}
+
             <Text style={{ fontSize: 20 }}>
               What is the maximum price you would be willing to pay for each of
               the models?
@@ -455,6 +467,7 @@ export default class ExitSurveyScreen extends React.Component {
                 keyboardType="numeric"
                 style={{
                   backgroundColor: "white",
+                  marginBottom: 5,
                   borderColor: "gray",
                   borderWidth: 1.5,
                   height: 35,
@@ -498,7 +511,7 @@ export default class ExitSurveyScreen extends React.Component {
               <Button
                 onPress={() => {
                   if (this.state.serviceQuestions) {
-                    if (this.state.value == -1) {
+                    if (this.state.usefulness == "") {
                       Alert.alert(
                         "Error",
                         "Please select an option to continue."
@@ -510,12 +523,12 @@ export default class ExitSurveyScreen extends React.Component {
                     const _curService = this.state.selectedServices[
                       _curServiceIdx
                     ];
-                    const _response = this.state.value;
+                    const _response = this.state.usefulness;
                     _serviceResponses = this.state.serviceResponses;
                     _serviceResponses.push({ [_curService]: _response });
                     this.setState({
                       serviceResponses: _serviceResponses,
-                      value: -1
+                      usefulness: ""
                     });
                     if (
                       _curServiceIdx <
