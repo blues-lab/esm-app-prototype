@@ -26,7 +26,8 @@ import {
   MODEL1_FEATURES,
   MODEL2_FEATURES,
   SINGLE_MODEL_INTRO_TEXT,
-  BOTH_MODEL_INTRO_TEXT
+  BOTH_MODEL_INTRO_TEXT,
+  EXPLAIN_WHY_NO_SERVICES
 } from "../controllers/strings.js";
 
 import logger from "../controllers/logger";
@@ -60,15 +61,16 @@ export default class ExitSurveyScreen extends React.Component {
     this.state = {
       usefulness: "",
       curServiceIdx: 0,
-      consent: false,
-      serviceQuestions: true,
+      serviceQuestions: false,
+      noServiceQuestions: false,
       priceQuestions: false,
       priceCondition: 0,
       selectedServices: [],
       serviceResponses: [], //holds responses to the service usefulness questions
       saveWaitVisible: false, //show progress dialog while saving survey response
       model1Price: "",
-      model2Price: ""
+      model2Price: "",
+      whyNoService: ""
     };
   }
 
@@ -133,9 +135,15 @@ export default class ExitSurveyScreen extends React.Component {
         "Failed to load services:" + error.message
       );
     }
+
+    this.setState({
+      serviceQuestions: this.state.selectedServices.length > 0,
+      noServiceQuestions: this.state.selectedServices.length == 0
+    });
   }
 
   async componentDidMount() {
+    logger.info(codeFileName, "componentDidMount", "Adding event handlers.");
     if (Platform.OS == "android") {
       BackHandler.addEventListener(
         "hardwareBackPress",
@@ -144,8 +152,6 @@ export default class ExitSurveyScreen extends React.Component {
     }
 
     await this.loadSelectedServices();
-
-    //Alert.alert("Selected",JSON.stringify(this.state.selectedServices));
   }
 
   onBackButtonPressAndroid = () => {
@@ -153,6 +159,11 @@ export default class ExitSurveyScreen extends React.Component {
   };
 
   componentWillUnmount() {
+    logger.info(
+      codeFileName,
+      "componentWillUnmount",
+      "Removing event handlers."
+    );
     if (Platform.OS == "android") {
       BackHandler.removeEventListener(
         "hardwareBackPress",
@@ -168,6 +179,7 @@ export default class ExitSurveyScreen extends React.Component {
 
     _response = {
       serviceResponses: this.state.serviceResponses,
+      whyNoService: this.state.whyNoService,
       priceCondition: this.state.priceCondition,
       model1Price: this.state.model1Price,
       model2Price: this.state.model2Price,
@@ -178,7 +190,8 @@ export default class ExitSurveyScreen extends React.Component {
     logger.info(
       codeFileName,
       "saveResponse",
-      "Uploading exit survey response to the server."
+      "Uploading exit survey response to the server:" +
+        JSON.stringify(_response)
     );
     const _uploaded = await utilities.uploadData(
       {
@@ -240,7 +253,160 @@ export default class ExitSurveyScreen extends React.Component {
   }
 
   handleUsefulnessSelection = async item => {
+    logger.info(
+      codeFileName,
+      "handleUsefulnessSelection",
+      "Service:" +
+        this.state.selectedServices[this.state.curServiceIdx] +
+        ", usefulness:" +
+        item
+    );
     this.setState({ usefulness: item });
+  };
+
+  handleNextButtonPress = () => {
+    logger.info(
+      codeFileName,
+      "handleNextButtonPress",
+      "Service question?:" +
+        this.state.serviceQuestions +
+        ", No service questions?:" +
+        this.state.noServiceQuestions +
+        ", priceQuestion?:" +
+        this.state.priceQuestions
+    );
+
+    if (this.state.serviceQuestions) {
+      if (this.state.usefulness == "") {
+        logger.warn(
+          codeFileName,
+          "handleNextButtonPress",
+          "No usefulness option was selected. Showing error message."
+        );
+        Alert.alert("Error", "Please select an option to continue.");
+        return;
+      }
+
+      const _curServiceIdx = this.state.curServiceIdx;
+      const _curService = this.state.selectedServices[_curServiceIdx];
+      const _response = this.state.usefulness;
+      logger.info(
+        codeFileName,
+        "handleNextButtonPress",
+        "Current service:" + _curService + ", usefulness:" + _response
+      );
+
+      _serviceResponses = this.state.serviceResponses;
+      _serviceResponses.push({ [_curService]: _response });
+      this.setState({
+        serviceResponses: _serviceResponses,
+        usefulness: ""
+      });
+      if (_curServiceIdx < this.state.selectedServices.length - 1) {
+        logger.info(
+          codeFileName,
+          "handleNextButtonPress",
+          "Advancing to the next service usefulness question"
+        );
+        this.setState({ curServiceIdx: _curServiceIdx + 1 });
+      } else {
+        const _priceCondition = Math.floor(Math.random() * 2);
+        logger.info(
+          codeFileName,
+          "handleNextButtonPress",
+          "All service usefulness questions are done. Going to price question with condition:" +
+            _priceCondition
+        );
+        this.setState({
+          priceCondition: _priceCondition,
+          serviceQuestions: false,
+          noServiceQuestions: false,
+          priceQuestions: true
+        });
+      }
+    } else if (this.state.noServiceQuestions) {
+      if (this.state.whyNoService.trim().length == 0) {
+        logger.warn(
+          codeFileName,
+          "handleNextButtonPress",
+          'whyNoService:"' +
+            this.state.whyNoService +
+            '". Showing error message.'
+        );
+        Alert.alert("Error", "Please answer the questions to continue.");
+      } else {
+        const _priceCondition = Math.floor(Math.random() * 2);
+        logger.info(
+          codeFileName,
+          "handleNextButtonPress",
+          "Going to price question with condition:" + _priceCondition
+        );
+        this.setState({
+          priceCondition: _priceCondition,
+          serviceQuestions: false,
+          noServiceQuestions: false,
+          priceQuestions: true
+        });
+      }
+    } else if (this.state.priceQuestions) {
+      if (
+        this.state.priceCondition == 0 &&
+        (this.state.model1Price.trim().length == 0 ||
+          !this.isNumeric(this.state.model1Price))
+      ) {
+        logger.warn(
+          codeFileName,
+          "handleNextButtonPress",
+          "Invalid value entered for price:" +
+            this.state.model1Price +
+            ". Showing error message"
+        );
+        Alert.alert("Error", "Please enter a valid numeric value to continue.");
+        return;
+      } else if (
+        this.state.priceCondition == 1 &&
+        (this.state.model2Price.trim().length == 0 ||
+          !this.isNumeric(this.state.model2Price))
+      ) {
+        logger.warn(
+          codeFileName,
+          "handleNextButtonPress",
+          "Invalid value entered for price:" +
+            this.state.model2Price +
+            ". Showing error message"
+        );
+        Alert.alert("Error", "Please enter a valid numeric value to continue.");
+        return;
+      } else if (
+        this.state.priceCondition == 2 &&
+        (this.state.model1Price.trim().length == 0 ||
+          !this.isNumeric(this.state.model1Price) ||
+          this.state.model2Price.trim().length == 0 ||
+          !this.isNumeric(this.state.model2Price))
+      ) {
+        logger.warn(
+          codeFileName,
+          "handleNextButtonPress",
+          "Invalid value entered for price:" +
+            this.state.model1Price +
+            "," +
+            this.state.model2Price +
+            ". Showing error message"
+        );
+        Alert.alert(
+          "Error",
+          "Please enter a valid numeric values to continue."
+        );
+        return;
+      }
+
+      logger.info(
+        codeFileName,
+        "handleNextButtonPress",
+        "All good. Going to saveResponse."
+      );
+      this.saveResponse();
+    }
   };
 
   renderListItemUsefulness = ({ item }) => {
@@ -344,43 +510,16 @@ export default class ExitSurveyScreen extends React.Component {
   render() {
     return (
       <ScrollView contentContainerStyle={{ backgroundColor: "lavender" }}>
-        {this.state.consent && (
-          <View
-            style={{
-              flex: 1,
-              marginTop: 20,
-              flexDirection: "column",
-              alignItems: "center"
-            }}
-          >
-            <Text style={{ fontSize: 20, margin: 10 }}>
-              {EXIT_SURVEY_CONSENT}
-            </Text>
-            <Text> {"\n"} </Text>
-            <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
-              <Button
-                onPress={() => {
-                  if (this.state.selectedServices.length > 0) {
-                    this.setState({ serviceQuestions: true, consent: false });
-                  } else {
-                    this.setState({ priceQuestions: true, consent: false });
-                  }
-                }}
-                title="I consent"
-                color="#20B2AA"
-                accessibilityLabel="Save"
-              />
-            </TouchableHighlight>
-          </View>
-        )}
-
-        {this.state.serviceQuestions && this.state.selectedServices.length > 0 && (
+        {this.state.serviceQuestions && (
           <View style={styles.verticalViewStyle}>
             <Text style={[commonStyle.questionStyle]}>
               <Text>How useful is</Text>
               <Text>
-                {" "}
-                "{this.state.selectedServices[this.state.curServiceIdx]}"{" "}
+                {' "'}
+                {this.state.selectedServices[this.state.curServiceIdx]
+                  .trim()
+                  .toLowerCase()}
+                {'" '}
               </Text>
               <Text>to you?</Text>
             </Text>
@@ -394,6 +533,29 @@ export default class ExitSurveyScreen extends React.Component {
                 extraData={this.state}
               />
             </View>
+          </View>
+        )}
+
+        {this.state.noServiceQuestions && (
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              margin: 10
+            }}
+          >
+            <Text style={commonStyle.questionStyle}>
+              {EXPLAIN_WHY_NO_SERVICES}
+            </Text>
+            <TextInput
+              multiline={true}
+              numOfLines={5}
+              style={commonStyle.inputStyle}
+              onChangeText={text => this.setState({ whyNoService: text })}
+              value={this.state.whyNoService}
+            />
           </View>
         )}
 
@@ -498,96 +660,23 @@ export default class ExitSurveyScreen extends React.Component {
           </View>
         )}
 
-        {!this.state.consent && (
-          <View
-            style={{
-              flex: 1,
-              marginTop: 20,
-              flexDirection: "row",
-              justifyContent: "center"
-            }}
-          >
-            <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
-              <Button
-                onPress={() => {
-                  if (this.state.serviceQuestions) {
-                    if (this.state.usefulness == "") {
-                      Alert.alert(
-                        "Error",
-                        "Please select an option to continue."
-                      );
-                      return;
-                    }
-
-                    const _curServiceIdx = this.state.curServiceIdx;
-                    const _curService = this.state.selectedServices[
-                      _curServiceIdx
-                    ];
-                    const _response = this.state.usefulness;
-                    _serviceResponses = this.state.serviceResponses;
-                    _serviceResponses.push({ [_curService]: _response });
-                    this.setState({
-                      serviceResponses: _serviceResponses,
-                      usefulness: ""
-                    });
-                    if (
-                      _curServiceIdx <
-                      this.state.selectedServices.length - 1
-                    ) {
-                      this.setState({ curServiceIdx: _curServiceIdx + 1 });
-                    } else {
-                      const _priceCondition = Math.floor(Math.random() * 2);
-                      this.setState({
-                        priceCondition: _priceCondition,
-                        serviceQuestions: false,
-                        priceQuestions: true
-                      });
-                    }
-                  } else if (this.state.priceQuestions) {
-                    if (
-                      this.state.priceCondition == 0 &&
-                      (this.state.model1Price.trim().length == 0 ||
-                        !this.isNumeric(this.state.model1Price))
-                    ) {
-                      Alert.alert(
-                        "Error",
-                        "Please enter a valid numeric value to continue."
-                      );
-                      return;
-                    } else if (
-                      this.state.priceCondition == 1 &&
-                      (this.state.model2Price.trim().length == 0 ||
-                        !this.isNumeric(this.state.model2Price))
-                    ) {
-                      Alert.alert(
-                        "Error",
-                        "Please enter a valid numeric value to continue."
-                      );
-                      return;
-                    } else if (
-                      this.state.priceCondition == 2 &&
-                      (this.state.model1Price.trim().length == 0 ||
-                        !this.isNumeric(this.state.model1Price) ||
-                        this.state.model2Price.trim().length == 0 ||
-                        !this.isNumeric(this.state.model2Price))
-                    ) {
-                      Alert.alert(
-                        "Error",
-                        "Please enter a valid numeric values to continue."
-                      );
-                      return;
-                    }
-
-                    this.saveResponse();
-                  }
-                }}
-                title="Next"
-                color="#20B2AA"
-                accessibilityLabel="Save"
-              />
-            </TouchableHighlight>
-          </View>
-        )}
+        <View
+          style={{
+            flex: 1,
+            marginTop: 20,
+            flexDirection: "row",
+            justifyContent: "center"
+          }}
+        >
+          <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
+            <Button
+              onPress={this.handleNextButtonPress}
+              title="Next"
+              color="#20B2AA"
+              accessibilityLabel="Save"
+            />
+          </TouchableHighlight>
+        </View>
       </ScrollView>
     );
   }

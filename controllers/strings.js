@@ -64,6 +64,8 @@ export const EXIT_SURVEY_CONSENT =
 export const LOCATION_SHARE_PROMPT =
   "To receive survey, please enable location sharing.";
 
+//********* Exit survey related texts ************//
+
 export const MODEL1_FEATURES = [
   "• used to provide the relevant services",
   "• stored until the relevant service is provided",
@@ -86,6 +88,10 @@ export const BOTH_MODEL_INTRO_TEXT =
   "Suppose you could actually buy a real version of MiMi, which" +
   " offered the services you suggested during the past week as well as additional features. Imagine" +
   " there are two models of MiMi.";
+
+export const EXPLAIN_WHY_NO_SERVICES =
+  "Please explain in a few sentences why you did not find any services relevant.";
+//********* End exit survey related texts ************//
 
 export const SERVICES = [
   {
