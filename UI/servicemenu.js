@@ -504,7 +504,7 @@ export default class ServiceMenuScreen extends React.Component {
 
   renderListItem = ({ item }) => {
     return (
-      <TouchableHighlight
+      <TouchableOpacity
         style={{ backgroundColor: "lavender" }}
         onPress={this.openServiceDetailsPage.bind(this, item)}
       >
@@ -557,7 +557,7 @@ export default class ServiceMenuScreen extends React.Component {
             {Array.from(item.selectedServiceNames).toString()}
           </Text>
         </View>
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   };
 

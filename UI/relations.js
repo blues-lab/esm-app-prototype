@@ -10,7 +10,7 @@ import {
   FlatList,
   Modal,
   ScrollView,
-  TouchableHighlight,
+  TouchableOpacity,
   Image
 } from "react-native";
 import * as RNFS from "react-native-fs";
@@ -171,7 +171,7 @@ export default class Relations extends React.Component {
         }}
       >
         <View style={styles.rowView}>
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.relationNames[0].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 0)}
           >
@@ -186,9 +186,9 @@ export default class Relations extends React.Component {
                 {this.state.relationNames[0].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
 
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.relationNames[1].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 1)}
           >
@@ -203,11 +203,11 @@ export default class Relations extends React.Component {
                 {this.state.relationNames[1].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.rowView}>
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.relationNames[2].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 2)}
           >
@@ -222,9 +222,9 @@ export default class Relations extends React.Component {
                 {this.state.relationNames[2].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
 
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.relationNames[3].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 3)}
           >
@@ -239,11 +239,11 @@ export default class Relations extends React.Component {
                 {this.state.relationNames[3].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.rowView}>
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.relationNames[4].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 4)}
           >
@@ -258,10 +258,10 @@ export default class Relations extends React.Component {
                 {this.state.relationNames[4].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
         </View>
         <View style={styles.rowView}>
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.relationNames[5].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 5)}
           >
@@ -276,11 +276,11 @@ export default class Relations extends React.Component {
                 {this.state.relationNames[5].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.rowView}>
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.relationNames[6].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 6)}
           >
@@ -295,9 +295,9 @@ export default class Relations extends React.Component {
                 {this.state.relationNames[6].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
 
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.relationNames[7].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 7)}
           >
@@ -312,7 +312,7 @@ export default class Relations extends React.Component {
                 {this.state.relationNames[7].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
         </View>
 
         <DialogInput

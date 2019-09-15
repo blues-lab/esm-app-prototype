@@ -10,7 +10,7 @@ import {
   FlatList,
   Modal,
   ScrollView,
-  TouchableHighlight,
+  TouchableOpacity,
   Image
 } from "react-native";
 import * as RNFS from "react-native-fs";
@@ -169,7 +169,7 @@ export default class Locations extends React.Component {
         }}
       >
         <View style={styles.rowView}>
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.locationNames[0].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 0)}
           >
@@ -184,9 +184,9 @@ export default class Locations extends React.Component {
                 {this.state.locationNames[0].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
 
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.locationNames[1].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 1)}
           >
@@ -201,9 +201,9 @@ export default class Locations extends React.Component {
                 {this.state.locationNames[1].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
 
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.locationNames[2].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 2)}
           >
@@ -218,11 +218,11 @@ export default class Locations extends React.Component {
                 {this.state.locationNames[2].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.rowView}>
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.locationNames[3].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 3)}
           >
@@ -237,9 +237,9 @@ export default class Locations extends React.Component {
                 {this.state.locationNames[3].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
 
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.locationNames[4].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 4)}
           >
@@ -254,9 +254,9 @@ export default class Locations extends React.Component {
                 {this.state.locationNames[4].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
 
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.locationNames[5].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 5)}
           >
@@ -271,11 +271,11 @@ export default class Locations extends React.Component {
                 {this.state.locationNames[5].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.rowView}>
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.locationNames[6].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 6)}
           >
@@ -290,9 +290,9 @@ export default class Locations extends React.Component {
                 {this.state.locationNames[6].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
 
-          <TouchableHighlight
+          <TouchableOpacity
             style={this.state.locationNames[7].renderStyle}
             onPress={this.handleSelectionChange.bind(this, 7)}
           >
@@ -307,7 +307,7 @@ export default class Locations extends React.Component {
                 {this.state.locationNames[7].name}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
         </View>
 
         <DialogInput

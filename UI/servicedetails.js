@@ -10,6 +10,7 @@ import {
   FlatList,
   ScrollView,
   TouchableHighlight,
+  TouchableOpacity,
   Image,
   BackHandler
 } from "react-native";
@@ -32,11 +33,11 @@ export default class ServiceDetailsScreen extends React.Component {
     return {
       title: "",
       headerLeft: (
-        <TouchableHighlight onPress={navigation.getParam("backHandler")}>
+        <TouchableOpacity onPress={navigation.getParam("backHandler")}>
           <Text style={{ marginLeft: 5, fontSize: 22, color: "blue" }}>
             {"< Save and return"}
           </Text>
-        </TouchableHighlight>
+        </TouchableOpacity>
       )
     };
   };
@@ -195,7 +196,7 @@ export default class ServiceDetailsScreen extends React.Component {
   renderListItem = ({ item }) => {
     if (item.id == "Other") {
       return (
-        <TouchableHighlight
+        <TouchableOpacity
           onPress={() => {
             this.setState({ isAddServiceDialogVisible: true });
           }}
@@ -229,12 +230,12 @@ export default class ServiceDetailsScreen extends React.Component {
               {item.name}{" "}
             </Text>
           </View>
-        </TouchableHighlight>
+        </TouchableOpacity>
       );
     }
 
     return (
-      <TouchableHighlight
+      <TouchableOpacity
         onPress={this.handleServiceSelection.bind(this, item.name)}
       >
         <View
@@ -266,7 +267,7 @@ export default class ServiceDetailsScreen extends React.Component {
             {item.name}{" "}
           </Text>
         </View>
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   };
 

@@ -11,6 +11,7 @@ import {
   Modal,
   ScrollView,
   TouchableHighlight,
+  TouchableOpacity,
   Switch,
   BackHandler
 } from "react-native";
@@ -411,7 +412,7 @@ export default class ExitSurveyScreen extends React.Component {
 
   renderListItemUsefulness = ({ item }) => {
     return (
-      <TouchableHighlight
+      <TouchableOpacity
         style={{ backgroundColor: "lavender" }}
         onPress={this.handleUsefulnessSelection.bind(this, item)}
       >
@@ -442,7 +443,7 @@ export default class ExitSurveyScreen extends React.Component {
 
           <Text style={{ fontSize: 18 }}>{item}</Text>
         </View>
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   };
 

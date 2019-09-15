@@ -11,6 +11,7 @@ import {
   Modal,
   ScrollView,
   TouchableHighlight,
+  TouchableOpacity,
   BackHandler
 } from "react-native";
 import * as RNFS from "react-native-fs";
@@ -292,7 +293,7 @@ export default class ServicePermissionScreen extends React.Component {
 
   renderListItem = ({ item }) => {
     return (
-      <TouchableHighlight
+      <TouchableOpacity
         style={{ backgroundColor: "lavender" }}
         onPress={this.permissionSelectionChangedHandler.bind(this, item)}
       >
@@ -323,7 +324,7 @@ export default class ServicePermissionScreen extends React.Component {
 
           <View>{item.value}</View>
         </View>
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   };
 
