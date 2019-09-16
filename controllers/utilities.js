@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import * as RNFS from "react-native-fs";
 import logger from "./logger";
-import { VERSION_NUMBER, STUDY_PERIOD } from "./constants";
+import { VERSION_NUMBER, STUDY_PERIOD, EXIT_SURVEY_PERIOD } from "./constants";
 
 const codeFileName = "utilities.js";
 
@@ -98,13 +98,14 @@ class Utilities extends Component {
           callerFunc + "-->readJSONFile",
           "Successfully read file. Content:" + _fileContent
         );
-        return _fileContent;
+        return JSON.parse(_fileContent);
       } else {
         logger.info(
           callerClass,
           callerFunc + "-->readJSONFile",
           filePath + " does not exist."
         );
+        return null;
       }
     } catch (error) {
       logger.error(
@@ -112,10 +113,8 @@ class Utilities extends Component {
         callerFunc + "-->readJSONFile",
         "Reading file " + filePath + " failed:" + error.message
       );
+      return null;
     }
-
-    logger.info(callerClass, callerFunc + "-->readJSONFile", "Returning null");
-    return null;
   }
 
   readServiceFile() {
@@ -259,6 +258,34 @@ class Utilities extends Component {
       }
     }
     return false;
+  }
+
+  exitSurveyAvailableDays(appStatus) {
+    //returns how many days are available until exit survey period ends
+    const _installationDate = appStatus.InstallationDate;
+    logger.info(
+      codeFileName,
+      "exitSurveyAvailableDays",
+      "Checking if exit survey period has ended. _installationDate:" +
+        _installationDate
+    );
+    if (_installationDate == null) {
+      logger.error(
+        codeFileName,
+        "exitSurveyAvailableDays",
+        "Fatal error: installation date is null!!!"
+      );
+      return 0;
+    } else {
+      _oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+      _currDate = new Date();
+      _daysPassed = Math.round(
+        Math.abs((_currDate.getTime() - _installationDate.getTime()) / _oneDay)
+      );
+
+      const _remainingDays = STUDY_PERIOD + EXIT_SURVEY_PERIOD - _daysPassed;
+      return _remainingDays;
+    }
   }
 
   getDateTime() {

@@ -21,7 +21,8 @@ class AppStatus {
       LastSurveyCreationDate: null, //date when the last survey was created. Needed to reset counts.
       CurrentSurveyID: null,
       ExitSurveyDone: false,
-      LastLocationAccess: null //when was the last time location sharing was enabled.
+      LastLocationAccess: null, //when was the last time location sharing was enabled.
+      LastLocationPromptTime: null //when was the last time location sharing prompt was shown.
     };
   }
 
@@ -52,6 +53,18 @@ class AppStatus {
         if (this.setLastSurveyCreationDate != null) {
           this.status.LastSurveyCreationDate = new Date(
             this.status.LastSurveyCreationDate
+          );
+        }
+
+        if (this.status.LastLocationAccess != null) {
+          this.status.LastLocationAccess = new Date(
+            this.status.LastLocationAccess
+          );
+        }
+
+        if (this.status.LastLocationPromptTime != null) {
+          this.status.LastLocationPromptTime = new Date(
+            this.status.LastLocationPromptTime
           );
         }
 

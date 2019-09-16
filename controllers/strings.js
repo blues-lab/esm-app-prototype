@@ -51,9 +51,12 @@ export const RESTRICT_WHY =
 export const WHY_DENY =
   "Why would you completely deny access to the conversation?";
 
-export const EXIT_SURVEY_INTRO =
+export const EXIT_SURVEY_INTRO = _remainingDays =>
   "Thank you for participating in the daily surveys!\n" +
-  "There is one more survey you can take and earn $1!!!";
+  "There is one more survey you can take and earn $1!!!\n\n" +
+  "You have " +
+  _remainingDays +
+  " days to complete this survey.";
 
 export const EXIT_SURVEY_CONSENT =
   "Welcome to the final part of the study! \n\n" +
@@ -62,7 +65,7 @@ export const EXIT_SURVEY_CONSENT =
   "This survey will take 8-10 minutes and you will receive $1 for completing it.";
 
 export const LOCATION_SHARE_PROMPT =
-  "To receive survey, please enable location sharing.";
+  "To receive survey, please enable location sharing and WiFi.";
 
 //********* Exit survey related texts ************//
 
@@ -92,6 +95,8 @@ export const BOTH_MODEL_INTRO_TEXT =
 export const EXPLAIN_WHY_NO_SERVICES =
   "Please explain in a few sentences why you did not find any services relevant.";
 //********* End exit survey related texts ************//
+
+export const FINAL_THANK = "Thank you for participating in our study!";
 
 export const SERVICES = [
   {

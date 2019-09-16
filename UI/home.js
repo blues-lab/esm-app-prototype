@@ -21,8 +21,11 @@ import Dialog from "react-native-dialog";
 import logger from "../controllers/logger";
 import UUIDGenerator from "react-native-uuid-generator";
 import appStatus from "../controllers/appStatus";
-import { SURVEY_STATUS } from "../controllers/constants";
-import { MIMI_ADVERTISEMENT, EXIT_SURVEY_INTRO } from "../controllers/strings";
+import {
+  MIMI_ADVERTISEMENT,
+  EXIT_SURVEY_INTRO,
+  FINAL_THANK
+} from "../controllers/strings";
 import DialogInput from "react-native-dialog-input";
 //Import UIs
 import SurveyStartScreen from "./startsurvey";
@@ -38,7 +41,8 @@ import AsyncStorage from "@react-native-community/async-storage";
 
 import {
   USER_SETTINGS_FILE_PATH,
-  INVITATION_CODE_FILE_PATH
+  INVITATION_CODE_FILE_PATH,
+  SURVEY_STATUS
 } from "../controllers/constants";
 import { INVITATION_CODE_FAIL } from "../controllers/strings";
 
@@ -66,7 +70,9 @@ export default class HomeScreen extends React.Component {
       noSurveyDialogVisible: true,
       studyPeriodEnded: false,
       exitSurveyDone: false,
-      invitationCodeObtained: false
+      exitSurveyAvailable: false,
+      invitationCodeObtained: false,
+      ExitSurveyRemainingDays: 0
     };
   }
 
@@ -165,16 +171,25 @@ export default class HomeScreen extends React.Component {
         //Check if study period has ended
         {
           if (utilities.surveyPeriodEnded(_appStatus)) {
+            const _remainingDays = utilities.exitSurveyAvailableDays(
+              _appStatus
+            );
             logger.info(
               codeFileName,
               "initApp",
-              "ESM period ended. Exit survey was done? " +
-                _appStatus.ExitSurveyDone
+              "ESM period ended. Exit survey done? " +
+                _appStatus.ExitSurveyDone +
+                ". Exit survey remaining days: " +
+                _remainingDays
             );
+
             this.setState({
               studyPeriodEnded: true,
               exitSurveyDone: _appStatus.ExitSurveyDone,
-              noSurveyDialogVisible: false
+              exitSurveyAvailable:
+                !_appStatus.ExitSurveyDone && _remainingDays > 0,
+              noSurveyDialogVisible: false,
+              ExitSurveyRemainingDays: _remainingDays
             });
             return;
           } else {
@@ -356,7 +371,7 @@ export default class HomeScreen extends React.Component {
               margin: 20
             }}
           >
-            {!this.state.exitSurveyDone && (
+            {this.state.exitSurveyAvailable && !this.state.exitSurveyDone && (
               <View
                 style={{
                   flex: 1,
@@ -373,7 +388,7 @@ export default class HomeScreen extends React.Component {
                     padding: 5
                   }}
                 >
-                  {EXIT_SURVEY_INTRO}
+                  {EXIT_SURVEY_INTRO(this.state.ExitSurveyRemainingDays)}
                 </Text>
 
                 {
@@ -412,7 +427,7 @@ export default class HomeScreen extends React.Component {
                     padding: 5
                   }}
                 >
-                  Thank you for participating in our study!
+                  {FINAL_THANK}
                 </Text>
                 {Platform.OS == "android" && (
                   <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>

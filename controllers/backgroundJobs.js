@@ -89,6 +89,110 @@ function before(d1, d2) {
   );
 }
 
+async function promptToShareLocation(_appStatus) {
+  //Return true if prompted for location sharing
+  //else return false
+
+  const _ssid = await NetworkInfo.getSSID();
+  if (_ssid == null || _ssid.length == 0 || _ssid == "<unknown ssid>") {
+    logger.info(
+      codeFileName,
+      "promptToShareLocation",
+      "Obtained ssid: " + _ssid + ". Checking if location sharing is enabled."
+    );
+
+    _locationSharingEnabled = false;
+    _showPrompt = false;
+    try {
+      const _locationEnabled = await LocationServicesDialogBox.checkLocationServicesIsEnabled(
+        {
+          showDialog: false, // false => Opens the Location access page directly
+          openLocationServices: false // false => Directly catch method is called if location services are turned off
+        }
+      );
+      logger.info(
+        codeFileName,
+        "promptToShareLocation",
+        JSON.stringify(_locationEnabled)
+      );
+
+      _locationSharingEnabled = _locationEnabled["status"] == "enabled";
+    } catch (error) {
+      logger.error(
+        codeFileName,
+        "promptToShareLocation",
+        "Error in getting location. May not be enabled."
+      );
+    }
+
+    if (_locationSharingEnabled) {
+      _appStatus.LastLocationAccess = new Date();
+      await appStatus.setAppStatus(_appStatus);
+      _showPrompt = false;
+    } else {
+      logger.info(
+        codeFileName,
+        "promptToShareLocation",
+        "_appStatus.LastLocationAccess : " +
+          _appStatus.LastLocationAccess +
+          ", _appStatus.LastLocationPromptTime" +
+          _appStatus.LastLocationPromptTime +
+          "."
+      );
+      _hoursSinceAccess = 24;
+      _hoursSincePrompt = 24;
+      if (_appStatus.LastLocationAccess != null) {
+        _hoursSinceAccess = Math.floor(
+          (Date.now() - _appStatus.LastLocationAccess) / (60 * 60000)
+        );
+      }
+      if (_appStatus.LastLocationPromptTime != null) {
+        _hoursSincePrompt = Math.floor(
+          (Date.now() - _appStatus.LastLocationPromptTime) / (60 * 60000)
+        );
+      }
+
+      logger.info(
+        codeFileName,
+        "promptToShareLocation",
+        "Last location access was " +
+          _hoursSinceAccess +
+          " hours ago. Last prompt was shown " +
+          _hoursSincePrompt +
+          " hours ago."
+      );
+
+      if (_hoursSinceAccess >= 24 && _hoursSincePrompt >= 24) {
+        _showPrompt = true;
+      } else {
+        logger.info(
+          codeFileName,
+          "promptToShareLocation",
+          "Not showing prompt to enable location sharing. Returning."
+        );
+      }
+
+      if (_showPrompt) {
+        logger.info(
+          codeFileName,
+          "promptToShareLocation",
+          "Showing prompt to enable location sharing and returning."
+        );
+        notificationController.cancelNotifications();
+        notificationController.showNotification(
+          "Location",
+          LOCATION_SHARE_PROMPT
+        );
+
+        _appStatus.LastLocationPromptTime = new Date();
+        await appStatus.setAppStatus(_appStatus);
+      }
+    }
+
+    return _showPrompt;
+  }
+}
+
 export async function showPrompt() {
   _appStatus = await appStatus.loadStatus();
   logger.info(
@@ -96,16 +200,6 @@ export async function showPrompt() {
     "showPrompt",
     "Current app status:" + JSON.stringify(_appStatus)
   );
-
-  //Check if study period has ended
-  {
-    if (utilities.surveyPeriodEnded(_appStatus)) {
-      logger.info(codeFileName, "showPrompt", "Study period ended. Returning.");
-      return;
-    } else {
-      logger.info(codeFileName, "showPrompt", "Still in survey period.");
-    }
-  }
 
   _userSettingsData = null;
   try {
@@ -136,78 +230,17 @@ export async function showPrompt() {
     return;
   }
 
-  //check if home wifi is set and connected to home wifi
-  const _ssid = await NetworkInfo.getSSID();
-  if (_ssid == null || _ssid.length == 0 || _ssid == "<unknown ssid>") {
+  if (await promptToShareLocation(_appStatus)) {
     logger.info(
       codeFileName,
       "showPrompt",
-      "Obtained ssid: " + _ssid + ". Checking if location sharing is enabled."
+      "promptToShareLocation returned true. Returning."
     );
-    try {
-      const _locationEnabled = await LocationServicesDialogBox.checkLocationServicesIsEnabled(
-        {
-          showDialog: false, // false => Opens the Location access page directly
-          openLocationServices: false // false => Directly catch method is called if location services are turned off
-        }
-      );
-      logger.info(codeFileName, "showPrompt", JSON.stringify(_locationEnabled));
-      _appStatus.LastLocationAccess = new Date();
-      await appStatus.setAppStatus(_appStatus);
-    } catch (error) {
-      logger.error(
-        codeFileName,
-        "showPrompt",
-        "Error in getting location. May not be enabled."
-      );
-      logger.info(
-        codeFileName,
-        "showPrompt",
-        "AppState:" + AppState.currentState
-      );
-      _showPrompt = false;
-      if (_appStatus.LastLocationAccess == null) {
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          "Last location access time is null."
-        );
-        _showPrompt = true;
-      } else {
-        _hourPassed = Math.floor(
-          (Date.now() - _appStatus.LastLocationAccess) / (60 * 60000)
-        );
-        if (_hourPassed >= 24) {
-          _showPrompt = true;
-        }
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          "Last location access time:" +
-            _appStatus.LastLocationAccess +
-            ". Hours passed:" +
-            _hourPassed
-        );
-      }
-      if (_showPrompt) {
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          "Showing prompt to enable location sharing and returning."
-        );
-        notificationController.cancelNotifications();
-        notificationController.showNotification(
-          "Location",
-          LOCATION_SHARE_PROMPT
-        );
-
-        _appStatus.LastLocationAccess = new Date();
-        await appStatus.setAppStatus(_appStatus);
-        return;
-      }
-    }
+    return;
   }
 
+  //check if home wifi is set and connected to home wifi
+  const _ssid = await NetworkInfo.getSSID();
   if (
     _userSettingsData.homeWifi.length == 0 ||
     _ssid != _userSettingsData.homeWifi
@@ -235,6 +268,61 @@ export async function showPrompt() {
     return;
   } else {
     logger.info(codeFileName, "showPrompt", 'Not in "Do not disturb" mode.');
+
+    //Check if study period has ended
+    {
+      if (utilities.surveyPeriodEnded(_appStatus)) {
+        const _remainingDays = utilities.exitSurveyAvailableDays(_appStatus);
+        logger.info(
+          codeFileName,
+          "initApp",
+          "ESM period ended. Exit survey done? " +
+            _appStatus.ExitSurveyDone +
+            ". Exit survey remaining days: " +
+            _remainingDays
+        );
+
+        if (_appStatus.ExitSurveyDone || _remainingDays <= 0) {
+          return;
+        } else {
+          logger.info(
+            codeFileName,
+            "showPrompt",
+            "Remaining days for exit survey:" +
+              _remainingDays +
+              ". Last notification was shown:" +
+              _appStatus.LastNotificationTime
+          );
+          _hourPassed = Math.floor(
+            (Date.now() - _appStatus.LastNotificationTime) / (60 * 60000)
+          );
+          logger.info(
+            codeFileName,
+            "showPrompt",
+            "Hours passed since last notification:" + _hourPassed
+          );
+          if (true || _hourPassed >= 24) {
+            logger.info(
+              codeFileName,
+              "showPrompt",
+              "Showing new notification for exit survey updating app status."
+            );
+            notificationController.cancelNotifications();
+            notificationController.showNotification(
+              "Final survey available!",
+              "Complete it within " + _remainingDays + " days to get $1"
+            );
+
+            _appStatus.LastNotificationTime = new Date();
+            await appStatus.setAppStatus(_appStatus);
+          }
+
+          return;
+        }
+      } else {
+        logger.info(codeFileName, "showPrompt", "Still in ESM study period.");
+      }
+    }
 
     //check if the date of last survey creation was before today, if so, reset variables.
     await logger.info(

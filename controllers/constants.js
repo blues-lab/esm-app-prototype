@@ -32,4 +32,6 @@ export const LOG_FILE_PATH = RNFS.DocumentDirectoryPath + "/log.csv";
 
 export const STUDY_PERIOD = 7; //study will continue over n days
 
+export const EXIT_SURVEY_PERIOD = 3;
+
 export const VERSION_NUMBER = "1.0.0";
