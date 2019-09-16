@@ -135,7 +135,7 @@ async function promptToShareLocation(_appStatus) {
         "promptToShareLocation",
         "_appStatus.LastLocationAccess : " +
           _appStatus.LastLocationAccess +
-          ", _appStatus.LastLocationPromptTime" +
+          ", _appStatus.LastLocationPromptTime : " +
           _appStatus.LastLocationPromptTime +
           "."
       );
