@@ -153,7 +153,7 @@ export default class SurveyStartScreen extends React.Component {
                   title="Next"
                   color="#20B2AA"
                   onPress={async () => {
-                    if (this.state.conversationTopic.length < 0) {
+                    if (this.state.conversationTopic.length == 0) {
                       Alert.alert(
                         "Error",
                         "Please enter conversation topic to continue."
