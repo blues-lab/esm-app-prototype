@@ -79,10 +79,10 @@ export default class ServicePermissionScreen extends React.Component {
       {
         key: fullShare,
         value: (
-          <View style={{}}>
-            <Text style={{ fontSize: 20, marginRight: 10, marginBottom: 5 }}>
-              Yes, I would{" "}
-              <Text style={{ fontWeight: "bold" }}>allow access</Text>
+          <View style={{ flex: 0 }}>
+            <Text style={{ fontSize: 20, marginRight: 5 }}>
+              Yes, I would
+              <Text style={{ fontWeight: "bold" }}> allow access</Text>
               <Text> to any relevant parts of the conversation.</Text>
             </Text>
           </View>
@@ -91,13 +91,13 @@ export default class ServicePermissionScreen extends React.Component {
       {
         key: partialShare,
         value: (
-          <View>
-            <Text style={{ fontSize: 20, marginRight: 10 }}>
-              I would{" "}
-              <Text style={{ fontWeight: "bold" }}>partially restrict</Text>{" "}
-              access to{" "}
-              <Text style={{ fontWeight: "bold" }}>certain parts</Text> of the
-              relevant conversation.
+          <View style={{ flex: 0 }}>
+            <Text style={{ fontSize: 20, marginRight: 5 }}>
+              I would
+              <Text style={{ fontWeight: "bold" }}> partially restrict </Text>
+              <Text>access to</Text>
+              <Text style={{ fontWeight: "bold" }}> certain parts </Text>
+              <Text>of the relevant conversation.</Text>
             </Text>
           </View>
         )
@@ -105,13 +105,12 @@ export default class ServicePermissionScreen extends React.Component {
       {
         key: noShare,
         value: (
-          <View>
-            <Text style={{ fontSize: 20, marginRight: 10 }}>
-              I would{" "}
-              <Text style={{ fontWeight: "bold" }}>partially restrict</Text>{" "}
-              access to{" "}
-              <Text style={{ fontWeight: "bold" }}>certain parts</Text> of the
-              relevant conversation.
+          <View style={{ flex: 0 }}>
+            <Text style={{ fontSize: 20, marginRight: 5 }}>
+              No, I would
+              <Text style={{ fontWeight: "bold" }}> deny </Text> access to
+              <Text style={{ fontWeight: "bold" }}> any </Text>
+              <Text>relevant part of the conversation.</Text>
             </Text>
           </View>
         )
@@ -294,7 +293,7 @@ export default class ServicePermissionScreen extends React.Component {
   renderListItem = ({ item }) => {
     return (
       <TouchableOpacity
-        style={{ backgroundColor: "lavender" }}
+        style={{ backgroundColor: "lavender", margin: 5 }}
         onPress={this.permissionSelectionChangedHandler.bind(this, item)}
       >
         <View
@@ -322,7 +321,7 @@ export default class ServicePermissionScreen extends React.Component {
             />
           )}
 
-          <View>{item.value}</View>
+          {item.value}
         </View>
       </TouchableOpacity>
     );
