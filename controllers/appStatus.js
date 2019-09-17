@@ -216,8 +216,23 @@ class AppStatus {
     );
     await this.saveAppStatus();
   }
+
+  static getAppStatus() {
+    instance = null;
+    if (instance == null) {
+      instance = new AppStatus();
+      instance.loadStatus().then(instance => {
+        logger.info(
+          codeFileName,
+          "getAppStatus",
+          "Creating static AppStatus instance. Current status: " +
+            JSON.stringify(instance)
+        );
+      });
+    }
+    return instance;
+  }
 }
 
-appStatus = new AppStatus();
-appStatus.loadStatus();
+appStatus = AppStatus.getAppStatus();
 export default appStatus;
