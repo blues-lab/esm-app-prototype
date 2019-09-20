@@ -23,9 +23,7 @@ module.exports = {
     "spaced-comment": 0,
     "prefer-template": 0,
     "react/jsx-filename-extension": 0,
-    "react/jsx-one-expression-per-line": 0,
-    "react/prop-types": 1,
-    "react/sort-comp": 0
+    "react/jsx-one-expression-per-line": 0
   },
   parser: "babel-eslint"
 };

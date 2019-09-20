@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   Platform,
   StyleSheet,
@@ -6,18 +6,19 @@ import {
   View,
   Button,
   Alert,
+  TextInput,
+  Picker,
+  ScrollView,
   TouchableHighlight,
   BackHandler,
-  Dimensions
+  Dimensions,
+  PermissionsAndroid,
+  Linking
 } from "react-native";
 import Mailer from "react-native-mail";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import * as RNFS from "react-native-fs";
-import Dialog from "react-native-dialog";
-import Permissions from "react-native-permissions";
-import { NetworkInfo } from "react-native-network-info";
-import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import logger from "../controllers/logger";
+import * as RNFS from "react-native-fs";
 import commonStyle from "./Style";
 import utilities from "../controllers/utilities";
 import {
@@ -32,24 +33,12 @@ import {
   NOT_HOME_WIFI,
   SAVE_CHANGES_PROMPT
 } from "../controllers/strings";
-import { uploadFiles } from "../controllers/backgroundJobs";
-
 const codeFileName = "userSettings.js";
-
-const styles = StyleSheet.create({
-  dayLabelStyle: {
-    width: 80,
-    fontSize: 18,
-    marginLeft: 5,
-    marginRight: 5
-  },
-  timeBoxStyle: {
-    width: 80,
-    height: 25,
-    fontSize: 18,
-    textAlign: "center"
-  }
-});
+import Dialog from "react-native-dialog";
+import Permissions from "react-native-permissions";
+import { NetworkInfo } from "react-native-network-info";
+import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
+import { uploadFiles } from "../controllers/backgroundJobs";
 
 export default class UserSettingsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -92,7 +81,7 @@ export default class UserSettingsScreen extends React.Component {
       backHandler: this.handleBackNavigation.bind(this)
     });
 
-    if (Platform.OS === "android") {
+    if (Platform.OS == "android") {
       BackHandler.addEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid.bind(this)
@@ -108,7 +97,7 @@ export default class UserSettingsScreen extends React.Component {
       "componentWillUnmount",
       "Removing event handlers."
     );
-    if (Platform.OS === "android") {
+    if (Platform.OS == "android") {
       BackHandler.removeEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid
@@ -125,7 +114,7 @@ export default class UserSettingsScreen extends React.Component {
     try {
       const _ssid = await NetworkInfo.getSSID();
       logger.info(codeFileName, "getHomeSSID", "SSID:" + _ssid);
-      if (_ssid != null && _ssid.length > 0 && _ssid !== "<unknown ssid>") {
+      if (_ssid != null && _ssid.length > 0 && _ssid != "<unknown ssid>") {
         logger.info(
           codeFileName,
           "getHomeSSID",
@@ -184,7 +173,7 @@ export default class UserSettingsScreen extends React.Component {
       "Checking if location permission is already granted."
     );
     const _response = await Permissions.check("location"); // ['authorized', 'denied', 'restricted', or 'undetermined']
-    if (_response === "authorized") {
+    if (_response == "authorized") {
       logger.info(
         codeFileName,
         "getHomeWiFi",
@@ -225,7 +214,7 @@ export default class UserSettingsScreen extends React.Component {
         askWifi: _userSettingsData.askWifi
       });
 
-      if (this.state.homeWifi.length === 0) {
+      if (this.state.homeWifi.length == 0) {
         logger.info(
           `${codeFileName}`,
           "loadSettings",
@@ -321,7 +310,7 @@ export default class UserSettingsScreen extends React.Component {
   };
 
   saveSettings() {
-    const _settings = {
+    _settings = {
       homeWifi: this.state.homeWifi,
       askWifi: this.state.askWifi,
       afterTime: this.state.afterTime,
@@ -353,27 +342,26 @@ export default class UserSettingsScreen extends React.Component {
     });
   };
 
-  static convertTime(time) {
-    let _hour = Number(time.split(":")[0]);
-    const _min = time.split(":")[1];
+  convertTime(time) {
+    _hour = Number(time.split(":")[0]);
+    _min = time.split(":")[1];
 
-    if (_hour === 12) {
+    if (_hour == 12) {
       return _hour.toString() + ":" + _min + " pm";
-    }
-    if (_hour === 0) {
+    } else if (_hour == 0) {
       return "12:" + _min + " am";
-    }
-    if (_hour >= 13) {
-      _hour -= 12;
+    } else if (_hour >= 13) {
+      _hour = _hour - 12;
       _hour = _hour > 9 ? _hour.toString() : "0" + _hour.toString();
       return _hour + ":" + _min + " pm";
+    } else {
+      return (
+        (_hour > 9 ? _hour.toString() : "0" + _hour.toString()) +
+        ":" +
+        _min +
+        " am"
+      );
     }
-    return (
-      (_hour > 9 ? _hour.toString() : "0" + _hour.toString()) +
-      ":" +
-      _min +
-      " am"
-    );
   }
 
   render() {
@@ -418,7 +406,7 @@ export default class UserSettingsScreen extends React.Component {
                     name: "log-file.csv" // Optional: Custom filename for attachment
                   }
                 },
-                error => {
+                (error, event) => {
                   Alert.alert("Error sending email.", error.message);
                 }
               );
@@ -847,7 +835,7 @@ export default class UserSettingsScreen extends React.Component {
                 wifiPermissionDialogVisible: false
               });
               const response = await Permissions.request("location");
-              if (response !== "authorized") {
+              if (response != "authorized") {
                 logger.info(
                   codeFileName,
                   "LocationPermissionDialog",
@@ -860,7 +848,7 @@ export default class UserSettingsScreen extends React.Component {
                   "LocationPermissionDialog",
                   "Location permission granted. Checking if location sharing is enabled."
                 );
-                if (Platform.OS === "android") {
+                if (Platform.OS == "android") {
                   try {
                     const _locationEnabled = await LocationServicesDialogBox.checkLocationServicesIsEnabled(
                       {
@@ -876,7 +864,7 @@ export default class UserSettingsScreen extends React.Component {
                         providerListener: false // true ==> Trigger locationProviderStatusChange listener when the location state changes
                       }
                     );
-                    if (_locationEnabled.status === "enabled") {
+                    if (_locationEnabled["status"] == "enabled") {
                       // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
                       logger.info(
                         codeFileName,
@@ -918,3 +906,18 @@ export default class UserSettingsScreen extends React.Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  dayLabelStyle: {
+    width: 80,
+    fontSize: 18,
+    marginLeft: 5,
+    marginRight: 5
+  },
+  timeBoxStyle: {
+    width: 80,
+    height: 25,
+    fontSize: 18,
+    textAlign: "center"
+  }
+});
