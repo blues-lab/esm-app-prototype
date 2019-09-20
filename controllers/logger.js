@@ -85,66 +85,6 @@ class Logger extends Component {
     }).catch(err => Alert.alert("Er", err.message));
   }
 
-  sendGoogle() {
-    var _from = "peacefuldeath777@gmail.com";
-    RNSmtpMailer.sendMail({
-      mailhost: "smtp.gmail.com",
-      port: "465",
-      ssl: true, //if ssl: false, TLS is enabled,**note:** in iOS TLS/SSL is determined automatically, so either true or false is the same
-      username: "peacefuldeath777",
-      password: "RAFSAN))&",
-      from: _from,
-      recipients: "rakhasan@iu.edu",
-      subject: "ALVA log",
-      htmlBody: "<h1>header</h1><p>body</p>",
-      attachmentPaths: [
-        //RNFS.DocumentDirectoryPath+'/log.csv'
-      ],
-      attachmentNames: [
-        // "log.csv"
-      ], //only used in android, these are renames of original files. in ios filenames will be same as specified in path. In ios-only application, leave it empty: attachmentNames:[]
-      attachmentTypes: [
-        //'csv'
-      ] //needed for android, in ios-only application, leave it empty: attachmentTypes:[]. Generally every img(either jpg, png, jpeg or whatever) file should have "img", and every other file should have its corresponding type.
-    })
-      .then(success => Alert.alert("Success"))
-      .catch(err =>
-        Alert.alert("Sending email failed from: " + _from, err.toString())
-      );
-
-    Alert.alert("Sent google");
-  }
-
-  sendYahoo() {
-    var _from = "bulbulbabul2@yahoo.com";
-    RNSmtpMailer.sendMail({
-      mailhost: "smtp.mail.yahoo.com",
-      port: "465",
-      ssl: true, //if ssl: false, TLS is enabled,**note:** in iOS TLS/SSL is determined automatically, so either true or false is the same
-      username: "bulbulbabul2",
-      password: "bulbulerpassword",
-      from: _from,
-      recipients: "rakhasan@iu.edu",
-      subject: "ALVA log",
-      htmlBody: "<h1>header</h1><p>body</p>",
-      attachmentPaths: [
-        //RNFS.DocumentDirectoryPath+'/log.csv'
-      ],
-      attachmentNames: [
-        // "log.csv"
-      ], //only used in android, these are renames of original files. in ios filenames will be same as specified in path. In ios-only application, leave it empty: attachmentNames:[]
-      attachmentTypes: [
-        //'csv'
-      ] //needed for android, in ios-only application, leave it empty: attachmentTypes:[]. Generally every img(either jpg, png, jpeg or whatever) file should have "img", and every other file should have its corresponding type.
-    })
-      .then(success => Alert.alert("Success"))
-      .catch(err =>
-        Alert.alert("Sending email failed from: " + _from, err.toString())
-      );
-
-    Alert.alert("Sent yahoo");
-  }
-
   uploadLog() {
     RNFS.readFile(logFilePath)
       .then(res => {
