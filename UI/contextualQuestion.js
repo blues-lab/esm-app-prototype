@@ -1,22 +1,36 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   Platform,
   StyleSheet,
   Text,
   View,
   Button,
+  TextInput,
   Alert,
+  FlatList,
+  Modal,
   ScrollView,
   TouchableHighlight,
   Switch,
   BackHandler
 } from "react-native";
 import * as RNFS from "react-native-fs";
+import RadioForm, {
+  RadioButton,
+  RadioButtonInput,
+  RadioButtonLabel
+} from "react-native-simple-radio-button";
 import { ProgressDialog } from "react-native-simple-dialogs";
 
 import CustomNumericInput from "./customNumericInput";
 
+import { CheckBox } from "react-native-elements";
+
 import commonStyle from "./Style";
+
+const serviceFileAsset = "services.js";
+const serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
+import SectionedMultiSelect from "react-native-sectioned-multi-select";
 
 import logger from "../controllers/logger";
 
@@ -24,15 +38,17 @@ import appStatus from "../controllers/appStatus";
 
 import notificationController from "../controllers/notificationController";
 
+import RelationGroup from "./relationGroup";
+import LocationGroup from "./locationGroup";
 import Locations from "./locations";
 
 import Relations from "./relations";
 
 import ToolBar from "./toolbar";
+const codeFileName = "contextualQuestion.js";
+const surveyResponseFilePath = RNFS.DocumentDirectoryPath + "/Responses.js";
 import utilities from "../controllers/utilities";
 import { SURVEY_STATUS } from "../controllers/constants";
-
-const codeFileName = "contextualQuestion.js";
 
 export default class ContextualQuestionScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -77,19 +93,10 @@ export default class ContextualQuestionScreen extends React.Component {
       surveyResponseJS: _surveyResponseJS,
       surveyProgress: navigation.getParam("surveyProgress", 0)
     });
-    if (Platform.OS === "android") {
+    if (Platform.OS == "android") {
       BackHandler.addEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid.bind(this)
-      );
-    }
-  }
-
-  componentWillUnmount() {
-    if (Platform.OS === "android") {
-      BackHandler.removeEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPressAndroid
       );
     }
   }
@@ -98,8 +105,17 @@ export default class ContextualQuestionScreen extends React.Component {
     return true; //make it false to enable going back
   };
 
+  componentWillUnmount() {
+    if (Platform.OS == "android") {
+      BackHandler.removeEventListener(
+        "hardwareBackPress",
+        this.onBackButtonPressAndroid
+      );
+    }
+  }
+
   relationSelectionHandler(selectedRelations) {
-    this.setState({ selectedRelations });
+    this.setState({ selectedRelations: selectedRelations });
     logger.info(
       codeFileName,
       "relationSelectionHandler",
@@ -108,7 +124,7 @@ export default class ContextualQuestionScreen extends React.Component {
   }
 
   locationSelectionHandler(selectedLocations) {
-    this.setState({ selectedLocations });
+    this.setState({ selectedLocations: selectedLocations });
     logger.info(
       codeFileName,
       "locationSelectionHandler",
@@ -119,9 +135,9 @@ export default class ContextualQuestionScreen extends React.Component {
   async saveResponse() {
     this.setState({ saveWaitVisible: true });
 
-    const _appStatus = await appStatus.loadStatus();
+    _appStatus = await appStatus.loadStatus();
 
-    const _contextResponseJS = {
+    _contextResponseJS = {
       NumOfPeopleAround: this.state.numOfPeople,
       NumOfPeopleCanHear: this.state.numOfPeopleCanHear,
       ChildrenPresent: this.state.childrenPresent,
@@ -135,7 +151,7 @@ export default class ContextualQuestionScreen extends React.Component {
       UIID: _appStatus.UIID
     };
 
-    const _surveyResponseJS = this.state.surveyResponseJS;
+    _surveyResponseJS = this.state.surveyResponseJS;
     _surveyResponseJS.ContextualQuestionResponses = _contextResponseJS;
 
     logger.info(
@@ -167,7 +183,7 @@ export default class ContextualQuestionScreen extends React.Component {
         "saveResponse",
         "Failed to upload response. Saving in local file for now."
       );
-      const _time = Date.now().toString();
+      _time = Date.now().toString();
       await utilities.writeJSONFile(
         _surveyResponseJS,
         RNFS.DocumentDirectoryPath + "/survey--response--" + _time + ".js",
@@ -207,7 +223,6 @@ export default class ContextualQuestionScreen extends React.Component {
   numPeopleAroundChangeHandler(value) {
     this.setState({ numOfPeople: value });
   }
-
   numPeopleCanHearChangeHandler(value) {
     this.setState({ numOfPeopleCanHear: value });
   }

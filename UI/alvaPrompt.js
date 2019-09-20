@@ -1,18 +1,24 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   Platform,
+  StyleSheet,
   Text,
   View,
   Button,
+  TextInput,
+  Alert,
   BackHandler,
-  TouchableHighlight
+  TouchableHighlight,
+  Dimensions,
+  Modal
 } from "react-native";
 
 import logger from "../controllers/logger";
+import ServiceMenuScreen from "./servicemenu";
 import commonStyles from "./Style";
-import ToolBar from "./toolbar";
 
 const codeFileName = "startsurvey.js";
+import ToolBar from "./toolbar";
 
 export default class AlvaPromptScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
