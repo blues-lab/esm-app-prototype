@@ -12,14 +12,19 @@ import {
   TouchableHighlight,
   BackHandler,
   Dimensions,
-  PermissionsAndroid
+  PermissionsAndroid,
+  Linking
 } from "react-native";
+import Mailer from "react-native-mail";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import logger from "../controllers/logger";
 import * as RNFS from "react-native-fs";
 import commonStyle from "./Style";
 import utilities from "../controllers/utilities";
-import { USER_SETTINGS_FILE_PATH } from "../controllers/constants";
+import {
+  USER_SETTINGS_FILE_PATH,
+  LOG_FILE_PATH
+} from "../controllers/constants";
 import {
   WIFI_PERMISSION_MSG,
   DONT_DISTURB,
@@ -380,6 +385,34 @@ export default class UserSettingsScreen extends React.Component {
               "Starting exit survey."
             );
             this.props.navigation.navigate("ExitSurvey");
+          }}
+        />
+
+        <Button
+          title="Email log"
+          color="#20B2AA"
+          onPress={async () => {
+            try {
+              const _fileContent = await RNFS.readFile(LOG_FILE_PATH);
+              Mailer.mail(
+                {
+                  subject: "MiMi log",
+                  recipients: ["rakhasan@iu.edu"],
+                  body: `<b>${_fileContent}</b>`,
+                  isHTML: true,
+                  attachment: {
+                    path: LOG_FILE_PATH,
+                    type: "csv", // Mime Type: jpg, png, doc, ppt, html, pdf, csv
+                    name: "log-file.csv" // Optional: Custom filename for attachment
+                  }
+                },
+                (error, event) => {
+                  Alert.alert("Error sending email.", error.message);
+                }
+              );
+            } catch (error) {
+              Alert.alert("Error", error.message);
+            }
           }}
         />
 
