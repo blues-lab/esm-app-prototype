@@ -22,6 +22,9 @@ module.exports = {
     "import/first": 1,
     "spaced-comment": 0,
     "prefer-template": 0,
+    "no-plusplus": 0,
+    "no-underscore-dangle": 0,
+    "react/destructuring-assignment": 0,
     "react/jsx-filename-extension": 0,
     "react/jsx-one-expression-per-line": 0
   },

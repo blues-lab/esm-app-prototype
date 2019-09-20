@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   Platform,
   StyleSheet,
@@ -8,37 +8,32 @@ import {
   TextInput,
   Alert,
   FlatList,
-  Modal,
   ScrollView,
   TouchableHighlight,
   TouchableOpacity,
-  Switch,
   BackHandler
 } from "react-native";
 import * as RNFS from "react-native-fs";
 import Icon from "react-native-vector-icons/Fontisto";
-import { ProgressDialog } from "react-native-simple-dialogs";
 
 import commonStyle from "./Style";
-import { RadioButton } from "react-native-paper";
 
 import {
-  EXIT_SURVEY_CONSENT,
   MODEL1_FEATURES,
   MODEL2_FEATURES,
   SINGLE_MODEL_INTRO_TEXT,
   BOTH_MODEL_INTRO_TEXT,
   EXPLAIN_WHY_NO_SERVICES
-} from "../controllers/strings.js";
+} from "../controllers/strings";
 
 import logger from "../controllers/logger";
 
 import appStatus from "../controllers/appStatus";
 
-const codeFileName = "exitSurvey.js";
-
 import utilities from "../controllers/utilities";
 import { SELECTED_SERVICES_FILE } from "../controllers/constants";
+
+const codeFileName = "exitSurvey.js";
 
 const usefulnessOptions = [
   "Not useful at all",
@@ -49,7 +44,7 @@ const usefulnessOptions = [
 ];
 
 export default class ExitSurveyScreen extends React.Component {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
       headerLeft: null,
       headerTitle: "Exit survey"
@@ -96,13 +91,13 @@ export default class ExitSurveyScreen extends React.Component {
         const _fileContents = await RNFS.readFile(SELECTED_SERVICES_FILE);
         const _lines = _fileContents.split("\n");
 
-        for (i = 0; i < _lines.length; i++) {
+        for (let i = 0; i < _lines.length; i++) {
           if (_lines[i].trim().length > 0) {
             try {
               const _js = JSON.parse(_lines[i]);
 
-              for (j = 0; j < _js.length; j++) {
-                for (s = 0; s < _js[j].services.length; s++) {
+              for (let j = 0; j < _js.length; j++) {
+                for (let s = 0; s < _js[j].services.length; s++) {
                   _selectedServices = new Set(this.state.selectedServices);
                   _selectedServices.add(_js[j].services[s]);
                   await this.promisedSetState({
@@ -139,13 +134,13 @@ export default class ExitSurveyScreen extends React.Component {
 
     this.setState({
       serviceQuestions: this.state.selectedServices.length > 0,
-      noServiceQuestions: this.state.selectedServices.length == 0
+      noServiceQuestions: this.state.selectedServices.length === 0
     });
   }
 
   async componentDidMount() {
     logger.info(codeFileName, "componentDidMount", "Adding event handlers.");
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.addEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid.bind(this)
@@ -165,7 +160,7 @@ export default class ExitSurveyScreen extends React.Component {
       "componentWillUnmount",
       "Removing event handlers."
     );
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.removeEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid
@@ -176,7 +171,7 @@ export default class ExitSurveyScreen extends React.Component {
   async saveResponse() {
     this.setState({ saveWaitVisible: true });
 
-    _appStatus = await appStatus.loadStatus();
+    const _appStatus = await appStatus.loadStatus();
 
     _response = {
       serviceResponses: this.state.serviceResponses,
@@ -278,7 +273,7 @@ export default class ExitSurveyScreen extends React.Component {
     );
 
     if (this.state.serviceQuestions) {
-      if (this.state.usefulness == "") {
+      if (this.state.usefulness === "") {
         logger.warn(
           codeFileName,
           "handleNextButtonPress",
@@ -326,7 +321,7 @@ export default class ExitSurveyScreen extends React.Component {
         });
       }
     } else if (this.state.noServiceQuestions) {
-      if (this.state.whyNoService.trim().length == 0) {
+      if (this.state.whyNoService.trim().length === 0) {
         logger.warn(
           codeFileName,
           "handleNextButtonPress",
@@ -351,8 +346,8 @@ export default class ExitSurveyScreen extends React.Component {
       }
     } else if (this.state.priceQuestions) {
       if (
-        this.state.priceCondition == 0 &&
-        (this.state.model1Price.trim().length == 0 ||
+        this.state.priceCondition === 0 &&
+        (this.state.model1Price.trim().length === 0 ||
           !this.isNumeric(this.state.model1Price))
       ) {
         logger.warn(
@@ -364,9 +359,10 @@ export default class ExitSurveyScreen extends React.Component {
         );
         Alert.alert("Error", "Please enter a valid numeric value to continue.");
         return;
-      } else if (
-        this.state.priceCondition == 1 &&
-        (this.state.model2Price.trim().length == 0 ||
+      }
+      if (
+        this.state.priceCondition === 1 &&
+        (this.state.model2Price.trim().length === 0 ||
           !this.isNumeric(this.state.model2Price))
       ) {
         logger.warn(
@@ -379,10 +375,10 @@ export default class ExitSurveyScreen extends React.Component {
         Alert.alert("Error", "Please enter a valid numeric value to continue.");
         return;
       } else if (
-        this.state.priceCondition == 2 &&
-        (this.state.model1Price.trim().length == 0 ||
+        this.state.priceCondition === 2 &&
+        (this.state.model1Price.trim().length === 0 ||
           !this.isNumeric(this.state.model1Price) ||
-          this.state.model2Price.trim().length == 0 ||
+          this.state.model2Price.trim().length === 0 ||
           !this.isNumeric(this.state.model2Price))
       ) {
         logger.warn(
@@ -424,7 +420,7 @@ export default class ExitSurveyScreen extends React.Component {
             justifyContent: "flex-start"
           }}
         >
-          {item == this.state.usefulness && (
+          {item === this.state.usefulness && (
             <Icon
               name="radio-btn-active"
               size={20}
@@ -452,12 +448,13 @@ export default class ExitSurveyScreen extends React.Component {
       <View style={{ height: 0, width: "100%", backgroundColor: "grey" }} />
     );
   };
+
   renderListItem = ({ item }) => {
     return <Text style={{ fontSize: 18 }}>{item}</Text>;
   };
 
   getModelText(model) {
-    if (model == 2) {
+    if (model === 2) {
       return (
         <View>
           <Text style={{ fontSize: 20 }}> {BOTH_MODEL_INTRO_TEXT}</Text>
@@ -488,24 +485,23 @@ export default class ExitSurveyScreen extends React.Component {
           </View>
         </View>
       );
-    } else {
-      model_features = MODEL1_FEATURES;
-      if (model == 1) {
-        model_features = MODEL2_FEATURES;
-      }
-      return (
-        <View>
-          <Text style={{ fontSize: 20 }}> {SINGLE_MODEL_INTRO_TEXT}</Text>
-          <View style={commonStyle.listContainerStyle}>
-            <FlatList
-              data={model_features}
-              renderItem={this.renderListItem}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          </View>
-        </View>
-      );
     }
+    model_features = MODEL1_FEATURES;
+    if (model === 1) {
+      model_features = MODEL2_FEATURES;
+    }
+    return (
+      <View>
+        <Text style={{ fontSize: 20 }}> {SINGLE_MODEL_INTRO_TEXT}</Text>
+        <View style={commonStyle.listContainerStyle}>
+          <FlatList
+            data={model_features}
+            renderItem={this.renderListItem}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+      </View>
+    );
   }
 
   render() {
@@ -551,7 +547,7 @@ export default class ExitSurveyScreen extends React.Component {
               {EXPLAIN_WHY_NO_SERVICES}
             </Text>
             <TextInput
-              multiline={true}
+              multiline
               numOfLines={5}
               style={commonStyle.inputStyle}
               onChangeText={text => this.setState({ whyNoService: text })}
@@ -560,7 +556,7 @@ export default class ExitSurveyScreen extends React.Component {
           </View>
         )}
 
-        {this.state.priceQuestions && this.state.priceCondition == 0 && (
+        {this.state.priceQuestions && this.state.priceCondition === 0 && (
           <View style={{ margin: 10 }}>
             {this.getModelText(this.state.priceCondition)}
 
@@ -588,7 +584,7 @@ export default class ExitSurveyScreen extends React.Component {
           </View>
         )}
 
-        {this.state.priceQuestions && this.state.priceCondition == 1 && (
+        {this.state.priceQuestions && this.state.priceCondition === 1 && (
           <View style={{ margin: 10 }}>
             {this.getModelText(this.state.priceCondition)}
             <Text style={{ fontSize: 20 }}>
@@ -615,7 +611,7 @@ export default class ExitSurveyScreen extends React.Component {
           </View>
         )}
 
-        {this.state.priceQuestions && this.state.priceCondition == 2 && (
+        {this.state.priceQuestions && this.state.priceCondition === 2 && (
           <View style={{ margin: 10 }}>
             {this.getModelText(this.state.priceCondition)}
 
