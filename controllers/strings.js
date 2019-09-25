@@ -104,37 +104,22 @@ export const SERVICES = [
       { serviceName: "Call doctor/hospital" },
       { serviceName: "Call the police/emergency service" },
       { serviceName: "Call/text/email a family member/friend" },
-      { serviceName: "Call/text/email a collegue" },
+      { serviceName: "Call/text/email for work" },
       { serviceName: "Call a store/restaurant/office" }
     ],
     categoryName: "Call/email/text"
   },
   {
     services: [
+      { serviceName: "Make doctor's/medical appointment" },
+      { serviceName: "Schedule a meeting with a colleague" },
+      { serviceName: "Schedule a get together with friends/family" },
       {
         serviceName:
-          "Keep track of the price of some item and notify when lower price available"
-      },
-      {
-        serviceName:
-          "Keep track of medication/exercise/other recurrent activities "
-      },
-      {
-        serviceName:
-          "Keep track of the flight ticket and notify when lower price available"
-      },
-      {
-        serviceName: "Add task in a to-do list and remind at appropriate time"
-      },
-      { serviceName: "Add event in calendar and remind at appropriate time" },
-      { serviceName: "Track a package shipping and confirm when delivered" },
-      {
-        serviceName:
-          "Keep track of the opinion/preference expressed in this conversation"
-      },
-      { serviceName: "Keep track of travel schedules" }
+          "Schedule personal care appointment (hair, nails, spa, etc.)"
+      }
     ],
-    categoryName: "Tracking"
+    categoryName: "Add calendar event"
   },
   {
     services: [
@@ -150,13 +135,14 @@ export const SERVICES = [
   },
   {
     services: [
-      { serviceName: "Adjust heating/cooling" },
-      { serviceName: "Start/stop music" },
-      { serviceName: "Turn on/off the oven" },
-      { serviceName: "Open/close garage door" },
-      { serviceName: "Turn on/off the light" }
+      { serviceName: "Order food" },
+      { serviceName: "Order gift item" },
+      { serviceName: "Book flight/hotel/rent car" },
+      { serviceName: "Buy clothes" },
+      { serviceName: "Buy book" },
+      { serviceName: "Order a taxi/ride share" }
     ],
-    categoryName: "Smart home services"
+    categoryName: "Purchase a product/service"
   },
   {
     services: [
@@ -185,8 +171,38 @@ export const SERVICES = [
   },
   {
     services: [
+      {
+        serviceName:
+          "Keep track of the price of some item and notify when lower price available"
+      },
+      {
+        serviceName:
+          "Keep track of medication/exercise/other recurrent activities "
+      },
+      { serviceName: "Add task in a to-do list" },
+      { serviceName: "Track a package shipping and confirm when delivered" },
+      {
+        serviceName:
+          "Keep track of the opinion/preference expressed in this conversation"
+      },
+      { serviceName: "Keep track of travel schedules" }
+    ],
+    categoryName: "Keep track of information"
+  },
+  {
+    services: [
+      { serviceName: "Adjust heating/cooling" },
+      { serviceName: "Start/stop music" },
+      { serviceName: "Turn on/off the oven" },
+      { serviceName: "Open/close garage door" },
+      { serviceName: "Turn on/off the light" }
+    ],
+    categoryName: "Smart home services"
+  },
+  {
+    services: [
       { serviceName: "Recommend a restaurant/food delivery store" },
-      { serviceName: "Suggest a gift store/item" },
+      { serviceName: "Suggest a store/item" },
       { serviceName: "Recommend music, movie, or other media" },
       { serviceName: "Recommend medication and place to find it" },
       { serviceName: "Recommend activities/happenings nearby" },
@@ -194,28 +210,5 @@ export const SERVICES = [
       { serviceName: "Recommend the optimal route for a destination" }
     ],
     categoryName: "Recommend product/service"
-  },
-  {
-    services: [
-      { serviceName: "Make doctor's/medical appointment" },
-      { serviceName: "Schedule a meeting with a colleague" },
-      { serviceName: "Schedule a get together with friends/family" },
-      {
-        serviceName:
-          "Schedule personal care appointment (hair, nails, spa, etc.)"
-      }
-    ],
-    categoryName: "Add calendar event"
-  },
-  {
-    services: [
-      { serviceName: "Order food" },
-      { serviceName: "Order gift item" },
-      { serviceName: "Book flight/hotel/rent car" },
-      { serviceName: "Buy clothes" },
-      { serviceName: "Buy book" },
-      { serviceName: "Order a taxi/ride share" }
-    ],
-    categoryName: "Purchase a product/service"
   }
 ];
