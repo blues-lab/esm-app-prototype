@@ -637,21 +637,6 @@ async function _uploadFiles() {
     logger.error(codeFileName, "uploadFiles", "Failed to upload log file.");
   }
 }
-//
-//async function uploadFilesAndroid()
-//{
-//    try
-//    {
-//        const _ssid = await NetworkInfo.getSSID();
-//        logger.info(codeFileName, 'uploadFiles', 'SSID:'+_ssid+'. Attempting to upload files.');
-//        _uploadFiles();
-//    }
-//    catch(error)
-//    {
-//        logger.error(codeFileName, 'uploadFiles', 'Failed to upload files: '+error);
-//        return;
-//    }
-//}
 
 export async function uploadFiles() {
   //return if any survey is ongoing
