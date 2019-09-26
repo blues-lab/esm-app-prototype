@@ -530,7 +530,7 @@ export async function showPrompt() {
 
 async function uploadFilesInDir(dirName, fileNamePattern) {
   const _files = await RNFS.readdir(dirName);
-  logger.info(
+  await logger.info(
     codeFileName,
     "uploadFilesInDir",
     "Directory:" + dirName + ". Files:" + _files.toString()
@@ -538,7 +538,7 @@ async function uploadFilesInDir(dirName, fileNamePattern) {
   for (i = 0; i < _files.length; i++) {
     const _file = _files[i];
     if (_file.startsWith(fileNamePattern)) {
-      logger.info(
+      await logger.info(
         codeFileName,
         "uploadFilesInDir",
         "Uploading survey response file:" + _file
@@ -553,14 +553,14 @@ async function uploadFilesInDir(dirName, fileNamePattern) {
         "uploadFiles"
       );
       if (_uploaded) {
-        logger.info(
+        await logger.info(
           codeFileName,
           "uploadFilesInDir",
           "Uploaded file content for:" + _file + ". Removing file."
         );
         await RNFS.unlink(_filePath);
       } else {
-        logger.error(
+        await logger.error(
           codeFileName,
           "uploadFilesInDir",
           "Failed to upload file:" + _file
@@ -583,14 +583,14 @@ async function _uploadFiles() {
       "uploadFiles"
     );
     if (_uploaded) {
-      logger.info(
+      await logger.info(
         codeFileName,
         "uploadFiles",
         "Uploaded invitation code file content."
       );
       await RNFS.unlink(INVITATION_CODE_FILE_PATH);
     } else {
-      logger.error(
+      await logger.error(
         codeFileName,
         "uploadFiles",
         "Failed to upload invitation file content:" +
@@ -600,13 +600,13 @@ async function _uploadFiles() {
   }
 
   //check if there is any survey/partial survey response files, if so, upload them
-  logger.info(
+  await logger.info(
     codeFileName,
     "uploadFiles",
     "Attempting to upload survey response files."
   );
   await uploadFilesInDir(RNFS.DocumentDirectoryPath, "survey--response--");
-  logger.info(
+  await logger.info(
     codeFileName,
     "uploadFiles",
     "Attempting to upload partial survey response files."
@@ -617,7 +617,11 @@ async function _uploadFiles() {
   );
 
   //upload log file
-  logger.info(codeFileName, "uploadFiles", "Attempting to upload log file.");
+  await logger.info(
+    codeFileName,
+    "uploadFiles",
+    "Attempting to upload log file."
+  );
   const _fileContent = await RNFS.readFile(LOG_FILE_PATH);
   const _uploaded = await utilities.uploadData(
     _fileContent,
@@ -628,13 +632,17 @@ async function _uploadFiles() {
   );
   if (_uploaded) {
     await RNFS.writeFile(LOG_FILE_PATH, "");
-    logger.info(
+    await logger.info(
       codeFileName,
       "uploadFiles",
       "Uploaded previous log file content. Replaced with empty file."
     );
   } else {
-    logger.error(codeFileName, "uploadFiles", "Failed to upload log file.");
+    await logger.error(
+      codeFileName,
+      "uploadFiles",
+      "Failed to upload log file."
+    );
   }
 }
 
@@ -645,7 +653,7 @@ export async function uploadFiles() {
     logger.info(codeFileName, "uploadFiles", "A survey is ongoing. Returning.");
     return;
   }
-  logger.info(
+  await logger.info(
     codeFileName,
     "uploadFiles",
     "Current app state is " +
@@ -655,14 +663,14 @@ export async function uploadFiles() {
 
   try {
     const _ssid = await NetworkInfo.getSSID();
-    logger.info(
+    await logger.info(
       codeFileName,
       "uploadFiles",
       "SSID:" + _ssid + ". Attempting to upload files."
     );
     _uploadFiles();
   } catch (error) {
-    logger.error(
+    await logger.error(
       codeFileName,
       "uploadFiles",
       "Failed to upload files: " + error
