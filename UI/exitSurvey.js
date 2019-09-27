@@ -1,44 +1,34 @@
-import React, { Component } from "react";
+import React from "react";
 import {
+  Alert,
+  BackHandler,
+  Button,
+  FlatList,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  Button,
   TextInput,
-  Alert,
-  FlatList,
-  Modal,
-  ScrollView,
   TouchableHighlight,
   TouchableOpacity,
-  Switch,
-  BackHandler
+  View
 } from "react-native";
 import * as RNFS from "react-native-fs";
 import Icon from "react-native-vector-icons/Fontisto";
-import { ProgressDialog } from "react-native-simple-dialogs";
-
-import commonStyle from "./Style";
-import { RadioButton } from "react-native-paper";
-
+import appStatus from "../controllers/appStatus";
+import { SELECTED_SERVICES_FILE } from "../controllers/constants";
+import logger from "../controllers/logger";
 import {
-  EXIT_SURVEY_CONSENT,
+  BOTH_MODEL_INTRO_TEXT,
+  EXPLAIN_WHY_NO_SERVICES,
   MODEL1_FEATURES,
   MODEL2_FEATURES,
-  SINGLE_MODEL_INTRO_TEXT,
-  BOTH_MODEL_INTRO_TEXT,
-  EXPLAIN_WHY_NO_SERVICES
-} from "../controllers/strings.js";
-
-import logger from "../controllers/logger";
-
-import appStatus from "../controllers/appStatus";
+  SINGLE_MODEL_INTRO_TEXT
+} from "../controllers/strings";
+import utilities from "../controllers/utilities";
+import commonStyle from "./Style";
 
 const codeFileName = "exitSurvey.js";
-
-import utilities from "../controllers/utilities";
-import { SELECTED_SERVICES_FILE } from "../controllers/constants";
 
 const usefulnessOptions = [
   "Not useful at all",
