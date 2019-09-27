@@ -1,34 +1,25 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   Platform,
-  StyleSheet,
   Text,
   View,
   Button,
   TextInput,
   Alert,
   FlatList,
-  Modal,
   ScrollView,
   TouchableHighlight,
   TouchableOpacity,
   BackHandler
 } from "react-native";
 import * as RNFS from "react-native-fs";
-//import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
-import { RadioButton } from "react-native-paper";
-import DialogInput from "react-native-dialog-input";
 import { ProgressDialog } from "react-native-simple-dialogs";
+import Icon from "react-native-vector-icons/Fontisto";
+import commonStyle from "./Style";
 import logger from "../controllers/logger";
 import utilities from "../controllers/utilities";
-const codeFileName = "servicePermission.js";
-const serviceFileAsset = "services.js";
-const serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
-import commonStyles from "./Style";
-import Icon from "react-native-vector-icons/Fontisto";
-
-import commonStyle from "./Style";
 import ToolBar from "./toolbar";
+import appStatus from "../controllers/appStatus";
 import {
   ANSWER_TO_CONTINUE,
   RESTRICT_WHICH,
@@ -37,6 +28,8 @@ import {
   WOULD_ALLOW_1,
   RESTRICT_WHY
 } from "../controllers/strings";
+
+const codeFileName = "servicePermission.js";
 
 const fullShare = "fullShare";
 const partialShare = "partialShare";
@@ -59,21 +52,21 @@ export default class ServicePermissionScreen extends React.Component {
     };
   };
 
-  state = {
-    services: null, //the service list sent from the serviceMenu page
-    currentServiceIdx: 0,
-    sharingDecision: "",
-    whyNoShare: "",
-    whyPartShare: "",
-    partsToRedact: "",
-    permissionResponses: [],
-    surveyResponseJS: null, // full survey response so far sent from the serviceMenu page
-    saveWaitVisible: false,
-    followUpQuestions: false
-  };
-
   constructor(props) {
     super(props);
+
+    this.state = {
+      services: null, //the service list sent from the serviceMenu page
+      currentServiceIdx: 0,
+      sharingDecision: "",
+      whyNoShare: "",
+      whyPartShare: "",
+      partsToRedact: "",
+      permissionResponses: [],
+      surveyResponseJS: null, // full survey response so far sent from the serviceMenu page
+      saveWaitVisible: false,
+      followUpQuestions: false
+    };
 
     this.permissionOptions = [
       {
@@ -108,7 +101,8 @@ export default class ServicePermissionScreen extends React.Component {
           <View style={{ flex: 0 }}>
             <Text style={{ fontSize: 20, marginRight: 5 }}>
               No, I would
-              <Text style={{ fontWeight: "bold" }}> deny </Text> access to
+              <Text style={{ fontWeight: "bold" }}> deny </Text>
+              <Text>access to</Text>
               <Text style={{ fontWeight: "bold" }}> any </Text>
               <Text>relevant part of the conversation.</Text>
             </Text>
@@ -138,7 +132,7 @@ export default class ServicePermissionScreen extends React.Component {
       surveyResponseJS: _surveyResponseJS
     });
 
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.addEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid.bind(this)
@@ -173,7 +167,7 @@ export default class ServicePermissionScreen extends React.Component {
   };
 
   async saveResponse() {
-    if (this.state.sharingDecision.length == 0) {
+    if (this.state.sharingDecision.length === 0) {
       Alert.alert("Error", "Please select an option to continue.");
       logger.info(
         codeFileName,
@@ -181,17 +175,18 @@ export default class ServicePermissionScreen extends React.Component {
         "No permission option selected. Returning"
       );
       return;
-    } else {
-      logger.info(
-        codeFileName,
-        "saveResponse",
-        `service:${this.state.services[this.state.currentServiceIdx].serviceName}, sharingDecision:${this.state.sharingDecision}`
-      );
     }
-    if (this.state.sharingDecision == partialShare) {
+
+    logger.info(
+      codeFileName,
+      "saveResponse",
+      `service:${this.state.services[this.state.currentServiceIdx].serviceName}, sharingDecision:${this.state.sharingDecision}`
+    );
+
+    if (this.state.sharingDecision === partialShare) {
       if (
-        this.state.whyPartShare.length == 0 ||
-        this.state.partsToRedact.length == 0
+        this.state.whyPartShare.length === 0 ||
+        this.state.partsToRedact.length === 0
       ) {
         Alert.alert("Error", ANSWER_TO_CONTINUE);
         logger.info(
@@ -202,8 +197,8 @@ export default class ServicePermissionScreen extends React.Component {
         return;
       }
     }
-    if (this.state.sharingDecision == noShare) {
-      if (this.state.whyNoShare.length == 0) {
+    if (this.state.sharingDecision === noShare) {
+      if (this.state.whyNoShare.length === 0) {
         Alert.alert("Error", ANSWER_TO_CONTINUE);
         logger.info(
           codeFileName,
@@ -225,9 +220,9 @@ export default class ServicePermissionScreen extends React.Component {
       WhyNoShare: this.state.whyNoShare
     };
 
-    _permissionResponses = this.state.permissionResponses;
+    const _permissionResponses = this.state.permissionResponses;
     _permissionResponses.push(_permissionResponse);
-    _surveyResponseJS = this.state.surveyResponseJS;
+    const _surveyResponseJS = this.state.surveyResponseJS;
     _surveyResponseJS.PermissionResponses = _permissionResponses;
 
     const _nextServiceIdx = this.state.currentServiceIdx + 1;
@@ -304,7 +299,7 @@ export default class ServicePermissionScreen extends React.Component {
             justifyContent: "flex-start"
           }}
         >
-          {item.key == this.state.sharingDecision && (
+          {item.key === this.state.sharingDecision && (
             <Icon
               name="radio-btn-active"
               size={20}
@@ -312,7 +307,7 @@ export default class ServicePermissionScreen extends React.Component {
               style={{ margin: 5 }}
             />
           )}
-          {item.key != this.state.sharingDecision && (
+          {item.key !== this.state.sharingDecision && (
             <Icon
               name="radio-btn-passive"
               size={20}
@@ -344,7 +339,8 @@ export default class ServicePermissionScreen extends React.Component {
           {!this.state.followUpQuestions && this.state.services != null && (
             <View>
               <Text style={[commonStyle.questionStyle, { fontSize: 22 }]}>
-                {WOULD_ALLOW_1} <Text>{'"'}</Text>
+                {WOULD_ALLOW_1}
+                <Text> {'"'}</Text>
                 <Text style={{ fontWeight: "bold" }}>
                   {this.state.services[this.state.currentServiceIdx].serviceName
                     .trim()
@@ -353,7 +349,7 @@ export default class ServicePermissionScreen extends React.Component {
                 <Text>{'"'}?</Text>
               </Text>
 
-              <View style={commonStyles.listContainerStyle}>
+              <View style={commonStyle.listContainerStyle}>
                 <FlatList
                   data={this.permissionOptions}
                   ItemSeparatorComponent={this.flatListItemSeparator}
@@ -366,7 +362,7 @@ export default class ServicePermissionScreen extends React.Component {
                 <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
                   <Button
                     onPress={() => {
-                      if (this.state.sharingDecision == fullShare) {
+                      if (this.state.sharingDecision === fullShare) {
                         this.saveResponse();
                       } else {
                         this.setState({ followUpQuestions: true });
@@ -382,7 +378,7 @@ export default class ServicePermissionScreen extends React.Component {
           )}
 
           {this.state.followUpQuestions &&
-            this.state.sharingDecision == partialShare && (
+            this.state.sharingDecision === partialShare && (
               <View
                 style={{
                   flex: 1,
@@ -392,7 +388,7 @@ export default class ServicePermissionScreen extends React.Component {
               >
                 <Text style={commonStyle.questionStyle}>{RESTRICT_WHICH}</Text>
                 <TextInput
-                  multiline={true}
+                  multiline
                   numberOfLines={4}
                   style={commonStyle.inputStyle}
                   onChangeText={text => this.setState({ partsToRedact: text })}
@@ -401,7 +397,7 @@ export default class ServicePermissionScreen extends React.Component {
 
                 <Text style={commonStyle.questionStyle}>{RESTRICT_WHY}</Text>
                 <TextInput
-                  multiline={true}
+                  multiline
                   numberOfLines={4}
                   style={commonStyle.inputStyle}
                   onChangeText={text => this.setState({ whyPartShare: text })}
@@ -410,7 +406,7 @@ export default class ServicePermissionScreen extends React.Component {
               </View>
             )}
           {this.state.followUpQuestions &&
-            this.state.sharingDecision == noShare && (
+            this.state.sharingDecision === noShare && (
               <View
                 style={{
                   flex: 1,
@@ -420,7 +416,7 @@ export default class ServicePermissionScreen extends React.Component {
               >
                 <Text style={commonStyle.questionStyle}>{WHY_DENY}</Text>
                 <TextInput
-                  multiline={true}
+                  multiline
                   numberOfLines={4}
                   style={commonStyle.inputStyle}
                   onChangeText={text => this.setState({ whyNoShare: text })}
@@ -455,7 +451,7 @@ export default class ServicePermissionScreen extends React.Component {
   }
 
   componentWillUnmount() {
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.removeEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid
@@ -467,5 +463,3 @@ export default class ServicePermissionScreen extends React.Component {
     return true;
   };
 }
-
-const styles = StyleSheet.create({});
