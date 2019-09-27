@@ -23,102 +23,110 @@ import Icon from "react-native-vector-icons/Fontisto";
 import DialogInput from "react-native-dialog-input";
 import NumericInput from "react-native-numeric-input";
 import { CheckBox } from "react-native-elements";
+import logger from "../controllers/logger";
 
 const serviceFileAsset = "services.js";
 const serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
-
-import logger from "../controllers/logger";
 const codeFileName = "locations.js";
-
 const checkBoxWidth = 25;
 const checkBoxHeight = 25;
 
-export default class Locations extends React.Component {
-  state = {
-    familySelected: false,
-    friendSelected: false,
-    acquaintanceSelected: false,
-    colleaguesSelected: false,
-    roommatesSelected: false,
-    workerSelected: false,
-    unknownSelected: false,
-    selectedRelations: [],
-    otherDialogVisible: false,
-    locationNames: [
-      {
-        name: "Bedroom",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      },
-      {
-        name: "Living room",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      },
-      {
-        name: "Garden",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      },
-      {
-        name: "Kitchen",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      },
-      {
-        name: "Garage",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      },
-      {
-        name: "Bathroom",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      },
-      {
-        name: "Patio/balcony/terrace",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      },
-      {
-        name: "Other",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      }
-    ],
-    otherLocationName: ""
-  };
+const styles = StyleSheet.create({
+  unselectedStyle: {
+    backgroundColor: "white",
+    padding: 2,
+    margin: 2,
+    borderWidth: 1
+  },
+  selectedStyle: {
+    backgroundColor: "#bfd9bf",
+    padding: 2,
+    margin: 2,
+    borderWidth: 0.5
+  },
 
+  rowView: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "stretch"
+  },
+  itemTextStyle: {
+    fontSize: 18
+  }
+});
+
+export default class Locations extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      otherDialogVisible: false,
+      locationNames: [
+        {
+          name: "Bedroom",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Living room",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Garden",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Kitchen",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Garage",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Bathroom",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Patio/balcony/terrace",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Other",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        }
+      ],
+      otherLocationName: ""
+    };
   }
 
-  componentDidMount() {
-    this.setState({
-      familySelected: false,
-      friendSelected: false,
-      selectedRelations: []
-    });
-  }
+  componentDidMount() {}
 
   handleSelectionChange(index) {
-    _locationNames = this.state.locationNames;
+    const _locationNames = this.state.locationNames;
     _locationNames[index].selected = !_locationNames[index].selected;
 
-    _name = _locationNames[index].name;
-    _selected = _locationNames[index].selected;
+    const _name = _locationNames[index].name;
+    const _selected = _locationNames[index].selected;
 
     if (_selected) {
       //check if 'other' was selected
-      if (_locationNames[index].name == "Other") {
+      if (_locationNames[index].name === "Other") {
         this.setState({ otherDialogVisible: true });
       }
       _locationNames[index].iconName = "checkbox-active";
@@ -144,9 +152,9 @@ export default class Locations extends React.Component {
   }
 
   getSelectedLocations() {
-    _locationNames = this.state.locationNames;
-    _selectedLocations = new Set([]);
-    for (i = 0; i < _locationNames.length; i++) {
+    const _locationNames = this.state.locationNames;
+    const _selectedLocations = new Set([]);
+    for (let i = 0; i < _locationNames.length; i++) {
       if (_locationNames[i].selected) {
         if (_locationNames[i].name != "Other") {
           _selectedLocations.add(_locationNames[i].name);
@@ -312,10 +320,10 @@ export default class Locations extends React.Component {
 
         <DialogInput
           isDialogVisible={this.state.otherDialogVisible}
-          title={"Please enter"}
-          message={""}
-          hintInput={""}
-          multiline={true}
+          title="Please enter"
+          message=""
+          hintInput=""
+          multiline
           numberOfLines={4}
           initValueTextInput={this.state.otherLocationName}
           submitInput={inputText => {
@@ -325,7 +333,7 @@ export default class Locations extends React.Component {
                 "OtherLocationInputDialog",
                 "Other location entered:" + inputText
               );
-              _selectedLocations = this.getSelectedLocations();
+              const _selectedLocations = this.getSelectedLocations();
               _selectedLocations.add(inputText);
               logger.info(
                 codeFileName,
@@ -347,7 +355,7 @@ export default class Locations extends React.Component {
               "OtherLocationInputDialog",
               "Other location (" + this.state.otherLocationName + ") removed."
             );
-            _selectedLocations = this.getSelectedLocations();
+            const _selectedLocations = this.getSelectedLocations();
             _selectedLocations.delete(this.state.otherLocationName);
             logger.info(
               codeFileName,
@@ -358,7 +366,7 @@ export default class Locations extends React.Component {
             this.props.locationSelectionHandler(_selectedLocations);
 
             //Un-select the UI option
-            _locationNames = this.state.locationNames;
+            const _locationNames = this.state.locationNames;
             _locationNames[_locationNames.length - 1].selected = false;
             _locationNames[_locationNames.length - 1].iconName =
               "checkbox-passive";
@@ -374,29 +382,3 @@ export default class Locations extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  unselectedStyle: {
-    backgroundColor: "white",
-    padding: 2,
-    margin: 2,
-    borderWidth: 1,
-    padding: 1
-  },
-  selectedStyle: {
-    backgroundColor: "#bfd9bf",
-    padding: 2,
-    margin: 2,
-    borderWidth: 0.5
-  },
-
-  rowView: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "stretch"
-  },
-  itemTextStyle: {
-    fontSize: 18
-  }
-});
