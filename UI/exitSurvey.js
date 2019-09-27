@@ -74,7 +74,7 @@ export default class ExitSurveyScreen extends React.Component {
   };
 
   async loadSelectedServices() {
-    _selectedServices = new Set([]);
+    let _selectedServices = new Set([]);
 
     try {
       if (await RNFS.exists(SELECTED_SERVICES_FILE)) {
@@ -86,13 +86,13 @@ export default class ExitSurveyScreen extends React.Component {
         const _fileContents = await RNFS.readFile(SELECTED_SERVICES_FILE);
         const _lines = _fileContents.split("\n");
 
-        for (i = 0; i < _lines.length; i++) {
+        for (let i = 0; i < _lines.length; i++) {
           if (_lines[i].trim().length > 0) {
             try {
               const _js = JSON.parse(_lines[i]);
 
-              for (j = 0; j < _js.length; j++) {
-                for (s = 0; s < _js[j].services.length; s++) {
+              for (let j = 0; j < _js.length; j++) {
+                for (let s = 0; s < _js[j].services.length; s++) {
                   _selectedServices = new Set(this.state.selectedServices);
                   _selectedServices.add(_js[j].services[s]);
                   await this.promisedSetState({
@@ -169,7 +169,7 @@ export default class ExitSurveyScreen extends React.Component {
     appStatus.loadStatus().then(_appStatus => {
       this.setState({ saveWaitVisible: true });
 
-      _response = {
+      const _response = {
         serviceResponses: this.state.serviceResponses,
         whyNoService: this.state.whyNoService,
         priceCondition: this.state.priceCondition,
@@ -210,7 +210,6 @@ export default class ExitSurveyScreen extends React.Component {
               "saveResponse",
               "Failed to upload exit survey response. Saving in local file for now."
             );
-            _time = Date.now().toString();
             utilities.writeJSONFile(
               _response,
               RNFS.DocumentDirectoryPath + "/exit-survey-response.js",
@@ -415,7 +414,7 @@ export default class ExitSurveyScreen extends React.Component {
           appStatus.loadStatus().then(_appStatus => {
             this.setState({ saveWaitVisible: true });
 
-            _response = {
+            const _response = {
               serviceResponses: this.state.serviceResponses,
               whyNoService: this.state.whyNoService,
               priceCondition: this.state.priceCondition,
@@ -456,7 +455,6 @@ export default class ExitSurveyScreen extends React.Component {
                     "saveResponse",
                     "Failed to upload exit survey response. Saving in local file for now."
                   );
-                  _time = Date.now().toString();
                   utilities.writeJSONFile(
                     _response,
                     RNFS.DocumentDirectoryPath + "/exit-survey-response.js",
@@ -578,7 +576,7 @@ export default class ExitSurveyScreen extends React.Component {
         </View>
       );
     } else {
-      model_features = MODEL1_FEATURES;
+      let model_features = MODEL1_FEATURES;
       if (model == 1) {
         model_features = MODEL2_FEATURES;
       }
