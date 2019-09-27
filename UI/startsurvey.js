@@ -15,13 +15,12 @@ import {
   Keyboard
 } from "react-native";
 import { ProgressDialog } from "react-native-simple-dialogs";
+import * as RNFS from "react-native-fs";
 import logger from "../controllers/logger";
 import ServiceMenuScreen from "./servicemenu";
 import commonStyles from "./Style";
 import appStatus from "../controllers/appStatus";
-const codeFileName = "startsurvey.js";
 import ToolBar from "./toolbar";
-import * as RNFS from "react-native-fs";
 import utilities from "../controllers/utilities";
 import {
   TALKING_ABOUT,
@@ -29,6 +28,8 @@ import {
   SAVING_WAIT
 } from "../controllers/strings";
 import { SURVEY_STATUS } from "../controllers/constants";
+
+const codeFileName = "startsurvey.js";
 
 export default class SurveyStartScreen extends React.Component {
   _didFocusSubscription;
@@ -51,7 +52,7 @@ export default class SurveyStartScreen extends React.Component {
   async componentDidMount() {
     logger.info(codeFileName, "componentDidMount", "Setting event handlers.");
 
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.addEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid.bind(this)
@@ -60,7 +61,7 @@ export default class SurveyStartScreen extends React.Component {
 
     const _surveyID = "SurveyID-" + Date.now();
 
-    _appStatus = await appStatus.loadStatus();
+    const _appStatus = await appStatus.loadStatus();
     _appStatus.CurrentSurveyID = _surveyID;
     _appStatus.SurveyStatus = SURVEY_STATUS.ONGOING;
     await appStatus.setAppStatus(_appStatus);
@@ -82,7 +83,7 @@ export default class SurveyStartScreen extends React.Component {
       "componentWillUnmount",
       "Removing event handlers."
     );
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.removeEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid
@@ -136,7 +137,7 @@ export default class SurveyStartScreen extends React.Component {
             <Text style={commonStyles.questionStyle}>{TALKING_ABOUT}</Text>
 
             <TextInput
-              multiline={true}
+              multiline
               numberOfLines={4}
               style={commonStyles.inputStyle}
               onChangeText={text => this.setState({ conversationTopic: text })}
@@ -153,7 +154,7 @@ export default class SurveyStartScreen extends React.Component {
                   title="Next"
                   color="#20B2AA"
                   onPress={async () => {
-                    if (this.state.conversationTopic.length == 0) {
+                    if (this.state.conversationTopic.length === 0) {
                       Alert.alert(
                         "Error",
                         "Please enter conversation topic to continue."
