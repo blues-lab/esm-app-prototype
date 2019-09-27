@@ -16,17 +16,21 @@ import {
 } from "react-native";
 import * as RNFS from "react-native-fs";
 import DialogInput from "react-native-dialog-input";
-
-import logger from "../controllers/logger";
-
-import commonStyles from "./Style";
-const serviceFileAsset = "services.js";
-const serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
+import Icon from "react-native-vector-icons/Fontisto";
 import ToolBar from "./toolbar";
+import logger from "../controllers/logger";
+import commonStyles from "./Style";
 
 const selectionText = "Selected (tap again to remove)";
 const codeFileName = "serviceDetails.js";
-import Icon from "react-native-vector-icons/Fontisto";
+
+const styles = StyleSheet.create({
+  selectedItemStyle: {
+    backgroundColor: "#9dd7fb",
+    padding: 10,
+    height: 60
+  }
+});
 
 export default class ServiceDetailsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -42,14 +46,6 @@ export default class ServiceDetailsScreen extends React.Component {
     };
   };
 
-  state = {
-    serviceCategory: {}, //contains the whole category object passed by parent
-    serviceCategoryName: "", //contains the category name
-    serviceNames: [], //contains parsed services
-    isAddServiceDialogVisible: false,
-    firstLoad: true //indicates whether the services are being loaded for the first time
-  };
-
   FlatListItemSeparator = () => {
     return (
       //Item Separator
@@ -61,28 +57,25 @@ export default class ServiceDetailsScreen extends React.Component {
 
   constructor(props) {
     super(props);
-  }
-
-  shuffle(a) {
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
+    this.state = {
+      serviceCategoryName: "", //contains the category name
+      serviceNames: [], //contains parsed services
+      isAddServiceDialogVisible: false,
+      firstLoad: true //indicates whether the services are being loaded for the first time
+    };
   }
 
   parseServiceNames(serviceCategory) {
     // load service names in array from service category object passed by parent
-    _serviceNames = [];
-    _services = serviceCategory.services;
-    for (var i = 0; i < _services.length; i++) {
+    const _serviceNames = [];
+    const _services = serviceCategory.services;
+    for (let i = 0; i < _services.length; i++) {
       _serviceNames.push({
         id: _services[i].name,
         name: _services[i].name,
         selected: _services[i].selected,
         description: _services[i].selected ? this.selectionText : "",
-        renderStyle: commonStyles.listItemStyle,
-        imgSrc: require("../res/unchecked.png")
+        renderStyle: commonStyles.listItemStyle
       });
     }
 
@@ -99,8 +92,7 @@ export default class ServiceDetailsScreen extends React.Component {
           name: "Other",
           selected: false,
           description: "",
-          renderStyle: commonStyles.listItemStyle,
-          imgSrc: require("../res/unchecked.png")
+          renderStyle: commonStyles.listItemStyle
         }
       );
     }
@@ -121,17 +113,17 @@ export default class ServiceDetailsScreen extends React.Component {
 
     this.setState(
       {
-        serviceCategory: _serviceCategory,
         serviceCategoryName: _serviceCategory.name,
         serviceNames: this.parseServiceNames(_serviceCategory)
       },
-      () =>
-        this.setState({
-          isAddServiceDialogVisible: this.state.serviceNames.length == 0
-        })
+      () => {
+        this.setState(prevState => ({
+          isAddServiceDialogVisible: prevState.serviceNames.length === 0
+        }));
+      }
     );
 
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.addEventListener(
         "hardwareBackPress",
         this.onBackButtonPress.bind(this)
@@ -140,7 +132,7 @@ export default class ServiceDetailsScreen extends React.Component {
   }
 
   componentWillUnmount() {
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.removeEventListener(
         "hardwareBackPress",
         this.onBackButtonPress
@@ -156,31 +148,31 @@ export default class ServiceDetailsScreen extends React.Component {
   };
 
   handleServiceSelection = async selectedServiceName => {
-    _serviceNames = this.state.serviceNames;
-    for (var i = 0; i < _serviceNames.length; i++) {
-      if (_serviceNames[i].name == selectedServiceName) {
+    const _serviceNames = this.state.serviceNames;
+    let _selectedService = null;
+    for (let i = 0; i < _serviceNames.length; i++) {
+      if (_serviceNames[i].name === selectedServiceName) {
         _serviceNames[i].selected = !_serviceNames[i].selected;
 
         if (_serviceNames[i].selected) {
           _serviceNames[i].description = selectionText;
           _serviceNames[i].renderStyle = styles.selectedItemStyle;
-          _serviceNames[i].imgSrc = require("../res/checked.png");
         } else {
           _serviceNames[i].description = "";
           _serviceNames[i].renderStyle = commonStyles.listItemStyle;
-          _serviceNames[i].imgSrc = require("../res/unchecked.png");
         }
 
-        //call parent component to update service selections
-        await this.props.navigation.state.params.serviceSelectionHandler(
-          this.state.serviceCategoryName,
-          _serviceNames[i],
-          false
-        );
-
+        _selectedService = _serviceNames[i];
         break;
       }
     }
+
+    //call parent component to update service selections
+    await this.props.navigation.state.params.serviceSelectionHandler(
+      this.state.serviceCategoryName,
+      _selectedService,
+      false
+    );
 
     logger.info(
       `${codeFileName}`,
@@ -194,7 +186,7 @@ export default class ServiceDetailsScreen extends React.Component {
   };
 
   renderListItem = ({ item }) => {
-    if (item.id == "Other") {
+    if (item.id === "Other") {
       return (
         <TouchableOpacity
           onPress={() => {
@@ -295,19 +287,19 @@ export default class ServiceDetailsScreen extends React.Component {
 
         <DialogInput
           isDialogVisible={this.state.isAddServiceDialogVisible}
-          title={"What other service?"}
-          message={""}
-          hintInput={""}
+          title="What other service?"
+          message=""
+          hintInput=""
           submitInput={async inputText => {
             if (inputText.length > 0) {
-              _newService = {
+              const _newService = {
                 id: inputText,
                 name: inputText,
                 selected: true,
                 description: "",
                 renderStyle: commonStyles.listItemStyle
               };
-              _serviceNames = this.state.serviceNames;
+              const _serviceNames = this.state.serviceNames;
               _serviceNames.splice(_serviceNames.length - 1, 0, _newService);
               //_serviceNames.push(_newService);
 
@@ -325,7 +317,7 @@ export default class ServiceDetailsScreen extends React.Component {
                 serviceNames: _serviceNames,
                 isAddServiceDialogVisible: false
               });
-              if (this.state.serviceNames.length == 1) {
+              if (this.state.serviceNames.length === 1) {
                 //if the newly added service is the first one, go back to main menu
                 this.props.navigation.goBack(null);
               }
@@ -338,7 +330,7 @@ export default class ServiceDetailsScreen extends React.Component {
               "Canceled"
             );
             this.setState({ isAddServiceDialogVisible: false }, () => {
-              if (this.state.serviceNames.length == 0) {
+              if (this.state.serviceNames.length === 0) {
                 //if no service, go back to main menu
                 this.props.navigation.goBack(null);
               }
@@ -349,11 +341,3 @@ export default class ServiceDetailsScreen extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  selectedItemStyle: {
-    backgroundColor: "#9dd7fb",
-    padding: 10,
-    height: 60
-  }
-});
