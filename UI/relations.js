@@ -19,108 +19,110 @@ import RadioForm, {
   RadioButtonInput,
   RadioButtonLabel
 } from "react-native-simple-radio-button";
-
 import DialogInput from "react-native-dialog-input";
-//import SelectMultiple from 'react-native-select-multiple';
 import NumericInput from "react-native-numeric-input";
 import Icon from "react-native-vector-icons/Fontisto";
 import { CheckBox } from "react-native-elements";
-
-//import CheckBoxes from 'react-native-group-checkbox'
-
-const serviceFileAsset = "services.js";
-const serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
-
 import logger from "../controllers/logger";
-const codeFileName = "relations.js";
 
+const codeFileName = "relations.js";
 const checkBoxWidth = 25;
 const checkBoxHeight = 25;
 
-export default class Relations extends React.Component {
-  state = {
-    familySelected: false,
-    friendSelected: false,
-    acquaintanceSelected: false,
-    colleaguesSelected: false,
-    roommatesSelected: false,
-    workerSelected: false,
-    unknownSelected: false,
-    selectedRelations: [],
-    otherDialogVisible: false,
-    otherRelationName: "",
-    relationNames: [
-      {
-        name: "Family members",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      },
-      {
-        name: "Friends",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      },
-      {
-        name: "Acquaintance",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      },
-      {
-        name: "Colleagues",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      },
-      {
-        name: "Roommates/other tenants",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      },
-      {
-        name: "Domestic worker/nanny",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      },
-      {
-        name: "Unknown",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      },
-      {
-        name: "Other",
-        renderStyle: styles.unselectedStyle,
-        iconName: "checkbox-passive",
-        selected: false
-      }
-    ]
-  };
+const styles = StyleSheet.create({
+  unselectedStyle: {
+    backgroundColor: "white",
+    padding: 2,
+    margin: 2,
+    borderWidth: 0.5
+  },
+  selectedStyle: {
+    backgroundColor: "darkseagreen",
+    padding: 2,
+    margin: 2,
+    borderWidth: 0.5
+  },
 
+  rowView: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "stretch"
+  },
+  itemTextStyle: {
+    fontSize: 20
+  }
+});
+
+export default class Relations extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      otherDialogVisible: false,
+      otherRelationName: "",
+      relationNames: [
+        {
+          name: "Family members",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Friends",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Acquaintance",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Colleagues",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Roommates/other tenants",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Domestic worker/nanny",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Unknown",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Other",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        }
+      ]
+    };
   }
 
-  componentDidMount() {
-    this.setState({
-      familySelected: false,
-      friendSelected: false,
-      selectedRelations: []
-    });
-  }
+  componentDidMount() {}
 
   handleSelectionChange(index) {
-    _relationNames = this.state.relationNames;
+    const _relationNames = this.state.relationNames;
     _relationNames[index].selected = !_relationNames[index].selected;
-    _name = _relationNames[index].name;
-    _selected = _relationNames[index].selected;
+    const _name = _relationNames[index].name;
+    const _selected = _relationNames[index].selected;
     if (_selected) {
       //check if 'other' was selected
-      if (_relationNames[index].name == "Other") {
+      if (_relationNames[index].name === "Other") {
         this.setState({ otherDialogVisible: true });
       }
       _relationNames[index].iconName = "checkbox-active";
@@ -146,11 +148,11 @@ export default class Relations extends React.Component {
   }
 
   getSelectedRelations() {
-    _relationNames = this.state.relationNames;
-    _selectedRelations = new Set([]);
-    for (i = 0; i < _relationNames.length; i++) {
+    const _relationNames = this.state.relationNames;
+    const _selectedRelations = new Set([]);
+    for (let i = 0; i < _relationNames.length; i++) {
       if (_relationNames[i].selected) {
-        if (_relationNames[i].name != "Other") {
+        if (_relationNames[i].name !== "Other") {
           _selectedRelations.add(_relationNames[i].name);
         }
       }
@@ -317,10 +319,10 @@ export default class Relations extends React.Component {
 
         <DialogInput
           isDialogVisible={this.state.otherDialogVisible}
-          title={"Please enter"}
-          message={""}
-          hintInput={""}
-          multiline={true}
+          title="Please enter"
+          message=""
+          hintInput=""
+          multiline
           numberOfLines={4}
           submitInput={inputText => {
             if (inputText.length > 0) {
@@ -329,7 +331,7 @@ export default class Relations extends React.Component {
                 "OtherRelationInputDialog",
                 "Other relation entered:" + inputText
               );
-              _selectedRelations = this.getSelectedRelations();
+              const _selectedRelations = this.getSelectedRelations();
               _selectedRelations.add(inputText);
               logger.info(
                 codeFileName,
@@ -352,7 +354,7 @@ export default class Relations extends React.Component {
               "Other relation (" + this.state.otherRelationName + ") removed."
             );
 
-            _selectedRelations = this.getSelectedRelations();
+            const _selectedRelations = this.getSelectedRelations();
             _selectedRelations.delete(this.state.otherRelationName);
             logger.info(
               codeFileName,
@@ -363,7 +365,7 @@ export default class Relations extends React.Component {
             this.props.relationSelectionHandler(_selectedRelations);
 
             //Un-select the UI option
-            _relationNames = this.state.relationNames;
+            const _relationNames = this.state.relationNames;
             _relationNames[_relationNames.length - 1].selected = false;
             _relationNames[_relationNames.length - 1].iconName =
               "checkbox-passive";
@@ -379,28 +381,3 @@ export default class Relations extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  unselectedStyle: {
-    backgroundColor: "white",
-    padding: 2,
-    margin: 2,
-    borderWidth: 0.5
-  },
-  selectedStyle: {
-    backgroundColor: "darkseagreen",
-    padding: 2,
-    margin: 2,
-    borderWidth: 0.5
-  },
-
-  rowView: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "stretch"
-  },
-  itemTextStyle: {
-    fontSize: 20
-  }
-});
