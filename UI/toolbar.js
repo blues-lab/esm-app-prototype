@@ -1,41 +1,27 @@
-import React, { Component } from "react";
+import React from "react";
 import {
-  Platform,
-  StyleSheet,
   Text,
   View,
-  Button,
-  Alert,
-  Image,
   TouchableHighlight,
   BackHandler,
-  AppState
+  Alert
 } from "react-native";
 
 import AnimatedProgressWheel from "react-native-progress-wheel";
 import { withNavigation } from "react-navigation";
-import appStatus from "../controllers/appStatus";
-import logger from "../controllers/logger";
-const codeFileName = "toolbar.js";
-import { SURVEY_STATUS, PROMPT_DURATION } from "../controllers/constants";
-import notificationController from "../controllers/notificationController";
-import commonStyles from "./Style";
 import Icon from "react-native-vector-icons/Feather";
 import ProgressBarAnimated from "react-native-progress-bar-animated";
-
-import { ProgressBar, Colors } from "react-native-paper";
+import { ProgressBar } from "react-native-paper";
+import appStatus from "../controllers/appStatus";
+import commonStyles from "./Style";
+import { SURVEY_STATUS, PROMPT_DURATION } from "../controllers/constants";
+import notificationController from "../controllers/notificationController";
+import logger from "../controllers/logger";
 import { SURVEY_EXPIRED } from "../controllers/strings";
 
-class ToolBar extends React.Component {
-  state = {
-    minRemaining: null,
-    secRemaining: null,
-    surveyStatus: null,
-    completedSurveys: 0,
-    exitSurveyDone: 0,
-    appState: AppState.currentState
-  };
+const codeFileName = "toolbar.js";
 
+class ToolBar extends React.Component {
   interval = null;
 
   promisedSetState = newState => {
@@ -68,7 +54,7 @@ class ToolBar extends React.Component {
         JSON.stringify(_appStatus)
     );
 
-    if (_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING) {
+    if (_appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) {
       await logger.info(
         codeFileName,
         "initToolbar",
@@ -78,7 +64,7 @@ class ToolBar extends React.Component {
       );
       const _firstNotificationTime = _appStatus.FirstNotificationTime;
 
-      if (_firstNotificationTime == null) {
+      if (_firstNotificationTime === null) {
         await logger.error(
           codeFileName,
           "initToolbar",
@@ -134,7 +120,6 @@ class ToolBar extends React.Component {
         "initToolbar",
         "Page:" + this.props.title + ". No survey is ONGOING. Returning."
       );
-      return;
     }
   }
 
@@ -155,7 +140,7 @@ class ToolBar extends React.Component {
       "componentWillUnmount",
       "Page:" + this.props.title + ". Removing event listeners."
     );
-    if (this.interval != null) {
+    if (this.interval !== null) {
       clearInterval(this.interval);
     }
   }
@@ -163,23 +148,31 @@ class ToolBar extends React.Component {
   constructor(props) {
     super(props);
     this._isMounted = false;
+
+    this.state = {
+      minRemaining: null,
+      secRemaining: null,
+      surveyStatus: null,
+      completedSurveys: 0,
+      exitSurveyDone: 0
+    };
   }
 
   async updateTimeDisplay() {
     if (this._isMounted) {
-      _appStatus = await appStatus.loadStatus();
+      const _appStatus = await appStatus.loadStatus();
       // update self survey state
       if (this._isMounted) {
         await this.promisedSetState({ surveyStatus: _appStatus.SurveyStatus });
       }
 
-      if (_appStatus.SurveyStatus != SURVEY_STATUS.ONGOING) {
+      if (_appStatus.SurveyStatus !== SURVEY_STATUS.ONGOING) {
         //if no survey is ongoing, no point in updating time.
         return;
       }
 
       const _firstNotificationTime = _appStatus.FirstNotificationTime;
-      if (_firstNotificationTime == null) {
+      if (_firstNotificationTime === null) {
         await logger.error(
           codeFileName,
           "updateTimeDisplay",
@@ -192,9 +185,9 @@ class ToolBar extends React.Component {
       const _curTime = new Date();
       const _secondsPassed =
         (_curTime.getTime() - _firstNotificationTime.getTime()) / 1000;
-      _secRemaining = PROMPT_DURATION * 60 - _secondsPassed;
+      let _secRemaining = PROMPT_DURATION * 60 - _secondsPassed;
 
-      _minRemaining = Math.floor(_secRemaining / 60);
+      let _minRemaining = Math.floor(_secRemaining / 60);
       _secRemaining = Math.floor(_secRemaining % 60);
 
       if (this._isMounted) {
@@ -206,7 +199,7 @@ class ToolBar extends React.Component {
 
       if (_secRemaining <= 0) {
         if (_minRemaining > 0) {
-          _minRemaining = _minRemaining - 1;
+          _minRemaining -= 1;
           _secRemaining = 59;
 
           if (this._isMounted) {
@@ -230,7 +223,7 @@ class ToolBar extends React.Component {
           _appStatus.CurrentSurveyID = null;
           await appStatus.setAppStatus(_appStatus);
 
-          if (this.props.title != "Settings") {
+          if (this.props.title !== "Settings") {
             Alert.alert(
               "Survey expired!",
               SURVEY_EXPIRED,
@@ -272,7 +265,7 @@ class ToolBar extends React.Component {
         <TouchableHighlight
           style={{ height: 30 }}
           onPress={() => {
-            _backCallBack = this.props.navigation.getParam(
+            const _backCallBack = this.props.navigation.getParam(
               "backCallBack",
               null
             ); //back button callback sent from Home
@@ -285,7 +278,7 @@ class ToolBar extends React.Component {
           <Icon name="settings" size={30} color="black" style={{ margin: 5 }} />
         </TouchableHighlight>
 
-        {this.state.surveyStatus == SURVEY_STATUS.ONGOING && (
+        {this.state.surveyStatus === SURVEY_STATUS.ONGOING && (
           <View
             style={{
               flex: 1,
