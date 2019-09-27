@@ -37,6 +37,35 @@ const usefulnessOptions = [
   "Useful",
   "Very useful"
 ];
+const styles = StyleSheet.create({
+  verticalViewStyle: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "space-around",
+    alignItems: "flex-start"
+    //    marginRight:10,
+    //    marginLeft:10,
+    //backgroundColor:'lightcyan',
+  },
+
+  insideVerticalViewStyle: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center"
+    //backgroundColor:'#a7f1e9'
+  },
+
+  horizontalViewStyle: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center"
+    //      marginRight:10,
+    //      marginLeft:10,
+    ///backgroundColor:'lightcyan',
+  }
+});
 
 export default class ExitSurveyScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -292,7 +321,7 @@ export default class ExitSurveyScreen extends React.Component {
         "Current service:" + _curService + ", usefulness:" + _response
       );
 
-      _serviceResponses = this.state.serviceResponses;
+      const _serviceResponses = this.state.serviceResponses;
       _serviceResponses.push({ [_curService]: _response });
       this.setState({
         serviceResponses: _serviceResponses,
@@ -519,7 +548,7 @@ export default class ExitSurveyScreen extends React.Component {
               style={{ margin: 5 }}
             />
           )}
-          {item != this.state.usefulness && (
+          {item !== this.state.usefulness && (
             <Icon
               name="radio-btn-passive"
               size={20}
@@ -539,6 +568,7 @@ export default class ExitSurveyScreen extends React.Component {
       <View style={{ height: 0, width: "100%", backgroundColor: "grey" }} />
     );
   };
+
   renderListItem = ({ item }) => {
     return <Text style={{ fontSize: 18 }}>{item}</Text>;
   };
@@ -575,24 +605,23 @@ export default class ExitSurveyScreen extends React.Component {
           </View>
         </View>
       );
-    } else {
-      let model_features = MODEL1_FEATURES;
-      if (model === 1) {
-        model_features = MODEL2_FEATURES;
-      }
-      return (
-        <View>
-          <Text style={{ fontSize: 20 }}> {SINGLE_MODEL_INTRO_TEXT}</Text>
-          <View style={commonStyle.listContainerStyle}>
-            <FlatList
-              data={model_features}
-              renderItem={this.renderListItem}
-              keyExtractor={(item, index) => index.toString()}
-            />
-          </View>
-        </View>
-      );
     }
+    let modelFeatures = MODEL1_FEATURES;
+    if (model === 1) {
+      modelFeatures = MODEL2_FEATURES;
+    }
+    return (
+      <View>
+        <Text style={{ fontSize: 20 }}> {SINGLE_MODEL_INTRO_TEXT}</Text>
+        <View style={commonStyle.listContainerStyle}>
+          <FlatList
+            data={modelFeatures}
+            renderItem={this.renderListItem}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+      </View>
+    );
   }
 
   render() {
@@ -769,33 +798,3 @@ export default class ExitSurveyScreen extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  verticalViewStyle: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "space-around",
-    alignItems: "flex-start"
-    //    marginRight:10,
-    //    marginLeft:10,
-    //backgroundColor:'lightcyan',
-  },
-
-  insideVerticalViewStyle: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    alignItems: "center"
-    //backgroundColor:'#a7f1e9'
-  },
-
-  horizontalViewStyle: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center"
-    //      marginRight:10,
-    //      marginLeft:10,
-    ///backgroundColor:'lightcyan',
-  }
-});
