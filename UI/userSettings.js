@@ -17,8 +17,13 @@ import {
 } from "react-native";
 import Mailer from "react-native-mail";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import logger from "../controllers/logger";
 import * as RNFS from "react-native-fs";
+import Dialog from "react-native-dialog";
+import Permissions from "react-native-permissions";
+import { NetworkInfo } from "react-native-network-info";
+import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
+
+import logger from "../controllers/logger";
 import commonStyle from "./Style";
 import utilities from "../controllers/utilities";
 import {
@@ -33,12 +38,24 @@ import {
   NOT_HOME_WIFI,
   SAVE_CHANGES_PROMPT
 } from "../controllers/strings";
-const codeFileName = "userSettings.js";
-import Dialog from "react-native-dialog";
-import Permissions from "react-native-permissions";
-import { NetworkInfo } from "react-native-network-info";
-import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import { uploadFiles } from "../controllers/backgroundJobs";
+
+const codeFileName = "userSettings.js";
+
+const styles = StyleSheet.create({
+  dayLabelStyle: {
+    width: 80,
+    fontSize: 18,
+    marginLeft: 5,
+    marginRight: 5
+  },
+  timeBoxStyle: {
+    width: 80,
+    height: 25,
+    fontSize: 18,
+    textAlign: "center"
+  }
+});
 
 export default class UserSettingsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -81,7 +98,7 @@ export default class UserSettingsScreen extends React.Component {
       backHandler: this.handleBackNavigation.bind(this)
     });
 
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.addEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid.bind(this)
@@ -97,7 +114,7 @@ export default class UserSettingsScreen extends React.Component {
       "componentWillUnmount",
       "Removing event handlers."
     );
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.removeEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid
@@ -114,7 +131,7 @@ export default class UserSettingsScreen extends React.Component {
     try {
       const _ssid = await NetworkInfo.getSSID();
       logger.info(codeFileName, "getHomeSSID", "SSID:" + _ssid);
-      if (_ssid != null && _ssid.length > 0 && _ssid != "<unknown ssid>") {
+      if (_ssid !== null && _ssid.length > 0 && _ssid !== "<unknown ssid>") {
         logger.info(
           codeFileName,
           "getHomeSSID",
@@ -173,7 +190,7 @@ export default class UserSettingsScreen extends React.Component {
       "Checking if location permission is already granted."
     );
     const _response = await Permissions.check("location"); // ['authorized', 'denied', 'restricted', or 'undetermined']
-    if (_response == "authorized") {
+    if (_response === "authorized") {
       logger.info(
         codeFileName,
         "getHomeWiFi",
@@ -214,7 +231,7 @@ export default class UserSettingsScreen extends React.Component {
         askWifi: _userSettingsData.askWifi
       });
 
-      if (this.state.homeWifi.length == 0) {
+      if (this.state.homeWifi.length === 0) {
         logger.info(
           `${codeFileName}`,
           "loadSettings",
@@ -310,7 +327,7 @@ export default class UserSettingsScreen extends React.Component {
   };
 
   saveSettings() {
-    _settings = {
+    const _settings = {
       homeWifi: this.state.homeWifi,
       askWifi: this.state.askWifi,
       afterTime: this.state.afterTime,
@@ -343,25 +360,28 @@ export default class UserSettingsScreen extends React.Component {
   };
 
   convertTime(time) {
-    _hour = Number(time.split(":")[0]);
-    _min = time.split(":")[1];
+    let _hour = Number(time.split(":")[0]);
+    const _min = time.split(":")[1];
 
-    if (_hour == 12) {
-      return _hour.toString() + ":" + _min + " pm";
-    } else if (_hour == 0) {
-      return "12:" + _min + " am";
+    let ret = "";
+
+    if (_hour === 12) {
+      ret = _hour.toString() + ":" + _min + " pm";
+    } else if (_hour === 0) {
+      ret = "12:" + _min + " am";
     } else if (_hour >= 13) {
-      _hour = _hour - 12;
+      _hour -= 12;
       _hour = _hour > 9 ? _hour.toString() : "0" + _hour.toString();
-      return _hour + ":" + _min + " pm";
+      ret = _hour + ":" + _min + " pm";
     } else {
-      return (
+      ret =
         (_hour > 9 ? _hour.toString() : "0" + _hour.toString()) +
         ":" +
         _min +
-        " am"
-      );
+        " am";
     }
+
+    return ret;
   }
 
   render() {
@@ -496,258 +516,6 @@ export default class UserSettingsScreen extends React.Component {
           </Text>
         </TouchableHighlight>
 
-        {false && (
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              margin: 10,
-              justifyContent: "space-around",
-              alignItems: "flex-start"
-            }}
-          >
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "space-around",
-                alignItems: "center"
-              }}
-            >
-              <Text style={styles.dayLabelStyle}>Monday</Text>
-              <TouchableHighlight
-                style={{ borderWidth: 0.5, padding: 5 }}
-                onPress={() => {
-                  this.setState({
-                    currentDay: "mondayFrom",
-                    isDateTimePickerVisible: true
-                  });
-                }}
-              >
-                <Text style={styles.timeBoxStyle}>{this.state.mondayFrom}</Text>
-              </TouchableHighlight>
-              <Text style={{ margin: 5 }}>to</Text>
-              <TouchableHighlight
-                style={{ borderWidth: 0.5, padding: 5 }}
-                onPress={() => {
-                  this.setState({
-                    currentDay: "mondayTo",
-                    isDateTimePickerVisible: true
-                  });
-                }}
-              >
-                <Text style={styles.timeBoxStyle}>{this.state.mondayTo}</Text>
-              </TouchableHighlight>
-            </View>
-
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "space-around",
-                alignItems: "center"
-              }}
-            >
-              <Text style={styles.dayLabelStyle}>Tuesday</Text>
-              <TouchableHighlight
-                style={{ borderWidth: 0.5, padding: 5 }}
-                onPress={() => {
-                  this.setState({
-                    currentDay: "tuesdayFrom",
-                    isDateTimePickerVisible: true
-                  });
-                }}
-              >
-                <Text style={styles.timeBoxStyle}>
-                  {this.state.tuesdayFrom}
-                </Text>
-              </TouchableHighlight>
-              <Text style={{ margin: 5 }}>to</Text>
-              <TouchableHighlight
-                style={{ borderWidth: 0.5, padding: 5 }}
-                onPress={() => {
-                  this.setState({
-                    currentDay: "tuesdayTo",
-                    isDateTimePickerVisible: true
-                  });
-                }}
-              >
-                <Text style={styles.timeBoxStyle}>{this.state.tuesdayTo}</Text>
-              </TouchableHighlight>
-            </View>
-
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "space-around",
-                alignItems: "center"
-              }}
-            >
-              <Text style={styles.dayLabelStyle}>Wednesday</Text>
-              <TouchableHighlight
-                style={{ borderWidth: 0.5, padding: 5 }}
-                onPress={() => {
-                  this.setState({
-                    currentDay: "wedFrom",
-                    isDateTimePickerVisible: true
-                  });
-                }}
-              >
-                <Text style={styles.timeBoxStyle}>{this.state.wedFrom}</Text>
-              </TouchableHighlight>
-              <Text style={{ margin: 5 }}>to</Text>
-              <TouchableHighlight
-                style={{ borderWidth: 0.5, padding: 5 }}
-                onPress={() => {
-                  this.setState({
-                    currentDay: "wedTo",
-                    isDateTimePickerVisible: true
-                  });
-                }}
-              >
-                <Text style={styles.timeBoxStyle}>{this.state.wedTo}</Text>
-              </TouchableHighlight>
-            </View>
-
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-            >
-              <Text style={styles.dayLabelStyle}>Thursday</Text>
-              <TouchableHighlight
-                style={{ borderWidth: 0.5, padding: 5 }}
-                onPress={() => {
-                  this.setState({
-                    currentDay: "thFrom",
-                    isDateTimePickerVisible: true
-                  });
-                }}
-              >
-                <Text style={styles.timeBoxStyle}>{this.state.thFrom}</Text>
-              </TouchableHighlight>
-              <Text style={{ margin: 5 }}>to</Text>
-              <TouchableHighlight
-                style={{ borderWidth: 0.5, padding: 5 }}
-                onPress={() => {
-                  this.setState({
-                    currentDay: "thTo",
-                    isDateTimePickerVisible: true
-                  });
-                }}
-              >
-                <Text style={styles.timeBoxStyle}>{this.state.thTo}</Text>
-              </TouchableHighlight>
-            </View>
-
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-            >
-              <Text style={styles.dayLabelStyle}>Friday</Text>
-              <TouchableHighlight
-                style={{ borderWidth: 0.5, padding: 5 }}
-                onPress={() => {
-                  this.setState({
-                    currentDay: "friFrom",
-                    isDateTimePickerVisible: true
-                  });
-                }}
-              >
-                <Text style={styles.timeBoxStyle}>{this.state.friFrom}</Text>
-              </TouchableHighlight>
-              <Text style={{ margin: 5 }}>to</Text>
-              <TouchableHighlight
-                style={{ borderWidth: 0.5, padding: 5 }}
-                onPress={() => {
-                  this.setState({
-                    currentDay: "friTo",
-                    isDateTimePickerVisible: true
-                  });
-                }}
-              >
-                <Text style={styles.timeBoxStyle}>{this.state.friTo}</Text>
-              </TouchableHighlight>
-            </View>
-
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-            >
-              <Text style={styles.dayLabelStyle}>Saturday</Text>
-              <TouchableHighlight
-                style={{ borderWidth: 0.5, padding: 5 }}
-                onPress={() => {
-                  this.setState({
-                    currentDay: "satFrom",
-                    isDateTimePickerVisible: true
-                  });
-                }}
-              >
-                <Text style={styles.timeBoxStyle}>{this.state.satFrom}</Text>
-              </TouchableHighlight>
-              <Text style={{ margin: 5 }}>to</Text>
-              <TouchableHighlight
-                style={{ borderWidth: 0.5, padding: 5 }}
-                onPress={() => {
-                  this.setState({
-                    currentDay: "satTo",
-                    isDateTimePickerVisible: true
-                  });
-                }}
-              >
-                <Text style={styles.timeBoxStyle}>{this.state.satTo}</Text>
-              </TouchableHighlight>
-            </View>
-
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-            >
-              <Text style={styles.dayLabelStyle}>Sunday</Text>
-              <TouchableHighlight
-                style={{ borderWidth: 0.5, padding: 5 }}
-                onPress={() => {
-                  this.setState({
-                    currentDay: "sunFrom",
-                    isDateTimePickerVisible: true
-                  });
-                }}
-              >
-                <Text style={styles.timeBoxStyle}>{this.state.sunFrom}</Text>
-              </TouchableHighlight>
-              <Text style={{ margin: 5 }}>to</Text>
-              <TouchableHighlight
-                style={{ borderWidth: 0.5, padding: 5 }}
-                onPress={() => {
-                  this.setState({
-                    currentDay: "sunTo",
-                    isDateTimePickerVisible: true
-                  });
-                }}
-              >
-                <Text style={styles.timeBoxStyle}>{this.state.sunTo}</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        )}
-
         <View
           style={{
             flex: 1,
@@ -835,7 +603,7 @@ export default class UserSettingsScreen extends React.Component {
                 wifiPermissionDialogVisible: false
               });
               const response = await Permissions.request("location");
-              if (response != "authorized") {
+              if (response !== "authorized") {
                 logger.info(
                   codeFileName,
                   "LocationPermissionDialog",
@@ -848,7 +616,7 @@ export default class UserSettingsScreen extends React.Component {
                   "LocationPermissionDialog",
                   "Location permission granted. Checking if location sharing is enabled."
                 );
-                if (Platform.OS == "android") {
+                if (Platform.OS === "android") {
                   try {
                     const _locationEnabled = await LocationServicesDialogBox.checkLocationServicesIsEnabled(
                       {
@@ -864,7 +632,7 @@ export default class UserSettingsScreen extends React.Component {
                         providerListener: false // true ==> Trigger locationProviderStatusChange listener when the location state changes
                       }
                     );
-                    if (_locationEnabled["status"] == "enabled") {
+                    if (_locationEnabled.status === "enabled") {
                       // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
                       logger.info(
                         codeFileName,
@@ -906,18 +674,3 @@ export default class UserSettingsScreen extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  dayLabelStyle: {
-    width: 80,
-    fontSize: 18,
-    marginLeft: 5,
-    marginRight: 5
-  },
-  timeBoxStyle: {
-    width: 80,
-    height: 25,
-    fontSize: 18,
-    textAlign: "center"
-  }
-});
