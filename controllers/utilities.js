@@ -305,6 +305,11 @@ class Utilities extends Component {
 
     return y + "-" + m + "-" + day + " " + time;
   }
+
+  isNumeric(num) {
+    const _num = "" + num; //coerce num to be a string
+    return !Number.isNaN(_num) && !Number.isNaN(parseFloat(_num));
+  }
 }
 const utilities = new Utilities();
 export default utilities;

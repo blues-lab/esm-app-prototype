@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import * as RNFS from "react-native-fs";
 import Icon from "react-native-vector-icons/Fontisto";
+import { ProgressDialog } from "react-native-simple-dialogs";
 import appStatus from "../controllers/appStatus";
 import { SELECTED_SERVICES_FILE } from "../controllers/constants";
 import logger from "../controllers/logger";
@@ -23,7 +24,8 @@ import {
   EXPLAIN_WHY_NO_SERVICES,
   MODEL1_FEATURES,
   MODEL2_FEATURES,
-  SINGLE_MODEL_INTRO_TEXT
+  SINGLE_MODEL_INTRO_TEXT,
+  SAVING_WAIT
 } from "../controllers/strings";
 import utilities from "../controllers/utilities";
 import commonStyle from "./Style";
@@ -103,7 +105,7 @@ export default class ExitSurveyScreen extends React.Component {
   };
 
   async loadSelectedServices() {
-    let _selectedServices = new Set([]);
+    const _selectedServices = new Set([]);
 
     try {
       if (await RNFS.exists(SELECTED_SERVICES_FILE)) {
@@ -122,11 +124,7 @@ export default class ExitSurveyScreen extends React.Component {
 
               for (let j = 0; j < _js.length; j++) {
                 for (let s = 0; s < _js[j].services.length; s++) {
-                  _selectedServices = new Set(this.state.selectedServices);
                   _selectedServices.add(_js[j].services[s]);
-                  await this.promisedSetState({
-                    selectedServices: Array.from(_selectedServices)
-                  });
                 }
               }
             } catch (error) {
@@ -141,6 +139,9 @@ export default class ExitSurveyScreen extends React.Component {
             }
           }
         }
+        await this.promisedSetState({
+          selectedServices: Array.from(_selectedServices)
+        });
       } else {
         logger.warn(
           codeFileName,
@@ -157,8 +158,8 @@ export default class ExitSurveyScreen extends React.Component {
     }
 
     this.setState({
-      serviceQuestions: this.state.selectedServices.length > 0,
-      noServiceQuestions: this.state.selectedServices.length === 0
+      serviceQuestions: _selectedServices.size > 0,
+      noServiceQuestions: _selectedServices.size === 0
     });
   }
 
@@ -250,9 +251,9 @@ export default class ExitSurveyScreen extends React.Component {
 
       logger.info(codeFileName, "saveResponse", "Updating app status.");
 
-      _appStatus.ExitSurveyDone = true;
-      appStatus.setAppStatus(_appStatus).then();
-      {
+      const _newStatus = _appStatus;
+      _newStatus.ExitSurveyDone = true;
+      appStatus.setAppStatus(_newStatus).then(() => {
         this.setState({ saveWaitVisible: false }, () => {
           Alert.alert(
             "Congratulations!",
@@ -268,13 +269,8 @@ export default class ExitSurveyScreen extends React.Component {
             { cancelable: false }
           );
         });
-      }
+      });
     });
-  }
-
-  isNumeric(num) {
-    num = "" + num; //coerce num to be a string
-    return !isNaN(num) && !isNaN(parseFloat(num));
   }
 
   handleUsefulnessSelection = async item => {
@@ -323,10 +319,8 @@ export default class ExitSurveyScreen extends React.Component {
 
       const _serviceResponses = this.state.serviceResponses;
       _serviceResponses.push({ [_curService]: _response });
-      this.setState({
-        serviceResponses: _serviceResponses,
-        usefulness: ""
-      });
+      this.setState({ serviceResponses: _serviceResponses, usefulness: "" });
+
       if (_curServiceIdx < this.state.selectedServices.length - 1) {
         logger.info(
           codeFileName,
@@ -377,7 +371,7 @@ export default class ExitSurveyScreen extends React.Component {
       if (
         this.state.priceCondition === 0 &&
         (this.state.model1Price.trim().length === 0 ||
-          !this.isNumeric(this.state.model1Price))
+          !utilities.isNumeric(this.state.model1Price))
       ) {
         logger.warn(
           codeFileName,
@@ -388,10 +382,11 @@ export default class ExitSurveyScreen extends React.Component {
         );
         Alert.alert("Error", "Please enter a valid numeric value to continue.");
         return;
-      } else if (
+      }
+      if (
         this.state.priceCondition === 1 &&
         (this.state.model2Price.trim().length === 0 ||
-          !this.isNumeric(this.state.model2Price))
+          !utilities.isNumeric(this.state.model2Price))
       ) {
         logger.warn(
           codeFileName,
@@ -402,12 +397,13 @@ export default class ExitSurveyScreen extends React.Component {
         );
         Alert.alert("Error", "Please enter a valid numeric value to continue.");
         return;
-      } else if (
+      }
+      if (
         this.state.priceCondition === 2 &&
         (this.state.model1Price.trim().length === 0 ||
-          !this.isNumeric(this.state.model1Price) ||
+          !utilities.isNumeric(this.state.model1Price) ||
           this.state.model2Price.trim().length === 0 ||
-          !this.isNumeric(this.state.model2Price))
+          !utilities.isNumeric(this.state.model2Price))
       ) {
         logger.warn(
           codeFileName,
@@ -432,96 +428,91 @@ export default class ExitSurveyScreen extends React.Component {
       );
 
       //save response
-      {
-        logger.info(
-          codeFileName,
-          "saveResponse",
-          "Saving exit survey response."
-        );
 
-        try {
-          appStatus.loadStatus().then(_appStatus => {
-            this.setState({ saveWaitVisible: true });
+      logger.info(codeFileName, "saveResponse", "Saving exit survey response.");
 
-            const _response = {
-              serviceResponses: this.state.serviceResponses,
-              whyNoService: this.state.whyNoService,
-              priceCondition: this.state.priceCondition,
-              model1Price: this.state.model1Price,
-              model2Price: this.state.model2Price,
-              CompletionTime: new Date(),
-              UIID: _appStatus.UIID
-            };
+      try {
+        appStatus.loadStatus().then(_appStatus => {
+          this.setState({ saveWaitVisible: true });
 
-            logger.info(
-              codeFileName,
-              "saveResponse",
-              "Uploading exit survey response to the server:" +
-                JSON.stringify(_response)
-            );
-            utilities
-              .uploadData(
-                {
-                  SurveyID: "Exit survey",
-                  Stage: "Completed.",
-                  Response: _response
-                },
-                _appStatus.UUID,
-                "ExitSurveyResponse",
-                codeFileName,
-                "saveResponse"
-              )
-              .then(_uploaded => {
-                if (_uploaded) {
-                  logger.info(
-                    codeFileName,
-                    "saveResponse",
-                    "Uploading exit survey response done!"
-                  );
-                } else {
-                  logger.error(
-                    codeFileName,
-                    "saveResponse",
-                    "Failed to upload exit survey response. Saving in local file for now."
-                  );
-                  utilities.writeJSONFile(
-                    _response,
-                    RNFS.DocumentDirectoryPath + "/exit-survey-response.js",
-                    codeFileName,
-                    "saveResponse"
-                  );
-                }
-              });
+          const _response = {
+            serviceResponses: this.state.serviceResponses,
+            whyNoService: this.state.whyNoService,
+            priceCondition: this.state.priceCondition,
+            model1Price: this.state.model1Price,
+            model2Price: this.state.model2Price,
+            CompletionTime: new Date(),
+            UIID: _appStatus.UIID
+          };
 
-            logger.info(codeFileName, "saveResponse", "Updating app status.");
-
-            _appStatus.ExitSurveyDone = true;
-            appStatus.setAppStatus(_appStatus).then();
-            {
-              this.setState({ saveWaitVisible: false }, () => {
-                Alert.alert(
-                  "Congratulations!",
-                  "You have earned $1!!!",
-                  [
-                    {
-                      text: "OK",
-                      onPress: () => {
-                        BackHandler.exitApp();
-                      }
-                    }
-                  ],
-                  { cancelable: false }
-                );
-              });
-            }
-          });
-        } catch (error) {
-          logger.error(
+          logger.info(
             codeFileName,
-            "handleNextButtonPress",
-            "Failed to save exit survey response: " + error.message
+            "saveResponse",
+            "Uploading exit survey response to the server:" +
+              JSON.stringify(_response)
           );
-        }
+          utilities
+            .uploadData(
+              {
+                SurveyID: "Exit survey",
+                Stage: "Completed.",
+                Response: _response
+              },
+              _appStatus.UUID,
+              "ExitSurveyResponse",
+              codeFileName,
+              "saveResponse"
+            )
+            .then(_uploaded => {
+              if (_uploaded) {
+                logger.info(
+                  codeFileName,
+                  "saveResponse",
+                  "Uploading exit survey response done!"
+                );
+              } else {
+                logger.error(
+                  codeFileName,
+                  "saveResponse",
+                  "Failed to upload exit survey response. Saving in local file for now."
+                );
+                utilities.writeJSONFile(
+                  _response,
+                  RNFS.DocumentDirectoryPath + "/exit-survey-response.js",
+                  codeFileName,
+                  "saveResponse"
+                );
+              }
+            });
+
+          logger.info(codeFileName, "saveResponse", "Updating app status.");
+
+          const _newStatus = _appStatus;
+          _newStatus.ExitSurveyDone = true;
+          appStatus.setAppStatus(_newStatus).then(() => {
+            this.setState({ saveWaitVisible: false }, () => {
+              Alert.alert(
+                "Congratulations!",
+                "You have earned $1!!!",
+                [
+                  {
+                    text: "OK",
+                    onPress: () => {
+                      BackHandler.exitApp();
+                    }
+                  }
+                ],
+                { cancelable: false }
+              );
+            });
+          });
+        });
+      } catch (error) {
+        logger.error(
+          codeFileName,
+          "handleNextButtonPress",
+          "Failed to save exit survey response: " + error.message
+        );
       }
     }
   };
@@ -530,7 +521,17 @@ export default class ExitSurveyScreen extends React.Component {
     return (
       <TouchableOpacity
         style={{ backgroundColor: "lavender" }}
-        onPress={this.handleUsefulnessSelection.bind(this, item)}
+        onPress={async () => {
+          logger.info(
+            codeFileName,
+            "handleUsefulnessSelection",
+            "Service:" +
+              this.state.selectedServices[this.state.curServiceIdx] +
+              ", usefulness:" +
+              item
+          );
+          this.setState({ usefulness: item });
+        }}
       >
         <View
           style={{
@@ -667,7 +668,7 @@ export default class ExitSurveyScreen extends React.Component {
               {EXPLAIN_WHY_NO_SERVICES}
             </Text>
             <TextInput
-              multiline={true}
+              multiline
               numOfLines={5}
               style={commonStyle.inputStyle}
               onChangeText={text => this.setState({ whyNoService: text })}
@@ -794,6 +795,11 @@ export default class ExitSurveyScreen extends React.Component {
             />
           </TouchableHighlight>
         </View>
+        <ProgressDialog
+          visible={this.state.saveWaitVisible}
+          title="MiMi"
+          message={SAVING_WAIT}
+        />
       </ScrollView>
     );
   }
