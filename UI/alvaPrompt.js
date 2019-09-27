@@ -1,20 +1,15 @@
-import React, { Component } from "react";
+import React from "react";
+
 import {
   Platform,
-  StyleSheet,
   Text,
   View,
   Button,
-  TextInput,
-  Alert,
   BackHandler,
-  TouchableHighlight,
-  Dimensions,
-  Modal
+  TouchableHighlight
 } from "react-native";
 
 import logger from "../controllers/logger";
-import ServiceMenuScreen from "./servicemenu";
 import commonStyles from "./Style";
 
 const codeFileName = "startsurvey.js";
@@ -41,7 +36,7 @@ export default class AlvaPromptScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { conversationTopic: "", noSurveyDialogVisible: false };
+    this.state = { conversationTopic: "" };
   }
 
   startNewSurvey = () =>
@@ -57,7 +52,7 @@ export default class AlvaPromptScreen extends React.Component {
       backHandler: this.onBackButtonPress.bind(this)
     });
     this.setState({ conversationTopic: _topic });
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.addEventListener(
         "hardwareBackPress",
         this.onBackButtonPress.bind(this)
@@ -76,7 +71,7 @@ export default class AlvaPromptScreen extends React.Component {
       "componentWillUnmount",
       "Removing event listeners."
     );
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.removeEventListener(
         "hardwareBackPress",
         this.onBackButtonPress
