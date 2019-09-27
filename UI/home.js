@@ -14,37 +14,34 @@ import {
   AppState
 } from "react-native";
 import * as RNFS from "react-native-fs";
-import notificationController from "../controllers/notificationController";
-import { onAppOpen } from "../controllers/notificationController";
 import AnimatedProgressWheel from "react-native-progress-wheel";
 import Dialog from "react-native-dialog";
-import logger from "../controllers/logger";
+import DialogInput from "react-native-dialog-input";
 import UUIDGenerator from "react-native-uuid-generator";
+import AsyncStorage from "@react-native-community/async-storage";
+
+import notificationController, {
+  onAppOpen
+} from "../controllers/notificationController";
+import logger from "../controllers/logger";
 import appStatus from "../controllers/appStatus";
 import {
   MIMI_ADVERTISEMENT,
   EXIT_SURVEY_INTRO,
-  FINAL_THANK
+  FINAL_THANK,
+  INVITATION_CODE_FAIL
 } from "../controllers/strings";
-import DialogInput from "react-native-dialog-input";
-//Import UIs
 import SurveyStartScreen from "./startsurvey";
 import commonStyles from "./Style";
-
 import ToolBar from "./toolbar";
-
-const codeFileName = "home.js";
-
 import utilities from "../controllers/utilities";
-
-import AsyncStorage from "@react-native-community/async-storage";
-
 import {
   USER_SETTINGS_FILE_PATH,
   INVITATION_CODE_FILE_PATH,
   SURVEY_STATUS
 } from "../controllers/constants";
-import { INVITATION_CODE_FAIL } from "../controllers/strings";
+
+const codeFileName = "home.js";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -83,9 +80,8 @@ export default class HomeScreen extends React.Component {
     } catch (e) {
       // error reading value
     }
+    return null;
   };
-
-  handleAppStateChange(currentState) {}
 
   async startSurvey() {
     //Will be called if participants indicate recent conversation
@@ -119,7 +115,7 @@ export default class HomeScreen extends React.Component {
               {
                 text: "OK",
                 onPress: () => {
-                  if (Platform.OS == "android") {
+                  if (Platform.OS === "android") {
                     BackHandler.exitApp();
                   }
                 }
@@ -137,8 +133,7 @@ export default class HomeScreen extends React.Component {
   };
 
   initApp = async () => {
-    if (this.props.navigation.state.routeName == "Home") {
-      AppState.addEventListener("change", this.handleAppStateChange.bind(this));
+    if (this.props.navigation.state.routeName === "Home") {
       logger.info(
         codeFileName,
         "initApp",
@@ -146,14 +141,14 @@ export default class HomeScreen extends React.Component {
       );
 
       logger.info(codeFileName, "initApp", "Reloading app status.");
-      _appStatus = await appStatus.loadStatus();
+      const _appStatus = await appStatus.loadStatus();
       logger.info(
         codeFileName,
         "initApp",
         "Current app status:" + JSON.stringify(_appStatus)
       );
 
-      if ((await this.isFirstLaunch()) == null) {
+      if ((await this.isFirstLaunch()) === null) {
         //first launch
         logger.info(
           codeFileName,
@@ -169,33 +164,30 @@ export default class HomeScreen extends React.Component {
         logger.info(codeFileName, "initApp", "Nth time app launch");
 
         //Check if study period has ended
-        {
-          if (utilities.surveyPeriodEnded(_appStatus)) {
-            const _remainingDays = utilities.exitSurveyAvailableDays(
-              _appStatus
-            );
-            logger.info(
-              codeFileName,
-              "initApp",
-              "ESM period ended. Exit survey done? " +
-                _appStatus.ExitSurveyDone +
-                ". Exit survey remaining days: " +
-                _remainingDays
-            );
 
-            this.setState({
-              studyPeriodEnded: true,
-              exitSurveyDone: _appStatus.ExitSurveyDone,
-              exitSurveyAvailable:
-                !_appStatus.ExitSurveyDone && _remainingDays > 0,
-              noSurveyDialogVisible: false,
-              ExitSurveyRemainingDays: _remainingDays
-            });
-            return;
-          } else {
-            logger.info(codeFileName, "initApp", "Still in study period.");
-          }
+        if (utilities.surveyPeriodEnded(_appStatus)) {
+          const _remainingDays = utilities.exitSurveyAvailableDays(_appStatus);
+          logger.info(
+            codeFileName,
+            "initApp",
+            "ESM period ended. Exit survey done? " +
+              _appStatus.ExitSurveyDone +
+              ". Exit survey remaining days: " +
+              _remainingDays
+          );
+
+          this.setState({
+            studyPeriodEnded: true,
+            exitSurveyDone: _appStatus.ExitSurveyDone,
+            exitSurveyAvailable:
+              !_appStatus.ExitSurveyDone && _remainingDays > 0,
+            noSurveyDialogVisible: false,
+            ExitSurveyRemainingDays: _remainingDays
+          });
+          return;
         }
+
+        logger.info(codeFileName, "initApp", "Still in study period.");
 
         //still in study period, check wifi status and if there is any survey
         try {
@@ -209,7 +201,7 @@ export default class HomeScreen extends React.Component {
             );
 
             //Check if home wifi is set
-            if (_userSettingsData.homeWifi.length == 0) {
+            if (_userSettingsData.homeWifi.length === 0) {
               logger.info(
                 codeFileName,
                 "initApp",
@@ -217,7 +209,7 @@ export default class HomeScreen extends React.Component {
               );
               this.props.navigation.navigate("UserSettings");
             } else {
-              if (_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE) {
+              if (_appStatus.SurveyStatus === SURVEY_STATUS.AVAILABLE) {
                 //check if survey is available from app settings
                 logger.info(
                   codeFileName,
@@ -226,7 +218,7 @@ export default class HomeScreen extends React.Component {
                 );
                 this.setState({ noSurveyDialogVisible: false });
                 await this.startSurvey();
-              } else if (_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING) {
+              } else if (_appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) {
                 //Survey is ongoing
                 logger.info(
                   codeFileName,
@@ -260,7 +252,7 @@ export default class HomeScreen extends React.Component {
   };
 
   async componentDidMount() {
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.addEventListener(
         "hardwareBackPress",
         this.onBackButtonPress.bind(this)
@@ -340,7 +332,7 @@ export default class HomeScreen extends React.Component {
             <Text style={{ fontSize: 16, margin: 10, marginTop: 10 }}>
               {MIMI_ADVERTISEMENT}
             </Text>
-            {Platform.OS == "android" && (
+            {Platform.OS === "android" && (
               <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
                 <Button
                   title="Ok, try later!"
@@ -429,7 +421,7 @@ export default class HomeScreen extends React.Component {
                 >
                   {FINAL_THANK}
                 </Text>
-                {Platform.OS == "android" && (
+                {Platform.OS === "android" && (
                   <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
                     <Button
                       title="Close app"
@@ -449,14 +441,13 @@ export default class HomeScreen extends React.Component {
             )}
           </View>
         )}
-
         <DialogInput
           isDialogVisible={this.state.invitationCodeDialogVisible}
           title={this.state.invitationCodePrompt}
           submitInput={async code => {
             await this.promisedSetState({ invitationCode: code });
             //TODO: check validity of the code
-            _code = this.state.invitationCode;
+            const _code = this.state.invitationCode;
             if (_code.length >= 2 && _code.toLowerCase().startsWith("i")) {
               logger.info(
                 codeFileName,
@@ -477,7 +468,7 @@ export default class HomeScreen extends React.Component {
                   const _uuid = await UUIDGenerator.getRandomUUID();
                   const _installationDate = new Date();
 
-                  _appStatus = appStatus.loadStatus();
+                  const _appStatus = appStatus.loadStatus();
                   _appStatus.InstallationDate = _installationDate;
                   _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
                   _appStatus.UUID = _uuid;
@@ -553,8 +544,7 @@ export default class HomeScreen extends React.Component {
       "componentWillUnmount",
       "Removing listeners and event handlers"
     );
-    AppState.removeEventListener("change", this.handleAppStateChange);
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.removeEventListener(
         "hardwareBackPress",
         this.onBackButtonPress
