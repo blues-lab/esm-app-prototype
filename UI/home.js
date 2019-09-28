@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   Platform,
   StyleSheet,
@@ -6,16 +6,10 @@ import {
   View,
   Button,
   Alert,
-  DeviceEventEmitter,
-  Image,
   TouchableHighlight,
-  Modal,
-  BackHandler,
-  AppState
+  BackHandler
 } from "react-native";
 import * as RNFS from "react-native-fs";
-import AnimatedProgressWheel from "react-native-progress-wheel";
-import Dialog from "react-native-dialog";
 import DialogInput from "react-native-dialog-input";
 import UUIDGenerator from "react-native-uuid-generator";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -31,7 +25,6 @@ import {
   FINAL_THANK,
   INVITATION_CODE_FAIL
 } from "../controllers/strings";
-import SurveyStartScreen from "./startsurvey";
 import commonStyles from "./Style";
 import ToolBar from "./toolbar";
 import utilities from "../controllers/utilities";
@@ -208,29 +201,27 @@ export default class HomeScreen extends React.Component {
                 "Home Wifi not set. Navigating to settings page."
               );
               this.props.navigation.navigate("UserSettings");
+            } else if (_appStatus.SurveyStatus === SURVEY_STATUS.AVAILABLE) {
+              //check if survey is available from app settings
+              logger.info(
+                codeFileName,
+                "initApp",
+                "New survey available. Asking for conversation."
+              );
+              this.setState({ noSurveyDialogVisible: false });
+              await this.startSurvey();
+            } else if (_appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) {
+              //Survey is ongoing
+              logger.info(
+                codeFileName,
+                "initApp",
+                "Survey is ongoing. Returning"
+              );
+              this.setState({ noSurveyDialogVisible: false });
+              return;
             } else {
-              if (_appStatus.SurveyStatus === SURVEY_STATUS.AVAILABLE) {
-                //check if survey is available from app settings
-                logger.info(
-                  codeFileName,
-                  "initApp",
-                  "New survey available. Asking for conversation."
-                );
-                this.setState({ noSurveyDialogVisible: false });
-                await this.startSurvey();
-              } else if (_appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) {
-                //Survey is ongoing
-                logger.info(
-                  codeFileName,
-                  "initApp",
-                  "Survey is ongoing. Returning"
-                );
-                this.setState({ noSurveyDialogVisible: false });
-                return;
-              } else {
-                logger.info(codeFileName, "initApp", "No survey available.");
-                this.setState({ noSurveyDialogVisible: true });
-              }
+              logger.info(codeFileName, "initApp", "No survey available.");
+              this.setState({ noSurveyDialogVisible: true });
             }
           } else {
             logger.info(
@@ -533,7 +524,7 @@ export default class HomeScreen extends React.Component {
               });
             }
           }}
-        ></DialogInput>
+        />
       </View>
     );
   }
