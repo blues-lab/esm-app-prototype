@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   Platform,
   StyleSheet,
@@ -6,14 +6,9 @@ import {
   View,
   Button,
   Alert,
-  TextInput,
-  Picker,
-  ScrollView,
   TouchableHighlight,
   BackHandler,
-  Dimensions,
-  PermissionsAndroid,
-  Linking
+  Dimensions
 } from "react-native";
 import Mailer from "react-native-mail";
 import DateTimePicker from "react-native-modal-datetime-picker";
@@ -359,7 +354,7 @@ export default class UserSettingsScreen extends React.Component {
     });
   };
 
-  convertTime(time) {
+  static convertTime(time) {
     let _hour = Number(time.split(":")[0]);
     const _min = time.split(":")[1];
 
