@@ -1,22 +1,16 @@
-import React, { Component } from "react";
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  AsyncStorage,
-  Alert
-} from "react-native";
+import { Component } from "react";
 import * as RNFS from "react-native-fs";
 import logger from "./logger";
 import { VERSION_NUMBER, STUDY_PERIOD, EXIT_SURVEY_PERIOD } from "./constants";
+
+const fetch = require("node-fetch");
 
 const codeFileName = "utilities.js";
 
 class Utilities extends Component {
   serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
 
-  async fileExists(path, fileName, callerClass, callerFunc) {
+  static async fileExists(path, fileName, callerClass, callerFunc) {
     logger.info(
       `${callerClass}`,
       `${callerFunc}-->fileExists`,
@@ -28,10 +22,15 @@ class Utilities extends Component {
     return false;
   }
 
-  async writeJSONFile(content, fileName, callerClass, callerFunc) {
+  static async writeJSONFile(
+    contentToWrite,
+    fileName,
+    callerClass,
+    callerFunc
+  ) {
     try {
-      //content = data;
-      if (typeof content == "object") {
+      let content = contentToWrite;
+      if (typeof content === "object") {
         //logger.info(callerClass, `${callerFunc}-->writeJSONFile`, 'Converting content.');
         content = JSON.stringify(content);
       }
@@ -64,8 +63,10 @@ class Utilities extends Component {
           logger.error(
             codeFileName,
             `${callerFunc}-->writeJSONFile`,
-            "Failed to write content in new file:" + error.message
-          ) + ". Restoring backup file.";
+            "Failed to write content in new file:" +
+              error.message +
+              ". Restoring backup file."
+          );
           await RNFS.copyFile(_backupFileName, fileName);
           return false;
         }
@@ -88,7 +89,8 @@ class Utilities extends Component {
     return true;
   }
 
-  async readJSONFile(filePath, callerClass, callerFunc) {
+  static async readJSONFile(filePath, callerClass, callerFunc) {
+    let result = null;
     try {
       const _fileExists = await RNFS.exists(filePath);
       if (_fileExists) {
@@ -98,14 +100,13 @@ class Utilities extends Component {
           callerFunc + "-->readJSONFile",
           "Successfully read file. Content:" + _fileContent
         );
-        return JSON.parse(_fileContent);
+        result = JSON.parse(_fileContent);
       } else {
         logger.info(
           callerClass,
           callerFunc + "-->readJSONFile",
           filePath + " does not exist."
         );
-        return null;
       }
     } catch (error) {
       logger.error(
@@ -113,58 +114,11 @@ class Utilities extends Component {
         callerFunc + "-->readJSONFile",
         "Reading file " + filePath + " failed:" + error.message
       );
-      return null;
     }
+    return result;
   }
 
-  readServiceFile() {
-    _serviceCategories = [];
-
-    RNFS.readFile(this.serviceFileLocal)
-      .then(_fileContent => {
-        logger.info(
-          `${callerClass}`,
-          "ReadServiceFile",
-          "Successfully read:" + this.serviceFileLocal
-        );
-
-        _serviceCategoriesJS = JSON.parse(_fileContent).serviceCategories;
-        for (var i = 0; i < _serviceCategoriesJS.length; i++) {
-          _servicesJS = _serviceCategoriesJS[i].services;
-          _services = [];
-          for (var j = 0; j < _servicesJS.length; j++) {
-            _services.push({
-              id: _servicesJS[j].serviceName,
-              name: _servicesJS[j].serviceName,
-              selected: false
-            });
-          }
-          _serviceCategories.push({
-            id: _serviceCategoriesJS[i].categoryName,
-            name: _serviceCategoriesJS[i].categoryName,
-            services: _services
-          });
-        }
-
-        logger.info(
-          `${callerClass}`,
-          "ReadServiceFile",
-          "Number of categories found:" + _serviceCategories.length
-        );
-
-        return _serviceCategories;
-      })
-      .catch(err => {
-        logger.info(
-          `${callerClass}`,
-          "ReadServiceFile",
-          "Failed to read:" + this.serviceFileLocal + ". Err:" + err.message
-        );
-        return _serviceCategories;
-      });
-  }
-
-  async uploadData(
+  static async uploadData(
     data,
     uuid,
     type,
@@ -172,12 +126,15 @@ class Utilities extends Component {
     callerFunc,
     callBackFunc = null
   ) {
+    let _uploaded = false;
+    let _error = "";
+
     logger.info(
       callerClass,
       callerFunc + "-->uploadData",
       "Uploading data. UUID:" + uuid
     );
-    _body = {};
+    let _body = {};
     try {
       _body = JSON.stringify({
         uid: uuid,
@@ -185,55 +142,43 @@ class Utilities extends Component {
         key: type,
         value: data
       });
-      let response = await fetch("https://mimi.research.icsi.institute/save/", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        },
-        body: _body
-      });
+      const response = await fetch(
+        "https://mimi.research.icsi.institute/save/",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          },
+          body: _body
+        }
+      );
 
+      _uploaded = response.ok;
       logger.info(
         callerClass,
         callerFunc + "-->uploadData",
         "Server response:" + JSON.stringify(response)
       );
-
-      if (!response.ok) {
-        logger.error(
-          callerClass,
-          callerFunc + "-->uploadData",
-          "Error uploading data:" + response.statusText
-        );
-        if (callBackFunc != null) {
-          callBackFunc(true);
-        } else {
-          return true;
-        }
-      }
     } catch (error) {
+      _error = error.message;
       logger.error(
         callerClass,
         callerFunc + "-->uploadData",
-        "Error uploading data:" + error.message
+        "Exception in uploading data:" + error
       );
-      if (callBackFunc != null) {
-        callBackFunc(false, error, _body);
-      } else {
-        return false;
-      }
     }
 
-    if (callBackFunc != null) {
-      callBackFunc(true);
-    } else {
-      return true;
+    if (callBackFunc !== null) {
+      callBackFunc(_uploaded, _error, _body);
     }
+
+    return _uploaded;
   }
 
-  surveyPeriodEnded(appStatus) {
-    _installationDate = appStatus.InstallationDate;
+  static surveyPeriodEnded(appStatus) {
+    let result = false;
+    const _installationDate = appStatus.InstallationDate;
     logger.info(
       codeFileName,
       "surveyPeriodEnded",
@@ -246,23 +191,24 @@ class Utilities extends Component {
         "surveyPeriodEnded",
         "Fatal error: installation date is null!!!"
       );
-      return true;
+      result = true;
     } else {
-      _oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-      _currDate = new Date();
-      _daysPassed = Math.round(
+      const _oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+      const _currDate = new Date();
+      const _daysPassed = Math.round(
         Math.abs((_currDate.getTime() - _installationDate.getTime()) / _oneDay)
       );
       if (_daysPassed >= STUDY_PERIOD) {
-        return true;
+        result = true;
       }
     }
-    return false;
+    return result;
   }
 
-  exitSurveyAvailableDays(appStatus) {
+  static exitSurveyAvailableDays(appStatus) {
     //returns how many days are available until exit survey period ends
     const _installationDate = appStatus.InstallationDate;
+    let _remainingDays = 0;
     logger.info(
       codeFileName,
       "exitSurveyAvailableDays",
@@ -275,26 +221,26 @@ class Utilities extends Component {
         "exitSurveyAvailableDays",
         "Fatal error: installation date is null!!!"
       );
-      return 0;
     } else {
-      _oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-      _currDate = new Date();
-      _daysPassed = Math.round(
+      const _oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+      const _currDate = new Date();
+      const _daysPassed = Math.round(
         Math.abs((_currDate.getTime() - _installationDate.getTime()) / _oneDay)
       );
 
-      const _remainingDays = STUDY_PERIOD + EXIT_SURVEY_PERIOD - _daysPassed;
-      return _remainingDays;
+      _remainingDays = STUDY_PERIOD + EXIT_SURVEY_PERIOD - _daysPassed;
     }
+
+    return _remainingDays;
   }
 
-  getDateTime() {
-    date = new Date();
-    var day = date.getDate();
-    var m = date.getMonth() + 1; //Month from 0 to 11
-    var y = date.getFullYear();
+  static getDateTime() {
+    const date = new Date();
+    const day = date.getDate();
+    const m = date.getMonth() + 1; //Month from 0 to 11
+    const y = date.getFullYear();
 
-    var time =
+    const time =
       date.getHours() +
       ":" +
       date.getMinutes() +
@@ -306,9 +252,18 @@ class Utilities extends Component {
     return y + "-" + m + "-" + day + " " + time;
   }
 
-  isNumeric(num) {
+  static isNumeric(num) {
     const _num = "" + num; //coerce num to be a string
     return !Number.isNaN(_num) && !Number.isNaN(parseFloat(_num));
+  }
+
+  static shuffleArray(array) {
+    const a = array;
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
   }
 }
 const utilities = new Utilities();
