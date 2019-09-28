@@ -1,12 +1,9 @@
-import React, { Component } from "react";
-import { Platform, StyleSheet, Text, View, Button, Alert } from "react-native";
 import * as RNFS from "react-native-fs";
-
 import logger from "./logger";
-const codeFileName = "appStatus.js";
-
 import utilities from "./utilities";
 import { SURVEY_STATUS, APP_STATUS_FILE_PATH } from "./constants";
+
+const codeFileName = "appStatus.js";
 
 class AppStatus {
   constructor() {
@@ -84,7 +81,7 @@ class AppStatus {
       }
     } catch (error) {
       logger.error(
-        callerClass,
+        codeFileName,
         "loadStatus",
         "Failed to read app status file:" + error.message
       );
@@ -95,9 +92,9 @@ class AppStatus {
   }
 
   async setAppStatus(status) {
-    for (var key in status) {
+    Object.keys(status).forEach(key => {
       this.status[key] = status[key];
-    }
+    });
 
     await logger.info(
       codeFileName,
@@ -181,6 +178,7 @@ class AppStatus {
     );
     await this.saveAppStatus();
   }
+
   async setInstallationDate(value) {
     this.status.InstallationDate = value;
     logger.info(
@@ -218,15 +216,15 @@ class AppStatus {
   }
 
   static getAppStatus() {
-    instance = null;
+    let instance = null;
     if (instance == null) {
       instance = new AppStatus();
-      instance.loadStatus().then(instance => {
+      instance.loadStatus().then(_instance => {
         logger.info(
           codeFileName,
           "getAppStatus",
           "Creating static AppStatus instance. Current status: " +
-            JSON.stringify(instance)
+            JSON.stringify(_instance)
         );
       });
     }
@@ -234,5 +232,5 @@ class AppStatus {
   }
 }
 
-appStatus = AppStatus.getAppStatus();
+const appStatus = AppStatus.getAppStatus();
 export default appStatus;
