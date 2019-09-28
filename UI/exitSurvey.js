@@ -317,9 +317,14 @@ export default class ExitSurveyScreen extends React.Component {
         "Current service:" + _curService + ", usefulness:" + _response
       );
 
-      const _serviceResponses = this.state.serviceResponses;
-      _serviceResponses.push({ [_curService]: _response });
-      this.setState({ serviceResponses: _serviceResponses, usefulness: "" });
+      this.setState(prevState => {
+        const _serviceResponses = prevState.serviceResponses;
+        _serviceResponses.push({ [_curService]: _response });
+        return {
+          serviceResponses: _serviceResponses,
+          usefulness: ""
+        };
+      });
 
       if (_curServiceIdx < this.state.selectedServices.length - 1) {
         logger.info(
