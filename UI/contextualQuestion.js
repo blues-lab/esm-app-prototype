@@ -15,40 +15,52 @@ import {
   BackHandler
 } from "react-native";
 import * as RNFS from "react-native-fs";
-import RadioForm, {
-  RadioButton,
-  RadioButtonInput,
-  RadioButtonLabel
-} from "react-native-simple-radio-button";
 import { ProgressDialog } from "react-native-simple-dialogs";
-
-import CustomNumericInput from "./customNumericInput";
-
 import { CheckBox } from "react-native-elements";
-
+import CustomNumericInput from "./customNumericInput";
 import commonStyle from "./Style";
-
-const serviceFileAsset = "services.js";
-const serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
-import SectionedMultiSelect from "react-native-sectioned-multi-select";
-
 import logger from "../controllers/logger";
-
 import appStatus from "../controllers/appStatus";
-
 import notificationController from "../controllers/notificationController";
-
 import RelationGroup from "./relationGroup";
 import LocationGroup from "./locationGroup";
 import Locations from "./locations";
-
 import Relations from "./relations";
-
-import ToolBar from "./toolbar";
-const codeFileName = "contextualQuestion.js";
-const surveyResponseFilePath = RNFS.DocumentDirectoryPath + "/Responses.js";
 import utilities from "../controllers/utilities";
 import { SURVEY_STATUS } from "../controllers/constants";
+import ToolBar from "./toolbar";
+
+const codeFileName = "contextualQuestion.js";
+
+const styles = StyleSheet.create({
+  verticalViewStyle: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "space-around",
+    alignItems: "center"
+    //    marginRight:10,
+    //    marginLeft:10,
+    //backgroundColor:'lightcyan',
+  },
+
+  insideVerticalViewStyle: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center"
+    //backgroundColor:'#a7f1e9'
+  },
+
+  horizontalViewStyle: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center"
+    //      marginRight:10,
+    //      marginLeft:10,
+    ///backgroundColor:'lightcyan',
+  }
+});
 
 export default class ContextualQuestionScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -68,17 +80,12 @@ export default class ContextualQuestionScreen extends React.Component {
 
     this.state = {
       numOfPeople: 0,
-      relations: [],
-      locations: [],
-      familySelected: false,
-      friendSelected: false,
       selectedRelations: new Set([]),
       selectedLocations: new Set([]),
       numOfPeopleCanHear: 0,
       childrenPresent: false,
       adolescentPresent: false,
       remoteConversation: true,
-      contextResponseJS: {}, //holds responses to the contextual questions
       surveyResponseJS: {}, //whole survey response passed by parent
       surrounding: true, //Questions about surrounding people VS participating people
       saveWaitVisible: false //show progress dialog while saving survey response
@@ -93,7 +100,7 @@ export default class ContextualQuestionScreen extends React.Component {
       surveyResponseJS: _surveyResponseJS,
       surveyProgress: navigation.getParam("surveyProgress", 0)
     });
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.addEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid.bind(this)
@@ -106,7 +113,7 @@ export default class ContextualQuestionScreen extends React.Component {
   };
 
   componentWillUnmount() {
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.removeEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid
@@ -115,7 +122,7 @@ export default class ContextualQuestionScreen extends React.Component {
   }
 
   relationSelectionHandler(selectedRelations) {
-    this.setState({ selectedRelations: selectedRelations });
+    this.setState({ selectedRelations });
     logger.info(
       codeFileName,
       "relationSelectionHandler",
@@ -124,7 +131,7 @@ export default class ContextualQuestionScreen extends React.Component {
   }
 
   locationSelectionHandler(selectedLocations) {
-    this.setState({ selectedLocations: selectedLocations });
+    this.setState({ selectedLocations });
     logger.info(
       codeFileName,
       "locationSelectionHandler",
@@ -135,9 +142,9 @@ export default class ContextualQuestionScreen extends React.Component {
   async saveResponse() {
     this.setState({ saveWaitVisible: true });
 
-    _appStatus = await appStatus.loadStatus();
+    const _appStatus = await appStatus.loadStatus();
 
-    _contextResponseJS = {
+    const _contextResponseJS = {
       NumOfPeopleAround: this.state.numOfPeople,
       NumOfPeopleCanHear: this.state.numOfPeopleCanHear,
       ChildrenPresent: this.state.childrenPresent,
@@ -151,7 +158,7 @@ export default class ContextualQuestionScreen extends React.Component {
       UIID: _appStatus.UIID
     };
 
-    _surveyResponseJS = this.state.surveyResponseJS;
+    const _surveyResponseJS = this.state.surveyResponseJS;
     _surveyResponseJS.ContextualQuestionResponses = _contextResponseJS;
 
     logger.info(
@@ -183,7 +190,7 @@ export default class ContextualQuestionScreen extends React.Component {
         "saveResponse",
         "Failed to upload response. Saving in local file for now."
       );
-      _time = Date.now().toString();
+      const _time = Date.now().toString();
       await utilities.writeJSONFile(
         _surveyResponseJS,
         RNFS.DocumentDirectoryPath + "/survey--response--" + _time + ".js",
@@ -223,6 +230,7 @@ export default class ContextualQuestionScreen extends React.Component {
   numPeopleAroundChangeHandler(value) {
     this.setState({ numOfPeople: value });
   }
+
   numPeopleCanHearChangeHandler(value) {
     this.setState({ numOfPeopleCanHear: value });
   }
@@ -398,33 +406,3 @@ export default class ContextualQuestionScreen extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  verticalViewStyle: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "space-around",
-    alignItems: "center"
-    //    marginRight:10,
-    //    marginLeft:10,
-    //backgroundColor:'lightcyan',
-  },
-
-  insideVerticalViewStyle: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    alignItems: "center"
-    //backgroundColor:'#a7f1e9'
-  },
-
-  horizontalViewStyle: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center"
-    //      marginRight:10,
-    //      marginLeft:10,
-    ///backgroundColor:'lightcyan',
-  }
-});
