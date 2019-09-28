@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   Platform,
   StyleSheet,
@@ -9,15 +9,14 @@ import {
   Alert,
   BackHandler,
   TouchableHighlight,
-  Dimensions,
   Modal,
   TouchableWithoutFeedback,
   Keyboard
 } from "react-native";
+import PropTypes from "prop-types";
 import { ProgressDialog } from "react-native-simple-dialogs";
 import * as RNFS from "react-native-fs";
 import logger from "../controllers/logger";
-import ServiceMenuScreen from "./servicemenu";
 import commonStyles from "./Style";
 import appStatus from "../controllers/appStatus";
 import ToolBar from "./toolbar";
@@ -32,9 +31,6 @@ import { SURVEY_STATUS } from "../controllers/constants";
 const codeFileName = "startsurvey.js";
 
 export default class SurveyStartScreen extends React.Component {
-  _didFocusSubscription;
-  _willBlurSubscription;
-
   static navigationOptions = {
     headerLeft: null,
     headerTitle: <ToolBar title="Conversation topic" progress={0} />
@@ -96,7 +92,7 @@ export default class SurveyStartScreen extends React.Component {
       logger.error(
         codeFileName,
         "fileUploadCallBack",
-        `Failed to upload partial response. Stage:Conversation topic. Saving in file: ${data !=
+        `Failed to upload partial response, error: ${error}. Stage:Conversation topic. Saving in file: ${data !=
           null}`
       );
       if (data != null) {
@@ -247,3 +243,9 @@ export default class SurveyStartScreen extends React.Component {
     );
   }
 }
+
+SurveyStartScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired
+  }).isRequired
+};
