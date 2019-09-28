@@ -1,33 +1,10 @@
-import React, { Component } from "react";
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TextInput,
-  Alert,
-  FlatList,
-  Modal,
-  ScrollView,
-  TouchableOpacity,
-  Image
-} from "react-native";
-import * as RNFS from "react-native-fs";
-import RadioForm, {
-  RadioButton,
-  RadioButtonInput,
-  RadioButtonLabel
-} from "react-native-simple-radio-button";
+import React from "react";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import DialogInput from "react-native-dialog-input";
-import NumericInput from "react-native-numeric-input";
 import Icon from "react-native-vector-icons/Fontisto";
-import { CheckBox } from "react-native-elements";
 import logger from "../controllers/logger";
 
 const codeFileName = "relations.js";
-const checkBoxWidth = 25;
-const checkBoxHeight = 25;
 
 const styles = StyleSheet.create({
   unselectedStyle: {
@@ -116,27 +93,30 @@ export default class Relations extends React.Component {
   componentDidMount() {}
 
   handleSelectionChange(index) {
-    const _relationNames = this.state.relationNames;
-    _relationNames[index].selected = !_relationNames[index].selected;
-    const _name = _relationNames[index].name;
-    const _selected = _relationNames[index].selected;
-    if (_selected) {
-      //check if 'other' was selected
-      if (_relationNames[index].name === "Other") {
-        this.setState({ otherDialogVisible: true });
+    this.setState(prevState => {
+      const _relationNames = prevState.relationNames;
+      _relationNames[index].selected = !_relationNames[index].selected;
+      const _selected = _relationNames[index].selected;
+      if (_selected) {
+        //check if 'other' was selected
+        if (_relationNames[index].name === "Other") {
+          this.setState({ otherDialogVisible: true });
+        }
+        _relationNames[index].iconName = "checkbox-active";
+      } else {
+        _relationNames[index].iconName = "checkbox-passive";
       }
-      _relationNames[index].iconName = "checkbox-active";
-    } else {
-      _relationNames[index].iconName = "checkbox-passive";
-    }
 
-    logger.info(
-      `${codeFileName}`,
-      "handleSelectionChange",
-      `relation: ${_relationNames[index].name}, selected: ${_relationNames[index].selected}`
-    );
+      logger.info(
+        `${codeFileName}`,
+        "handleSelectionChange",
+        `relation: ${_relationNames[index].name}, selected: ${_relationNames[index].selected}`
+      );
 
-    this.setState({ relationNames: _relationNames });
+      return {
+        relationNames: _relationNames
+      };
+    });
 
     const _selectedRelations = this.getSelectedRelations();
     logger.info(
@@ -365,18 +345,19 @@ export default class Relations extends React.Component {
             this.props.relationSelectionHandler(_selectedRelations);
 
             //Un-select the UI option
-            const _relationNames = this.state.relationNames;
-            _relationNames[_relationNames.length - 1].selected = false;
-            _relationNames[_relationNames.length - 1].iconName =
-              "checkbox-passive";
-
-            this.setState({
-              otherDialogVisible: false,
-              relationNames: _relationNames,
-              otherRelationName: ""
+            this.setState(prevState => {
+              const _relationNames = prevState.relationNames;
+              _relationNames[_relationNames.length - 1].selected = false;
+              _relationNames[_relationNames.length - 1].iconName =
+                "checkbox-passive";
+              return {
+                otherDialogVisible: false,
+                relationNames: _relationNames,
+                otherRelationName: ""
+              };
             });
           }}
-        ></DialogInput>
+        />
       </View>
     );
   }

@@ -1,23 +1,16 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   Platform,
   StyleSheet,
   Text,
   View,
-  Button,
-  TextInput,
-  Alert,
   FlatList,
   ScrollView,
-  TouchableHighlight,
   TouchableOpacity,
-  Image,
   BackHandler
 } from "react-native";
-import * as RNFS from "react-native-fs";
 import DialogInput from "react-native-dialog-input";
 import Icon from "react-native-vector-icons/Fontisto";
-import ToolBar from "./toolbar";
 import logger from "../controllers/logger";
 import commonStyles from "./Style";
 
@@ -147,42 +140,54 @@ export default class ServiceDetailsScreen extends React.Component {
     return true;
   };
 
+  promisedSetState = newState => {
+    return new Promise(resolve => {
+      this.setState(newState, () => {
+        resolve();
+      });
+    });
+  };
+
   handleServiceSelection = async selectedServiceName => {
-    const _serviceNames = this.state.serviceNames;
-    let _selectedService = null;
-    for (let i = 0; i < _serviceNames.length; i++) {
-      if (_serviceNames[i].name === selectedServiceName) {
-        _serviceNames[i].selected = !_serviceNames[i].selected;
+    await this.promisedSetState(prevState => {
+      const _serviceNames = prevState.serviceNames;
+      let _selectedService = null;
+      for (let i = 0; i < _serviceNames.length; i++) {
+        if (_serviceNames[i].name === selectedServiceName) {
+          _serviceNames[i].selected = !_serviceNames[i].selected;
 
-        if (_serviceNames[i].selected) {
-          _serviceNames[i].description = selectionText;
-          _serviceNames[i].renderStyle = styles.selectedItemStyle;
-        } else {
-          _serviceNames[i].description = "";
-          _serviceNames[i].renderStyle = commonStyles.listItemStyle;
+          if (_serviceNames[i].selected) {
+            _serviceNames[i].description = selectionText;
+            _serviceNames[i].renderStyle = styles.selectedItemStyle;
+          } else {
+            _serviceNames[i].description = "";
+            _serviceNames[i].renderStyle = commonStyles.listItemStyle;
+          }
+
+          _selectedService = _serviceNames[i];
+          break;
         }
-
-        _selectedService = _serviceNames[i];
-        break;
       }
-    }
 
-    //call parent component to update service selections
-    await this.props.navigation.state.params.serviceSelectionHandler(
-      this.state.serviceCategoryName,
-      _selectedService,
-      false
-    );
+      //call parent component to update service selections
+      this.props.navigation.state.params.serviceSelectionHandler(
+        this.state.serviceCategoryName,
+        _selectedService,
+        false
+      );
 
-    logger.info(
-      `${codeFileName}`,
-      "handleServiceSelection",
-      `Parameter:${selectedServiceName}.Services:${JSON.stringify(
-        _serviceNames
-      )}`
-    );
+      logger.info(
+        `${codeFileName}`,
+        "handleServiceSelection",
+        `Parameter:${selectedServiceName}.Services:${JSON.stringify(
+          _serviceNames
+        )}`
+      );
 
-    this.setState({ serviceNames: _serviceNames });
+      return {
+        serviceNames: _serviceNames
+      };
+    });
   };
 
   renderListItem = ({ item }) => {
@@ -299,9 +304,6 @@ export default class ServiceDetailsScreen extends React.Component {
                 description: "",
                 renderStyle: commonStyles.listItemStyle
               };
-              const _serviceNames = this.state.serviceNames;
-              _serviceNames.splice(_serviceNames.length - 1, 0, _newService);
-              //_serviceNames.push(_newService);
 
               logger.info(
                 codeFileName,
@@ -309,13 +311,19 @@ export default class ServiceDetailsScreen extends React.Component {
                 `Newly added service name:${inputText}`
               );
 
+              //call the callback function from the parent
               await this.props.navigation.state.params.newServiceHandler(
                 this.state.serviceCategoryName,
                 inputText
               );
-              this.setState({
-                serviceNames: _serviceNames,
-                isAddServiceDialogVisible: false
+
+              await this.promisedSetState(prevState => {
+                const _serviceNames = prevState.serviceNames;
+                _serviceNames.splice(_serviceNames.length - 1, 0, _newService);
+                return {
+                  serviceNames: _serviceNames,
+                  isAddServiceDialogVisible: false
+                };
               });
               if (this.state.serviceNames.length === 1) {
                 //if the newly added service is the first one, go back to main menu
@@ -336,7 +344,7 @@ export default class ServiceDetailsScreen extends React.Component {
               }
             });
           }}
-        ></DialogInput>
+        />
       </ScrollView>
     );
   }

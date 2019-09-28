@@ -1,35 +1,10 @@
-import React, { Component } from "react";
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TextInput,
-  Alert,
-  FlatList,
-  Modal,
-  ScrollView,
-  TouchableOpacity,
-  Image
-} from "react-native";
-import * as RNFS from "react-native-fs";
-import RadioForm, {
-  RadioButton,
-  RadioButtonInput,
-  RadioButtonLabel
-} from "react-native-simple-radio-button";
+import React from "react";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Fontisto";
 import DialogInput from "react-native-dialog-input";
-import NumericInput from "react-native-numeric-input";
-import { CheckBox } from "react-native-elements";
 import logger from "../controllers/logger";
 
-const serviceFileAsset = "services.js";
-const serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
 const codeFileName = "locations.js";
-const checkBoxWidth = 25;
-const checkBoxHeight = 25;
 
 const styles = StyleSheet.create({
   unselectedStyle: {
@@ -118,29 +93,30 @@ export default class Locations extends React.Component {
   componentDidMount() {}
 
   handleSelectionChange(index) {
-    const _locationNames = this.state.locationNames;
-    _locationNames[index].selected = !_locationNames[index].selected;
+    this.setState(prevState => {
+      const _locationNames = prevState.locationNames;
+      _locationNames[index].selected = !_locationNames[index].selected;
 
-    const _name = _locationNames[index].name;
-    const _selected = _locationNames[index].selected;
+      const _selected = _locationNames[index].selected;
 
-    if (_selected) {
-      //check if 'other' was selected
-      if (_locationNames[index].name === "Other") {
-        this.setState({ otherDialogVisible: true });
+      if (_selected) {
+        //check if 'other' was selected
+        if (_locationNames[index].name === "Other") {
+          this.setState({ otherDialogVisible: true });
+        }
+        _locationNames[index].iconName = "checkbox-active";
+      } else {
+        _locationNames[index].iconName = "checkbox-passive";
       }
-      _locationNames[index].iconName = "checkbox-active";
-    } else {
-      _locationNames[index].iconName = "checkbox-passive";
-    }
 
-    logger.info(
-      `${codeFileName}`,
-      "handleSelectionChange",
-      `location: ${_locationNames[index].name}, selected: ${_locationNames[index].selected}`
-    );
+      logger.info(
+        `${codeFileName}`,
+        "handleSelectionChange",
+        `location: ${_locationNames[index].name}, selected: ${_locationNames[index].selected}`
+      );
 
-    this.setState({ locationNames: _locationNames });
+      return { locationNames: _locationNames };
+    });
 
     const _selectedLocations = this.getSelectedLocations();
     logger.info(
@@ -366,18 +342,19 @@ export default class Locations extends React.Component {
             this.props.locationSelectionHandler(_selectedLocations);
 
             //Un-select the UI option
-            const _locationNames = this.state.locationNames;
-            _locationNames[_locationNames.length - 1].selected = false;
-            _locationNames[_locationNames.length - 1].iconName =
-              "checkbox-passive";
-
-            this.setState({
-              otherDialogVisible: false,
-              otherLocationName: "",
-              locationNames: _locationNames
+            this.setState(prevState => {
+              const _locationNames = prevState.locationNames;
+              _locationNames[_locationNames.length - 1].selected = false;
+              _locationNames[_locationNames.length - 1].iconName =
+                "checkbox-passive";
+              return {
+                otherDialogVisible: false,
+                otherLocationName: "",
+                locationNames: _locationNames
+              };
             });
           }}
-        ></DialogInput>
+        />
       </View>
     );
   }

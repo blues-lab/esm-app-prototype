@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   Platform,
   StyleSheet,
@@ -6,33 +6,28 @@ import {
   View,
   Button,
   ScrollView,
-  Image,
-  TextInput,
   Alert,
   FlatList,
   TouchableHighlight,
   TouchableOpacity,
-  Modal,
-  CheckBox,
   BackHandler
 } from "react-native";
 import Icon from "react-native-vector-icons/Fontisto";
 import { ProgressDialog } from "react-native-simple-dialogs";
 import * as RNFS from "react-native-fs";
-import ElevatedView from "react-native-elevated-view";
 import Dialog from "react-native-dialog";
 import DialogInput from "react-native-dialog-input";
 
 import appStatus from "../controllers/appStatus";
-import ServicePermissionScreen from "./servicePermission";
 import commonStyles from "./Style";
-const serviceFileAsset = "services.js";
-const serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
 import ToolBar from "./toolbar";
 
 import logger from "../controllers/logger";
 import utilities from "../controllers/utilities";
-import { SELECTED_SERVICES_FILE } from "../controllers/constants";
+import {
+  SELECTED_SERVICES_FILE,
+  SERVICE_FILE_LOCAL
+} from "../controllers/constants";
 
 const codeFileName = "servicemenu.js";
 
@@ -49,24 +44,6 @@ export default class ServiceMenuScreen extends React.Component {
     };
   };
 
-  state = {
-    serviceCategoriesJS: "", //JSON object loaded from file and then parsed
-    serviceCategories: [], //Parsed service categories in an array
-    newCategoryDialogVisible: false,
-    noRelevantDialogVisible: false,
-    saveButtonEnabled: true,
-    permissionModalVisible: false,
-    permissionResponses: [], //array to hold permission responses for each of the selected services
-    permissionPages: [], //used to navigate to the permission page
-    permissionPageIdx: -1,
-    noRelevantServiceReason: "",
-    surveyResponseJS: {}, //Hold participants responses
-    activeServiceCategoryName: null,
-    activeServiceName: null,
-    firstLoad: true, //indicates whether the services are being loaded for the first time
-    saveWaitVisible: false //show progress dialog while saving survey response
-  };
-
   openServiceDetailsPage(selectedServiceCategory) {
     //When clicked on a service category item, show the service-details page with the services
     // unless "No relevant service"/"None" was selected
@@ -77,15 +54,15 @@ export default class ServiceMenuScreen extends React.Component {
       "Opening service category:" + selectedServiceCategory.name
     );
 
-    if (selectedServiceCategory.id == "None") {
+    if (selectedServiceCategory.id === "None") {
       this.setState({ noRelevantDialogVisible: true });
       return;
     }
 
-    _serviceCategories = this.state.serviceCategories;
-    _selectedIdx = 0;
-    for (var i = 0; i < _serviceCategories.length; i++) {
-      if (_serviceCategories[i].name == selectedServiceCategory.name) {
+    const _serviceCategories = this.state.serviceCategories;
+    let _selectedIdx = 0;
+    for (let i = 0; i < _serviceCategories.length; i++) {
+      if (_serviceCategories[i].name === selectedServiceCategory.name) {
         _selectedIdx = i;
         break;
       }
@@ -116,10 +93,10 @@ export default class ServiceMenuScreen extends React.Component {
       "Category:" + categoryName + ", service:" + newServiceName
     );
 
-    _serviceCategoriesJS = this.state.serviceCategoriesJS;
+    const _serviceCategoriesJS = this.state.serviceCategoriesJS;
 
-    for (var i = 0; i < _serviceCategoriesJS.length; i++) {
-      if (_serviceCategoriesJS[i].categoryName == categoryName) {
+    for (let i = 0; i < _serviceCategoriesJS.length; i++) {
+      if (_serviceCategoriesJS[i].categoryName === categoryName) {
         _serviceCategoriesJS[i].services.push({
           serviceName: newServiceName,
           selected: true
@@ -136,7 +113,7 @@ export default class ServiceMenuScreen extends React.Component {
     );
     await utilities.writeJSONFile(
       _serviceCategoriesJS,
-      serviceFileLocal,
+      SERVICE_FILE_LOCAL,
       codeFileName,
       "createNewService"
     );
@@ -149,13 +126,13 @@ export default class ServiceMenuScreen extends React.Component {
 
   async parseService(_fullJsonObj) {
     //parse json data
-    _serviceCategoriesJS = _fullJsonObj;
-    _serviceCategories = [];
+    const _serviceCategoriesJS = _fullJsonObj;
+    let _serviceCategories = [];
 
-    for (var i = 0; i < _serviceCategoriesJS.length; i++) {
-      _servicesJS = _serviceCategoriesJS[i].services;
-      _services = [];
-      for (var j = 0; j < _servicesJS.length; j++) {
+    for (let i = 0; i < _serviceCategoriesJS.length; i++) {
+      const _servicesJS = _serviceCategoriesJS[i].services;
+      const _services = [];
+      for (let j = 0; j < _servicesJS.length; j++) {
         _services.push({
           id: _servicesJS[j].serviceName,
           name: _servicesJS[j].serviceName,
@@ -184,7 +161,7 @@ export default class ServiceMenuScreen extends React.Component {
         "parseService",
         "First time loading. Shuffling service categories."
       );
-      _serviceCategories = this.shuffle(_serviceCategories);
+      _serviceCategories = utilities.shuffleArray(_serviceCategories);
       _serviceCategories.push(
         //Add 'Other'
         {
@@ -236,9 +213,9 @@ export default class ServiceMenuScreen extends React.Component {
       "Category:" + categoryName + ", service:" + service.name,
       ", selected:" + service.selected
     );
-    _serviceCategories = this.state.serviceCategories;
-    for (var i = 0; i < _serviceCategories.length; i++) {
-      if (_serviceCategories[i].name == categoryName) {
+    const _serviceCategories = this.state.serviceCategories;
+    for (let i = 0; i < _serviceCategories.length; i++) {
+      if (_serviceCategories[i].name === categoryName) {
         //add service to the selected list
         if (service.selected) {
           _serviceCategories[i].selectedServiceNames.add(service.name);
@@ -248,9 +225,9 @@ export default class ServiceMenuScreen extends React.Component {
 
         //if existing service, mark it as selected, or create a new entry
         if (!isNewService) {
-          _services = _serviceCategories[i].services;
-          for (var j = 0; j < _services.length; j++) {
-            if (_services[j].name == service.name) {
+          const _services = _serviceCategories[i].services;
+          for (let j = 0; j < _services.length; j++) {
+            if (_services[j].name === service.name) {
               _services[j].selected = service.selected;
             }
           }
@@ -266,9 +243,9 @@ export default class ServiceMenuScreen extends React.Component {
 
   getSelectedServices() {
     //Convert selected services in JSON format
-    _selectedServicesJS = [];
-    _serviceCategories = this.state.serviceCategories;
-    for (var i = 0; i < _serviceCategories.length; i++) {
+    const _selectedServicesJS = [];
+    const _serviceCategories = this.state.serviceCategories;
+    for (let i = 0; i < _serviceCategories.length; i++) {
       if (_serviceCategories[i].selectedServiceNames.size > 0) {
         _selectedServicesJS.push({
           category: _serviceCategories[i].name,
@@ -280,21 +257,21 @@ export default class ServiceMenuScreen extends React.Component {
   }
 
   loadServices() {
-    RNFS.readFile(serviceFileLocal)
+    RNFS.readFile(SERVICE_FILE_LOCAL)
       .then(_fileContent => {
         logger.info(
           "ServiceMenu",
           "ReadServiceFile",
-          "Successfully read:" + serviceFileLocal
+          "Successfully read:" + SERVICE_FILE_LOCAL
         );
-        _fullJsonObj = JSON.parse(_fileContent);
+        const _fullJsonObj = JSON.parse(_fileContent);
         this.parseService(_fullJsonObj);
       })
       .catch(err => {
         logger.info(
           "ServiceMenu",
           "ReadServiceFile",
-          "Failed to read:" + serviceFileLocal + ". Err:" + err.message
+          "Failed to read:" + SERVICE_FILE_LOCAL + ". Err:" + err.message
         );
       });
   }
@@ -309,21 +286,35 @@ export default class ServiceMenuScreen extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      serviceCategoriesJS: "", //JSON object loaded from file and then parsed
+      serviceCategories: [], //Parsed service categories in an array
+      newCategoryDialogVisible: false,
+      noRelevantDialogVisible: false,
+      noRelevantServiceReason: "",
+      surveyResponseJS: {}, //Hold participants responses
+      firstLoad: true, //indicates whether the services are being loaded for the first time
+      saveWaitVisible: false //show progress dialog while saving survey response
+    };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { navigation } = this.props;
     const _topic = navigation.getParam("conversationTopic", "");
-    _surveyResponseJS = this.state.surveyResponseJS;
-    _surveyResponseJS.conversationTopic = _topic;
-    this.setState({
-      surveyResponseJS: _surveyResponseJS,
-      surveyProgress: navigation.getParam("surveyProgress", 0)
+
+    await this.promisedSetState(prevState => {
+      const _surveyResponseJS = prevState.surveyResponseJS;
+      _surveyResponseJS.conversationTopic = _topic;
+      return {
+        surveyResponseJS: _surveyResponseJS,
+        surveyProgress: navigation.getParam("surveyProgress", 0)
+      };
     });
 
-    this.loadServices();
+    await this.loadServices();
 
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.addEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid.bind(this)
@@ -337,25 +328,6 @@ export default class ServiceMenuScreen extends React.Component {
     );
   };
 
-  enableDisableNextButton() {
-    //enable the next button if
-    // --at least one selected service OR
-    // --entered reason for no relevant service
-
-    _serviceCategories = this.state.serviceCategories;
-    for (var i = 0; i < _serviceCategories.length; i++) {
-      _services = _serviceCategories[i].services;
-      for (var j = 0; j < _services.length; i++) {
-        if (_services[j].selected) {
-          this.setState({ saveButtonEnabled: true });
-          return;
-        }
-      }
-    }
-
-    this.setState({ saveButtonEnabled: true });
-  }
-
   clearServiceSelections() {
     //clears all selected services if 'No relevant service' selected
     logger.info(
@@ -363,19 +335,16 @@ export default class ServiceMenuScreen extends React.Component {
       "clearServiceSelections",
       "Clearing all selected services."
     );
-    _serviceCategories = this.state.serviceCategories;
-    for (var i = 0; i < _serviceCategories.length; i++) {
-      _serviceCategories[i].selectedServiceNames.clear();
-    }
-    this.setState({ serviceCategories: _serviceCategories });
-  }
 
-  shuffle(a) {
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
+    this.setState(prevState => {
+      const _serviceCategories = prevState.serviceCategories;
+      for (let i = 0; i < _serviceCategories.length; i++) {
+        _serviceCategories[i].selectedServiceNames.clear();
+      }
+      return {
+        serviceCategories: _serviceCategories
+      };
+    });
   }
 
   fileUploadCallBack(success, error = null, data = null) {
@@ -402,12 +371,12 @@ export default class ServiceMenuScreen extends React.Component {
 
   async showPermissionPage() {
     //After service selection is done, show permission page for at most 3 selected services
-    _services = [];
-    for (var i = 0; i < this.state.serviceCategories.length; i++) {
-      _selectedServiceNames = Array.from(
+    let _services = [];
+    for (let i = 0; i < this.state.serviceCategories.length; i++) {
+      const _selectedServiceNames = Array.from(
         this.state.serviceCategories[i].selectedServiceNames
       );
-      for (var j = 0; j < _selectedServiceNames.length; j++) {
+      for (let j = 0; j < _selectedServiceNames.length; j++) {
         _services.push({
           categoryName: this.state.serviceCategories[i].name,
           serviceName: _selectedServiceNames[j]
@@ -415,7 +384,7 @@ export default class ServiceMenuScreen extends React.Component {
       }
     }
 
-    if (_services.length == 0) {
+    if (_services.length === 0) {
       Alert.alert("Please select at least one service to continue.");
       logger.info(
         codeFileName,
@@ -428,7 +397,7 @@ export default class ServiceMenuScreen extends React.Component {
     //logger.info(codeFileName, 'showPermissionPage','Total number of services selected:'+_services.length);
 
     //randomly select 3 permission pages
-    _services = this.shuffle(_services);
+    _services = utilities.shuffleArray(_services);
     _services = _services.slice(0, 3);
 
     const _selectedServices = this.getSelectedServices();
@@ -466,7 +435,7 @@ export default class ServiceMenuScreen extends React.Component {
     //upload partial survey response
     {
       await this.promisedSetState({ saveWaitVisible: true });
-      _surveyResponseJS = this.state.surveyResponseJS;
+      const _surveyResponseJS = this.state.surveyResponseJS;
       _surveyResponseJS.SelectedServices = _selectedServices;
       const _appStatus = await appStatus.loadStatus();
 
@@ -517,7 +486,7 @@ export default class ServiceMenuScreen extends React.Component {
               justifyContent: "flex-start"
             }}
           >
-            {item.id != "None" && item.selectedServiceNames.size === 0 && (
+            {item.id !== "None" && item.selectedServiceNames.size === 0 && (
               <Icon
                 name="checkbox-passive"
                 size={20}
@@ -525,7 +494,7 @@ export default class ServiceMenuScreen extends React.Component {
                 style={{ margin: 5 }}
               />
             )}
-            {item.id != "None" && item.selectedServiceNames.size > 0 && (
+            {item.id !== "None" && item.selectedServiceNames.size > 0 && (
               <Icon
                 name="checkbox-active"
                 size={20}
@@ -545,7 +514,7 @@ export default class ServiceMenuScreen extends React.Component {
           </View>
           <Text
             numberOfLines={1}
-            ellipsizeMode={"tail"}
+            ellipsizeMode="tail"
             style={{
               fontSize: 14,
               fontStyle: "italic",
@@ -608,43 +577,44 @@ export default class ServiceMenuScreen extends React.Component {
 
         <DialogInput
           isDialogVisible={this.state.newCategoryDialogVisible}
-          title={"What other service?"}
-          message={""}
-          hintInput={""}
-          multiline={true}
+          title="What other service?"
+          message=""
+          hintInput=""
+          multiline
           numberOfLines={4}
           submitInput={inputText => {
-            _serviceCategories = this.state.serviceCategories;
-            _serviceCategories.push({
-              id: inputText,
-              name: inputText,
-              selectedServiceNames: new Set([]),
-              renderStyle: commonStyles.listItemStyle,
-              services: []
-            });
-
             logger.info(
               "ServiceMenu",
               "DialogInput.Submit",
               "Adding new service category: " + inputText
             );
 
-            this.setState({
-              serviceCategories: _serviceCategories,
-              newCategoryDialogVisible: false
+            this.setState(prevState => {
+              const _serviceCategories = prevState.serviceCategories;
+              _serviceCategories.push({
+                id: inputText,
+                name: inputText,
+                selectedServiceNames: new Set([]),
+                renderStyle: commonStyles.listItemStyle,
+                services: []
+              });
+              return {
+                serviceCategories: _serviceCategories,
+                newCategoryDialogVisible: false
+              };
             });
           }}
           closeDialog={() => {
             this.setState({ newCategoryDialogVisible: false });
           }}
-        ></DialogInput>
+        />
 
         <Dialog.Container visible={this.state.noRelevantDialogVisible}>
           <Dialog.Title>
             Please explain why no service would be relevant in this situation.
           </Dialog.Title>
           <Dialog.Input
-            multiline={true}
+            multiline
             numberOfLines={4}
             style={{ height: 300, borderColor: "lightgray", borderWidth: 1 }}
             value={this.state.noRelevantServiceReason}
@@ -655,18 +625,19 @@ export default class ServiceMenuScreen extends React.Component {
           <Dialog.Button
             label="Cancel"
             onPress={() => {
-              this.setState({
-                noRelevantDialogVisible: false,
-                noRelevantServiceReason: this.state.surveyResponseJS
-                  .noRelevantServiceReason
+              this.setState(prevState => {
+                const _reason =
+                  prevState.surveyResponseJS.noRelevantServiceReason;
+                return {
+                  noRelevantDialogVisible: false,
+                  noRelevantServiceReason: _reason
+                };
               });
             }}
           />
           <Dialog.Button
             label="Next"
             onPress={async () => {
-              _surveyResponseJS = this.state.surveyResponseJS;
-              _surveyResponseJS.noRelevantServiceReason = this.state.noRelevantServiceReason;
               this.clearServiceSelections();
               logger.info(
                 "ServiceMenu",
@@ -675,9 +646,15 @@ export default class ServiceMenuScreen extends React.Component {
                   this.state.noRelevantServiceReason
               );
 
-              this.setState({
-                noRelevantDialogVisible: false,
-                surveyResponseJS: _surveyResponseJS
+              await this.promisedSetState(prevState => {
+                const _surveyResponseJS = prevState.surveyResponseJS;
+                _surveyResponseJS.noRelevantServiceReason =
+                  prevState.noRelevantServiceReason;
+
+                return {
+                  noRelevantDialogVisible: false,
+                  surveyResponseJS: _surveyResponseJS
+                };
               });
 
               if (
@@ -697,7 +674,7 @@ export default class ServiceMenuScreen extends React.Component {
                     {
                       SurveyID: _appStatus.CurrentSurveyID,
                       Stage: "No relevant service selected.",
-                      PartialResponse: _surveyResponseJS
+                      PartialResponse: this.state.surveyResponseJS
                     },
                     _appStatus.UUID,
                     "PartialSurveyResponse",
@@ -733,7 +710,7 @@ export default class ServiceMenuScreen extends React.Component {
   }
 
   componentWillUnmount() {
-    if (Platform.OS == "android") {
+    if (Platform.OS === "android") {
       BackHandler.removeEventListener(
         "hardwareBackPress",
         this.onBackButtonPressAndroid
