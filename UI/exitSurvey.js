@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
 });
 
 export default class ExitSurveyScreen extends React.Component {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
       headerLeft: null,
       headerTitle: "Exit survey"
