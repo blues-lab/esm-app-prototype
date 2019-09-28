@@ -537,7 +537,7 @@ async function uploadFilesInDir(dirName, fileNamePattern, _appStatus) {
       await logger.info(
         codeFileName,
         "uploadFilesInDir",
-        "Uploading survey response file:" + _file
+        "Uploading file:" + _file
       );
       const _filePath = RNFS.DocumentDirectoryPath + "/" + _file;
       const _fileContent = await RNFS.readFile(_filePath);
