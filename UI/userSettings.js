@@ -492,7 +492,7 @@ export default class UserSettingsScreen extends React.Component {
           }}
         >
           <Text style={styles.timeBoxStyle}>
-            {this.convertTime(this.state.afterTime)}
+            {UserSettingsScreen.convertTime(this.state.afterTime)}
           </Text>
         </TouchableHighlight>
         <Text style={{ margin: 10, fontSize: 18, textAlign: "center" }}>
@@ -508,7 +508,7 @@ export default class UserSettingsScreen extends React.Component {
           }}
         >
           <Text style={styles.timeBoxStyle}>
-            {this.convertTime(this.state.beforeTime)}
+            {UserSettingsScreen.convertTime(this.state.beforeTime)}
           </Text>
         </TouchableHighlight>
 
