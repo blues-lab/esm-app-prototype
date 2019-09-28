@@ -1,17 +1,18 @@
-import React, { Component } from "react";
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TouchableHighlight
-} from "react-native";
+import React from "react";
+import { View } from "react-native";
 
 import NumericInput from "react-native-numeric-input";
 
+import logger from "../controllers/logger";
+
+const codeFileName = "customNumericInput";
+
 export default class CustomNumericInput extends React.Component {
-  state = { value: 0 };
+  constructor(props) {
+    super(props);
+    this.state = { value: 0 };
+  }
+
   render() {
     return (
       <View
@@ -31,10 +32,16 @@ export default class CustomNumericInput extends React.Component {
           }}
           value={this.state.value}
           onChange={value => {
-            this.setState({ value: value });
+            this.setState({ value });
             this.props.valueChangeCallback(this.state.value);
           }}
-          onLimitReached={(isMax, msg) => console.log(isMax, msg)}
+          onLimitReached={(isMax, msg) =>
+            logger.warn(
+              codeFileName,
+              "onLimitReached",
+              "isMax:" + isMax + ", message:" + msg
+            )
+          }
           totalWidth={200}
           totalHeight={40}
           minValue={0}
