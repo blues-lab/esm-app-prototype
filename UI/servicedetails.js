@@ -359,8 +359,8 @@ ServiceDetailsScreen.propTypes = {
     goBack: PropTypes.func.isRequired,
     state: PropTypes.shape({
       params: PropTypes.shape({
-        newServiceHandler: PropTypes.function.isRequired,
-        serviceSelectionHandler: PropTypes.function.isRequired
+        newServiceHandler: PropTypes.func.isRequired,
+        serviceSelectionHandler: PropTypes.func.isRequired
       })
     }).isRequired
   }).isRequired
