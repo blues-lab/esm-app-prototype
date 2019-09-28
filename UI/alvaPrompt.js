@@ -8,7 +8,7 @@ import {
   BackHandler,
   TouchableHighlight
 } from "react-native";
-
+import PropTypes from "prop-types";
 import logger from "../controllers/logger";
 import commonStyles from "./Style";
 import ToolBar from "./toolbar";
@@ -135,3 +135,12 @@ export default class AlvaPromptScreen extends React.Component {
     );
   }
 }
+
+AlvaPromptScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    getParam: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired
+  }).isRequired
+};

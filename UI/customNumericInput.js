@@ -1,5 +1,6 @@
 import React from "react";
 import { View } from "react-native";
+import PropTypes from "prop-types";
 
 import NumericInput from "react-native-numeric-input";
 
@@ -59,3 +60,7 @@ export default class CustomNumericInput extends React.Component {
     );
   }
 }
+
+CustomNumericInput.propTypes = {
+  valueChangeCallback: PropTypes.func.isRequired
+};

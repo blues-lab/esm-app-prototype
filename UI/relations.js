@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import DialogInput from "react-native-dialog-input";
 import Icon from "react-native-vector-icons/Fontisto";
@@ -362,3 +363,6 @@ export default class Relations extends React.Component {
     );
   }
 }
+Relations.propTypes = {
+  relationSelectionHandler: PropTypes.func.isRequired
+};

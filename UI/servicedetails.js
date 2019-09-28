@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   BackHandler
 } from "react-native";
+import PropTypes from "prop-types";
 import DialogInput from "react-native-dialog-input";
 import Icon from "react-native-vector-icons/Fontisto";
 import logger from "../controllers/logger";
@@ -349,3 +350,18 @@ export default class ServiceDetailsScreen extends React.Component {
     );
   }
 }
+
+ServiceDetailsScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    getParam: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+    state: PropTypes.shape({
+      params: PropTypes.shape({
+        newServiceHandler: PropTypes.function.isRequired,
+        serviceSelectionHandler: PropTypes.function.isRequired
+      })
+    }).isRequired
+  }).isRequired
+};

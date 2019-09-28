@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Fontisto";
 import DialogInput from "react-native-dialog-input";
@@ -132,7 +133,7 @@ export default class Locations extends React.Component {
     const _selectedLocations = new Set([]);
     for (let i = 0; i < _locationNames.length; i++) {
       if (_locationNames[i].selected) {
-        if (_locationNames[i].name != "Other") {
+        if (_locationNames[i].name !== "Other") {
           _selectedLocations.add(_locationNames[i].name);
         }
       }
@@ -359,3 +360,7 @@ export default class Locations extends React.Component {
     );
   }
 }
+
+Locations.propTypes = {
+  locationSelectionHandler: PropTypes.func.isRequired
+};

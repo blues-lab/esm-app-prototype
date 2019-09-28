@@ -11,6 +11,7 @@ import {
   Switch,
   BackHandler
 } from "react-native";
+import PropTypes from "prop-types";
 import * as RNFS from "react-native-fs";
 import { ProgressDialog } from "react-native-simple-dialogs";
 import CustomNumericInput from "./customNumericInput";
@@ -400,3 +401,11 @@ export default class ContextualQuestionScreen extends React.Component {
     );
   }
 }
+
+ContextualQuestionScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    getParam: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired
+  }).isRequired
+};

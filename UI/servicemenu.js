@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Platform,
-  StyleSheet,
   Text,
   View,
   Button,
@@ -12,6 +11,7 @@ import {
   TouchableOpacity,
   BackHandler
 } from "react-native";
+import PropTypes from "prop-types";
 import Icon from "react-native-vector-icons/Fontisto";
 import { ProgressDialog } from "react-native-simple-dialogs";
 import * as RNFS from "react-native-fs";
@@ -352,7 +352,7 @@ export default class ServiceMenuScreen extends React.Component {
       logger.error(
         codeFileName,
         "fileUploadCallBack",
-        `Failed to upload partial response. Stage:Services selected. Saving in file: ${data !=
+        `Failed to upload partial response, error: ${error}. Stage:Services selected. Saving in file: ${data !=
           null}`
       );
       if (data != null) {
@@ -723,10 +723,9 @@ export default class ServiceMenuScreen extends React.Component {
   };
 }
 
-const styles = StyleSheet.create({
-  selectedItemStyle: {
-    backgroundColor: "#9dd7fb",
-    padding: 10,
-    height: 60
-  }
-});
+ServiceMenuScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    getParam: PropTypes.func.isRequired
+  }).isRequired
+};

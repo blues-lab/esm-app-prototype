@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   BackHandler
 } from "react-native";
+import PropTypes from "prop-types";
 import * as RNFS from "react-native-fs";
 import { ProgressDialog } from "react-native-simple-dialogs";
 import Icon from "react-native-vector-icons/Fontisto";
@@ -145,7 +146,7 @@ export default class ServicePermissionScreen extends React.Component {
       logger.error(
         codeFileName,
         "fileUploadCallBack",
-        `Failed to upload partial response. Stage:Permission complete. Saving in file: ${data !=
+        `Failed to upload partial response, erro: ${error}. Stage:Permission complete. Saving in file: ${data !=
           null}`
       );
       if (data != null) {
@@ -279,6 +280,7 @@ export default class ServicePermissionScreen extends React.Component {
       });
     }
   }
+
   flatListItemSeparator = () => {
     return (
       <View style={{ height: 0.5, width: "100%", backgroundColor: "grey" }} />
@@ -463,3 +465,11 @@ export default class ServicePermissionScreen extends React.Component {
     return true;
   };
 }
+
+ServicePermissionScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    getParam: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired
+  }).isRequired
+};
