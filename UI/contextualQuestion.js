@@ -1,14 +1,11 @@
-import React, { Component } from "react";
+import React from "react";
 import {
   Platform,
   StyleSheet,
   Text,
   View,
   Button,
-  TextInput,
   Alert,
-  FlatList,
-  Modal,
   ScrollView,
   TouchableHighlight,
   Switch,
@@ -16,14 +13,11 @@ import {
 } from "react-native";
 import * as RNFS from "react-native-fs";
 import { ProgressDialog } from "react-native-simple-dialogs";
-import { CheckBox } from "react-native-elements";
 import CustomNumericInput from "./customNumericInput";
 import commonStyle from "./Style";
 import logger from "../controllers/logger";
 import appStatus from "../controllers/appStatus";
 import notificationController from "../controllers/notificationController";
-import RelationGroup from "./relationGroup";
-import LocationGroup from "./locationGroup";
 import Locations from "./locations";
 import Relations from "./relations";
 import utilities from "../controllers/utilities";
