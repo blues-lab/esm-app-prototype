@@ -1,13 +1,4 @@
-import React, { Component } from "react";
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  Alert,
-  AppState
-} from "react-native";
+import { Platform, StyleSheet, AppState } from "react-native";
 import * as RNFS from "react-native-fs";
 import { NetworkInfo } from "react-native-network-info";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
@@ -275,7 +266,7 @@ export async function showPrompt() {
           _remainingDays
       );
 
-      if (_appStatus.ExitSurveyDone || _remainingDays <= 0) {
+      if (!_appStatus.ExitSurveyDone && _remainingDays > 0) {
         return;
       } else {
         logger.info(
