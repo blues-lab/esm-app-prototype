@@ -11,9 +11,9 @@ import {
 
 import logger from "../controllers/logger";
 import commonStyles from "./Style";
+import ToolBar from "./toolbar";
 
 const codeFileName = "startsurvey.js";
-import ToolBar from "./toolbar";
 
 export default class AlvaPromptScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
