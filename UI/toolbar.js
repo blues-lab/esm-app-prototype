@@ -7,13 +7,12 @@ import {
   Alert
 } from "react-native";
 
-import AnimatedProgressWheel from "react-native-progress-wheel";
+import PropTypes from "prop-types";
+
 import { withNavigation } from "react-navigation";
 import Icon from "react-native-vector-icons/Feather";
 import ProgressBarAnimated from "react-native-progress-bar-animated";
-import { ProgressBar } from "react-native-paper";
 import appStatus from "../controllers/appStatus";
-import commonStyles from "./Style";
 import { SURVEY_STATUS, PROMPT_DURATION } from "../controllers/constants";
 import notificationController from "../controllers/notificationController";
 import logger from "../controllers/logger";
@@ -316,5 +315,14 @@ class ToolBar extends React.Component {
     );
   }
 }
+
+ToolBar.propTypes = {
+  title: PropTypes.string.isRequired,
+  progress: PropTypes.number.isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    getParam: PropTypes.func.isRequired
+  }).isRequired
+};
 
 export default withNavigation(ToolBar);
