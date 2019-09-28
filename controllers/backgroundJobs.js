@@ -9,13 +9,13 @@ import {
   AppState
 } from "react-native";
 import * as RNFS from "react-native-fs";
+import { NetworkInfo } from "react-native-network-info";
+import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
 import logger from "./logger";
 import notificationController from "./notificationController";
-const codeFileName = "backgroundJobs.js";
-import appStatus from "../controllers/appStatus";
-
-import utilities from "../controllers/utilities";
+import appStatus from "./appStatus";
+import utilities from "./utilities";
 import {
   USER_SETTINGS_FILE_PATH,
   SURVEY_STATUS,
@@ -24,14 +24,9 @@ import {
   LOG_FILE_PATH,
   PROMPT_DURATION
 } from "./constants";
-
 import { LOCATION_SHARE_PROMPT } from "./strings";
 
-import { NetworkInfo } from "react-native-network-info";
-
-//if (Platform.OS == 'android') {
-//    wifi = require('react-native-android-wifi');
-//}
+const codeFileName = "backgroundJobs.js";
 
 function isInDoNotDisturbTime(settings) {
   if (settings.afterTime === settings.beforeTime) {
@@ -59,7 +54,7 @@ function isInDoNotDisturbTime(settings) {
     "isInDoNotDisturbTime",
     `Do not disturb afterTime:${settings.afterTime} and beforeTime:${settings.beforeTime}. Current time:${_current}`
   );
-  _doNotDisturb = false;
+  let _doNotDisturb = false;
   if (settings.afterTime < settings.beforeTime) {
     _doNotDisturb =
       _current > settings.afterTime && _current < settings.beforeTime;
@@ -93,16 +88,16 @@ async function promptToShareLocation(_appStatus) {
   //Return true if prompted for location sharing
   //else return false
 
+  let _showPrompt = false;
   const _ssid = await NetworkInfo.getSSID();
-  if (_ssid == null || _ssid.length == 0 || _ssid == "<unknown ssid>") {
+  if (_ssid === null || _ssid.length === 0 || _ssid === "<unknown ssid>") {
     logger.info(
       codeFileName,
       "promptToShareLocation",
       "Obtained ssid: " + _ssid + ". Checking if location sharing is enabled."
     );
 
-    _locationSharingEnabled = false;
-    _showPrompt = false;
+    let _locationSharingEnabled = false;
     try {
       const _locationEnabled = await LocationServicesDialogBox.checkLocationServicesIsEnabled(
         {
@@ -116,7 +111,7 @@ async function promptToShareLocation(_appStatus) {
         JSON.stringify(_locationEnabled)
       );
 
-      _locationSharingEnabled = _locationEnabled["status"] == "enabled";
+      _locationSharingEnabled = _locationEnabled.status === "enabled";
     } catch (error) {
       logger.error(
         codeFileName,
@@ -139,8 +134,8 @@ async function promptToShareLocation(_appStatus) {
           _appStatus.LastLocationPromptTime +
           "."
       );
-      _hoursSinceAccess = 24;
-      _hoursSincePrompt = 24;
+      let _hoursSinceAccess = 24;
+      let _hoursSincePrompt = 24;
       if (_appStatus.LastLocationAccess != null) {
         _hoursSinceAccess = Math.floor(
           (Date.now() - _appStatus.LastLocationAccess) / (60 * 60000)
@@ -188,20 +183,20 @@ async function promptToShareLocation(_appStatus) {
         await appStatus.setAppStatus(_appStatus);
       }
     }
-
-    return _showPrompt;
   }
+
+  return _showPrompt;
 }
 
 export async function showPrompt() {
-  _appStatus = await appStatus.loadStatus();
+  const _appStatus = await appStatus.loadStatus();
   logger.info(
     codeFileName,
     "showPrompt",
     "Current app status:" + JSON.stringify(_appStatus)
   );
 
-  _userSettingsData = null;
+  let _userSettingsData = null;
   try {
     const _fileExists = await RNFS.exists(USER_SETTINGS_FILE_PATH);
     if (_fileExists) {
@@ -221,7 +216,7 @@ export async function showPrompt() {
     );
   }
 
-  if (_userSettingsData == null) {
+  if (_userSettingsData === null) {
     logger.error(
       codeFileName,
       "showPrompt",
@@ -242,8 +237,8 @@ export async function showPrompt() {
   //check if home wifi is set and connected to home wifi
   const _ssid = await NetworkInfo.getSSID();
   if (
-    _userSettingsData.homeWifi.length == 0 ||
-    _ssid != _userSettingsData.homeWifi
+    _userSettingsData.homeWifi.length === 0 ||
+    _ssid !== _userSettingsData.homeWifi
   ) {
     logger.info(
       codeFileName,
@@ -256,7 +251,7 @@ export async function showPrompt() {
   logger.info(codeFileName, "showPrompt", "Obtained wifi:" + _ssid + ".");
 
   //Check if in "Don't disturb" times (Sunday is 0, Monday is 1)
-  _doNotDisturb = isInDoNotDisturbTime(_userSettingsData);
+  const _doNotDisturb = isInDoNotDisturbTime(_userSettingsData);
 
   if (_doNotDisturb) {
     logger.info(
@@ -265,64 +260,61 @@ export async function showPrompt() {
       'Inside "Do not disturb" mode. Canceling all notification and returning.'
     );
     notificationController.cancelNotifications();
-    return;
   } else {
     logger.info(codeFileName, "showPrompt", 'Not in "Do not disturb" mode.');
 
     //Check if study period has ended
-    {
-      if (utilities.surveyPeriodEnded(_appStatus)) {
-        const _remainingDays = utilities.exitSurveyAvailableDays(_appStatus);
+    if (utilities.surveyPeriodEnded(_appStatus)) {
+      const _remainingDays = utilities.exitSurveyAvailableDays(_appStatus);
+      logger.info(
+        codeFileName,
+        "initApp",
+        "ESM period ended. Exit survey done? " +
+          _appStatus.ExitSurveyDone +
+          ". Exit survey remaining days: " +
+          _remainingDays
+      );
+
+      if (_appStatus.ExitSurveyDone || _remainingDays <= 0) {
+        return;
+      } else {
         logger.info(
           codeFileName,
-          "initApp",
-          "ESM period ended. Exit survey done? " +
-            _appStatus.ExitSurveyDone +
-            ". Exit survey remaining days: " +
-            _remainingDays
+          "showPrompt",
+          "Remaining days for exit survey:" +
+            _remainingDays +
+            ". Last notification was shown:" +
+            _appStatus.LastNotificationTime
         );
-
-        if (_appStatus.ExitSurveyDone || _remainingDays <= 0) {
-          return;
-        } else {
+        const _hourPassed = Math.floor(
+          (Date.now() - _appStatus.LastNotificationTime) / (60 * 60000)
+        );
+        logger.info(
+          codeFileName,
+          "showPrompt",
+          "Hours passed since last notification:" + _hourPassed
+        );
+        if (true || _hourPassed >= 24) {
           logger.info(
             codeFileName,
             "showPrompt",
-            "Remaining days for exit survey:" +
-              _remainingDays +
-              ". Last notification was shown:" +
-              _appStatus.LastNotificationTime
+            "Showing new notification for exit survey updating app status."
           );
-          _hourPassed = Math.floor(
-            (Date.now() - _appStatus.LastNotificationTime) / (60 * 60000)
+          notificationController.cancelNotifications();
+          notificationController.showNotification(
+            "Final survey available!",
+            "Complete it within " + _remainingDays + " days to get $1"
           );
-          logger.info(
-            codeFileName,
-            "showPrompt",
-            "Hours passed since last notification:" + _hourPassed
-          );
-          if (true || _hourPassed >= 24) {
-            logger.info(
-              codeFileName,
-              "showPrompt",
-              "Showing new notification for exit survey updating app status."
-            );
-            notificationController.cancelNotifications();
-            notificationController.showNotification(
-              "Final survey available!",
-              "Complete it within " + _remainingDays + " days to get $1"
-            );
 
-            _appStatus.LastNotificationTime = new Date();
-            await appStatus.setAppStatus(_appStatus);
-          }
-
-          return;
+          _appStatus.LastNotificationTime = new Date();
+          await appStatus.setAppStatus(_appStatus);
         }
-      } else {
-        logger.info(codeFileName, "showPrompt", "Still in ESM study period.");
+
+        return;
       }
     }
+
+    logger.info(codeFileName, "showPrompt", "Still in ESM study period.");
 
     //check if the date of last survey creation was before today, if so, reset variables.
     await logger.info(
@@ -334,7 +326,7 @@ export async function showPrompt() {
         typeof _appStatus.LastSurveyCreationDate
     );
     if (
-      _appStatus.LastSurveyCreationDate == null ||
+      _appStatus.LastSurveyCreationDate === null ||
       before(_appStatus.LastSurveyCreationDate, new Date())
     ) {
       logger.info(
@@ -350,14 +342,14 @@ export async function showPrompt() {
       await appStatus.setAppStatus(_appStatus);
     }
 
-    if (_appStatus.SurveyStatus == SURVEY_STATUS.NOT_AVAILABLE) {
+    if (_appStatus.SurveyStatus === SURVEY_STATUS.NOT_AVAILABLE) {
       //if no survey is available, randomly create one
       logger.info(
         codeFileName,
         "showPrompt",
         "No survey available; checking if already completed survey today."
       );
-      if (_appStatus.SurveyStatus != SURVEY_STATUS.COMPLETED) {
+      if (_appStatus.SurveyStatus !== SURVEY_STATUS.COMPLETED) {
         if (_appStatus.SurveyCountToday >= MAX_SURVEY_PER_DAY) {
           logger.info(
             codeFileName,
@@ -368,7 +360,7 @@ export async function showPrompt() {
           );
           return;
         }
-        _createSurvey = (Math.floor(Math.random() * 100) + 1) % 2 == 0;
+        const _createSurvey = (Math.floor(Math.random() * 100) + 1) % 2 === 0;
         logger.info(
           codeFileName,
           "showPrompt",
@@ -376,7 +368,7 @@ export async function showPrompt() {
         );
 
         if (_createSurvey) {
-          _remainingTime = PROMPT_DURATION;
+          const _remainingTime = PROMPT_DURATION;
           notificationController.cancelNotifications();
           notificationController.showNotification(
             "New survey available!",
@@ -409,12 +401,12 @@ export async function showPrompt() {
           "Survey already completed today."
         );
       }
-    } else if (_appStatus.SurveyStatus == SURVEY_STATUS.AVAILABLE) {
+    } else if (_appStatus.SurveyStatus === SURVEY_STATUS.AVAILABLE) {
       //Survey is available, show prompt if there is still time, or make survey expired
 
       logger.info(codeFileName, "showPrompt", "Survey available.");
       const _firstNotificationTime = _appStatus.FirstNotificationTime;
-      if (_firstNotificationTime == null) {
+      if (_firstNotificationTime === null) {
         logger.error(
           codeFileName,
           "showPrompt",
@@ -423,7 +415,9 @@ export async function showPrompt() {
         return;
       }
 
-      _minPassed = Math.floor((Date.now() - _firstNotificationTime) / 60000);
+      const _minPassed = Math.floor(
+        (Date.now() - _firstNotificationTime) / 60000
+      );
       logger.info(
         codeFileName,
         "showPrompt",
@@ -432,7 +426,7 @@ export async function showPrompt() {
           _firstNotificationTime
       );
 
-      _remainingTime = PROMPT_DURATION - _minPassed;
+      const _remainingTime = PROMPT_DURATION - _minPassed;
       if (_remainingTime <= 0) {
         //survey expired, remove all existing notification
         logger.info(
@@ -474,9 +468,9 @@ export async function showPrompt() {
             ". Not showing any new notification."
         );
       }
-    } else if (_appStatus.SurveyStatus == SURVEY_STATUS.ONGOING) {
+    } else if (_appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) {
       //if ongoing and app not in 'active' mode, prompt again
-      if (AppState.currentState == "background") {
+      if (AppState.currentState === "background") {
         logger.info(
           codeFileName,
           "showPrompt",
@@ -485,7 +479,7 @@ export async function showPrompt() {
             ". Updating notification."
         );
         const _firstNotificationTime = _appStatus.FirstNotificationTime;
-        if (_firstNotificationTime == null) {
+        if (_firstNotificationTime === null) {
           logger.error(
             codeFileName,
             "showPrompt",
@@ -494,7 +488,9 @@ export async function showPrompt() {
           return;
         }
 
-        _minPassed = Math.floor((Date.now() - _firstNotificationTime) / 60000);
+        const _minPassed = Math.floor(
+          (Date.now() - _firstNotificationTime) / 60000
+        );
         logger.info(
           codeFileName,
           "showPrompt",
@@ -503,7 +499,7 @@ export async function showPrompt() {
             _firstNotificationTime
         );
 
-        _remainingTime = PROMPT_DURATION - _minPassed;
+        const _remainingTime = PROMPT_DURATION - _minPassed;
         if (_remainingTime > 0) {
           logger.info(
             codeFileName,
@@ -528,14 +524,14 @@ export async function showPrompt() {
   }
 }
 
-async function uploadFilesInDir(dirName, fileNamePattern) {
+async function uploadFilesInDir(dirName, fileNamePattern, _appStatus) {
   const _files = await RNFS.readdir(dirName);
   await logger.info(
     codeFileName,
     "uploadFilesInDir",
     "Directory:" + dirName + ". Files:" + _files.toString()
   );
-  for (i = 0; i < _files.length; i++) {
+  for (let i = 0; i < _files.length; i++) {
     const _file = _files[i];
     if (_file.startsWith(fileNamePattern)) {
       await logger.info(
@@ -570,7 +566,7 @@ async function uploadFilesInDir(dirName, fileNamePattern) {
   }
 }
 
-async function _uploadFiles() {
+async function _uploadFiles(_appStatus) {
   //send the invitation code file
   const _fileExists = await RNFS.exists(INVITATION_CODE_FILE_PATH);
   if (_fileExists) {
@@ -605,7 +601,11 @@ async function _uploadFiles() {
     "uploadFiles",
     "Attempting to upload survey response files."
   );
-  await uploadFilesInDir(RNFS.DocumentDirectoryPath, "survey--response--");
+  await uploadFilesInDir(
+    RNFS.DocumentDirectoryPath,
+    "survey--response--",
+    _appStatus
+  );
   await logger.info(
     codeFileName,
     "uploadFiles",
@@ -613,7 +613,8 @@ async function _uploadFiles() {
   );
   await uploadFilesInDir(
     RNFS.DocumentDirectoryPath,
-    "partial-survey--response--"
+    "partial-survey--response--",
+    _appStatus
   );
 
   //upload log file
@@ -649,7 +650,7 @@ async function _uploadFiles() {
 export async function uploadFiles() {
   //return if any survey is ongoing
   const _appStatus = await appStatus.loadStatus();
-  if (_appStatus.SURVEY_STATUS == SURVEY_STATUS.ONGOING) {
+  if (_appStatus.SURVEY_STATUS === SURVEY_STATUS.ONGOING) {
     logger.info(codeFileName, "uploadFiles", "A survey is ongoing. Returning.");
     return;
   }
@@ -668,13 +669,12 @@ export async function uploadFiles() {
       "uploadFiles",
       "SSID:" + _ssid + ". Attempting to upload files."
     );
-    _uploadFiles();
+    _uploadFiles(_appStatus);
   } catch (error) {
     await logger.error(
       codeFileName,
       "uploadFiles",
       "Failed to upload files: " + error
     );
-    return;
   }
 }
