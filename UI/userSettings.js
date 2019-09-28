@@ -10,6 +10,7 @@ import {
   BackHandler,
   Dimensions
 } from "react-native";
+import PropTypes from "prop-types";
 import Mailer from "react-native-mail";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import * as RNFS from "react-native-fs";
@@ -422,7 +423,7 @@ export default class UserSettingsScreen extends React.Component {
                   }
                 },
                 (error, event) => {
-                  Alert.alert("Error sending email.", error.message);
+                  Alert.alert("Error sending email.", error.message + event);
                 }
               );
             } catch (error) {
@@ -669,3 +670,12 @@ export default class UserSettingsScreen extends React.Component {
     );
   }
 }
+
+UserSettingsScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    getParam: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired
+  }).isRequired
+};
