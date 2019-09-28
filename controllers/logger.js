@@ -5,7 +5,7 @@ import * as RNFS from "react-native-fs";
 import { LOG_FILE_PATH } from "./constants";
 
 class Logger extends Component {
-  static async setup() {
+  async setup() {
     try {
       if (await !RNFS.exists(LOG_FILE_PATH)) {
         await RNFS.writeFile(LOG_FILE_PATH, "\n");
@@ -15,7 +15,7 @@ class Logger extends Component {
     }
   }
 
-  static getDateTime() {
+  getDateTime() {
     const date = new Date();
     const day = date.getDate();
     const m = date.getMonth() + 1; //Month from 0 to 11
@@ -31,7 +31,7 @@ class Logger extends Component {
     return { UTCTime: date, LocalTime: y + "-" + m + "-" + day + " " + time };
   }
 
-  static async writeLog(type, className, funcName, message) {
+  async writeLog(type, className, funcName, message) {
     const dates = this.getDateTime();
     try {
       const _log = {
@@ -48,21 +48,44 @@ class Logger extends Component {
     }
   }
 
-  static async info(className, funcName, message) {
+  async info(className, funcName, message) {
     await this.writeLog("Info", className, funcName, message);
   }
 
-  static async warn(className, funcName, message) {
+  async warn(className, funcName, message) {
     await this.writeLog("Warning", className, funcName, message);
   }
 
-  static async error(className, funcName, message) {
+  async error(className, funcName, message) {
     await this.writeLog("Error", className, funcName, message);
   }
 
-  static debug(className, funcName, message) {
+  debug(className, funcName, message) {
     this.writeLog("Debug", className, funcName, message);
   }
+
+  //  static getLogger() {
+  //      let instance = null;
+  //      if (instance == null) {
+  //        instance = new Logger();
+  //
+  //        try
+  //        {
+  //            RNFS.exists(LOG_FILE_PATH)
+  //            .then( (exists) =>{
+  //                if(!exists)
+  //                {
+  //                    RNFS.writeFile(LOG_FILE_PATH, '\n');
+  //                }
+  //            });
+  //        }catch (error)
+  //        {
+  //             Alert.alert("Error", error.message);
+  //        }
+  //
+  //      return instance;
+  //    }
+  //}
 }
 
 const logger = new Logger();

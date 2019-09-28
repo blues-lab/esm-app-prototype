@@ -11,11 +11,11 @@ export function onAppOpen() {
 }
 
 class NotificationController {
-  static cancelNotifications() {
+  cancelNotifications() {
     PushNotification.cancelAllLocalNotifications();
   }
 
-  static showNotification(promptTitle, promptMessage) {
+  showNotification(promptTitle, promptMessage) {
     PushNotification.localNotification({
       date: new Date(),
       /* Android Only Properties */
@@ -52,7 +52,7 @@ class NotificationController {
     });
   }
 
-  static configureNotification() {
+  configureNotification() {
     PushNotification.configure({
       // (optional) Called when Token is generated (iOS and Android)
       onRegister(token) {

@@ -10,7 +10,7 @@ const codeFileName = "utilities.js";
 class Utilities extends Component {
   serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
 
-  static async fileExists(path, fileName, callerClass, callerFunc) {
+  async fileExists(path, fileName, callerClass, callerFunc) {
     logger.info(
       `${callerClass}`,
       `${callerFunc}-->fileExists`,
@@ -22,12 +22,7 @@ class Utilities extends Component {
     return false;
   }
 
-  static async writeJSONFile(
-    contentToWrite,
-    fileName,
-    callerClass,
-    callerFunc
-  ) {
+  async writeJSONFile(contentToWrite, fileName, callerClass, callerFunc) {
     try {
       let content = contentToWrite;
       if (typeof content === "object") {
@@ -89,7 +84,7 @@ class Utilities extends Component {
     return true;
   }
 
-  static async readJSONFile(filePath, callerClass, callerFunc) {
+  async readJSONFile(filePath, callerClass, callerFunc) {
     let result = null;
     try {
       const _fileExists = await RNFS.exists(filePath);
@@ -118,7 +113,7 @@ class Utilities extends Component {
     return result;
   }
 
-  static async uploadData(
+  async uploadData(
     data,
     uuid,
     type,
@@ -176,7 +171,7 @@ class Utilities extends Component {
     return _uploaded;
   }
 
-  static surveyPeriodEnded(appStatus) {
+  surveyPeriodEnded(appStatus) {
     let result = false;
     const _installationDate = appStatus.InstallationDate;
     logger.info(
@@ -205,7 +200,7 @@ class Utilities extends Component {
     return result;
   }
 
-  static exitSurveyAvailableDays(appStatus) {
+  exitSurveyAvailableDays(appStatus) {
     //returns how many days are available until exit survey period ends
     const _installationDate = appStatus.InstallationDate;
     let _remainingDays = 0;
@@ -234,7 +229,7 @@ class Utilities extends Component {
     return _remainingDays;
   }
 
-  static getDateTime() {
+  getDateTime() {
     const date = new Date();
     const day = date.getDate();
     const m = date.getMonth() + 1; //Month from 0 to 11
@@ -252,12 +247,12 @@ class Utilities extends Component {
     return y + "-" + m + "-" + day + " " + time;
   }
 
-  static isNumeric(num) {
+  isNumeric(num) {
     const _num = "" + num; //coerce num to be a string
     return !Number.isNaN(_num) && !Number.isNaN(parseFloat(_num));
   }
 
-  static shuffleArray(array) {
+  shuffleArray(array) {
     const a = array;
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
