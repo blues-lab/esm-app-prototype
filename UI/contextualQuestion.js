@@ -74,7 +74,7 @@ export default class ContextualQuestionScreen extends React.Component {
     super(props);
 
     this.state = {
-      numOfPeople: 0,
+      numOfPeople: 1,
       selectedRelations: new Set([]),
       selectedLocations: new Set([]),
       numOfPeopleCanHear: 0,
@@ -276,6 +276,7 @@ export default class ContextualQuestionScreen extends React.Component {
                   </Text>
                   <CustomNumericInput
                     valueChangeCallback={this.numPeopleAroundChangeHandler}
+                    minValue={1}
                   />
                 </View>
 

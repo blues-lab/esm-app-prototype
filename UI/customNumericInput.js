@@ -11,7 +11,7 @@ const codeFileName = "customNumericInput";
 export default class CustomNumericInput extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: 0 };
+    this.state = { value: props.minValue };
   }
 
   render() {
@@ -45,7 +45,7 @@ export default class CustomNumericInput extends React.Component {
           }
           totalWidth={200}
           totalHeight={40}
-          minValue={0}
+          minValue={this.props.minValue}
           maxValue={100}
           iconSize={25}
           step={1}
@@ -62,5 +62,10 @@ export default class CustomNumericInput extends React.Component {
 }
 
 CustomNumericInput.propTypes = {
+  minValue: PropTypes.number,
   valueChangeCallback: PropTypes.func.isRequired
+};
+
+CustomNumericInput.defaultProps = {
+  minValue: 0
 };
