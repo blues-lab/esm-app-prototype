@@ -141,7 +141,7 @@ export default class ServicePermissionScreen extends React.Component {
     }
   }
 
-  fileUploadCallBack(success, error = null, data = null) {
+  static fileUploadCallBack(success, error = null, data = null) {
     if (!success) {
       logger.error(
         codeFileName,
@@ -258,7 +258,7 @@ export default class ServicePermissionScreen extends React.Component {
           "PartialSurveyResponse",
           codeFileName,
           "saveResponse",
-          this.fileUploadCallBack.bind(this)
+          ServicePermissionScreen.fileUploadCallBack
         );
       }
 

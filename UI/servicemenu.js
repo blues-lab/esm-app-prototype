@@ -347,7 +347,7 @@ export default class ServiceMenuScreen extends React.Component {
     });
   }
 
-  fileUploadCallBack(success, error = null, data = null) {
+  static fileUploadCallBack(success, error = null, data = null) {
     if (!success) {
       logger.error(
         codeFileName,
@@ -449,7 +449,7 @@ export default class ServiceMenuScreen extends React.Component {
         "PartialSurveyResponse",
         codeFileName,
         "showPermissionPage",
-        this.fileUploadCallBack.bind(this)
+        ServiceMenuScreen.fileUploadCallBack
       );
 
       logger.info(
@@ -682,7 +682,7 @@ export default class ServiceMenuScreen extends React.Component {
                     "PartialSurveyResponse",
                     codeFileName,
                     "NextButtonPress",
-                    this.fileUploadCallBack.bind(this)
+                    ServiceMenuScreen.fileUploadCallBack
                   );
 
                   this.setState({ saveWaitVisible: false });

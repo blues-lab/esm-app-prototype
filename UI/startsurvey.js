@@ -87,7 +87,7 @@ export default class SurveyStartScreen extends React.Component {
     }
   }
 
-  fileUploadCallBack(success, error = null, data = null) {
+  static fileUploadCallBack(success, error = null, data = null) {
     if (!success) {
       logger.error(
         codeFileName,
@@ -175,7 +175,7 @@ export default class SurveyStartScreen extends React.Component {
                           "PartialSurveyResponse",
                           codeFileName,
                           "NextButtonPress",
-                          this.fileUploadCallBack.bind(this)
+                          SurveyStartScreen.fileUploadCallBack
                         );
 
                         this.setState({ saveWaitVisible: false });
