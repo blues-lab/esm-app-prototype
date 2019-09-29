@@ -156,7 +156,9 @@ export default class Relations extends React.Component {
         <View style={styles.rowView}>
           <TouchableOpacity
             style={this.state.relationNames[0].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 0)}
+            onPress={() => {
+              this.handleSelectionChange(0);
+            }}
           >
             <View style={styles.rowView}>
               <Icon
@@ -173,7 +175,9 @@ export default class Relations extends React.Component {
 
           <TouchableOpacity
             style={this.state.relationNames[1].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 1)}
+            onPress={() => {
+              this.handleSelectionChange(1);
+            }}
           >
             <View style={styles.rowView}>
               <Icon
@@ -192,7 +196,9 @@ export default class Relations extends React.Component {
         <View style={styles.rowView}>
           <TouchableOpacity
             style={this.state.relationNames[2].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 2)}
+            onPress={() => {
+              this.handleSelectionChange(2);
+            }}
           >
             <View style={styles.rowView}>
               <Icon
@@ -209,7 +215,9 @@ export default class Relations extends React.Component {
 
           <TouchableOpacity
             style={this.state.relationNames[3].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 3)}
+            onPress={() => {
+              this.handleSelectionChange(3);
+            }}
           >
             <View style={styles.rowView}>
               <Icon
@@ -228,7 +236,9 @@ export default class Relations extends React.Component {
         <View style={styles.rowView}>
           <TouchableOpacity
             style={this.state.relationNames[4].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 4)}
+            onPress={() => {
+              this.handleSelectionChange(4);
+            }}
           >
             <View style={styles.rowView}>
               <Icon
@@ -246,7 +256,9 @@ export default class Relations extends React.Component {
         <View style={styles.rowView}>
           <TouchableOpacity
             style={this.state.relationNames[5].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 5)}
+            onPress={() => {
+              this.handleSelectionChange(5);
+            }}
           >
             <View style={styles.rowView}>
               <Icon
@@ -265,7 +277,9 @@ export default class Relations extends React.Component {
         <View style={styles.rowView}>
           <TouchableOpacity
             style={this.state.relationNames[6].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 6)}
+            onPress={() => {
+              this.handleSelectionChange(6);
+            }}
           >
             <View style={styles.rowView}>
               <Icon
@@ -282,7 +296,9 @@ export default class Relations extends React.Component {
 
           <TouchableOpacity
             style={this.state.relationNames[7].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 7)}
+            onPress={() => {
+              this.handleSelectionChange(7);
+            }}
           >
             <View style={styles.rowView}>
               <Icon

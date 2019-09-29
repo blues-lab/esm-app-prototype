@@ -475,7 +475,9 @@ export default class ServiceMenuScreen extends React.Component {
     return (
       <TouchableOpacity
         style={{ backgroundColor: "lavender" }}
-        onPress={this.openServiceDetailsPage.bind(this, item)}
+        onPress={() => {
+          this.openServiceDetailsPage(item);
+        }}
       >
         <View style={{ flex: 1, flexDirection: "column" }}>
           <View

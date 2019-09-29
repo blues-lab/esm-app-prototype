@@ -234,7 +234,9 @@ export default class ServiceDetailsScreen extends React.Component {
 
     return (
       <TouchableOpacity
-        onPress={this.handleServiceSelection.bind(this, item.name)}
+        onPress={() => {
+          this.handleServiceSelection(item.name);
+        }}
       >
         <View
           style={{

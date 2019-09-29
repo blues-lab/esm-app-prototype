@@ -66,7 +66,7 @@ export default class ServicePermissionScreen extends React.Component {
       permissionResponses: [],
       surveyResponseJS: null, // full survey response so far sent from the serviceMenu page
       saveWaitVisible: false,
-      followUpQuestions: false
+      followUpQuestions: false //indicates whether permission options or follow up questions should be shown
     };
 
     this.permissionOptions = [
@@ -164,20 +164,10 @@ export default class ServicePermissionScreen extends React.Component {
   }
 
   permissionSelectionChangedHandler = async item => {
-    this.setState({ sharingDecision: item.key });
+    await this.promisedSetState({ sharingDecision: item.key });
   };
 
   async saveResponse() {
-    if (this.state.sharingDecision.length === 0) {
-      Alert.alert("Error", "Please select an option to continue.");
-      logger.info(
-        codeFileName,
-        "saveResponse",
-        "No permission option selected. Returning"
-      );
-      return;
-    }
-
     logger.info(
       codeFileName,
       "saveResponse",
@@ -291,7 +281,9 @@ export default class ServicePermissionScreen extends React.Component {
     return (
       <TouchableOpacity
         style={{ backgroundColor: "lavender", margin: 5 }}
-        onPress={this.permissionSelectionChangedHandler.bind(this, item)}
+        onPress={() => {
+          this.permissionSelectionChangedHandler(item);
+        }}
       >
         <View
           style={{
@@ -364,6 +356,21 @@ export default class ServicePermissionScreen extends React.Component {
                 <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
                   <Button
                     onPress={() => {
+                      if (this.state.sharingDecision.length === 0) {
+                        Alert.alert(
+                          "Error",
+                          "Please select an option to continue."
+                        );
+                        logger.info(
+                          codeFileName,
+                          "NextButton.onPress",
+                          "No permission option selected. Returning."
+                        );
+                        return;
+                      }
+
+                      //if fullShare, then do not show followup questions
+                      //instead, save response and go to the next permission question
                       if (this.state.sharingDecision === fullShare) {
                         this.saveResponse();
                       } else {

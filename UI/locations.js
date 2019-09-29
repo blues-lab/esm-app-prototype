@@ -156,7 +156,9 @@ export default class Locations extends React.Component {
         <View style={styles.rowView}>
           <TouchableOpacity
             style={this.state.locationNames[0].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 0)}
+            onPress={() => {
+              this.handleSelectionChange(0);
+            }}
           >
             <View style={styles.rowView}>
               <Icon
@@ -173,7 +175,9 @@ export default class Locations extends React.Component {
 
           <TouchableOpacity
             style={this.state.locationNames[1].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 1)}
+            onPress={() => {
+              this.handleSelectionChange(1);
+            }}
           >
             <View style={styles.rowView}>
               <Icon
@@ -190,7 +194,9 @@ export default class Locations extends React.Component {
 
           <TouchableOpacity
             style={this.state.locationNames[2].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 2)}
+            onPress={() => {
+              this.handleSelectionChange(2);
+            }}
           >
             <View style={styles.rowView}>
               <Icon
@@ -209,7 +215,9 @@ export default class Locations extends React.Component {
         <View style={styles.rowView}>
           <TouchableOpacity
             style={this.state.locationNames[3].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 3)}
+            onPress={() => {
+              this.handleSelectionChange(3);
+            }}
           >
             <View style={styles.rowView}>
               <Icon
@@ -226,7 +234,9 @@ export default class Locations extends React.Component {
 
           <TouchableOpacity
             style={this.state.locationNames[4].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 4)}
+            onPress={() => {
+              this.handleSelectionChange(4);
+            }}
           >
             <View style={styles.rowView}>
               <Icon
@@ -243,7 +253,9 @@ export default class Locations extends React.Component {
 
           <TouchableOpacity
             style={this.state.locationNames[5].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 5)}
+            onPress={() => {
+              this.handleSelectionChange(5);
+            }}
           >
             <View style={styles.rowView}>
               <Icon
@@ -262,7 +274,9 @@ export default class Locations extends React.Component {
         <View style={styles.rowView}>
           <TouchableOpacity
             style={this.state.locationNames[6].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 6)}
+            onPress={() => {
+              this.handleSelectionChange(6);
+            }}
           >
             <View style={styles.rowView}>
               <Icon
@@ -279,7 +293,9 @@ export default class Locations extends React.Component {
 
           <TouchableOpacity
             style={this.state.locationNames[7].renderStyle}
-            onPress={this.handleSelectionChange.bind(this, 7)}
+            onPress={() => {
+              this.handleSelectionChange(7);
+            }}
           >
             <View style={styles.rowView}>
               <Icon

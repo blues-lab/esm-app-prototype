@@ -116,23 +116,23 @@ export default class ContextualQuestionScreen extends React.Component {
     }
   }
 
-  relationSelectionHandler(selectedRelations) {
+  relationSelectionHandler = selectedRelations => {
     this.setState({ selectedRelations });
     logger.info(
       codeFileName,
       "relationSelectionHandler",
       "Currently selected relations:" + Array.from(selectedRelations)
     );
-  }
+  };
 
-  locationSelectionHandler(selectedLocations) {
+  locationSelectionHandler = selectedLocations => {
     this.setState({ selectedLocations });
     logger.info(
       codeFileName,
       "locationSelectionHandler",
       "Currently selected locations:" + Array.from(selectedLocations)
     );
-  }
+  };
 
   async saveResponse() {
     this.setState({ saveWaitVisible: true });
@@ -222,13 +222,13 @@ export default class ContextualQuestionScreen extends React.Component {
     });
   }
 
-  numPeopleAroundChangeHandler(value) {
+  numPeopleAroundChangeHandler = value => {
     this.setState({ numOfPeople: value });
-  }
+  };
 
-  numPeopleCanHearChangeHandler(value) {
+  numPeopleCanHearChangeHandler = value => {
     this.setState({ numOfPeopleCanHear: value });
-  }
+  };
 
   render() {
     return (
@@ -250,9 +250,7 @@ export default class ContextualQuestionScreen extends React.Component {
                     <Text>Select all that apply.</Text>
                   </Text>
                   <Locations
-                    locationSelectionHandler={this.locationSelectionHandler.bind(
-                      this
-                    )}
+                    locationSelectionHandler={this.locationSelectionHandler}
                   />
                 </View>
 
@@ -263,9 +261,7 @@ export default class ContextualQuestionScreen extends React.Component {
                       conversation, could hear it?
                     </Text>
                     <CustomNumericInput
-                      valueChangeCallback={this.numPeopleCanHearChangeHandler.bind(
-                        this
-                      )}
+                      valueChangeCallback={this.numPeopleCanHearChangeHandler}
                     />
                   </View>
                 </View>
@@ -279,9 +275,7 @@ export default class ContextualQuestionScreen extends React.Component {
                     How many other people (excluding you) were talking?
                   </Text>
                   <CustomNumericInput
-                    valueChangeCallback={this.numPeopleAroundChangeHandler.bind(
-                      this
-                    )}
+                    valueChangeCallback={this.numPeopleAroundChangeHandler}
                   />
                 </View>
 
@@ -292,9 +286,7 @@ export default class ContextualQuestionScreen extends React.Component {
                         How do you relate to them? Select all that apply.
                       </Text>
                       <Relations
-                        relationSelectionHandler={this.relationSelectionHandler.bind(
-                          this
-                        )}
+                        relationSelectionHandler={this.relationSelectionHandler}
                       />
                     </View>
 
