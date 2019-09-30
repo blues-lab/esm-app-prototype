@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 
 export default class CustomRadioButtonGroup extends React.Component {
   state = {
@@ -70,7 +70,7 @@ export default class CustomRadioButtonGroup extends React.Component {
                 justifyContent: "center"
               }}
             >
-              {item.key == this.state.selectedItemKey ? (
+              {item.key === this.state.selectedItemKey ? (
                 <View
                   style={{
                     height: 12,
