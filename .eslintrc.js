@@ -25,8 +25,8 @@ module.exports = {
     "no-plusplus": 0,
     "no-underscore-dangle": 0,
     "react/destructuring-assignment": 0,
+    "react/jsx-curly-newline": 0,
     "react/jsx-filename-extension": 0,
-    "react/jsx-one-expression-per-line": 0,
     "react/jsx-one-expression-per-line": 0,
     "react/prop-types": 1,
     "react/sort-comp": 0
