@@ -19,12 +19,16 @@ import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions";
 import { NetworkInfo } from "react-native-network-info";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
+import appStatus from "../controllers/appStatus";
+import notificationController from "../controllers/notificationController";
 import logger from "../controllers/logger";
 import commonStyle from "./Style";
 import utilities from "../controllers/utilities";
 import {
   USER_SETTINGS_FILE_PATH,
-  LOG_FILE_PATH
+  LOG_FILE_PATH,
+  SURVEY_STATUS,
+  INTERNAL_TEST
 } from "../controllers/constants";
 import {
   WIFI_PERMISSION_MSG,
@@ -391,46 +395,88 @@ export default class UserSettingsScreen extends React.Component {
           backgroundColor: "lavender"
         }}
       >
-        <Button
-          title="Take the exit survey"
-          color="#20B2AA"
-          onPress={() => {
-            logger.info(
-              codeFileName,
-              "Study ended modal",
-              "Starting exit survey."
-            );
-            this.props.navigation.navigate("ExitSurvey");
-          }}
-        />
+        {INTERNAL_TEST && (
+          <View>
+            <Button
+              title="Take the exit survey"
+              color="#20B2AA"
+              onPress={() => {
+                logger.info(
+                  codeFileName,
+                  "StartExitSurveyButton",
+                  "Starting exit survey."
+                );
+                this.props.navigation.navigate("ExitSurvey");
+              }}
+            />
+            <Button
+              title="Start survey"
+              color="#20B2AA"
+              onPress={async () => {
+                logger.info(
+                  codeFileName,
+                  "StartSurveyButton",
+                  "Starting daily survey from the settings page."
+                );
 
-        <Button
-          title="Email log"
-          color="#20B2AA"
-          onPress={async () => {
-            try {
-              const _fileContent = await RNFS.readFile(LOG_FILE_PATH);
-              Mailer.mail(
-                {
-                  subject: "MiMi log",
-                  recipients: ["rakhasan@iu.edu"],
-                  body: `<b>${_fileContent}</b>`,
-                  isHTML: true,
-                  attachment: {
-                    path: LOG_FILE_PATH,
-                    type: "csv", // Mime Type: jpg, png, doc, ppt, html, pdf, csv
-                    name: "log-file.csv" // Optional: Custom filename for attachment
-                  }
-                },
-                (error, event) => {
-                  Alert.alert("Error sending email.", error.message + event);
+                notificationController.cancelNotifications();
+                notificationController.showNotification(
+                  "New survey available!",
+                  "Complete within 60 minutes to get $1!!!"
+                );
+
+                const _appStatus = await appStatus.loadStatus();
+                const _currentDate = new Date();
+                _appStatus.SurveyCountToday += 1;
+                _appStatus.SurveyStatus = SURVEY_STATUS.AVAILABLE;
+                _appStatus.LastSurveyCreationDate = _currentDate;
+                _appStatus.FirstNotificationTime = _currentDate;
+                _appStatus.LastNotificationTime = _currentDate;
+                await appStatus.setAppStatus(_appStatus);
+
+                if (this.state.backCallBack != null) {
+                  logger.info(
+                    codeFileName,
+                    "StartSurveyButton",
+                    "Calling backCallBack."
+                  );
+                  this.state.backCallBack();
                 }
-              );
-            } catch (error) {
-              Alert.alert("Error", error.message);
-            }
-          }}
-        />
+                this.props.navigation.goBack(null);
+              }}
+            />
+            <Button
+              title="Email log"
+              color="#20B2AA"
+              onPress={async () => {
+                try {
+                  const _fileContent = await RNFS.readFile(LOG_FILE_PATH);
+                  Mailer.mail(
+                    {
+                      subject: "MiMi log",
+                      recipients: ["rakhasan@iu.edu"],
+                      body: `<b>${_fileContent}</b>`,
+                      isHTML: true,
+                      attachment: {
+                        path: LOG_FILE_PATH,
+                        type: "csv", // Mime Type: jpg, png, doc, ppt, html, pdf, csv
+                        name: "log-file.csv" // Optional: Custom filename for attachment
+                      }
+                    },
+                    (error, event) => {
+                      Alert.alert(
+                        "Error sending email.",
+                        error.message + event
+                      );
+                    }
+                  );
+                } catch (error) {
+                  Alert.alert("Error", error.message);
+                }
+              }}
+            />
+          </View>
+        )}
 
         {this.state.homeWifi.length > 0 && (
           <Text

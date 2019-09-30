@@ -434,7 +434,7 @@ export default class HomeScreen extends React.Component {
         )}
         <DialogInput
           isDialogVisible={this.state.invitationCodeDialogVisible}
-          title={this.state.invitationCodePrompt}
+          title={this.state.invitationCodePrompt + " Testing mode"} //reminder that it is in testing mode
           submitInput={async code => {
             await this.promisedSetState({ invitationCode: code });
             //TODO: check validity of the code
