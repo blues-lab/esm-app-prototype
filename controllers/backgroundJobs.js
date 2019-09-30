@@ -268,41 +268,40 @@ export async function showPrompt() {
 
       if (!_appStatus.ExitSurveyDone && _remainingDays > 0) {
         return;
-      } else {
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          "Remaining days for exit survey:" +
-            _remainingDays +
-            ". Last notification was shown:" +
-            _appStatus.LastNotificationTime
-        );
-        const _hourPassed = Math.floor(
-          (Date.now() - _appStatus.LastNotificationTime) / (60 * 60000)
-        );
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          "Hours passed since last notification:" + _hourPassed
-        );
-        if (true || _hourPassed >= 24) {
-          logger.info(
-            codeFileName,
-            "showPrompt",
-            "Showing new notification for exit survey updating app status."
-          );
-          notificationController.cancelNotifications();
-          notificationController.showNotification(
-            "Final survey available!",
-            "Complete it within " + _remainingDays + " days to get $1"
-          );
-
-          _appStatus.LastNotificationTime = new Date();
-          await appStatus.setAppStatus(_appStatus);
-        }
-
-        return;
       }
+      logger.info(
+        codeFileName,
+        "showPrompt",
+        "Remaining days for exit survey:" +
+          _remainingDays +
+          ". Last notification was shown:" +
+          _appStatus.LastNotificationTime
+      );
+      const _hourPassed = Math.floor(
+        (Date.now() - _appStatus.LastNotificationTime) / (60 * 60000)
+      );
+      logger.info(
+        codeFileName,
+        "showPrompt",
+        "Hours passed since last notification:" + _hourPassed
+      );
+      if (true || _hourPassed >= 24) {
+        logger.info(
+          codeFileName,
+          "showPrompt",
+          "Showing new notification for exit survey updating app status."
+        );
+        notificationController.cancelNotifications();
+        notificationController.showNotification(
+          "Final survey available!",
+          "Complete it within " + _remainingDays + " days to get $1"
+        );
+
+        _appStatus.LastNotificationTime = new Date();
+        await appStatus.setAppStatus(_appStatus);
+      }
+
+      return;
     }
 
     logger.info(codeFileName, "showPrompt", "Still in ESM study period.");

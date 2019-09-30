@@ -14,12 +14,12 @@ import {
   BackHandler
 } from "react-native";
 
+import Icon from "react-native-vector-icons/Fontisto";
 import logger from "../controllers/logger";
 
 import commonStyles from "./Style";
 
 const codeFileName = "radioButtonGroup.js";
-import Icon from "react-native-vector-icons/Fontisto";
 
 export default class CustomRadioButtonGroup extends React.Component {
   state = {
