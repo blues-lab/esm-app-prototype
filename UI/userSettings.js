@@ -384,6 +384,85 @@ export default class UserSettingsScreen extends React.Component {
     return ret;
   }
 
+  static async askForLocationSharingAndroid() {
+    logger.info(
+      codeFileName,
+      "LocationPermissionDialog",
+      "Checking if location sharing is enabled."
+    );
+
+    let _locationSharingEnabled = false;
+    try {
+      const _locationEnabled = await LocationServicesDialogBox.checkLocationServicesIsEnabled(
+        {
+          showDialog: false, // false => Opens the Location access page directly
+          openLocationServices: false // false => Directly catch method is called if location services are turned off
+        }
+      );
+      logger.info(
+        codeFileName,
+        "LocationPermissionDialog",
+        "Location sharing status: " + JSON.stringify(_locationEnabled)
+      );
+
+      _locationSharingEnabled = _locationEnabled.status === "enabled";
+    } catch (error) {
+      logger.error(
+        codeFileName,
+        "LocationPermissionDialog",
+        "Failed to check if location sharing is enabled. Error: " +
+          error.message
+      );
+
+      if (!_locationSharingEnabled) {
+        logger.info(
+          codeFileName,
+          "LocationPermissionDialog",
+          "Location sharing is not enabled. Asking to share location."
+        );
+
+        try {
+          const _locationEnabled = await LocationServicesDialogBox.checkLocationServicesIsEnabled(
+            {
+              message: "",
+              ok: "YES",
+              cancel: "NO",
+              enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => GPS OR NETWORK PROVIDER
+              showDialog: false, // false => Opens the Location access page directly
+              openLocationServices: true, // false => Directly catch method is called if location services are turned off
+              preventOutSideTouch: false, // true => To prevent the location services window from closing when it is clicked outside
+              preventBackClick: false, // true => To prevent the location services popup from closing when it is clicked back button
+              providerListener: false // true ==> Trigger locationProviderStatusChange listener when the location state changes
+            }
+          );
+
+          if (_locationEnabled.status === "enabled") {
+            // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
+            logger.info(
+              codeFileName,
+              "LocationPermissionDialog",
+              "Location sharing is enabled. Status: " +
+                JSON.stringify(_locationEnabled)
+            );
+          } else {
+            logger.warn(
+              codeFileName,
+              "LocationPermissionDialog",
+              "Location sharing was not enabled. Status: " +
+                JSON.stringify(_locationEnabled)
+            );
+          }
+        } catch (err) {
+          logger.error(
+            codeFileName,
+            "LocationPermissionDialog",
+            "Failed to get location sharing enabled. Error: " + err.message
+          );
+        }
+      }
+    }
+  }
+
   render() {
     return (
       <View
@@ -661,55 +740,20 @@ export default class UserSettingsScreen extends React.Component {
                   "Location permission granted. Checking if location sharing is enabled."
                 );
                 if (Platform.OS === "android") {
-                  try {
-                    const _locationEnabled = await LocationServicesDialogBox.checkLocationServicesIsEnabled(
-                      {
-                        message:
-                          "<h2>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
-                        ok: "YES",
-                        cancel: "NO",
-                        enableHighAccuracy: true, // true => GPS AND NETWORK PROVIDER, false => GPS OR NETWORK PROVIDER
-                        showDialog: false, // false => Opens the Location access page directly
-                        openLocationServices: true, // false => Directly catch method is called if location services are turned off
-                        preventOutSideTouch: false, // true => To prevent the location services window from closing when it is clicked outside
-                        preventBackClick: false, // true => To prevent the location services popup from closing when it is clicked back button
-                        providerListener: false // true ==> Trigger locationProviderStatusChange listener when the location state changes
-                      }
-                    );
-                    if (_locationEnabled.status === "enabled") {
-                      // success => {alreadyEnabled: false, enabled: true, status: "enabled"}
-                      logger.info(
-                        codeFileName,
-                        "LocationPermissionDialog",
-                        "Location sharing is " +
-                          JSON.stringify(_locationEnabled) +
-                          ". Getting home wifi name."
-                      );
-                      await this.getHomeSSID();
-                    } else {
-                      await logger.warn(
-                        codeFileName,
-                        "LocationPermissionDialog",
-                        "Location sharing was not enabled:" +
-                          JSON.stringify(_locationEnabled)
-                      );
-                      //send log data to the server
-                      await uploadFiles();
-                    }
-                  } catch (error) {
-                    // error.message => "disabled"
-                    await logger.error(
-                      codeFileName,
-                      "LocationPermissionDialog",
-                      "Error: " + error.message
-                    );
-                    //send log data to the server
-                    await uploadFiles();
-                    await this.getHomeSSID();
-                  }
+                  await UserSettingsScreen.askForLocationSharingAndroid();
                 } else {
-                  await this.getHomeSSID();
+                  //iOS platform, try to obtain ssid without asking to enable location sharing
+                  //corresponding method to enable location sharing for iOS
                 }
+
+                await logger.info(
+                  codeFileName,
+                  "LocationPermissionDialog",
+                  "Getting home wifi."
+                );
+                await this.getHomeSSID();
+                //send log data to the server
+                await uploadFiles();
               }
             }}
           />
