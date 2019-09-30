@@ -101,19 +101,19 @@ export const FINAL_THANK = "Thank you for participating in our study!";
 export const SERVICES = [
   {
     services: [
-      { serviceName: "Call doctor/hospital" },
-      { serviceName: "Call the police/emergency service" },
       { serviceName: "Call/text/email a family member/friend" },
       { serviceName: "Call/text/email for work" },
-      { serviceName: "Call a store/restaurant/office" }
+      { serviceName: "Call a store/restaurant/office" },
+      { serviceName: "Call doctor/hospital" },
+      { serviceName: "Call the police/emergency service" }
     ],
     categoryName: "Call/email/text"
   },
   {
     services: [
+      { serviceName: "Schedule a get-together with friends/family" },
       { serviceName: "Make doctor's/medical appointment" },
       { serviceName: "Schedule a meeting with a colleague" },
-      { serviceName: "Schedule a get together with friends/family" },
       {
         serviceName:
           "Schedule personal care appointment (hair, nails, spa, etc.)"
@@ -123,24 +123,24 @@ export const SERVICES = [
   },
   {
     services: [
-      { serviceName: "Remind about doctor's/medical appointment" },
+      { serviceName: "Remind about a to-do item" },
+      { serviceName: "Remind about a calendar event" },
       { serviceName: "Remind to call/text/email someone" },
       { serviceName: "Remind about a meeting" },
-      { serviceName: "Remind about a to-do item" },
       { serviceName: "Remind to take medication" },
-      { serviceName: "Remind to avoid some food/drink" },
-      { serviceName: "Remind about a calendar event" }
+      { serviceName: "Remind about doctor's/medical appointment" },
+      { serviceName: "Remind to avoid some food/drink" }
     ],
     categoryName: "Set a reminder"
   },
   {
     services: [
       { serviceName: "Order food" },
-      { serviceName: "Order gift item" },
-      { serviceName: "Book flight/hotel/rent car" },
+      { serviceName: "Buy a gift" },
       { serviceName: "Buy clothes" },
       { serviceName: "Buy book" },
-      { serviceName: "Order a taxi/ride share" }
+      { serviceName: "Book flight/hotel/rent car" },
+      { serviceName: "Call a taxi/rideshare" }
     ],
     categoryName: "Purchase a product/service"
   },
@@ -150,27 +150,28 @@ export const SERVICES = [
         serviceName:
           "Search for health/disease/medical condition related information"
       },
-      { serviceName: "Search for the nearest hospital/pharmacy" },
-      { serviceName: "Search for the nearest restaurant" },
+      { serviceName: "Search for restaurant(s)" },
+      { serviceName: "Search for address or location" },
       { serviceName: "Search for food recipe" },
       { serviceName: "Search for song/artist/lyric" },
       {
         serviceName: "Search contact information for a store/restaurant/office"
       },
+      { serviceName: "Search for meanings of a word/term/phrase" },
       {
         serviceName:
           "Search for promo code/discount offer for some product/service"
       },
-      { serviceName: "Search for job opportunities" },
       { serviceName: "Search for travel info (flights/hotels/rental cars)" },
       { serviceName: "Search for weather information at a location" },
-      { serviceName: "Search for the nearest library" },
-      { serviceName: "Search for meanings of a word/term/phrase" }
+      { serviceName: "Search for the nearest hospital/pharmacy" },
+      { serviceName: "Search for job opportunities" }
     ],
     categoryName: "Search for information"
   },
   {
     services: [
+      { serviceName: "Add task in a to-do list" },
       {
         serviceName:
           "Keep track of the price of some item and notify when lower price available"
@@ -179,7 +180,6 @@ export const SERVICES = [
         serviceName:
           "Keep track of medication/exercise/other recurrent activities "
       },
-      { serviceName: "Add task in a to-do list" },
       { serviceName: "Track a package shipping and confirm when delivered" },
       {
         serviceName:
@@ -191,11 +191,12 @@ export const SERVICES = [
   },
   {
     services: [
-      { serviceName: "Adjust heating/cooling" },
       { serviceName: "Start/stop music" },
+      { serviceName: "Turn on/off the TV" },
+      { serviceName: "Turn on/off the light" },
+      { serviceName: "Adjust heating/cooling" },
       { serviceName: "Turn on/off the oven" },
-      { serviceName: "Open/close garage door" },
-      { serviceName: "Turn on/off the light" }
+      { serviceName: "Open/close garage door" }
     ],
     categoryName: "Smart home services"
   },
@@ -204,10 +205,10 @@ export const SERVICES = [
       { serviceName: "Recommend a restaurant/food delivery store" },
       { serviceName: "Suggest a store/item" },
       { serviceName: "Recommend music, movie, or other media" },
-      { serviceName: "Recommend medication and place to find it" },
       { serviceName: "Recommend activities/happenings nearby" },
-      { serviceName: "Recommend dietary plan" },
-      { serviceName: "Recommend the optimal route for a destination" }
+      { serviceName: "Recommend the optimal route for a destination" },
+      { serviceName: "Recommend medication and place to find it" },
+      { serviceName: "Recommend dietary plan" }
     ],
     categoryName: "Recommend product/service"
   }
