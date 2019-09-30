@@ -185,20 +185,11 @@ export default class ServiceMenuScreen extends React.Component {
       );
     }
 
-    this.setState(
-      {
-        serviceCategoriesJS: _fullJsonObj,
-        serviceCategories: _serviceCategories,
-        firstLoad: false
-      },
-      () => {
-        logger.info(
-          "ServiceMenu",
-          "parseService",
-          "Service[0]:" + JSON.stringify(this.state.serviceCategories[0])
-        );
-      }
-    );
+    this.setState({
+      serviceCategoriesJS: _fullJsonObj,
+      serviceCategories: _serviceCategories,
+      firstLoad: false
+    });
   }
 
   handleServiceSelectionChange = async (
