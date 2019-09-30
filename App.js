@@ -22,7 +22,7 @@ import {
   RESULTS
 } from "react-native-permissions";
 import logger from "./controllers/logger";
-
+import { showPrompt, uploadFiles } from "./controllers/backgroundJobs";
 //Import UI files
 import HomeScreen from "./UI/home";
 import SurveyStartScreen from "./UI/startsurvey";
