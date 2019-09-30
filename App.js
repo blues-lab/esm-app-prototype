@@ -9,20 +9,14 @@
 //might be useful to show status https://www.npmjs.com/package/react-native-flash-message
 
 import React, { Component } from "react";
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  AppState,
-  Alert
-} from "react-native";
+import { Platform, BackHandler, Props } from "react-native";
 import * as RNFS from "react-native-fs";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
-import appStatus from "./controllers/appStatus";
+import BackgroundJob from "react-native-background-job";
+import BackgroundFetch from "react-native-background-fetch";
+import Permissions from "react-native-permissions";
 import logger from "./controllers/logger";
 
 //Import UI files
@@ -34,27 +28,17 @@ import ServicePermissionScreen from "./UI/servicePermission";
 import ContextualQuestionScreen from "./UI/contextualQuestion";
 import ExitSurveyScreen from "./UI/exitSurvey";
 import UserSettingsScreen from "./UI/userSettings";
-import { UserSettingsEntity } from "./UI/userSettings";
 import AlvaPromptScreen from "./UI/alvaPrompt";
 import utilities from "./controllers/utilities";
-import BackgroundFetch from "react-native-background-fetch";
-import backgroundJobs from "./controllers/backgroundJobs";
-import notificationController from "./controllers/notificationController";
 import {
   USER_SETTINGS_FILE_PATH,
-  SURVEY_STATUS,
-  MAX_NOTIFICATION_NUM,
-  SERVICE_FILE_ASSET,
   SERVICE_FILE_LOCAL
 } from "./controllers/constants";
 import { SERVICES } from "./controllers/strings";
-import { showPrompt, uploadFiles } from "./controllers/backgroundJobs";
-import Permissions from "react-native-permissions";
 
 const codeFileName = "App.js";
 
-if (Platform.OS == "android") {
-  BackgroundJob = require("react-native-background-job");
+if (Platform.OS === "android") {
   //----- set up job for showing periodic survey prompts --------//
   //// define the job
   const backgroundJobPrompt = {
@@ -68,7 +52,7 @@ if (Platform.OS == "android") {
   BackgroundJob.register(backgroundJobPrompt);
 
   ////create schedule for the notification
-  var notificationSchedulePrompt = {
+  const notificationSchedulePrompt = {
     jobKey: "showNotification",
     period: 15 * 60 * 1000
   };
@@ -106,7 +90,7 @@ if (Platform.OS == "android") {
   BackgroundJob.register(backgroundJobFU);
 
   ////create schedule for the notification
-  var notificationScheduleFU = {
+  const notificationScheduleFU = {
     jobKey: "fileUpload",
     period: 37 * 60 * 1000
   };
@@ -185,21 +169,21 @@ export default class App extends Component<Props> {
   }
 
   async componentDidMount() {
-    if (Platform.OS == "ios") {
+    if (Platform.OS === "ios") {
       logger.info(
         codeFileName,
         "componentDidMount",
         "Checking if notification permission is granted."
       );
       const _response = await Permissions.check("notification");
-      if (_response != "authorized") {
+      if (_response !== "authorized") {
         logger.info(
           codeFileName,
           "componentDidMount",
           "Notification permission is not granted. Asking for permission."
         );
         const response = await Permissions.request("notification");
-        if (response != "authorized") {
+        if (response !== "authorized") {
           logger.info(
             codeFileName,
             "componentDidMount",
@@ -228,7 +212,7 @@ export default class App extends Component<Props> {
           // or assign battery-blame for consuming too much background-time
           BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA);
         },
-        error => {
+        () => {
           logger.error(
             codeFileName,
             "componentDidMount",
@@ -287,22 +271,3 @@ export default class App extends Component<Props> {
     return <AppContainer />;
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF"
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: "center",
-    margin: 10
-  },
-  instructions: {
-    textAlign: "center",
-    color: "#333333",
-    marginBottom: 5
-  }
-});
