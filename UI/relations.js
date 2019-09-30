@@ -40,7 +40,7 @@ export default class Relations extends React.Component {
       otherRelationName: "",
       relationNames: [
         {
-          name: "Family members",
+          name: "Other family members",
           renderStyle: styles.unselectedStyle,
           iconName: "checkbox-passive",
           selected: false
@@ -83,6 +83,12 @@ export default class Relations extends React.Component {
         },
         {
           name: "Other",
+          renderStyle: styles.unselectedStyle,
+          iconName: "checkbox-passive",
+          selected: false
+        },
+        {
+          name: "Partner/spouse/significant other",
           renderStyle: styles.unselectedStyle,
           iconName: "checkbox-passive",
           selected: false
@@ -153,6 +159,27 @@ export default class Relations extends React.Component {
           //backgroundColor:'lightcyan',
         }}
       >
+        <View style={styles.rowView}>
+          <TouchableOpacity
+            style={this.state.relationNames[8].renderStyle}
+            onPress={() => {
+              this.handleSelectionChange(8);
+            }}
+          >
+            <View style={styles.rowView}>
+              <Icon
+                name={this.state.relationNames[8].iconName}
+                size={18}
+                color="#66cc94"
+                style={{ margin: 5 }}
+              />
+              <Text style={styles.itemTextStyle}>
+                {this.state.relationNames[8].name}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.rowView}>
           <TouchableOpacity
             style={this.state.relationNames[0].renderStyle}
