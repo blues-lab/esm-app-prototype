@@ -1,25 +1,5 @@
-import React, { Component } from "react";
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TextInput,
-  Alert,
-  FlatList,
-  ScrollView,
-  TouchableHighlight,
-  Image,
-  BackHandler
-} from "react-native";
-
-import Icon from "react-native-vector-icons/Fontisto";
-import logger from "../controllers/logger";
-
-import commonStyles from "./Style";
-
-const codeFileName = "radioButtonGroup.js";
+import React from "react";
+import { View } from "react-native";
 
 export default class CustomRadioButtonGroup extends React.Component {
   state = {
@@ -108,11 +88,3 @@ export default class CustomRadioButtonGroup extends React.Component {
     });
   }
 }
-
-const styles = StyleSheet.create({
-  selectedItemStyle: {
-    backgroundColor: "#9dd7fb",
-    padding: 10,
-    height: 60
-  }
-});
