@@ -9,7 +9,7 @@
 //might be useful to show status https://www.npmjs.com/package/react-native-flash-message
 
 import React, { Component } from "react";
-import { Platform, BackHandler, Props } from "react-native";
+import { Platform, BackHandler } from "react-native";
 import * as RNFS from "react-native-fs";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
@@ -139,7 +139,7 @@ const AppNavigator = createStackNavigator(
 
 const AppContainer = createAppContainer(AppNavigator);
 
-export default class App extends Component<Props> {
+export default class App extends Component {
   state = {};
 
   async generateInitialFiles() {
@@ -252,17 +252,17 @@ export default class App extends Component<Props> {
               "BackgroundFetch enabled"
             );
             break;
+          default:
+            logger.debug(
+              codeFileName,
+              "componentDidMount",
+              `unrecognized status: ${status}`
+            );
         }
       });
     }
 
     await this.generateInitialFiles();
-
-    //uploadFiles();
-    this.tu = null;
-    this.sp = null;
-    //this.tu = setTimeout(uploadFiles, 60*1000);
-    //this.sp = setTimeout(showPrompt, 20*1000);
   }
 
   componentWillUnmount() {
@@ -271,8 +271,6 @@ export default class App extends Component<Props> {
       "componentWillUnmount",
       "Removing event listeners."
     );
-    this.tu && clearInterval(this.tu);
-    this.sp && clearInterval(this.sp);
   }
 
   render() {
