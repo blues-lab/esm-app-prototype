@@ -16,7 +16,11 @@ import { createStackNavigator } from "react-navigation-stack";
 
 import BackgroundJob from "react-native-background-job";
 import BackgroundFetch from "react-native-background-fetch";
-import Permissions from "react-native-permissions";
+import {
+  checkNotifications,
+  requestNotifications,
+  RESULTS
+} from "react-native-permissions";
 import logger from "./controllers/logger";
 
 //Import UI files
@@ -175,15 +179,19 @@ export default class App extends Component<Props> {
         "componentDidMount",
         "Checking if notification permission is granted."
       );
-      const _response = await Permissions.check("notification");
-      if (_response !== "authorized") {
+      const { status: _response } = await checkNotifications();
+      if (_response !== RESULTS.GRANTED) {
         logger.info(
           codeFileName,
           "componentDidMount",
           "Notification permission is not granted. Asking for permission."
         );
-        const response = await Permissions.request("notification");
-        if (response !== "authorized") {
+        const { status: response } = await requestNotifications([
+          "alert",
+          "badge",
+          "sound"
+        ]);
+        if (response !== RESULTS.GRANTED) {
           logger.info(
             codeFileName,
             "componentDidMount",

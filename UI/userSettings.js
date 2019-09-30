@@ -15,7 +15,7 @@ import Mailer from "react-native-mail";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import * as RNFS from "react-native-fs";
 import Dialog from "react-native-dialog";
-import Permissions from "react-native-permissions";
+import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions";
 import { NetworkInfo } from "react-native-network-info";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
@@ -185,8 +185,8 @@ export default class UserSettingsScreen extends React.Component {
       "getHomeWiFi",
       "Checking if location permission is already granted."
     );
-    const _response = await Permissions.check("location"); // ['authorized', 'denied', 'restricted', or 'undetermined']
-    if (_response === "authorized") {
+    const _response = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION); // ['authorized', 'denied', 'restricted', or 'undetermined']
+    if (_response === RESULTS.GRANTED) {
       logger.info(
         codeFileName,
         "getHomeWiFi",
@@ -598,8 +598,10 @@ export default class UserSettingsScreen extends React.Component {
               await this.promisedSetState({
                 wifiPermissionDialogVisible: false
               });
-              const response = await Permissions.request("location");
-              if (response !== "authorized") {
+              const response = await request(
+                PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
+              );
+              if (response !== RESULTS.GRANTED) {
                 logger.info(
                   codeFileName,
                   "LocationPermissionDialog",
