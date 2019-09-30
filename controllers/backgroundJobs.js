@@ -285,7 +285,7 @@ export async function showPrompt() {
         "showPrompt",
         "Hours passed since last notification:" + _hourPassed
       );
-      if (true || _hourPassed >= 24) {
+      if (_hourPassed >= 24) {
         logger.info(
           codeFileName,
           "showPrompt",
