@@ -3,6 +3,7 @@ package edu.berkeley.cs.blues.alva;;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import com.chirag.RNMail.RNMail;
 import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
 import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
@@ -35,6 +36,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNPermissionsPackage(),
             new RNMail(),
             new LocationServicesDialogBoxPackage(),
             new RNNetworkInfoPackage(),
