@@ -1,12 +1,21 @@
 import { format } from "./utilities";
 
 /* Unsorted */
-export const MIMI_ADVERTISEMENT =
-  "MiMi is an always-listening voice assistant, which is always ready" +
-  " to help and provide services/suggestions" +
-  " based on conversations you have with other people at your home without waiting for a wake-word.\n\n" +
-  "The surveys in this app help improve MiMi's design." +
-  " You'll receive a notification when a new survey becomes available.";
+
+export const INVITATION_CODE_FAIL =
+  "There was an error saving your invitation code. Please try again later.";
+
+export const SAVE_CHANGES_PROMPT = "Do you want to save changes?";
+
+export const SURVEY_EXPIRED =
+  "Sorry, the current survey expired. We will notify you once new surveys become available.";
+
+export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
+
+/* Permissions */
+
+export const LOCATION_SHARE_PROMPT =
+  "To receive survey, please enable location sharing and WiFi.";
 
 export const WIFI_PERMISSION_MSG =
   "We will not collect or store your location data." +
@@ -24,33 +33,13 @@ export const HOME_WIFI_PROMPT = wifiName =>
 export const NOT_HOME_WIFI =
   "Got it. We'll ask again when you connect to another network.";
 
-export const INVITATION_CODE_FAIL =
-  "There was an error saving your invitation code. Please try again later.";
-
-export const SAVE_CHANGES_PROMPT = "Do you want to save changes?";
-
-export const SURVEY_EXPIRED =
-  "Sorry, the current survey expired. We will notify you once new surveys become available.";
-
-export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
-
-export const EXIT_SURVEY_INTRO = _remainingDays =>
-  "Thank you for participating in the daily surveys!\n" +
-  "There is one more survey you can take and earn $1!\n\n" +
-  "You have " +
-  _remainingDays +
-  " days to complete this survey.";
-
-export const EXIT_SURVEY_CONSENT =
-  "Welcome to the final part of the study! \n\n" +
-  "In this survey, we will ask questions about the importance of " +
-  "the services that you have selected in the past weeks.\n\n" +
-  "This survey will take 8-10 minutes and you will receive $1 for completing it.";
-
-export const LOCATION_SHARE_PROMPT =
-  "To receive survey, please enable location sharing and WiFi.";
-
 /* Home screen */
+export const MIMI_ADVERTISEMENT =
+  "MiMi is an always-listening voice assistant, which is always ready" +
+  " to help and provide services/suggestions" +
+  " based on conversations you have with other people at your home without waiting for a wake-word.\n\n" +
+  "The surveys in this app help improve MiMi's design." +
+  " You'll receive a notification when a new survey becomes available.";
 export const NO_SURVEY_AVAILABLE = "No survey available yet. Hang tight!";
 export const TRY_LATER_BUTTON = "Ok, try later!";
 
@@ -155,6 +144,19 @@ export const SURVEY_DONE_HEADER = "Congratulations!";
 export const SURVEY_DONE = "You have earned $1!";
 
 //********* Exit survey related texts ************//
+
+export const EXIT_SURVEY_INTRO = _remainingDays =>
+  "Thank you for participating in the daily surveys!\n" +
+  "There is one more survey you can take and earn $1!\n\n" +
+  "You have " +
+  _remainingDays +
+  " days to complete this survey.";
+
+export const EXIT_SURVEY_CONSENT =
+  "Welcome to the final part of the study! \n\n" +
+  "In this survey, we will ask questions about the importance of " +
+  "the services that you have selected in the past weeks.\n\n" +
+  "This survey will take 8-10 minutes and you will receive $1 for completing it.";
 
 export const SERVICE_USEFULNESS = serviceName =>
   "How useful is '" + serviceName + "' to you?";
