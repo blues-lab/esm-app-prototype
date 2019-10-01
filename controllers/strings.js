@@ -34,17 +34,6 @@ export const SURVEY_EXPIRED =
 
 export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
 
-export const WOULD_ALLOW_1 =
-  "Would you allow MiMi to access the relevant parts of the conversation you just had to";
-
-export const RESTRICT_WHICH =
-  "To which specific parts of your conversation would you restrict MiMi's access?";
-export const RESTRICT_WHY =
-  "Why would you restrict the device's access to these parts of your conversation?";
-
-export const WHY_DENY =
-  "Why would you completely deny access to the conversation?";
-
 export const EXIT_SURVEY_INTRO = _remainingDays =>
   "Thank you for participating in the daily surveys!\n" +
   "There is one more survey you can take and earn $1!!!\n\n" +
@@ -113,6 +102,9 @@ export const IMAGINE_TEXT = format(
 );
 export const NEXT_BUTTON = "Next";
 
+export const WOULD_ALLOW_1 =
+  "Would you allow MiMi to access the relevant parts of the conversation you just had to";
+
 export const ACCESS_ALLOW = format(
   "Yes, I would **allow access** to any relevant parts of the conversation."
 );
@@ -122,6 +114,14 @@ export const ACCESS_PARTIAL = format(
 export const ACCESS_DENY = format(
   "No, I would **deny** access to **any** relevant part of the conversation."
 );
+
+export const RESTRICT_WHICH =
+  "To which specific parts of your conversation would you restrict MiMi's access?";
+export const RESTRICT_WHY =
+  "Why would you restrict the device's access to these parts of your conversation?";
+
+export const WHY_DENY =
+  "Why would you completely deny access to the conversation?";
 
 export const ACCESS_SELECTION_REQUIRED_HEADER = "Error";
 export const ACCESS_SELECTION_REQUIRED = "Please select an option to continue.";
