@@ -15,7 +15,7 @@ export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
 /* Permissions */
 
 export const LOCATION_SHARE_PROMPT =
-  "To receive survey, please enable location sharing and WiFi.";
+  "To receive surveys, please enable location sharing and WiFi.";
 
 export const WIFI_PERMISSION_MSG =
   "We will not collect or store your location data." +
