@@ -383,8 +383,8 @@ export default class ContextualQuestionScreen extends React.Component {
 
         <ProgressDialog
           visible={this.state.saveWaitVisible}
-          title={strings.SAVING_RESPONSE_HEADER}
-          message={strings.SAVING_RESPONSE}
+          title={strings.SAVING_HEADER}
+          message={strings.SAVING_WAIT}
         />
       </ScrollView>
     );

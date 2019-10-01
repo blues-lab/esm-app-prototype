@@ -441,7 +441,7 @@ export default class ServicePermissionScreen extends React.Component {
 
         <ProgressDialog
           visible={this.state.saveWaitVisible}
-          title="MiMi"
+          title={strings.SAVING_HEADER}
           message={strings.SAVING_WAIT}
         />
       </ScrollView>

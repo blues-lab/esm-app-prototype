@@ -25,6 +25,7 @@ import {
   MODEL1_FEATURES,
   MODEL2_FEATURES,
   SINGLE_MODEL_INTRO_TEXT,
+  SAVING_HEADER,
   SAVING_WAIT
 } from "../controllers/strings";
 import utilities from "../controllers/utilities";
@@ -802,7 +803,7 @@ export default class ExitSurveyScreen extends React.Component {
         </View>
         <ProgressDialog
           visible={this.state.saveWaitVisible}
-          title="MiMi"
+          title={SAVING_HEADER}
           message={SAVING_WAIT}
         />
       </ScrollView>

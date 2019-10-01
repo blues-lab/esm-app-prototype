@@ -231,7 +231,7 @@ export default class SurveyStartScreen extends React.Component {
         </TouchableWithoutFeedback>
         <ProgressDialog
           visible={this.state.saveWaitVisible}
-          title="MiMi"
+          title={strings.SAVING_HEADER}
           message={strings.SAVING_WAIT}
         />
       </View>

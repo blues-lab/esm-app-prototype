@@ -38,8 +38,6 @@ export const SURVEY_EXPIRED =
 
 export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
 
-export const SAVING_WAIT = "Saving response. Please wait...";
-
 export const WOULD_ALLOW_1 =
   "Would you allow MiMi to access the relevant parts of the conversation you just had to";
 
@@ -80,6 +78,10 @@ export const INVITE_REQUIRED = "An invitation code is required to continue.";
 /* Initial prompt */
 export const NEW_SURVEY_HEADER = "New survey!";
 export const CONVERSATION_PROMPT = "Have you had a conversation recently?";
+
+/* Saving messages that appear between screens and at the end */
+export const SAVING_WAIT = "Saving response. Please wait...";
+export const SAVING_HEADER = "MiMi";
 
 /* Conversation topic */
 export const TALKING_ABOUT_HEADER = "Conversation topic";
@@ -122,8 +124,6 @@ export const CONTEXT_PRESENT =
   "Was everyone talking physically present (e.g., rather than talking over the phone)?";
 
 /* Survey completion */
-export const SAVING_RESPONSE_HEADER = "MiMi";
-export const SAVING_RESPONSE = "Saving response. Please, wait...";
 export const SURVEY_DONE_HEADER = "Congratulations!";
 export const SURVEY_DONE = "You have earned $1!";
 
