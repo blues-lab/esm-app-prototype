@@ -391,8 +391,8 @@ export default class Relations extends React.Component {
             //Un-select the UI option
             this.setState(prevState => {
               const _relationNames = prevState.relationNames;
-              _relationNames[_relationNames.length - 1].selected = false;
-              _relationNames[_relationNames.length - 1].iconName =
+              _relationNames[_relationNames.length - 2].selected = false;
+              _relationNames[_relationNames.length - 2].iconName =
                 "checkbox-passive";
               return {
                 otherDialogVisible: false,
