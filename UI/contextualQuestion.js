@@ -23,6 +23,10 @@ import Locations from "./locations";
 import Relations from "./relations";
 import utilities from "../controllers/utilities";
 import { SURVEY_STATUS } from "../controllers/constants";
+import {
+  NO_LOCATION_SELECTED_ERROR,
+  NO_RELATION_SELECTED_ERROR
+} from "../controllers/strings";
 import ToolBar from "./toolbar";
 import * as strings from "../controllers/strings";
 
@@ -365,9 +369,27 @@ export default class ContextualQuestionScreen extends React.Component {
               <Button
                 onPress={() => {
                   if (this.state.surrounding) {
+                    if (this.state.selectedLocations.size == 0) {
+                      Alert.alert("Error", NO_LOCATION_SELECTED_ERROR);
+                      logger.warn(
+                        codeFileName,
+                        "NextButtonPress",
+                        "No location has been selected, showing error."
+                      );
+                      return;
+                    }
                     this.setState({ surrounding: false, surveyProgress: 90 });
                     this.props.navigation.setParams({ surveyProgress: 90 });
                   } else {
+                    if (this.state.selectedRelations.size == 0) {
+                      Alert.alert("Error", NO_RELATION_SELECTED_ERROR);
+                      logger.warn(
+                        codeFileName,
+                        "NextButtonPress",
+                        "No relation has been selected, showing error."
+                      );
+                      return;
+                    }
                     this.setState({ surrounding: false, surveyProgress: 100 });
                     this.props.navigation.setParams({ surveyProgress: 100 });
                     this.saveResponse();

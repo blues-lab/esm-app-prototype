@@ -94,37 +94,42 @@ export default class Locations extends React.Component {
   componentDidMount() {}
 
   handleSelectionChange(index) {
-    this.setState(prevState => {
-      const _locationNames = prevState.locationNames;
-      _locationNames[index].selected = !_locationNames[index].selected;
+    this.setState(
+      prevState => {
+        const _locationNames = prevState.locationNames;
+        _locationNames[index].selected = !_locationNames[index].selected;
 
-      const _selected = _locationNames[index].selected;
+        const _selected = _locationNames[index].selected;
 
-      if (_selected) {
-        _locationNames[index].iconName = "checkbox-active";
-      } else {
-        _locationNames[index].iconName = "checkbox-passive";
+        if (_selected) {
+          _locationNames[index].iconName = "checkbox-active";
+        } else {
+          _locationNames[index].iconName = "checkbox-passive";
+        }
+
+        logger.info(
+          `${codeFileName}`,
+          "handleSelectionChange",
+          `location: ${_locationNames[index].name}, selected: ${_locationNames[index].selected}`
+        );
+
+        return {
+          locationNames: _locationNames,
+          otherDialogVisible:
+            _locationNames[index].name === "Other" && _selected
+        };
+      },
+      () => {
+        const _selectedLocations = this.getSelectedLocations();
+        logger.info(
+          codeFileName,
+          "handleSelectionChange",
+          "Invoking call back, selected locations:" +
+            Array.from(_selectedLocations)
+        );
+        this.props.locationSelectionHandler(_selectedLocations);
       }
-
-      logger.info(
-        `${codeFileName}`,
-        "handleSelectionChange",
-        `location: ${_locationNames[index].name}, selected: ${_locationNames[index].selected}`
-      );
-
-      return {
-        locationNames: _locationNames,
-        otherDialogVisible: _locationNames[index].name === "Other" && _selected
-      };
-    });
-
-    const _selectedLocations = this.getSelectedLocations();
-    logger.info(
-      codeFileName,
-      "handleSelectionChange",
-      "Invoking call back, selected locations:" + Array.from(_selectedLocations)
     );
-    this.props.locationSelectionHandler(_selectedLocations);
   }
 
   getSelectedLocations() {

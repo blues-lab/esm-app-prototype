@@ -100,35 +100,40 @@ export default class Relations extends React.Component {
   componentDidMount() {}
 
   handleSelectionChange(index) {
-    this.setState(prevState => {
-      const _relationNames = prevState.relationNames;
-      _relationNames[index].selected = !_relationNames[index].selected;
-      const _selected = _relationNames[index].selected;
-      if (_selected) {
-        _relationNames[index].iconName = "checkbox-active";
-      } else {
-        _relationNames[index].iconName = "checkbox-passive";
+    this.setState(
+      prevState => {
+        const _relationNames = prevState.relationNames;
+        _relationNames[index].selected = !_relationNames[index].selected;
+        const _selected = _relationNames[index].selected;
+        if (_selected) {
+          _relationNames[index].iconName = "checkbox-active";
+        } else {
+          _relationNames[index].iconName = "checkbox-passive";
+        }
+
+        logger.info(
+          `${codeFileName}`,
+          "handleSelectionChange",
+          `relation: ${_relationNames[index].name}, selected: ${_relationNames[index].selected}`
+        );
+
+        return {
+          relationNames: _relationNames,
+          otherDialogVisible:
+            _relationNames[index].name === "Other" && _selected
+        };
+      },
+      () => {
+        const _selectedRelations = this.getSelectedRelations();
+        logger.info(
+          codeFileName,
+          "handleSelectionChange",
+          "Invoking call back, selected relations:" +
+            Array.from(_selectedRelations)
+        );
+        this.props.relationSelectionHandler(_selectedRelations);
       }
-
-      logger.info(
-        `${codeFileName}`,
-        "handleSelectionChange",
-        `relation: ${_relationNames[index].name}, selected: ${_relationNames[index].selected}`
-      );
-
-      return {
-        relationNames: _relationNames,
-        otherDialogVisible: _relationNames[index].name === "Other" && _selected
-      };
-    });
-
-    const _selectedRelations = this.getSelectedRelations();
-    logger.info(
-      codeFileName,
-      "handleSelectionChange",
-      "Invoking call back, selected relations:" + Array.from(_selectedRelations)
     );
-    this.props.relationSelectionHandler(_selectedRelations);
   }
 
   getSelectedRelations() {

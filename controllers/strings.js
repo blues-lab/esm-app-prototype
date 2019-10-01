@@ -122,6 +122,10 @@ export const CONTEXT_RELATE =
   "How do you relate to them? Select all that apply.";
 export const CONTEXT_PRESENT =
   "Was everyone talking physically present (e.g., rather than talking over the phone)?";
+export const NO_LOCATION_SELECTED_ERROR =
+  "Please select conversation location to continue.";
+export const NO_RELATION_SELECTED_ERROR =
+  "Please select relationships with the conversation participants to continue.";
 
 /* Survey completion */
 export const SURVEY_DONE_HEADER = "Congratulations!";
