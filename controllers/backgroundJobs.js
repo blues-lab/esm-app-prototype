@@ -15,7 +15,13 @@ import {
   LOG_FILE_PATH,
   PROMPT_DURATION
 } from "./constants";
-import { LOCATION_SHARE_PROMPT } from "./strings";
+import {
+  LOCATION_SHARE_PROMPT,
+  NEW_SURVEY_AVAILABLE,
+  SURVEY_TIME,
+  ONGOING_SURVEY,
+  FINAL_SURVEY_AVAILABLE
+} from "./strings";
 
 const codeFileName = "backgroundJobs.js";
 
@@ -293,8 +299,8 @@ export async function showPrompt() {
         );
         notificationController.cancelNotifications();
         notificationController.showNotification(
-          "Final survey available!",
-          "Complete it within " + _remainingDays + " days to get $1"
+          FINAL_SURVEY_AVAILABLE,
+          SURVEY_TIME
         );
 
         _appStatus.LastNotificationTime = new Date();
@@ -361,8 +367,8 @@ export async function showPrompt() {
           const _remainingTime = PROMPT_DURATION;
           notificationController.cancelNotifications();
           notificationController.showNotification(
-            "New survey available!",
-            "Complete within " + _remainingTime + " minutes to get $1!!!"
+            NEW_SURVEY_AVAILABLE,
+            SURVEY_TIME(_remainingTime)
           );
 
           logger.info(
@@ -440,8 +446,8 @@ export async function showPrompt() {
 
         notificationController.cancelNotifications();
         notificationController.showNotification(
-          "New survey available!",
-          "Complete within " + _remainingTime + " minutes to get $1!!!"
+          NEW_SURVEY_AVAILABLE,
+          SURVEY_TIME(_remainingTime)
         );
         logger.info(
           codeFileName,
@@ -498,10 +504,7 @@ export async function showPrompt() {
           );
 
           notificationController.cancelNotifications();
-          notificationController.showNotification(
-            "Survey is still available!",
-            "Complete within " + _remainingTime + " minutes to get $1!!!"
-          );
+          notificationController.showNotification(ONGOING_SURVEY, SURVEY_TIME);
           logger.info(
             codeFileName,
             "showPrompt",

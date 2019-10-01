@@ -21,7 +21,7 @@ import DialogInput from "react-native-dialog-input";
 import appStatus from "../controllers/appStatus";
 import commonStyles from "./Style";
 import ToolBar from "./toolbar";
-
+import { SELECT_RELEVANT_SERVICES } from "../controllers/strings";
 import logger from "../controllers/logger";
 import utilities from "../controllers/utilities";
 import {
@@ -536,12 +536,7 @@ export default class ServiceMenuScreen extends React.Component {
           }}
         >
           <Text style={commonStyles.questionStyle}>
-            What services could MiMi offer
-            <Text style={{ fontWeight: "500" }}>
-              {" "}
-              based on the conversation you just had
-            </Text>
-            <Text>?</Text>
+            {SELECT_RELEVANT_SERVICES}
           </Text>
 
           <View style={commonStyles.listContainerStyle}>

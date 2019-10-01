@@ -33,6 +33,8 @@ import {
 import {
   WIFI_PERMISSION_MSG,
   DONT_DISTURB,
+  DONT_DISTURB_AFTER,
+  DONT_DISTURB_BEFORE,
   HOME_WIFI_NOT_CONNECTED,
   HOME_WIFI_PROMPT,
   NOT_HOME_WIFI,
@@ -605,7 +607,7 @@ export default class UserSettingsScreen extends React.Component {
         </Text>
 
         <Text style={{ margin: 10, fontSize: 18, textAlign: "center" }}>
-          Do not show notifications after
+          {DONT_DISTURB_AFTER}
         </Text>
         <TouchableHighlight
           style={{ borderWidth: 0.5, padding: 5 }}
@@ -621,7 +623,7 @@ export default class UserSettingsScreen extends React.Component {
           </Text>
         </TouchableHighlight>
         <Text style={{ margin: 10, fontSize: 18, textAlign: "center" }}>
-          And before
+          {DONT_DISTURB_BEFORE}
         </Text>
         <TouchableHighlight
           style={{ borderWidth: 0.5, padding: 5 }}

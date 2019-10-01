@@ -26,7 +26,8 @@ import {
   MODEL2_FEATURES,
   SINGLE_MODEL_INTRO_TEXT,
   SAVING_HEADER,
-  SAVING_WAIT
+  SAVING_WAIT,
+  SERVICE_USEFULNESS
 } from "../controllers/strings";
 import utilities from "../controllers/utilities";
 import commonStyle from "./Style";
@@ -637,15 +638,11 @@ export default class ExitSurveyScreen extends React.Component {
         {this.state.serviceQuestions && (
           <View style={styles.verticalViewStyle}>
             <Text style={[commonStyle.questionStyle]}>
-              <Text>How useful is</Text>
-              <Text>
-                {' "'}
-                {this.state.selectedServices[this.state.curServiceIdx]
+              {SERVICE_USEFULNESS(
+                this.state.selectedServices[this.state.curServiceIdx]
                   .trim()
-                  .toLowerCase()}
-                {'" '}
-              </Text>
-              <Text>to you?</Text>
+                  .toLowerCase()
+              )}
             </Text>
 
             <View style={commonStyle.listContainerStyle}>

@@ -27,10 +27,6 @@ export const NOT_HOME_WIFI =
 export const INVITATION_CODE_FAIL =
   "There was an error saving your invitation code. Please try again later.";
 
-export const DONT_DISTURB =
-  "If there is a specific time of day you don't want to receive surveys, " +
-  "please indicate it below.";
-
 export const SAVE_CHANGES_PROMPT = "Do you want to save changes?";
 
 export const SURVEY_EXPIRED =
@@ -83,12 +79,31 @@ export const CONVERSATION_PROMPT = "Have you had a conversation recently?";
 export const SAVING_WAIT = "Saving response. Please wait...";
 export const SAVING_HEADER = "MiMi";
 
+/* Texts for settings page*/
+export const DONT_DISTURB =
+  "If there is a specific time of day you don't want to receive surveys, " +
+  "please indicate it below.";
+export const DONT_DISTURB_AFTER = "Do not show notifications after";
+export const DONT_DISTURB_BEFORE = "And before";
+
+/* Notifications */
+export const NEW_SURVEY_AVAILABLE = "New survey available!";
+export const SURVEY_TIME = remainingTime =>
+  "Complete within " + remainingTime + " minutes to get $1!!!";
+export const ONGOING_SURVEY = "Survey is still available!";
+export const FINAL_SURVEY_AVAILABLE = "Final survey available!";
+
 /* Conversation topic */
 export const TALKING_ABOUT_HEADER = "Conversation topic";
 export const TALKING_ABOUT = "What were you talking about?";
 export const TALKING_ABOUT_SKIP_HINT = "Enter 'Prefer not to answer' to skip";
 export const TALKING_ABOUT_REQUIRED =
   "Please enter conversation topic to continue.";
+
+/* Questions about relevant services*/
+export const SELECT_RELEVANT_SERVICES = format(
+  "What services could MiMi offer **based on the conversation you just had** ?"
+);
 
 /* Questions about access */
 export const IMAGINE_TEXT = format(
@@ -127,11 +142,20 @@ export const NO_LOCATION_SELECTED_ERROR =
 export const NO_RELATION_SELECTED_ERROR =
   "Please select relationships with the conversation participants to continue.";
 
+export const CHILDREN_ADOLESCENT = [
+  "Of the people who were talking, were there:",
+  "Children (0-12 years old):",
+  "Adolescents (13-17 years old):"
+];
+
 /* Survey completion */
 export const SURVEY_DONE_HEADER = "Congratulations!";
 export const SURVEY_DONE = "You have earned $1!";
 
 //********* Exit survey related texts ************//
+
+export const SERVICE_USEFULNESS = serviceName =>
+  "How useful is '" + serviceName + "' to you?";
 
 export const MODEL1_FEATURES = [
   "• used to provide the relevant services",
