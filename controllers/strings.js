@@ -1,3 +1,5 @@
+import { format } from "./utilities";
+
 /* Unsorted */
 export const MIMI_ADVERTISEMENT =
   "MiMi is an always-listening voice assistant, which is always ready" +
@@ -85,6 +87,11 @@ export const TALKING_ABOUT = "What were you talking about?";
 export const TALKING_ABOUT_SKIP_HINT = "Enter 'Prefer not to answer' to skip";
 export const TALKING_ABOUT_REQUIRED =
   "Please enter conversation topic to continue.";
+
+/* Questions about access */
+export const IMAGINE_TEXT = format(
+  "Imagine an **always-listening voice assistant**, MiMi, was able to offer you services that were **relevant** to your conversation."
+);
 
 //********* Exit survey related texts ************//
 

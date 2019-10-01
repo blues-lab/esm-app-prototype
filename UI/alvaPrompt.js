@@ -12,6 +12,7 @@ import PropTypes from "prop-types";
 import logger from "../controllers/logger";
 import commonStyles from "./Style";
 import ToolBar from "./toolbar";
+import * as strings from "../controllers/strings";
 
 const codeFileName = "startsurvey.js";
 
@@ -106,13 +107,7 @@ export default class AlvaPromptScreen extends React.Component {
                 { fontSize: 24, backgroundColor: "lavender" }
               ]}
             >
-              <Text>Imagine an </Text>
-              <Text style={{ fontWeight: "bold" }}>
-                always-listening voice assistant
-              </Text>
-              <Text>, MiMi, was able to offer you services that were </Text>
-              <Text style={{ fontWeight: "bold" }}>relevant </Text>
-              <Text>to your conversation.</Text>
+              {strings.IMAGINE_TEXT}
             </Text>
           </View>
 

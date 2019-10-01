@@ -1,4 +1,5 @@
-import { Component } from "react";
+import React, { Component } from "react";
+import { Text } from "react-native";
 import * as RNFS from "react-native-fs";
 import logger from "./logger";
 import { VERSION_NUMBER, STUDY_PERIOD, EXIT_SURVEY_PERIOD } from "./constants";
@@ -263,3 +264,46 @@ class Utilities extends Component {
 }
 const utilities = new Utilities();
 export default utilities;
+
+const BOLD_MARKER = "**";
+/**
+ * The goal of this function is to construct a list of Text segments,
+ * with any **bolded** text replaced with Text styled to bold.
+ */
+export const format = string => {
+  const texts = [];
+
+  /** A helper function that saves the defined substring to our list of Text objects */
+  const addSubstring = (from, to, bold) => {
+    const rawText = string.substring(from, to);
+    const fontWeight = bold ? "bold" : "normal";
+    const text = (
+      <Text style={{ fontWeight }} key={texts.length}>
+        {rawText}
+      </Text>
+    );
+    texts.push(text);
+  };
+
+  let isBold = false;
+  let segmentStart = 0;
+  let segmentEnd = string.indexOf(BOLD_MARKER);
+
+  while (segmentEnd >= 0) {
+    // Add everything up to the current marker as a separate Text object
+    addSubstring(segmentStart, segmentEnd, isBold);
+
+    // If we saw a marker, then the following text will be the opposite of the previous one:
+    // bold if it was normal, and normal if it was bold.
+    isBold = !isBold;
+
+    // Look for the next marker
+    segmentStart = segmentEnd + BOLD_MARKER.length;
+    segmentEnd = string.indexOf(BOLD_MARKER, segmentStart);
+  }
+
+  // Add whatever remains left of the string
+  addSubstring(segmentStart, string.length, isBold);
+
+  return texts;
+};
