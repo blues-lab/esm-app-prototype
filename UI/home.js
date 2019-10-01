@@ -390,7 +390,7 @@ export default class HomeScreen extends React.Component {
               </View>
             )}
 
-            {this.state.exitSurveyDone && (
+            {!this.state.exitSurveyAvailable && (
               <View
                 style={{
                   flex: 1,
