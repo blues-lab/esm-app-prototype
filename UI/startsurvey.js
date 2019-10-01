@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Platform,
-  StyleSheet,
   Text,
   View,
   Button,
@@ -9,7 +8,6 @@ import {
   Alert,
   BackHandler,
   TouchableHighlight,
-  Modal,
   TouchableWithoutFeedback,
   Keyboard
 } from "react-native";
@@ -36,7 +34,6 @@ export default class SurveyStartScreen extends React.Component {
     super(props);
     this.state = {
       conversationTopic: "",
-      noSurveyDialogVisible: false,
       saveWaitVisible: false //show progress dialog while saving survey response
     };
   }
@@ -184,49 +181,6 @@ export default class SurveyStartScreen extends React.Component {
                 />
               </TouchableHighlight>
             </View>
-
-            <Modal visible={this.state.noSurveyDialogVisible}>
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  backgroundColor: "lavender",
-                  margin: 1
-                }}
-              >
-                <Text
-                  style={{
-                    margin: 15,
-                    fontSize: 20,
-                    borderBottomColor: "black",
-                    borderBottomWidth: StyleSheet.hairlineWidth,
-                    padding: 5
-                  }}
-                >
-                  Sorry, survey has expired!
-                </Text>
-                <Text style={{ fontSize: 16, margin: 20, marginTop: 10 }}>
-                  Advertisement/reminder for MIMI and suggestion to come back
-                  later.
-                </Text>
-                <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
-                  <Button
-                    title="I will come back later!"
-                    color="#20B2AA"
-                    onPress={() => {
-                      logger.info(
-                        `${codeFileName}`,
-                        "No survey modal",
-                        "Closing app"
-                      );
-                      this.setState({ noSurveyDialogVisible: false });
-                    }}
-                  />
-                </TouchableHighlight>
-              </View>
-            </Modal>
           </View>
         </TouchableWithoutFeedback>
         <ProgressDialog
