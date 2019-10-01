@@ -19,16 +19,7 @@ import { ProgressDialog } from "react-native-simple-dialogs";
 import appStatus from "../controllers/appStatus";
 import { SELECTED_SERVICES_FILE } from "../controllers/constants";
 import logger from "../controllers/logger";
-import {
-  BOTH_MODEL_INTRO_TEXT,
-  EXPLAIN_WHY_NO_SERVICES,
-  MODEL1_FEATURES,
-  MODEL2_FEATURES,
-  SINGLE_MODEL_INTRO_TEXT,
-  SAVING_HEADER,
-  SAVING_WAIT,
-  SERVICE_USEFULNESS
-} from "../controllers/strings";
+import * as strings from "../controllers/strings";
 import utilities from "../controllers/utilities";
 import commonStyle from "./Style";
 
@@ -585,7 +576,7 @@ export default class ExitSurveyScreen extends React.Component {
     if (model === 2) {
       return (
         <View>
-          <Text style={{ fontSize: 20 }}> {BOTH_MODEL_INTRO_TEXT}</Text>
+          <Text style={{ fontSize: 20 }}> {strings.BOTH_MODEL_INTRO_TEXT}</Text>
           <Text style={{ fontSize: 20 }}>
             To provide them, in
             <Text style={{ fontWeight: "bold" }}> Model 1</Text>, audio
@@ -593,7 +584,7 @@ export default class ExitSurveyScreen extends React.Component {
           </Text>
           <View style={commonStyle.listContainerStyle}>
             <FlatList
-              data={MODEL1_FEATURES}
+              data={strings.MODEL1_FEATURES}
               renderItem={this.renderListItem}
               keyExtractor={(item, index) => index.toString()}
             />
@@ -606,7 +597,7 @@ export default class ExitSurveyScreen extends React.Component {
           </Text>
           <View style={commonStyle.listContainerStyle}>
             <FlatList
-              data={MODEL2_FEATURES}
+              data={strings.MODEL2_FEATURES}
               renderItem={this.renderListItem}
               keyExtractor={(item, index) => index.toString()}
             />
@@ -614,13 +605,13 @@ export default class ExitSurveyScreen extends React.Component {
         </View>
       );
     }
-    let modelFeatures = MODEL1_FEATURES;
+    let modelFeatures = strings.MODEL1_FEATURES;
     if (model === 1) {
-      modelFeatures = MODEL2_FEATURES;
+      modelFeatures = strings.MODEL2_FEATURES;
     }
     return (
       <View>
-        <Text style={{ fontSize: 20 }}> {SINGLE_MODEL_INTRO_TEXT}</Text>
+        <Text style={{ fontSize: 20 }}> {strings.SINGLE_MODEL_INTRO_TEXT}</Text>
         <View style={commonStyle.listContainerStyle}>
           <FlatList
             data={modelFeatures}
@@ -638,7 +629,7 @@ export default class ExitSurveyScreen extends React.Component {
         {this.state.serviceQuestions && (
           <View style={styles.verticalViewStyle}>
             <Text style={[commonStyle.questionStyle]}>
-              {SERVICE_USEFULNESS(
+              {strings.SERVICE_USEFULNESS(
                 this.state.selectedServices[this.state.curServiceIdx]
                   .trim()
                   .toLowerCase()
@@ -668,7 +659,7 @@ export default class ExitSurveyScreen extends React.Component {
             }}
           >
             <Text style={commonStyle.questionStyle}>
-              {EXPLAIN_WHY_NO_SERVICES}
+              {strings.EXPLAIN_WHY_NO_SERVICES}
             </Text>
             <TextInput
               multiline
@@ -800,8 +791,8 @@ export default class ExitSurveyScreen extends React.Component {
         </View>
         <ProgressDialog
           visible={this.state.saveWaitVisible}
-          title={SAVING_HEADER}
-          message={SAVING_WAIT}
+          title={strings.SAVING_HEADER}
+          message={strings.SAVING_WAIT}
         />
       </ScrollView>
     );

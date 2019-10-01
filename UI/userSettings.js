@@ -30,16 +30,7 @@ import {
   SURVEY_STATUS,
   INTERNAL_TEST
 } from "../controllers/constants";
-import {
-  WIFI_PERMISSION_MSG,
-  DONT_DISTURB,
-  DONT_DISTURB_AFTER,
-  DONT_DISTURB_BEFORE,
-  HOME_WIFI_NOT_CONNECTED,
-  HOME_WIFI_PROMPT,
-  NOT_HOME_WIFI,
-  SAVE_CHANGES_PROMPT
-} from "../controllers/strings";
+import * as strings from "../controllers/strings";
 import { uploadFiles } from "../controllers/backgroundJobs";
 
 const codeFileName = "userSettings.js";
@@ -141,12 +132,12 @@ export default class UserSettingsScreen extends React.Component {
         );
         Alert.alert(
           "Home WiFi",
-          HOME_WIFI_PROMPT(_ssid),
+          strings.HOME_WIFI_PROMPT(_ssid),
           [
             {
               text: "NO",
               onPress: () => {
-                Alert.alert("Home WiFi", NOT_HOME_WIFI);
+                Alert.alert("Home WiFi", strings.NOT_HOME_WIFI);
                 logger.info(
                   codeFileName,
                   "getHomeSSID",
@@ -174,7 +165,7 @@ export default class UserSettingsScreen extends React.Component {
           "getHomeSSID",
           "WiFi is not enabled or connected. Will check again later."
         );
-        Alert.alert("Home WiFi", HOME_WIFI_NOT_CONNECTED);
+        Alert.alert("Home WiFi", strings.HOME_WIFI_NOT_CONNECTED);
       }
     } catch (error) {
       logger.error(
@@ -254,7 +245,7 @@ export default class UserSettingsScreen extends React.Component {
         "handleBackNavigation",
         "Back button pressed, asking to save settings."
       );
-      Alert.alert(SAVE_CHANGES_PROMPT, "", [
+      Alert.alert(strings.SAVE_CHANGES_PROMPT, "", [
         {
           text: "NO",
           onPress: () => {
@@ -603,11 +594,11 @@ export default class UserSettingsScreen extends React.Component {
             textAlign: "center"
           }}
         >
-          {DONT_DISTURB}
+          {strings.DONT_DISTURB}
         </Text>
 
         <Text style={{ margin: 10, fontSize: 18, textAlign: "center" }}>
-          {DONT_DISTURB_AFTER}
+          {strings.DONT_DISTURB_AFTER}
         </Text>
         <TouchableHighlight
           style={{ borderWidth: 0.5, padding: 5 }}
@@ -623,7 +614,7 @@ export default class UserSettingsScreen extends React.Component {
           </Text>
         </TouchableHighlight>
         <Text style={{ margin: 10, fontSize: 18, textAlign: "center" }}>
-          {DONT_DISTURB_BEFORE}
+          {strings.DONT_DISTURB_BEFORE}
         </Text>
         <TouchableHighlight
           style={{ borderWidth: 0.5, padding: 5 }}
@@ -699,7 +690,7 @@ export default class UserSettingsScreen extends React.Component {
 
         <Dialog.Container visible={this.state.wifiPermissionDialogVisible}>
           <Dialog.Title>WiFi permission</Dialog.Title>
-          <Dialog.Description>{WIFI_PERMISSION_MSG}</Dialog.Description>
+          <Dialog.Description>{strings.WIFI_PERMISSION_MSG}</Dialog.Description>
           <Dialog.Button
             label="Cancel"
             onPress={async () => {
