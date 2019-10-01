@@ -105,10 +105,6 @@ export default class Relations extends React.Component {
       _relationNames[index].selected = !_relationNames[index].selected;
       const _selected = _relationNames[index].selected;
       if (_selected) {
-        //check if 'other' was selected
-        if (_relationNames[index].name === "Other") {
-          this.setState({ otherDialogVisible: true });
-        }
         _relationNames[index].iconName = "checkbox-active";
       } else {
         _relationNames[index].iconName = "checkbox-passive";
@@ -121,7 +117,8 @@ export default class Relations extends React.Component {
       );
 
       return {
-        relationNames: _relationNames
+        relationNames: _relationNames,
+        otherDialogVisible: _relationNames[index].name === "Other" && _selected
       };
     });
 

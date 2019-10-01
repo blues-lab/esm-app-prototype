@@ -101,10 +101,6 @@ export default class Locations extends React.Component {
       const _selected = _locationNames[index].selected;
 
       if (_selected) {
-        //check if 'other' was selected
-        if (_locationNames[index].name === "Other") {
-          this.setState({ otherDialogVisible: true });
-        }
         _locationNames[index].iconName = "checkbox-active";
       } else {
         _locationNames[index].iconName = "checkbox-passive";
@@ -116,7 +112,10 @@ export default class Locations extends React.Component {
         `location: ${_locationNames[index].name}, selected: ${_locationNames[index].selected}`
       );
 
-      return { locationNames: _locationNames };
+      return {
+        locationNames: _locationNames,
+        otherDialogVisible: _locationNames[index].name === "Other" && _selected
+      };
     });
 
     const _selectedLocations = this.getSelectedLocations();
