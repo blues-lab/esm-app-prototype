@@ -19,12 +19,7 @@ import notificationController, {
 } from "../controllers/notificationController";
 import logger from "../controllers/logger";
 import appStatus from "../controllers/appStatus";
-import {
-  MIMI_ADVERTISEMENT,
-  EXIT_SURVEY_INTRO,
-  FINAL_THANK,
-  INVITATION_CODE_FAIL
-} from "../controllers/strings";
+import * as strings from "../controllers/strings";
 import commonStyles from "./Style";
 import ToolBar from "./toolbar";
 import utilities from "../controllers/utilities";
@@ -54,7 +49,7 @@ export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      invitationCodePrompt: "Please enter your invitation code",
+      invitationCodePrompt: strings.ENTER_INVITE_CODE,
       invitationCodeDialogVisible: false,
       invitationCode: "",
       noSurveyDialogVisible: true,
@@ -79,8 +74,8 @@ export default class HomeScreen extends React.Component {
   async startSurvey() {
     //Will be called if participants indicate recent conversation
     Alert.alert(
-      "New survey!",
-      "Have you had a conversation recently?",
+      strings.NEW_SURVEY_HEADER,
+      strings.CONVERSATION_PROMPT,
       [
         {
           text: "Yes",
@@ -318,15 +313,15 @@ export default class HomeScreen extends React.Component {
                 padding: 5
               }}
             >
-              No survey available yet. Hang tight!
+              {strings.NO_SURVEY_AVAILABLE}
             </Text>
             <Text style={{ fontSize: 16, margin: 10, marginTop: 10 }}>
-              {MIMI_ADVERTISEMENT}
+              {strings.MIMI_ADVERTISEMENT}
             </Text>
             {Platform.OS === "android" && (
               <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
                 <Button
-                  title="Ok, try later!"
+                  title={strings.TRY_LATER_BUTTON}
                   color="#20B2AA"
                   onPress={() => {
                     logger.info(
@@ -371,7 +366,9 @@ export default class HomeScreen extends React.Component {
                     padding: 5
                   }}
                 >
-                  {EXIT_SURVEY_INTRO(this.state.ExitSurveyRemainingDays)}
+                  {strings.EXIT_SURVEY_INTRO(
+                    this.state.ExitSurveyRemainingDays
+                  )}
                 </Text>
 
                 {
@@ -410,7 +407,7 @@ export default class HomeScreen extends React.Component {
                     padding: 5
                   }}
                 >
-                  {FINAL_THANK}
+                  {strings.FINAL_THANK}
                 </Text>
                 {Platform.OS === "android" && (
                   <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
@@ -500,15 +497,14 @@ export default class HomeScreen extends React.Component {
                 );
                 Alert.alert(
                   "Error",
-                  INVITATION_CODE_FAIL,
+                  strings.INVITATION_CODE_FAIL,
                   [{ text: "OK", onPress: () => BackHandler.exitApp() }],
                   { cancelable: false }
                 );
               }
             } else {
               this.setState({
-                invitationCodePrompt:
-                  "The code you entered is invalid. Please try again."
+                invitationCodePrompt: strings.INVALID_INVITE
               });
             }
           }}
@@ -519,8 +515,7 @@ export default class HomeScreen extends React.Component {
               });
             } else {
               await this.promisedSetState({
-                invitationCodePrompt:
-                  "An invitation code is required to continue."
+                invitationCodePrompt: strings.INVITE_REQUIRED
               });
             }
           }}

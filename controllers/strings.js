@@ -1,3 +1,4 @@
+/* Unsorted */
 export const MIMI_ADVERTISEMENT =
   "MiMi is an always-listening voice assistant, which is always ready" +
   " to help and provide services/suggestions" +
@@ -67,6 +68,20 @@ export const EXIT_SURVEY_CONSENT =
 export const LOCATION_SHARE_PROMPT =
   "To receive survey, please enable location sharing and WiFi.";
 
+/* Home screen */
+export const NO_SURVEY_AVAILABLE = "No survey available yet. Hang tight!";
+export const TRY_LATER_BUTTON = "Ok, try later!";
+
+/* Invitation code processing */
+export const ENTER_INVITE_CODE = "Please enter your invitation code";
+export const INVALID_INVITE =
+  "The code you entered is invalid. Please try again.";
+export const INVITE_REQUIRED = "An invitation code is required to continue.";
+
+/* Initial prompt */
+export const NEW_SURVEY_HEADER = "New survey!";
+export const CONVERSATION_PROMPT = "Have you had a conversation recently?";
+
 //********* Exit survey related texts ************//
 
 export const MODEL1_FEATURES = [
@@ -98,6 +113,7 @@ export const EXPLAIN_WHY_NO_SERVICES =
 
 export const FINAL_THANK = "Thank you for participating in our study!";
 
+/* Services */
 export const SERVICES = [
   {
     services: [
