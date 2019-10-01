@@ -98,7 +98,7 @@ export const SELECT_RELEVANT_SERVICES = format(
 
 /* Questions about access */
 export const IMAGINE_TEXT = format(
-  "Imagine an **always-listening voice assistant**, MiMi, was able to offer you services that were **relevant** to your conversation."
+  "Imagine an **always-listening voice assistant**, MiMi, was able to offer you services that were **relevant to your conversation**."
 );
 export const NEXT_BUTTON = "Next";
 
