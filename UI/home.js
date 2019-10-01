@@ -26,7 +26,8 @@ import utilities from "../controllers/utilities";
 import {
   USER_SETTINGS_FILE_PATH,
   INVITATION_CODE_FILE_PATH,
-  SURVEY_STATUS
+  SURVEY_STATUS,
+  INTERNAL_TEST
 } from "../controllers/constants";
 
 const codeFileName = "home.js";
@@ -92,12 +93,20 @@ export default class HomeScreen extends React.Component {
         },
         {
           text: "No",
-          onPress: () => {
+          onPress: async () => {
             logger.info(
               `${codeFileName}`,
               "'No' to recent conversation",
               "Exiting App."
             );
+
+            if (INTERNAL_TEST) {
+              const _appStatus = await appStatus.loadStatus();
+              _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+              await appStatus.setAppStatus(_appStatus);
+              this.initApp();
+              return;
+            }
 
             Alert.alert("Thank you!", "We will try again later.", [
               {
