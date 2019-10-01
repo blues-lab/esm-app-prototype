@@ -94,6 +94,19 @@ export const IMAGINE_TEXT = format(
 );
 export const NEXT_BUTTON = "Next";
 
+export const ACCESS_ALLOW = format(
+  "Yes, I would **allow access** to any relevant parts of the conversation."
+);
+export const ACCESS_PARTIAL = format(
+  "I would **partially restrict** access to **certain parts** of the relevant conversation."
+);
+export const ACCESS_DENY = format(
+  "No, I would **deny** access to **any** relevant part of the conversation."
+);
+
+export const ACCESS_SELECTION_REQUIRED_HEADER = "Error";
+export const ACCESS_SELECTION_REQUIRED = "Please select an option to continue.";
+
 /* Contextual questions */
 export const CONTEXT_INTRO =
   "Answer a few questions about the conversation you just had.";
