@@ -493,8 +493,8 @@ export default class UserSettingsScreen extends React.Component {
 
                 notificationController.cancelNotifications();
                 notificationController.showNotification(
-                  "New survey available!",
-                  "Complete within 60 minutes to get $1!!!"
+                  strings.NEW_SURVEY_AVAILABLE,
+                  strings.SURVEY_TIME(60)
                 );
 
                 const _appStatus = await appStatus.loadStatus();

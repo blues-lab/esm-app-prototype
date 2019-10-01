@@ -249,8 +249,8 @@ export default class ExitSurveyScreen extends React.Component {
       appStatus.setAppStatus(_newStatus).then(() => {
         this.setState({ saveWaitVisible: false }, () => {
           Alert.alert(
-            "Congratulations!",
-            "You have earned $1!!!",
+            strings.EXIT_SURVEY_DONE_HEADER,
+            strings.EXIT_SURVEY_DONE,
             [
               {
                 text: "OK",
@@ -490,8 +490,8 @@ export default class ExitSurveyScreen extends React.Component {
           appStatus.setAppStatus(_newStatus).then(() => {
             this.setState({ saveWaitVisible: false }, () => {
               Alert.alert(
-                "Congratulations!",
-                "You have earned $1!!!",
+                strings.EXIT_SURVEY_DONE_HEADER,
+                strings.EXIT_SURVEY_DONE,
                 [
                   {
                     text: "OK",

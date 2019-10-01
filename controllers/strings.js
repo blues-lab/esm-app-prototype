@@ -36,7 +36,7 @@ export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
 
 export const EXIT_SURVEY_INTRO = _remainingDays =>
   "Thank you for participating in the daily surveys!\n" +
-  "There is one more survey you can take and earn $1!!!\n\n" +
+  "There is one more survey you can take and earn $1!\n\n" +
   "You have " +
   _remainingDays +
   " days to complete this survey.";
@@ -78,11 +78,11 @@ export const DONT_DISTURB_BEFORE = "And before";
 /* Notifications */
 export const NEW_SURVEY_AVAILABLE = "New survey available!";
 export const SURVEY_TIME = remainingTime =>
-  "Complete within " + remainingTime + " minutes to get $1!!!";
+  "Complete within " + remainingTime + " minutes to get $1!";
 export const ONGOING_SURVEY = "Survey is still available!";
 export const FINAL_SURVEY_AVAILABLE = "Final survey available!";
 export const FINAL_SURVEY_TIME = remainingDays =>
-  "Complete within " + remainingDays + " days to get $1!!!";
+  "Complete within " + remainingDays + " days to get $1!";
 
 /* Conversation topic */
 export const TALKING_ABOUT_HEADER = "Conversation topic";
@@ -184,6 +184,10 @@ export const BOTH_MODEL_INTRO_TEXT =
 
 export const EXPLAIN_WHY_NO_SERVICES =
   "Please explain in a few sentences why you did not find any services relevant.";
+
+export const EXIT_SURVEY_DONE_HEADER = "Congratulations!";
+export const EXIT_SURVEY_DONE = "You have earned $1!";
+
 //********* End exit survey related texts ************//
 
 export const FINAL_THANK = "Thank you for participating in our study!";
