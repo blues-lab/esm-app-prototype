@@ -1,3 +1,6 @@
+import { format } from "./utilities";
+
+/* Unsorted */
 export const MIMI_ADVERTISEMENT =
   "MiMi is an always-listening voice assistant, which is always ready" +
   " to help and provide services/suggestions" +
@@ -33,12 +36,7 @@ export const SAVE_CHANGES_PROMPT = "Do you want to save changes?";
 export const SURVEY_EXPIRED =
   "Sorry, the current survey expired. We will notify you once new surveys become available.";
 
-export const TALKING_ABOUT = "What were you talking about?";
-export const TALKING_ABOUT_SKIP_HINT = "Enter 'Prefer not to answer' to skip";
-
 export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
-
-export const SAVING_WAIT = "Saving response. Please wait...";
 
 export const WOULD_ALLOW_1 =
   "Would you allow MiMi to access the relevant parts of the conversation you just had to";
@@ -66,6 +64,68 @@ export const EXIT_SURVEY_CONSENT =
 
 export const LOCATION_SHARE_PROMPT =
   "To receive survey, please enable location sharing and WiFi.";
+
+/* Home screen */
+export const NO_SURVEY_AVAILABLE = "No survey available yet. Hang tight!";
+export const TRY_LATER_BUTTON = "Ok, try later!";
+
+/* Invitation code processing */
+export const ENTER_INVITE_CODE = "Please enter your invitation code";
+export const INVALID_INVITE =
+  "The code you entered is invalid. Please try again.";
+export const INVITE_REQUIRED = "An invitation code is required to continue.";
+
+/* Initial prompt */
+export const NEW_SURVEY_HEADER = "New survey!";
+export const CONVERSATION_PROMPT = "Have you had a conversation recently?";
+
+/* Saving messages that appear between screens and at the end */
+export const SAVING_WAIT = "Saving response. Please wait...";
+export const SAVING_HEADER = "MiMi";
+
+/* Conversation topic */
+export const TALKING_ABOUT_HEADER = "Conversation topic";
+export const TALKING_ABOUT = "What were you talking about?";
+export const TALKING_ABOUT_SKIP_HINT = "Enter 'Prefer not to answer' to skip";
+export const TALKING_ABOUT_REQUIRED =
+  "Please enter conversation topic to continue.";
+
+/* Questions about access */
+export const IMAGINE_TEXT = format(
+  "Imagine an **always-listening voice assistant**, MiMi, was able to offer you services that were **relevant** to your conversation."
+);
+export const NEXT_BUTTON = "Next";
+
+export const ACCESS_ALLOW = format(
+  "Yes, I would **allow access** to any relevant parts of the conversation."
+);
+export const ACCESS_PARTIAL = format(
+  "I would **partially restrict** access to **certain parts** of the relevant conversation."
+);
+export const ACCESS_DENY = format(
+  "No, I would **deny** access to **any** relevant part of the conversation."
+);
+
+export const ACCESS_SELECTION_REQUIRED_HEADER = "Error";
+export const ACCESS_SELECTION_REQUIRED = "Please select an option to continue.";
+
+/* Contextual questions */
+export const CONTEXT_INTRO =
+  "Answer a few questions about the conversation you just had.";
+export const CONTEXT_WHERE = "Where were you talking?";
+export const CONTEXT_WHERE_SELECT_ALL = "Select all that apply.";
+export const CONTEXT_COULD_HEAR =
+  "How many people, who did not participate in the conversation, could hear it?";
+export const CONTEXT_HOW_MANY_TALKING =
+  "How many other people (excluding you) were talking?";
+export const CONTEXT_RELATE =
+  "How do you relate to them? Select all that apply.";
+export const CONTEXT_PRESENT =
+  "Was everyone talking physically present (e.g., rather than talking over the phone)?";
+
+/* Survey completion */
+export const SURVEY_DONE_HEADER = "Congratulations!";
+export const SURVEY_DONE = "You have earned $1!";
 
 //********* Exit survey related texts ************//
 
@@ -98,6 +158,7 @@ export const EXPLAIN_WHY_NO_SERVICES =
 
 export const FINAL_THANK = "Thank you for participating in our study!";
 
+/* Services */
 export const SERVICES = [
   {
     services: [

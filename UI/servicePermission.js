@@ -21,14 +21,7 @@ import logger from "../controllers/logger";
 import utilities from "../controllers/utilities";
 import ToolBar from "./toolbar";
 import appStatus from "../controllers/appStatus";
-import {
-  ANSWER_TO_CONTINUE,
-  RESTRICT_WHICH,
-  WHY_DENY,
-  SAVING_WAIT,
-  WOULD_ALLOW_1,
-  RESTRICT_WHY
-} from "../controllers/strings";
+import * as strings from "../controllers/strings";
 
 const codeFileName = "servicePermission.js";
 
@@ -75,9 +68,7 @@ export default class ServicePermissionScreen extends React.Component {
         value: (
           <View style={{ flex: 0 }}>
             <Text style={{ fontSize: 20, marginRight: 5 }}>
-              Yes, I would
-              <Text style={{ fontWeight: "bold" }}> allow access</Text>
-              <Text> to any relevant parts of the conversation.</Text>
+              {strings.ACCESS_ALLOW}
             </Text>
           </View>
         )
@@ -87,11 +78,7 @@ export default class ServicePermissionScreen extends React.Component {
         value: (
           <View style={{ flex: 0 }}>
             <Text style={{ fontSize: 20, marginRight: 5 }}>
-              I would
-              <Text style={{ fontWeight: "bold" }}> partially restrict </Text>
-              <Text>access to</Text>
-              <Text style={{ fontWeight: "bold" }}> certain parts </Text>
-              <Text>of the relevant conversation.</Text>
+              {strings.ACCESS_PARTIAL}
             </Text>
           </View>
         )
@@ -101,11 +88,7 @@ export default class ServicePermissionScreen extends React.Component {
         value: (
           <View style={{ flex: 0 }}>
             <Text style={{ fontSize: 20, marginRight: 5 }}>
-              No, I would
-              <Text style={{ fontWeight: "bold" }}> deny </Text>
-              <Text>access to</Text>
-              <Text style={{ fontWeight: "bold" }}> any </Text>
-              <Text>relevant part of the conversation.</Text>
+              {strings.ACCESS_DENY}
             </Text>
           </View>
         )
@@ -179,7 +162,7 @@ export default class ServicePermissionScreen extends React.Component {
         this.state.whyPartShare.length === 0 ||
         this.state.partsToRedact.length === 0
       ) {
-        Alert.alert("Error", ANSWER_TO_CONTINUE);
+        Alert.alert("Error", strings.ANSWER_TO_CONTINUE);
         logger.info(
           codeFileName,
           "saveResponse",
@@ -190,7 +173,7 @@ export default class ServicePermissionScreen extends React.Component {
     }
     if (this.state.sharingDecision === noShare) {
       if (this.state.whyNoShare.length === 0) {
-        Alert.alert("Error", ANSWER_TO_CONTINUE);
+        Alert.alert("Error", strings.ANSWER_TO_CONTINUE);
         logger.info(
           codeFileName,
           "saveResponse",
@@ -333,7 +316,7 @@ export default class ServicePermissionScreen extends React.Component {
           {!this.state.followUpQuestions && this.state.services != null && (
             <View>
               <Text style={[commonStyle.questionStyle, { fontSize: 22 }]}>
-                {WOULD_ALLOW_1}
+                {strings.WOULD_ALLOW_1}
                 <Text> {'"'}</Text>
                 <Text style={{ fontWeight: "bold" }}>
                   {this.state.services[this.state.currentServiceIdx].serviceName
@@ -358,8 +341,8 @@ export default class ServicePermissionScreen extends React.Component {
                     onPress={() => {
                       if (this.state.sharingDecision.length === 0) {
                         Alert.alert(
-                          "Error",
-                          "Please select an option to continue."
+                          strings.ACCESS_SELECTION_REQUIRED_HEADER,
+                          strings.ACCESS_SELECTION_REQUIRED
                         );
                         logger.info(
                           codeFileName,
@@ -377,7 +360,7 @@ export default class ServicePermissionScreen extends React.Component {
                         this.setState({ followUpQuestions: true });
                       }
                     }}
-                    title="Next"
+                    title={strings.NEXT_BUTTON}
                     color="#20B2AA"
                     accessibilityLabel="Next"
                   />
@@ -395,7 +378,9 @@ export default class ServicePermissionScreen extends React.Component {
                   justifyContent: "center"
                 }}
               >
-                <Text style={commonStyle.questionStyle}>{RESTRICT_WHICH}</Text>
+                <Text style={commonStyle.questionStyle}>
+                  {strings.RESTRICT_WHICH}
+                </Text>
                 <TextInput
                   multiline
                   numberOfLines={4}
@@ -404,7 +389,9 @@ export default class ServicePermissionScreen extends React.Component {
                   value={this.state.partsToRedact}
                 />
 
-                <Text style={commonStyle.questionStyle}>{RESTRICT_WHY}</Text>
+                <Text style={commonStyle.questionStyle}>
+                  {strings.RESTRICT_WHY}
+                </Text>
                 <TextInput
                   multiline
                   numberOfLines={4}
@@ -423,7 +410,9 @@ export default class ServicePermissionScreen extends React.Component {
                   justifyContent: "center"
                 }}
               >
-                <Text style={commonStyle.questionStyle}>{WHY_DENY}</Text>
+                <Text style={commonStyle.questionStyle}>
+                  {strings.WHY_DENY}
+                </Text>
                 <TextInput
                   multiline
                   numberOfLines={4}
@@ -442,7 +431,7 @@ export default class ServicePermissionScreen extends React.Component {
                 onPress={() => {
                   this.saveResponse();
                 }}
-                title="Next"
+                title={strings.NEXT_BUTTON}
                 color="#20B2AA"
                 accessibilityLabel="Next"
               />
@@ -452,8 +441,8 @@ export default class ServicePermissionScreen extends React.Component {
 
         <ProgressDialog
           visible={this.state.saveWaitVisible}
-          title="MiMi"
-          message={SAVING_WAIT}
+          title={strings.SAVING_HEADER}
+          message={strings.SAVING_WAIT}
         />
       </ScrollView>
     );

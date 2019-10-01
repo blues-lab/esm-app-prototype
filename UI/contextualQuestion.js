@@ -24,6 +24,7 @@ import Relations from "./relations";
 import utilities from "../controllers/utilities";
 import { SURVEY_STATUS } from "../controllers/constants";
 import ToolBar from "./toolbar";
+import * as strings from "../controllers/strings";
 
 const codeFileName = "contextualQuestion.js";
 
@@ -207,8 +208,8 @@ export default class ContextualQuestionScreen extends React.Component {
 
     this.setState({ saveWaitVisible: false }, () => {
       Alert.alert(
-        "Congratulations!",
-        "You have earned $1!!!",
+        strings.SURVEY_DONE_HEADER,
+        strings.SURVEY_DONE,
         [
           {
             text: "OK",
@@ -239,15 +240,12 @@ export default class ContextualQuestionScreen extends React.Component {
               <View style={styles.verticalViewStyle}>
                 <View style={commonStyle.dividerStyle}>
                   <Text style={[commonStyle.questionStyle]}>
-                    <Text>
-                      Answer a few questions about the conversation you just
-                      had.
-                    </Text>
+                    <Text>{strings.CONTEXT_INTRO}</Text>
                     <Text>{"\n"}</Text>
                     <Text>{"\n"}</Text>
-                    <Text>Where were you talking?</Text>
+                    <Text>{strings.CONTEXT_WHERE}</Text>
                     <Text>{"\n"}</Text>
-                    <Text>Select all that apply.</Text>
+                    <Text>{strings.CONTEXT_WHERE_SELECT_ALL}</Text>
                   </Text>
                   <Locations
                     locationSelectionHandler={this.locationSelectionHandler}
@@ -257,8 +255,7 @@ export default class ContextualQuestionScreen extends React.Component {
                 <View style={styles.insideVerticalViewStyle}>
                   <View style={commonStyle.dividerStyle}>
                     <Text style={commonStyle.questionStyle}>
-                      How many people, who did not participate in the
-                      conversation, could hear it?
+                      {strings.CONTEXT_COULD_HEAR}
                     </Text>
                     <CustomNumericInput
                       valueChangeCallback={this.numPeopleCanHearChangeHandler}
@@ -272,7 +269,7 @@ export default class ContextualQuestionScreen extends React.Component {
               <View style={styles.verticalViewStyle}>
                 <View style={commonStyle.dividerStyle}>
                   <Text style={commonStyle.questionStyle}>
-                    How many other people (excluding you) were talking?
+                    {strings.CONTEXT_HOW_MANY_TALKING}
                   </Text>
                   <CustomNumericInput
                     valueChangeCallback={this.numPeopleAroundChangeHandler}
@@ -284,7 +281,7 @@ export default class ContextualQuestionScreen extends React.Component {
                   <View style={styles.verticalViewStyle}>
                     <View style={commonStyle.dividerStyle}>
                       <Text style={commonStyle.questionStyle}>
-                        How do you relate to them? Select all that apply.
+                        {strings.CONTEXT_RELATE}
                       </Text>
                       <Relations
                         relationSelectionHandler={this.relationSelectionHandler}
@@ -343,8 +340,7 @@ export default class ContextualQuestionScreen extends React.Component {
 
                     <View style={commonStyle.dividerStyle}>
                       <Text style={commonStyle.questionStyle}>
-                        Was everyone talking physically present (e.g., rather
-                        than talking over the phone)?
+                        {strings.CONTEXT_PRESENT}
                       </Text>
                       <View style={styles.horizontalViewStyle}>
                         <Text style={{ margin: 10, fontSize: 18 }}>No</Text>
@@ -387,8 +383,8 @@ export default class ContextualQuestionScreen extends React.Component {
 
         <ProgressDialog
           visible={this.state.saveWaitVisible}
-          title="MiMi"
-          message="Saving response. Please, wait..."
+          title={strings.SAVING_HEADER}
+          message={strings.SAVING_WAIT}
         />
       </ScrollView>
     );

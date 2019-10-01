@@ -21,11 +21,7 @@ import commonStyles from "./Style";
 import appStatus from "../controllers/appStatus";
 import ToolBar from "./toolbar";
 import utilities from "../controllers/utilities";
-import {
-  TALKING_ABOUT,
-  TALKING_ABOUT_SKIP_HINT,
-  SAVING_WAIT
-} from "../controllers/strings";
+import * as strings from "../controllers/strings";
 import { SURVEY_STATUS } from "../controllers/constants";
 
 const codeFileName = "startsurvey.js";
@@ -33,7 +29,7 @@ const codeFileName = "startsurvey.js";
 export default class SurveyStartScreen extends React.Component {
   static navigationOptions = {
     headerLeft: null,
-    headerTitle: <ToolBar title="Conversation topic" progress={0} />
+    headerTitle: <ToolBar title={strings.TALKING_ABOUT_HEADER} progress={0} />
   };
 
   constructor(props) {
@@ -130,7 +126,9 @@ export default class SurveyStartScreen extends React.Component {
               alignItems: "center"
             }}
           >
-            <Text style={commonStyles.questionStyle}>{TALKING_ABOUT}</Text>
+            <Text style={commonStyles.questionStyle}>
+              {strings.TALKING_ABOUT}
+            </Text>
 
             <TextInput
               multiline
@@ -141,7 +139,7 @@ export default class SurveyStartScreen extends React.Component {
             />
 
             <Text style={{ fontSize: 14, fontStyle: "italic", margin: 10 }}>
-              {TALKING_ABOUT_SKIP_HINT}
+              {strings.TALKING_ABOUT_SKIP_HINT}
             </Text>
 
             <View style={commonStyles.buttonViewStyle}>
@@ -151,10 +149,7 @@ export default class SurveyStartScreen extends React.Component {
                   color="#20B2AA"
                   onPress={async () => {
                     if (this.state.conversationTopic.length === 0) {
-                      Alert.alert(
-                        "Error",
-                        "Please enter conversation topic to continue."
-                      );
+                      Alert.alert("Error", strings.TALKING_ABOUT_REQUIRED);
                     } else {
                       //upload partial survey response
                       {
@@ -236,8 +231,8 @@ export default class SurveyStartScreen extends React.Component {
         </TouchableWithoutFeedback>
         <ProgressDialog
           visible={this.state.saveWaitVisible}
-          title="MiMi"
-          message={SAVING_WAIT}
+          title={strings.SAVING_HEADER}
+          message={strings.SAVING_WAIT}
         />
       </View>
     );
