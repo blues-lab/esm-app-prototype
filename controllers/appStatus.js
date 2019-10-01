@@ -83,7 +83,10 @@ class AppStatus {
       logger.error(
         codeFileName,
         "loadStatus",
-        "Failed to read app status file:" + error.message
+        "Failed to read app status file:" +
+          error.message +
+          ". _fileContent:" +
+          _fileContent
       );
     }
 
