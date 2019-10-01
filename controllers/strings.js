@@ -34,9 +34,6 @@ export const SAVE_CHANGES_PROMPT = "Do you want to save changes?";
 export const SURVEY_EXPIRED =
   "Sorry, the current survey expired. We will notify you once new surveys become available.";
 
-export const TALKING_ABOUT = "What were you talking about?";
-export const TALKING_ABOUT_SKIP_HINT = "Enter 'Prefer not to answer' to skip";
-
 export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
 
 export const SAVING_WAIT = "Saving response. Please wait...";
@@ -81,6 +78,13 @@ export const INVITE_REQUIRED = "An invitation code is required to continue.";
 /* Initial prompt */
 export const NEW_SURVEY_HEADER = "New survey!";
 export const CONVERSATION_PROMPT = "Have you had a conversation recently?";
+
+/* Conversation topic */
+export const TALKING_ABOUT_HEADER = "Conversation topic";
+export const TALKING_ABOUT = "What were you talking about?";
+export const TALKING_ABOUT_SKIP_HINT = "Enter 'Prefer not to answer' to skip";
+export const TALKING_ABOUT_REQUIRED =
+  "Please enter conversation topic to continue.";
 
 //********* Exit survey related texts ************//
 
