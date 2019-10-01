@@ -20,7 +20,8 @@ import {
   NEW_SURVEY_AVAILABLE,
   SURVEY_TIME,
   ONGOING_SURVEY,
-  FINAL_SURVEY_AVAILABLE
+  FINAL_SURVEY_AVAILABLE,
+  FINAL_SURVEY_TIME
 } from "./strings";
 
 const codeFileName = "backgroundJobs.js";
@@ -295,12 +296,12 @@ export async function showPrompt() {
         logger.info(
           codeFileName,
           "showPrompt",
-          "Showing new notification for exit survey updating app status."
+          "Showing new notification for exit survey and updating app status."
         );
         notificationController.cancelNotifications();
         notificationController.showNotification(
           FINAL_SURVEY_AVAILABLE,
-          SURVEY_TIME
+          FINAL_SURVEY_TIME(_remainingDays)
         );
 
         _appStatus.LastNotificationTime = new Date();
