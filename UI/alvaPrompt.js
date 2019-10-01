@@ -114,7 +114,7 @@ export default class AlvaPromptScreen extends React.Component {
           <View style={commonStyles.buttonViewStyle}>
             <TouchableHighlight style={commonStyles.buttonTouchHLStyle}>
               <Button
-                title="Next"
+                title={strings.NEXT_BUTTON}
                 color="#20B2AA"
                 onPress={() => {
                   this.props.navigation.navigate("ServiceMenu", {
