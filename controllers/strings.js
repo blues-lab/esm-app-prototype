@@ -12,6 +12,8 @@ export const SURVEY_EXPIRED =
 
 export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
 
+export const NEXT_BUTTON = "Next";
+
 /* Permissions */
 
 export const LOCATION_SHARE_PROMPT =
@@ -81,16 +83,14 @@ export const TALKING_ABOUT_REQUIRED =
   "Please enter conversation topic to continue.";
 
 /* Questions about relevant services*/
+export const IMAGINE_TEXT = format(
+  "Imagine an **always-listening voice assistant**, MiMi, was able to offer you services that were **relevant to your conversation**."
+);
 export const SELECT_RELEVANT_SERVICES = format(
   "What services could MiMi offer **based on the conversation you just had**? (They don't have to be services you would want or use.)"
 );
 
 /* Questions about access */
-export const IMAGINE_TEXT = format(
-  "Imagine an **always-listening voice assistant**, MiMi, was able to offer you services that were **relevant to your conversation**."
-);
-export const NEXT_BUTTON = "Next";
-
 export const WOULD_ALLOW_1 = format(
   "Would you allow MiMi to access the **relevant parts** of the conversation you just had to"
 );
