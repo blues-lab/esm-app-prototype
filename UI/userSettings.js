@@ -525,7 +525,7 @@ export default class UserSettingsScreen extends React.Component {
                   const _fileContent = await RNFS.readFile(LOG_FILE_PATH);
                   Mailer.mail(
                     {
-                      subject: "MiMi log",
+                      subject: "ALVA log",
                       recipients: ["rakhasan@iu.edu"],
                       body: `<b>${_fileContent}</b>`,
                       isHTML: true,

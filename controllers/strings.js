@@ -37,10 +37,10 @@ export const NOT_HOME_WIFI =
 
 /* Home screen */
 export const MIMI_ADVERTISEMENT =
-  "MiMi is an always-listening voice assistant, which is always ready" +
+  "ALVA is an always-listening voice assistant, which is always ready" +
   " to help and provide services/suggestions" +
   " based on conversations you have with other people at your home without waiting for a wake-word.\n\n" +
-  "The surveys in this app help improve MiMi's design." +
+  "The surveys in this app help improve ALVA's design." +
   " You'll receive a notification when a new survey becomes available.";
 export const NO_SURVEY_AVAILABLE = "No survey available yet. Hang tight!";
 export const TRY_LATER_BUTTON = "Ok, try later!";
@@ -57,7 +57,7 @@ export const CONVERSATION_PROMPT = "Have you had a conversation recently?";
 
 /* Saving messages that appear between screens and at the end */
 export const SAVING_WAIT = "Saving response. Please wait...";
-export const SAVING_HEADER = "MiMi";
+export const SAVING_HEADER = "ALVA";
 
 /* Texts for settings page*/
 export const DONT_DISTURB =
@@ -83,11 +83,12 @@ export const TALKING_ABOUT_REQUIRED =
   "Please enter conversation topic to continue.";
 
 /* Questions about relevant services*/
+export const PROMPT_SCREEN_TITLE = "ALVA"; // TODO: I don't think this is actually seen anywhere?
 export const IMAGINE_TEXT = format(
-  "Imagine an **always-listening voice assistant**, MiMi, was able to offer you services that were **relevant to your conversation**."
+  "Imagine an **always-listening voice assistant**, ALVA, was able to offer you services that were **relevant to your conversation**."
 );
 export const SELECT_RELEVANT_SERVICES = format(
-  "What services could MiMi offer **based on the conversation you just had**? (They don't have to be services you would want or use.)"
+  "What services could ALVA offer **based on the conversation you just had**? (They don't have to be services you would want or use.)"
 );
 
 export const OTHER_SERVICE_PROMPT = "What other service?";
@@ -97,7 +98,7 @@ export const WHY_NO_RELEVANT =
 
 /* Questions about access */
 export const WOULD_ALLOW_1 = format(
-  "Would you allow MiMi to access the **relevant parts** of the conversation you just had to"
+  "Would you allow ALVA to access the **relevant parts** of the conversation you just had to"
 );
 
 export const ACCESS_ALLOW = format(
@@ -111,7 +112,7 @@ export const ACCESS_DENY = format(
 );
 
 export const RESTRICT_WHICH =
-  "To which specific parts of your conversation would you restrict MiMi's access?";
+  "To which specific parts of your conversation would you restrict ALVA's access?";
 export const RESTRICT_WHY =
   "Why would you restrict the device's access to these parts of your conversation?";
 
@@ -187,13 +188,13 @@ export const MODEL2_FEATURES = [
 ];
 
 export const SINGLE_MODEL_INTRO_TEXT =
-  "Suppose you could actually buy a real version of MiMi, which " +
+  "Suppose you could actually buy a real version of ALVA, which " +
   "offered the services you suggested during the past week. It would also have additional features." +
   " To provide them, audio recordings are:";
 export const BOTH_MODEL_INTRO_TEXT =
-  "Suppose you could actually buy a real version of MiMi, which" +
+  "Suppose you could actually buy a real version of ALVA, which" +
   " offered the services you suggested during the past week as well as additional features. Imagine" +
-  " there are two models of MiMi.";
+  " there are two models of ALVA.";
 
 export const EXPLAIN_WHY_NO_SERVICES =
   "Please explain in a few sentences why you did not find any services relevant.";
