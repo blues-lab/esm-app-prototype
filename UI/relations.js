@@ -351,6 +351,7 @@ export default class Relations extends React.Component {
           hintInput=""
           multiline
           numberOfLines={4}
+          submitText={strings.CONTEXT_RELATE_OTHER_SUBMIT}
           submitInput={inputText => {
             if (inputText.length > 0) {
               logger.info(

@@ -324,6 +324,7 @@ export default class Locations extends React.Component {
           multiline
           numberOfLines={4}
           initValueTextInput={this.state.otherLocationName}
+          submitText={strings.CONTEXT_WHERE_OTHER_SUBMIT}
           submitInput={inputText => {
             if (inputText.length > 0) {
               logger.info(
