@@ -474,6 +474,38 @@ export default class HomeScreen extends React.Component {
             )}
           </View>
         )}
+
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "flex-end",
+            margin: 10,
+            marginTop: 20,
+            marginBottom: 20
+          }}
+        >
+          <Text style={{ fontSize: 16, margin: 0 }}>
+            {strings.CONTACT_TEXT}
+            <Text
+              style={{
+                color: "blue",
+                fontSize: 16,
+                margin: 0,
+                textDecorationLine: "underline"
+              }}
+              onPress={() => {
+                logger.info(codeFileName, "Contact link", "Sending email.");
+                utilities.sendEmail([strings.CONTACT_EMAIL], "", "");
+              }}
+            >
+              {" "}
+              {strings.CONTACT_EMAIL}
+            </Text>
+          </Text>
+        </View>
+
         <DialogInput
           isDialogVisible={this.state.invitationCodeDialogVisible}
           title={this.state.invitationCodePrompt + " Testing mode"} //reminder that it is in testing mode

@@ -205,6 +205,9 @@ export const EXIT_SURVEY_DONE = "You have earned $1!";
 
 export const FINAL_THANK = "Thank you for participating in our study!";
 
+export const CONTACT_TEXT = "For any question or comment, contact at";
+export const CONTACT_EMAIL = "blues-study-mimi@lists.eecs.berkeley.edu";
+
 /* Services */
 export const SERVICES = [
   {

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Text } from "react-native";
+import Mailer from "react-native-mail";
 import * as RNFS from "react-native-fs";
 import logger from "./logger";
 import { VERSION_NUMBER, STUDY_PERIOD, EXIT_SURVEY_PERIOD } from "./constants";
@@ -112,6 +113,32 @@ class Utilities extends Component {
       );
     }
     return result;
+  }
+
+  sendEmail(recipients, subject, body) {
+    try {
+      Mailer.mail(
+        {
+          subject,
+          recipients,
+          body: `<b>${body}</b>`,
+          isHTML: true
+        },
+        (error, event) => {
+          logger.error(
+            codeFileName,
+            "sendEmail",
+            "Error sending email:" + error.message
+          );
+        }
+      );
+    } catch (error) {
+      logger.error(
+        codeFileName,
+        "sendEmail",
+        "Error sending email:" + error.message
+      );
+    }
   }
 
   async uploadData(
