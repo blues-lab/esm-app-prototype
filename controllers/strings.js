@@ -143,6 +143,7 @@ export const CONTEXT_WHERE_LOCATIONS = [
   "Garage",
   "Bathroom",
   "Patio/balcony/terrace",
+  "Office",
   "Other"
 ];
 export const CONTEXT_WHERE_SELECT_ALL = "Select all that apply.";
