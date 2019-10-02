@@ -232,8 +232,12 @@ export const SERVICES = [
   },
   {
     services: [
+      {
+        serviceName:
+          "Add an already-scheduled meeting or event to your calendar"
+      },
       { serviceName: "Schedule a get-together with friends/family" },
-      { serviceName: "Make doctor's/medical appointment" },
+      { serviceName: "Schedule doctor's/medical appointment" },
       { serviceName: "Schedule a meeting with a colleague" },
       {
         serviceName:
