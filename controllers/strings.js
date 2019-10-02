@@ -233,6 +233,8 @@ export const SERVICES = [
   {
     services: [
       { serviceName: "Order food" },
+      { serviceName: "Buy groceries" },
+      { serviceName: "Buy household item(s)" },
       { serviceName: "Buy a gift" },
       { serviceName: "Buy clothes" },
       { serviceName: "Buy book" },
@@ -252,7 +254,8 @@ export const SERVICES = [
       { serviceName: "Search for food recipe" },
       { serviceName: "Search for song/artist/lyric" },
       {
-        serviceName: "Search contact information for a store/restaurant/office"
+        serviceName:
+          "Search contact information for a store/restaurant/office/business"
       },
       { serviceName: "Search for meanings of a word/term/phrase" },
       {
