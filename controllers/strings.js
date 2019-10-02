@@ -135,6 +135,16 @@ export const DATA_RETENTION_DENY =
 export const CONTEXT_INTRO =
   "Answer a few questions about the conversation you just had.";
 export const CONTEXT_WHERE = "Where were you talking?";
+export const CONTEXT_WHERE_LOCATIONS = [
+  "Bedroom",
+  "Living room",
+  "Garden",
+  "Kitchen",
+  "Garage",
+  "Bathroom",
+  "Patio/balcony/terrace",
+  "Other"
+];
 export const CONTEXT_WHERE_SELECT_ALL = "Select all that apply.";
 export const CONTEXT_WHERE_OTHER = "Enter the location where you were talking:";
 export const CONTEXT_WHERE_OTHER_SUBMIT = "Save";
