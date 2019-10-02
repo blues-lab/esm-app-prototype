@@ -72,6 +72,29 @@ export default class HomeScreen extends React.Component {
     return null;
   };
 
+  static fileUploadCallBack(success, error = null, data = null) {
+    //need to move this function in utility
+    if (!success) {
+      logger.error(
+        codeFileName,
+        "fileUploadCallBack",
+        `Failed to upload file, error: ${error}. Stage: Ask for conversation. Saving in file: ${data !=
+          null}`
+      );
+      if (data != null) {
+        utilities.writeJSONFile(
+          data,
+          RNFS.DocumentDirectoryPath +
+            "/partial-survey--response--" +
+            Date.now().toString() +
+            ".js",
+          codeFileName,
+          "fileUploadCallBack"
+        );
+      }
+    }
+  }
+
   async startSurvey() {
     //Will be called if participants indicate recent conversation
     Alert.alert(
@@ -97,11 +120,24 @@ export default class HomeScreen extends React.Component {
             logger.info(
               `${codeFileName}`,
               "'No' to recent conversation",
-              "Exiting App."
+              "Uploading response and exiting App."
+            );
+
+            const _appStatus = await appStatus.loadStatus();
+            utilities.uploadData(
+              {
+                Stage: "Recent conversation.",
+                PartialResponse: "No recent conversation.",
+                Time: new Date()
+              },
+              _appStatus.UUID,
+              "NoConversationResponse",
+              codeFileName,
+              "startSurvey",
+              HomeScreen.fileUploadCallBack
             );
 
             if (INTERNAL_TEST) {
-              const _appStatus = await appStatus.loadStatus();
               _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
               await appStatus.setAppStatus(_appStatus);
               this.initApp();
