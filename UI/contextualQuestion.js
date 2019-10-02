@@ -83,7 +83,7 @@ export default class ContextualQuestionScreen extends React.Component {
       adolescentPresent: false,
       remoteConversation: true,
       surveyResponseJS: {}, //whole survey response passed by parent
-      surrounding: true, //Questions about surrounding people VS participating people
+      surrounding: false, //Questions about surrounding people VS participating people
       saveWaitVisible: false //show progress dialog while saving survey response
     };
   }
@@ -238,20 +238,6 @@ export default class ContextualQuestionScreen extends React.Component {
           <View style={styles.verticalViewStyle}>
             {this.state.surrounding && (
               <View style={styles.verticalViewStyle}>
-                <View style={commonStyle.dividerStyle}>
-                  <Text style={[commonStyle.questionStyle]}>
-                    <Text>{strings.CONTEXT_INTRO}</Text>
-                    <Text>{"\n"}</Text>
-                    <Text>{"\n"}</Text>
-                    <Text>{strings.CONTEXT_WHERE}</Text>
-                    <Text>{"\n"}</Text>
-                    <Text>{strings.CONTEXT_WHERE_SELECT_ALL}</Text>
-                  </Text>
-                  <Locations
-                    locationSelectionHandler={this.locationSelectionHandler}
-                  />
-                </View>
-
                 <View style={styles.insideVerticalViewStyle}>
                   <View style={commonStyle.dividerStyle}>
                     <Text style={commonStyle.questionStyle}>
@@ -262,11 +248,25 @@ export default class ContextualQuestionScreen extends React.Component {
                     />
                   </View>
                 </View>
+
+                <View style={commonStyle.dividerStyle}>
+                  <Text style={[commonStyle.questionStyle]}>
+                    <Text>{strings.CONTEXT_WHERE}</Text>
+                    <Text>{"\n"}</Text>
+                    <Text>{strings.CONTEXT_WHERE_SELECT_ALL}</Text>
+                  </Text>
+                  <Locations
+                    locationSelectionHandler={this.locationSelectionHandler}
+                  />
+                </View>
               </View>
             )}
 
             {!this.state.surrounding && (
               <View style={styles.verticalViewStyle}>
+                <Text style={[commonStyle.questionStyle]}>
+                  {strings.CONTEXT_INTRO}
+                </Text>
                 <View style={commonStyle.dividerStyle}>
                   <Text style={commonStyle.questionStyle}>
                     {strings.CONTEXT_HOW_MANY_TALKING}
@@ -374,8 +374,9 @@ export default class ContextualQuestionScreen extends React.Component {
                       );
                       return;
                     }
-                    this.setState({ surrounding: false, surveyProgress: 90 });
-                    this.props.navigation.setParams({ surveyProgress: 90 });
+                    this.setState({ surveyProgress: 100 });
+                    this.props.navigation.setParams({ surveyProgress: 100 });
+                    this.saveResponse();
                   } else {
                     if (this.state.selectedRelations.size === 0) {
                       Alert.alert("Error", strings.NO_RELATION_SELECTED_ERROR);
@@ -386,9 +387,8 @@ export default class ContextualQuestionScreen extends React.Component {
                       );
                       return;
                     }
-                    this.setState({ surrounding: false, surveyProgress: 100 });
-                    this.props.navigation.setParams({ surveyProgress: 100 });
-                    this.saveResponse();
+                    this.setState({ surrounding: true, surveyProgress: 90 });
+                    this.props.navigation.setParams({ surveyProgress: 90 });
                   }
                 }}
                 title="Next"
