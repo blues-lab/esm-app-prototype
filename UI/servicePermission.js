@@ -323,7 +323,7 @@ export default class ServicePermissionScreen extends React.Component {
                     .trim()
                     .toLowerCase()}
                 </Text>
-                <Text>{'"'}?</Text>
+                <Text>?{'"'}</Text>
               </Text>
 
               <View style={commonStyle.listContainerStyle}>
