@@ -257,7 +257,7 @@ export const SERVICES = [
           "Schedule personal care appointment (hair, nails, spa, etc.)"
       }
     ],
-    categoryName: "Add calendar event"
+    categoryName: "Schedule appointment or add event"
   },
   {
     services: [
