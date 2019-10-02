@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { Alert } from "react-native";
 import * as RNFS from "react-native-fs";
+import DeviceInfo from "react-native-device-info";
 
 import { LOG_FILE_PATH } from "./constants";
 
@@ -33,6 +34,8 @@ class Logger extends Component {
 
   async writeLog(type, className, funcName, message) {
     const dates = this.getDateTime();
+    const _version = await DeviceInfo.getSystemVersion();
+    const _build = await DeviceInfo.getBuildNumber();
     try {
       const _log = {
         Type: type,
@@ -40,7 +43,9 @@ class Logger extends Component {
         Function: funcName,
         Message: message,
         Time: dates.LocalTime,
-        UTCTime: dates.UTCTime
+        UTCTime: dates.UTCTime,
+        systemVersion: _version,
+        buildNumber: _build
       };
       await RNFS.appendFile(LOG_FILE_PATH, JSON.stringify(_log) + "\n");
     } catch (error) {
