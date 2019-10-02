@@ -21,7 +21,7 @@ import DialogInput from "react-native-dialog-input";
 import appStatus from "../controllers/appStatus";
 import commonStyles from "./Style";
 import ToolBar from "./toolbar";
-import { SELECT_RELEVANT_SERVICES } from "../controllers/strings";
+import * as strings from "../controllers/strings";
 import logger from "../controllers/logger";
 import utilities from "../controllers/utilities";
 import {
@@ -536,7 +536,7 @@ export default class ServiceMenuScreen extends React.Component {
           }}
         >
           <Text style={commonStyles.questionStyle}>
-            {SELECT_RELEVANT_SERVICES}
+            {strings.SELECT_RELEVANT_SERVICES}
           </Text>
 
           <View style={commonStyles.listContainerStyle}>
@@ -553,10 +553,9 @@ export default class ServiceMenuScreen extends React.Component {
         <View style={commonStyles.buttonViewStyle}>
           <TouchableHighlight style={commonStyles.buttonTouchHLStyle}>
             <Button
-              title="Next"
+              title={strings.NEXT_BUTTON}
               color="#20B2AA"
               onPress={async () => {
-                //Alert.alert("Hi");
                 await this.showPermissionPage();
               }}
             />
@@ -565,7 +564,7 @@ export default class ServiceMenuScreen extends React.Component {
 
         <DialogInput
           isDialogVisible={this.state.newCategoryDialogVisible}
-          title="What other service?"
+          title={strings.OTHER_SERVICE_PROMPT}
           message=""
           hintInput=""
           multiline
@@ -598,9 +597,7 @@ export default class ServiceMenuScreen extends React.Component {
         />
 
         <Dialog.Container visible={this.state.noRelevantDialogVisible}>
-          <Dialog.Title>
-            Please explain why no service would be relevant in this situation.
-          </Dialog.Title>
+          <Dialog.Title>{strings.WHY_NO_RELEVANT}</Dialog.Title>
           <Dialog.Input
             multiline
             numberOfLines={4}
@@ -624,7 +621,7 @@ export default class ServiceMenuScreen extends React.Component {
             }}
           />
           <Dialog.Button
-            label="Next"
+            label={strings.NEXT_BUTTON}
             onPress={async () => {
               this.clearServiceSelections();
               logger.info(
@@ -690,8 +687,8 @@ export default class ServiceMenuScreen extends React.Component {
 
         <ProgressDialog
           visible={this.state.saveWaitVisible}
-          title="MiMi"
-          message="Saving response. Please, wait..."
+          title={strings.SAVING_HEADER}
+          message={strings.SAVING_WAIT}
         />
       </ScrollView>
     );

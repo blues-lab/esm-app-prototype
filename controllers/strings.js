@@ -1,12 +1,23 @@
 import { format } from "./utilities";
 
 /* Unsorted */
-export const MIMI_ADVERTISEMENT =
-  "MiMi is an always-listening voice assistant, which is always ready" +
-  " to help and provide services/suggestions" +
-  " based on conversations you have with other people at your home without waiting for a wake-word.\n\n" +
-  "The surveys in this app help improve MiMi's design." +
-  " You'll receive a notification when a new survey becomes available.";
+
+export const INVITATION_CODE_FAIL =
+  "There was an error saving your invitation code. Please try again later.";
+
+export const SAVE_CHANGES_PROMPT = "Do you want to save changes?";
+
+export const SURVEY_EXPIRED =
+  "Sorry, the current survey expired. We will notify you once new surveys become available.";
+
+export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
+
+export const NEXT_BUTTON = "Next";
+
+/* Permissions */
+
+export const LOCATION_SHARE_PROMPT =
+  "To receive surveys, please enable location sharing and WiFi.";
 
 export const WIFI_PERMISSION_MSG =
   "We will not collect or store your location data." +
@@ -24,44 +35,13 @@ export const HOME_WIFI_PROMPT = wifiName =>
 export const NOT_HOME_WIFI =
   "Got it. We'll ask again when you connect to another network.";
 
-export const INVITATION_CODE_FAIL =
-  "There was an error saving your invitation code. Please try again later.";
-
-export const SAVE_CHANGES_PROMPT = "Do you want to save changes?";
-
-export const SURVEY_EXPIRED =
-  "Sorry, the current survey expired. We will notify you once new surveys become available.";
-
-export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
-
-export const WOULD_ALLOW_1 =
-  "Would you allow MiMi to access the relevant parts of the conversation you just had to";
-
-export const RESTRICT_WHICH =
-  "To which specific parts of your conversation would you restrict MiMi's access?";
-export const RESTRICT_WHY =
-  "Why would you restrict the device's access to these parts of your conversation?";
-
-export const WHY_DENY =
-  "Why would you completely deny access to the conversation?";
-
-export const EXIT_SURVEY_INTRO = _remainingDays =>
-  "Thank you for participating in the daily surveys!\n" +
-  "There is one more survey you can take and earn $1!!!\n\n" +
-  "You have " +
-  _remainingDays +
-  " days to complete this survey.";
-
-export const EXIT_SURVEY_CONSENT =
-  "Welcome to the final part of the study! \n\n" +
-  "In this survey, we will ask questions about the importance of " +
-  "the services that you have selected in the past weeks.\n\n" +
-  "This survey will take 8-10 minutes and you will receive $1 for completing it.";
-
-export const LOCATION_SHARE_PROMPT =
-  "To receive survey, please enable location sharing and WiFi.";
-
 /* Home screen */
+export const MIMI_ADVERTISEMENT =
+  "ALVA is an always-listening voice assistant, which is always ready" +
+  " to help and provide services/suggestions" +
+  " based on conversations you have with other people at your home without waiting for a wake-word.\n\n" +
+  "The surveys in this app help improve ALVA's design." +
+  " You'll receive a notification when a new survey becomes available.";
 export const NO_SURVEY_AVAILABLE = "No survey available yet. Hang tight!";
 export const TRY_LATER_BUTTON = "Ok, try later!";
 
@@ -77,7 +57,7 @@ export const CONVERSATION_PROMPT = "Have you had a conversation recently?";
 
 /* Saving messages that appear between screens and at the end */
 export const SAVING_WAIT = "Saving response. Please wait...";
-export const SAVING_HEADER = "MiMi";
+export const SAVING_HEADER = "ALVA";
 
 /* Texts for settings page*/
 export const DONT_DISTURB =
@@ -89,11 +69,11 @@ export const DONT_DISTURB_BEFORE = "And before";
 /* Notifications */
 export const NEW_SURVEY_AVAILABLE = "New survey available!";
 export const SURVEY_TIME = remainingTime =>
-  "Complete within " + remainingTime + " minutes to get $1!!!";
+  "Complete within " + remainingTime + " minutes to get $1!";
 export const ONGOING_SURVEY = "Survey is still available!";
 export const FINAL_SURVEY_AVAILABLE = "Final survey available!";
 export const FINAL_SURVEY_TIME = remainingDays =>
-  "Complete within " + remainingDays + " days to get $1!!!";
+  "Complete within " + remainingDays + " days to get $1!";
 
 /* Conversation topic */
 export const TALKING_ABOUT_HEADER = "Conversation topic";
@@ -103,25 +83,41 @@ export const TALKING_ABOUT_REQUIRED =
   "Please enter conversation topic to continue.";
 
 /* Questions about relevant services*/
-export const SELECT_RELEVANT_SERVICES = format(
-  "What services could MiMi offer **based on the conversation you just had** ?"
+export const PROMPT_SCREEN_TITLE = "ALVA"; // TODO: I don't think this is actually seen anywhere?
+export const IMAGINE_TEXT = format(
+  "Imagine an **always-listening voice assistant**, ALVA, was able to offer you services that were **relevant to your conversation**."
 );
+export const SELECT_RELEVANT_SERVICES = format(
+  "What services could ALVA offer **based on the conversation you just had**? (They don't have to be services you would want or use.)"
+);
+
+export const OTHER_SERVICE_PROMPT = "What other service?";
+
+export const WHY_NO_RELEVANT =
+  "Please explain why no service would be relevant in this situation.";
 
 /* Questions about access */
-export const IMAGINE_TEXT = format(
-  "Imagine an **always-listening voice assistant**, MiMi, was able to offer you services that were **relevant** to your conversation."
+export const WOULD_ALLOW_1 = format(
+  "Would you allow ALVA to access the **relevant parts** of the conversation you just had to"
 );
-export const NEXT_BUTTON = "Next";
 
 export const ACCESS_ALLOW = format(
-  "Yes, I would **allow access** to any relevant parts of the conversation."
+  "Yes, I would **allow access** to any parts of the conversation that were relevant to this service."
 );
 export const ACCESS_PARTIAL = format(
-  "I would **partially restrict** access to **certain parts** of the relevant conversation."
+  "I'd allow access to **some parts** of the conversation, but I'd **deny access* to other parts, even though they are relevant."
 );
 export const ACCESS_DENY = format(
-  "No, I would **deny** access to **any** relevant part of the conversation."
+  "No, I would **deny** access to **all parts** of the conversation, even those that are relevant to this service."
 );
+
+export const RESTRICT_WHICH =
+  "To which specific parts of your conversation would you restrict ALVA's access?";
+export const RESTRICT_WHY =
+  "Why would you restrict the device's access to these parts of your conversation?";
+
+export const WHY_DENY =
+  "Why would you completely deny access to the conversation?";
 
 export const ACCESS_SELECTION_REQUIRED_HEADER = "Error";
 export const ACCESS_SELECTION_REQUIRED = "Please select an option to continue.";
@@ -131,12 +127,16 @@ export const CONTEXT_INTRO =
   "Answer a few questions about the conversation you just had.";
 export const CONTEXT_WHERE = "Where were you talking?";
 export const CONTEXT_WHERE_SELECT_ALL = "Select all that apply.";
+export const CONTEXT_WHERE_OTHER = "Enter the location where you were talking:";
+export const CONTEXT_WHERE_OTHER_SUBMIT = "Save";
 export const CONTEXT_COULD_HEAR =
-  "How many people, who did not participate in the conversation, could hear it?";
+  "How many people could hear the conversation but did not participate in it?";
 export const CONTEXT_HOW_MANY_TALKING =
-  "How many other people (excluding you) were talking?";
-export const CONTEXT_RELATE =
-  "How do you relate to them? Select all that apply.";
+  "Not including yourself, how many people were talking?";
+export const CONTEXT_RELATE = "Who are they? (Select all that apply.)";
+export const CONTEXT_RELATE_OTHER =
+  "What is your relationship with this person?";
+export const CONTEXT_RELATE_OTHER_SUBMIT = "Save";
 export const CONTEXT_PRESENT =
   "Was everyone talking physically present (e.g., rather than talking over the phone)?";
 export const NO_LOCATION_SELECTED_ERROR =
@@ -156,6 +156,19 @@ export const SURVEY_DONE = "You have earned $1!";
 
 //********* Exit survey related texts ************//
 
+export const EXIT_SURVEY_INTRO = _remainingDays =>
+  "Thank you for participating in the daily surveys!\n" +
+  "There is one more survey you can take and earn $1!\n\n" +
+  "You have " +
+  _remainingDays +
+  " days to complete this survey.";
+
+export const EXIT_SURVEY_CONSENT =
+  "Welcome to the final part of the study! \n\n" +
+  "In this survey, we will ask questions about the importance of " +
+  "the services that you have selected in the past weeks.\n\n" +
+  "This survey will take 8-10 minutes and you will receive $1 for completing it.";
+
 export const SERVICE_USEFULNESS = serviceName =>
   "How useful is '" + serviceName + "' to you?";
 
@@ -174,16 +187,20 @@ export const MODEL2_FEATURES = [
 ];
 
 export const SINGLE_MODEL_INTRO_TEXT =
-  "Suppose you could actually buy a real version of MiMi, which " +
+  "Suppose you could actually buy a real version of ALVA, which " +
   "offered the services you suggested during the past week. It would also have additional features." +
   " To provide them, audio recordings are:";
 export const BOTH_MODEL_INTRO_TEXT =
-  "Suppose you could actually buy a real version of MiMi, which" +
+  "Suppose you could actually buy a real version of ALVA, which" +
   " offered the services you suggested during the past week as well as additional features. Imagine" +
-  " there are two models of MiMi.";
+  " there are two models of ALVA.";
 
 export const EXPLAIN_WHY_NO_SERVICES =
   "Please explain in a few sentences why you did not find any services relevant.";
+
+export const EXIT_SURVEY_DONE_HEADER = "Congratulations!";
+export const EXIT_SURVEY_DONE = "You have earned $1!";
+
 //********* End exit survey related texts ************//
 
 export const FINAL_THANK = "Thank you for participating in our study!";
@@ -227,6 +244,8 @@ export const SERVICES = [
   {
     services: [
       { serviceName: "Order food" },
+      { serviceName: "Buy groceries" },
+      { serviceName: "Buy household item(s)" },
       { serviceName: "Buy a gift" },
       { serviceName: "Buy clothes" },
       { serviceName: "Buy book" },
@@ -246,7 +265,8 @@ export const SERVICES = [
       { serviceName: "Search for food recipe" },
       { serviceName: "Search for song/artist/lyric" },
       {
-        serviceName: "Search contact information for a store/restaurant/office"
+        serviceName:
+          "Search contact information for a store/restaurant/office/business"
       },
       { serviceName: "Search for meanings of a word/term/phrase" },
       {

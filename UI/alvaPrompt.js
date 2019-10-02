@@ -21,7 +21,7 @@ export default class AlvaPromptScreen extends React.Component {
     return {
       headerTitle: (
         <ToolBar
-          title="MIMI"
+          title={strings.PROMPT_SCREEN_TITLE}
           progress={navigation.state.params.surveyProgress}
         />
       ),
