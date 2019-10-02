@@ -105,7 +105,7 @@ export const ACCESS_ALLOW = format(
   "Yes, I would **allow access** to any parts of the conversation that were relevant to this service."
 );
 export const ACCESS_PARTIAL = format(
-  "I'd allow access to **some parts** of the conversation, but I'd **deny access* to other parts, even though they are relevant."
+  "I'd allow access to **some parts** of the conversation, but I'd **deny access** to other parts, even though they are relevant."
 );
 export const ACCESS_DENY = format(
   "No, I would **deny** access to **all parts** of the conversation, even those that are relevant to this service."
