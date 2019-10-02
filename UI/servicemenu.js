@@ -674,11 +674,16 @@ export default class ServiceMenuScreen extends React.Component {
                 logger.info(
                   codeFileName,
                   "NextButtonPress",
-                  "Navigating to ContextualQuestion page."
+                  "Navigating to servicePermission page."
                 );
-                this.props.navigation.navigate("ContextualQuestion", {
+                //                this.props.navigation.navigate("ContextualQuestion", {
+                //                  surveyResponseJS: this.state.surveyResponseJS,
+                //                  surveyProgress: 80
+                //                });
+                this.props.navigation.navigate("ServicePermission", {
+                  services: null,
                   surveyResponseJS: this.state.surveyResponseJS,
-                  surveyProgress: 80
+                  surveyProgress: 75
                 });
               }
             }}

@@ -59,7 +59,10 @@ export default class ServicePermissionScreen extends React.Component {
       permissionResponses: [],
       surveyResponseJS: null, // full survey response so far sent from the serviceMenu page
       saveWaitVisible: false,
-      followUpQuestions: false //indicates whether permission options or follow up questions should be shown
+      followUpQuestions: false, //indicates whether permission options or follow up questions should be shown
+      permissionQuestions: true,
+      dataRetentionQuestions: false, //should the data retention question be shown?
+      dataRetentionDecision: ""
     };
 
     this.permissionOptions = [
@@ -94,6 +97,18 @@ export default class ServicePermissionScreen extends React.Component {
         )
       }
     ];
+
+    this.dataRetentionOptions = [
+      {
+        key: "agree",
+        value: strings.DATA_RETENTION_AGREE
+      },
+
+      {
+        key: "deny",
+        value: strings.DATA_RETENTION_DENY
+      }
+    ];
   }
 
   promisedSetState = newState => {
@@ -113,7 +128,9 @@ export default class ServicePermissionScreen extends React.Component {
     await this.promisedSetState({
       services: _services,
       surveyProgress: _surveyProgress,
-      surveyResponseJS: _surveyResponseJS
+      surveyResponseJS: _surveyResponseJS,
+      permissionQuestions: _services !== null,
+      dataRetentionQuestions: _services === null
     });
 
     if (Platform.OS === "android") {
@@ -150,84 +167,114 @@ export default class ServicePermissionScreen extends React.Component {
     await this.promisedSetState({ sharingDecision: item.key });
   };
 
+  dataRetentionSelectionChangedHandler = async item => {
+    await this.promisedSetState({ dataRetentionDecision: item.key });
+  };
+
   async saveResponse() {
-    logger.info(
-      codeFileName,
-      "saveResponse",
-      `service:${this.state.services[this.state.currentServiceIdx].serviceName}, sharingDecision:${this.state.sharingDecision}`
-    );
-
-    if (this.state.sharingDecision === partialShare) {
-      if (
-        this.state.whyPartShare.length === 0 ||
-        this.state.partsToRedact.length === 0
-      ) {
-        Alert.alert("Error", strings.ANSWER_TO_CONTINUE);
-        logger.info(
-          codeFileName,
-          "saveResponse",
-          "Not all questions regarding partial share is answered. Returning"
-        );
-        return;
-      }
-    }
-    if (this.state.sharingDecision === noShare) {
-      if (this.state.whyNoShare.length === 0) {
-        Alert.alert("Error", strings.ANSWER_TO_CONTINUE);
-        logger.info(
-          codeFileName,
-          "saveResponse",
-          "Not all questions regarding no share is answered. Returning"
-        );
-        return;
-      }
-    }
-
-    const _permissionResponse = {
-      ServiceCategory: this.state.services[this.state.currentServiceIdx]
-        .categoryName,
-      ServiceName: this.state.services[this.state.currentServiceIdx]
-        .serviceName,
-      Sharing: this.state.sharingDecision,
-      PartsToRedact: this.state.partsToRedact,
-      WhyPartShare: this.state.whyPartShare,
-      WhyNoShare: this.state.whyNoShare
-    };
-
-    const _permissionResponses = this.state.permissionResponses;
-    _permissionResponses.push(_permissionResponse);
-    const _surveyResponseJS = this.state.surveyResponseJS;
-    _surveyResponseJS.PermissionResponses = _permissionResponses;
-
-    const _nextServiceIdx = this.state.currentServiceIdx + 1;
-    if (_nextServiceIdx < this.state.services.length) {
-      //more services remaining
+    if (this.state.permissionQuestions) {
       logger.info(
         codeFileName,
         "saveResponse",
-        "Saving response and going to the next service."
+        `service:${this.state.services[this.state.currentServiceIdx].serviceName}, sharingDecision:${this.state.sharingDecision}`
       );
-      const _surveyProgress =
-        this.state.surveyProgress + Math.floor(40 / this.state.services.length);
-      await this.promisedSetState({
-        surveyResponseJS: _surveyResponseJS,
-        currentServiceIdx: _nextServiceIdx,
-        surveyProgress: _surveyProgress,
-        whyNoShare: "",
-        whyPartShare: "",
-        partsToRedact: "",
-        sharingDecision: "",
-        followUpQuestions: false
+
+      if (this.state.sharingDecision === partialShare) {
+        if (
+          this.state.whyPartShare.length === 0 ||
+          this.state.partsToRedact.length === 0
+        ) {
+          Alert.alert("Error", strings.ANSWER_TO_CONTINUE);
+          logger.info(
+            codeFileName,
+            "saveResponse",
+            "Not all questions regarding partial share is answered. Returning"
+          );
+          return;
+        }
+      }
+      if (this.state.sharingDecision === noShare) {
+        if (this.state.whyNoShare.length === 0) {
+          Alert.alert("Error", strings.ANSWER_TO_CONTINUE);
+          logger.info(
+            codeFileName,
+            "saveResponse",
+            "Not all questions regarding no share is answered. Returning"
+          );
+          return;
+        }
+      }
+
+      const _permissionResponse = {
+        ServiceCategory: this.state.services[this.state.currentServiceIdx]
+          .categoryName,
+        ServiceName: this.state.services[this.state.currentServiceIdx]
+          .serviceName,
+        Sharing: this.state.sharingDecision,
+        PartsToRedact: this.state.partsToRedact,
+        WhyPartShare: this.state.whyPartShare,
+        WhyNoShare: this.state.whyNoShare
+      };
+
+      const _permissionResponses = this.state.permissionResponses;
+      _permissionResponses.push(_permissionResponse);
+      const _surveyResponseJS = this.state.surveyResponseJS;
+      _surveyResponseJS.PermissionResponses = _permissionResponses;
+
+      const _nextServiceIdx = this.state.currentServiceIdx + 1;
+      if (_nextServiceIdx < this.state.services.length) {
+        //more services remaining
+        logger.info(
+          codeFileName,
+          "saveResponse",
+          "Saving response and going to the next service."
+        );
+        const _surveyProgress =
+          this.state.surveyProgress +
+          Math.floor(35 / this.state.services.length);
+        await this.promisedSetState({
+          surveyResponseJS: _surveyResponseJS,
+          currentServiceIdx: _nextServiceIdx,
+          surveyProgress: _surveyProgress,
+          whyNoShare: "",
+          whyPartShare: "",
+          partsToRedact: "",
+          sharingDecision: "",
+          followUpQuestions: false
+        });
+        this.props.navigation.setParams({ surveyProgress: _surveyProgress });
+      } //no more service, ask data retention question
+      else {
+        await this.promisedSetState({
+          permissionQuestions: false,
+          followUpQuestions: false,
+          dataRetentionQuestions: true
+        });
+      }
+    } else if (this.state.dataRetentionQuestions) {
+      if (this.state.dataRetentionDecision.length === 0) {
+        Alert.alert("Error", strings.ANSWER_TO_CONTINUE);
+        logger.info(
+          codeFileName,
+          "saveResponse",
+          "Not all questions regarding data retention is answered. Returning."
+        );
+        return;
+      }
+      await this.promisedSetState(prevState => {
+        const _surveyResponseJS = prevState.surveyResponseJS;
+        _surveyResponseJS.dataRetentionDecision =
+          prevState.dataRetentionDecision;
+
+        return { surveyResponseJS: _surveyResponseJS };
       });
-      this.props.navigation.setParams({ surveyProgress: _surveyProgress });
-    } //no more service, save and upload permission responses
-    else {
+
+      //all done, save response and go to the contextual questions page
       logger.info(
         codeFileName,
         "saveResponse",
         "Uploading partial response and going to ContextualQuestion page."
       );
-      //upload partial survey response
       {
         await this.promisedSetState({ saveWaitVisible: true });
         const _appStatus = await appStatus.loadStatus();
@@ -299,6 +346,47 @@ export default class ServicePermissionScreen extends React.Component {
     );
   };
 
+  renderListItemDataRetention = ({ item }) => {
+    return (
+      <TouchableOpacity
+        style={{ backgroundColor: "lavender", margin: 5 }}
+        onPress={() => {
+          this.dataRetentionSelectionChangedHandler(item);
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            padding: 2,
+            justifyContent: "flex-start"
+          }}
+        >
+          {item.key === this.state.dataRetentionDecision && (
+            <Icon
+              name="radio-btn-active"
+              size={20}
+              color="grey"
+              style={{ margin: 5 }}
+            />
+          )}
+          {item.key !== this.state.dataRetentionDecision && (
+            <Icon
+              name="radio-btn-passive"
+              size={20}
+              color="grey"
+              style={{ margin: 5 }}
+            />
+          )}
+
+          <View style={{ marginRight: 10 }}>
+            <Text style={{ fontSize: 20, paddingRight: 10 }}>{item.value}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   render() {
     return (
       <ScrollView contentContainerStyle={{ backgroundColor: "lavender" }}>
@@ -313,61 +401,65 @@ export default class ServicePermissionScreen extends React.Component {
             backgroundColor: "lavendar"
           }}
         >
-          {!this.state.followUpQuestions && this.state.services != null && (
-            <View>
-              <Text style={[commonStyle.questionStyle, { fontSize: 22 }]}>
-                {strings.WOULD_ALLOW_1}
-                <Text> {'"'}</Text>
-                <Text style={{ fontWeight: "bold" }}>
-                  {this.state.services[this.state.currentServiceIdx].serviceName
-                    .trim()
-                    .toLowerCase()}
+          {this.state.permissionQuestions &&
+            this.state.services != null &&
+            !this.state.followUpQuestions && (
+              <View>
+                <Text style={[commonStyle.questionStyle, { fontSize: 22 }]}>
+                  {strings.WOULD_ALLOW_1}
+                  <Text> {'"'}</Text>
+                  <Text style={{ fontWeight: "bold" }}>
+                    {this.state.services[
+                      this.state.currentServiceIdx
+                    ].serviceName
+                      .trim()
+                      .toLowerCase()}
+                  </Text>
+                  <Text>?{'"'}</Text>
                 </Text>
-                <Text>?{'"'}</Text>
-              </Text>
 
-              <View style={commonStyle.listContainerStyle}>
-                <FlatList
-                  data={this.permissionOptions}
-                  ItemSeparatorComponent={this.flatListItemSeparator}
-                  renderItem={this.renderListItem}
-                  keyExtractor={(item, index) => index.toString()}
-                  extraData={this.state}
-                />
-              </View>
-              <View style={commonStyle.buttonViewStyle}>
-                <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
-                  <Button
-                    onPress={() => {
-                      if (this.state.sharingDecision.length === 0) {
-                        Alert.alert(
-                          strings.ACCESS_SELECTION_REQUIRED_HEADER,
-                          strings.ACCESS_SELECTION_REQUIRED
-                        );
-                        logger.info(
-                          codeFileName,
-                          "NextButton.onPress",
-                          "No permission option selected. Returning."
-                        );
-                        return;
-                      }
-
-                      //if fullShare, then do not show followup questions
-                      //instead, save response and go to the next permission question
-                      if (this.state.sharingDecision === fullShare) {
-                        this.saveResponse();
-                      } else {
-                        this.setState({ followUpQuestions: true });
-                      }
-                    }}
-                    title={strings.NEXT_BUTTON}
-                    color="#20B2AA"
-                    accessibilityLabel="Next"
+                <View style={commonStyle.listContainerStyle}>
+                  <FlatList
+                    data={this.permissionOptions}
+                    ItemSeparatorComponent={this.flatListItemSeparator}
+                    renderItem={this.renderListItem}
+                    keyExtractor={(item, index) => index.toString()}
+                    extraData={this.state}
                   />
-                </TouchableHighlight>
+                </View>
+                <View style={commonStyle.buttonViewStyle}>
+                  <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
+                    <Button
+                      onPress={() => {
+                        if (this.state.sharingDecision.length === 0) {
+                          Alert.alert(
+                            strings.ACCESS_SELECTION_REQUIRED_HEADER,
+                            strings.ACCESS_SELECTION_REQUIRED
+                          );
+                          logger.info(
+                            codeFileName,
+                            "NextButton.onPress",
+                            "No permission option selected. Returning."
+                          );
+                          return;
+                        }
+
+                        //if fullShare, then do not show followup questions
+                        //instead, save response and go to the next permission question
+                        if (this.state.sharingDecision === fullShare) {
+                          this.saveResponse();
+                        } else {
+                          this.setState({ followUpQuestions: true });
+                        }
+                      }}
+                      title={strings.NEXT_BUTTON}
+                      color="#20B2AA"
+                      accessibilityLabel="Next"
+                    />
+                  </TouchableHighlight>
+                </View>
               </View>
-            </View>
-          )}
+            )}
 
           {this.state.followUpQuestions &&
             this.state.sharingDecision === partialShare && (
@@ -436,6 +528,36 @@ export default class ServicePermissionScreen extends React.Component {
                 accessibilityLabel="Next"
               />
             </TouchableHighlight>
+          </View>
+        )}
+
+        {this.state.dataRetentionQuestions && (
+          <View>
+            <Text style={commonStyle.questionStyle}>
+              {strings.DATA_RETENTION_QUESTION}
+            </Text>
+            <View style={commonStyle.listContainerStyle}>
+              <FlatList
+                data={this.dataRetentionOptions}
+                ItemSeparatorComponent={this.flatListItemSeparator}
+                renderItem={this.renderListItemDataRetention}
+                keyExtractor={(item, index) => index.toString()}
+                extraData={this.state}
+              />
+            </View>
+
+            <View style={commonStyle.buttonViewStyle}>
+              <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
+                <Button
+                  onPress={() => {
+                    this.saveResponse();
+                  }}
+                  title={strings.NEXT_BUTTON}
+                  color="#20B2AA"
+                  accessibilityLabel="Next"
+                />
+              </TouchableHighlight>
+            </View>
           </View>
         )}
 

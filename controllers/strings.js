@@ -122,6 +122,15 @@ export const WHY_DENY =
 export const ACCESS_SELECTION_REQUIRED_HEADER = "Error";
 export const ACCESS_SELECTION_REQUIRED = "Please select an option to continue.";
 
+export const DATA_RETENTION_QUESTION =
+  "Suppose MiMi could store this conversation for 30 days, " +
+  "so that you could review the transcript to make sure the correct service was rendered. " +
+  "Only the people who participated in the conversation could review it.";
+export const DATA_RETENTION_AGREE =
+  "I would allow this conversation to be stored.";
+export const DATA_RETENTION_DENY =
+  "I would not allow this conversation to be stored.";
+
 /* Contextual questions */
 export const CONTEXT_INTRO =
   "Answer a few questions about the conversation you just had.";
