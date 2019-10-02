@@ -82,7 +82,7 @@ export const TALKING_ABOUT_REQUIRED =
 
 /* Questions about relevant services*/
 export const SELECT_RELEVANT_SERVICES = format(
-  "What services could MiMi offer **based on the conversation you just had** ?"
+  "What services could MiMi offer **based on the conversation you just had**? (They don't have to be services you would want or use.)"
 );
 
 /* Questions about access */
@@ -91,8 +91,9 @@ export const IMAGINE_TEXT = format(
 );
 export const NEXT_BUTTON = "Next";
 
-export const WOULD_ALLOW_1 =
-  "Would you allow MiMi to access the relevant parts of the conversation you just had to";
+export const WOULD_ALLOW_1 = format(
+  "Would you allow MiMi to access the **relevant parts** of the conversation you just had to"
+);
 
 export const ACCESS_ALLOW = format(
   "Yes, I would **allow access** to any relevant parts of the conversation."
