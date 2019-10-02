@@ -154,7 +154,7 @@ export const NO_RELATION_SELECTED_ERROR =
   "Please select relationships with the conversation participants to continue.";
 
 export const CHILDREN_ADOLESCENT = [
-  "Of the people who were talking, were there:",
+  "Of the people who were talking, were there any:",
   "Children (0-12 years old):",
   "Adolescents (13-17 years old):"
 ];
