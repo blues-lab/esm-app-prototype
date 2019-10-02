@@ -90,6 +90,11 @@ export const SELECT_RELEVANT_SERVICES = format(
   "What services could MiMi offer **based on the conversation you just had**? (They don't have to be services you would want or use.)"
 );
 
+export const OTHER_SERVICE_PROMPT = "What other service?";
+
+export const WHY_NO_RELEVANT =
+  "Please explain why no service would be relevant in this situation.";
+
 /* Questions about access */
 export const WOULD_ALLOW_1 = format(
   "Would you allow MiMi to access the **relevant parts** of the conversation you just had to"
