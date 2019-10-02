@@ -37,11 +37,13 @@ export const NOT_HOME_WIFI =
 
 /* Home screen */
 export const MIMI_ADVERTISEMENT =
-  "ALVA is an always-listening voice assistant, which is always ready" +
+  "Imagine that ALVA is an always-listening voice assistant, which is always ready" +
   " to help and provide services/suggestions" +
   " based on conversations you have with other people at your home without waiting for a wake-word.\n\n" +
   "The surveys in this app help improve ALVA's design." +
-  " You'll receive a notification when a new survey becomes available.";
+  " You'll receive a notification when a new survey becomes available." +
+  " Although for now ALVA is just a prototype and it won't actually record your conversations or offer suggestions," +
+  " answer the surveys as if ALVA was a real product.";
 export const NO_SURVEY_AVAILABLE = "No survey available yet. Hang tight!";
 export const TRY_LATER_BUTTON = "Ok, try later!";
 
