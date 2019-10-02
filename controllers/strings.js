@@ -126,12 +126,15 @@ export const CONTEXT_INTRO =
   "Answer a few questions about the conversation you just had.";
 export const CONTEXT_WHERE = "Where were you talking?";
 export const CONTEXT_WHERE_SELECT_ALL = "Select all that apply.";
+export const CONTEXT_WHERE_OTHER = "Enter the location where you were talking:";
 export const CONTEXT_COULD_HEAR =
   "How many people, who did not participate in the conversation, could hear it?";
 export const CONTEXT_HOW_MANY_TALKING =
   "How many other people (excluding you) were talking?";
 export const CONTEXT_RELATE =
   "How do you relate to them? Select all that apply.";
+export const CONTEXT_RELATE_OTHER =
+  "What is your relationship with this person?";
 export const CONTEXT_PRESENT =
   "Was everyone talking physically present (e.g., rather than talking over the phone)?";
 export const NO_LOCATION_SELECTED_ERROR =

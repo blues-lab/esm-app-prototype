@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Fontisto";
 import DialogInput from "react-native-dialog-input";
 import logger from "../controllers/logger";
+import * as strings from "../controllers/strings";
 
 const codeFileName = "locations.js";
 
@@ -317,7 +318,7 @@ export default class Locations extends React.Component {
 
         <DialogInput
           isDialogVisible={this.state.otherDialogVisible}
-          title="Please enter"
+          title={strings.CONTEXT_WHERE_OTHER}
           message=""
           hintInput=""
           multiline

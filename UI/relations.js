@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import DialogInput from "react-native-dialog-input";
 import Icon from "react-native-vector-icons/Fontisto";
 import logger from "../controllers/logger";
+import * as strings from "../controllers/strings";
 
 const codeFileName = "relations.js";
 
@@ -345,7 +346,7 @@ export default class Relations extends React.Component {
 
         <DialogInput
           isDialogVisible={this.state.otherDialogVisible}
-          title="Please enter"
+          title={strings.CONTEXT_RELATE_OTHER}
           message=""
           hintInput=""
           multiline
