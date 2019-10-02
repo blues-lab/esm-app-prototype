@@ -68,33 +68,15 @@ export default class ServicePermissionScreen extends React.Component {
     this.permissionOptions = [
       {
         key: fullShare,
-        value: (
-          <View style={{ flex: 0 }}>
-            <Text style={{ fontSize: 20, marginRight: 5 }}>
-              {strings.ACCESS_ALLOW}
-            </Text>
-          </View>
-        )
+        value: strings.ACCESS_ALLOW
       },
       {
         key: partialShare,
-        value: (
-          <View style={{ flex: 0 }}>
-            <Text style={{ fontSize: 20, marginRight: 5 }}>
-              {strings.ACCESS_PARTIAL}
-            </Text>
-          </View>
-        )
+        value: strings.ACCESS_PARTIAL
       },
       {
         key: noShare,
-        value: (
-          <View style={{ flex: 0 }}>
-            <Text style={{ fontSize: 20, marginRight: 5 }}>
-              {strings.ACCESS_DENY}
-            </Text>
-          </View>
-        )
+        value: strings.ACCESS_DENY
       }
     ];
 
@@ -340,7 +322,9 @@ export default class ServicePermissionScreen extends React.Component {
             />
           )}
 
-          {item.value}
+          <View style={{ marginRight: 10 }}>
+            <Text style={{ fontSize: 20, paddingRight: 10 }}>{item.value}</Text>
+          </View>
         </View>
       </TouchableOpacity>
     );
