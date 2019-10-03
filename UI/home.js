@@ -161,7 +161,7 @@ export default class HomeScreen extends React.Component {
       return;
     }
 
-    Alert.alert("Thank you!", "We will try again later.", [
+    Alert.alert(strings.NO_CONVERSATION_HEADER, strings.NO_CONVERSATION, [
       {
         text: "OK",
         onPress: () => {

@@ -56,6 +56,8 @@ export const INVITE_REQUIRED = "An invitation code is required to continue.";
 /* Initial prompt */
 export const NEW_SURVEY_HEADER = "New survey!";
 export const CONVERSATION_PROMPT = "Have you had a conversation recently?";
+export const NO_CONVERSATION_HEADER = "Thank you!";
+export const NO_CONVERSATION = "We will try again later.";
 
 /* Saving messages that appear between screens and at the end */
 export const SAVING_WAIT = "Saving response. Please wait...";
