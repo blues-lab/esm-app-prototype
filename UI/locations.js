@@ -36,58 +36,17 @@ const styles = StyleSheet.create({
 export default class Locations extends React.Component {
   constructor(props) {
     super(props);
+    const locationCheckboxes = strings.CONTEXT_WHERE_LOCATIONS.map(location => {
+      return {
+        name: location,
+        renderStyle: styles.unselectedStyle,
+        iconName: "checkbox-passive",
+        selected: false
+      };
+    });
     this.state = {
       otherDialogVisible: false,
-      locationNames: [
-        {
-          name: "Bedroom",
-          renderStyle: styles.unselectedStyle,
-          iconName: "checkbox-passive",
-          selected: false
-        },
-        {
-          name: "Living room",
-          renderStyle: styles.unselectedStyle,
-          iconName: "checkbox-passive",
-          selected: false
-        },
-        {
-          name: "Garden",
-          renderStyle: styles.unselectedStyle,
-          iconName: "checkbox-passive",
-          selected: false
-        },
-        {
-          name: "Kitchen",
-          renderStyle: styles.unselectedStyle,
-          iconName: "checkbox-passive",
-          selected: false
-        },
-        {
-          name: "Garage",
-          renderStyle: styles.unselectedStyle,
-          iconName: "checkbox-passive",
-          selected: false
-        },
-        {
-          name: "Bathroom",
-          renderStyle: styles.unselectedStyle,
-          iconName: "checkbox-passive",
-          selected: false
-        },
-        {
-          name: "Patio/balcony/terrace",
-          renderStyle: styles.unselectedStyle,
-          iconName: "checkbox-passive",
-          selected: false
-        },
-        {
-          name: "Other",
-          renderStyle: styles.unselectedStyle,
-          iconName: "checkbox-passive",
-          selected: false
-        }
-      ],
+      locationNames: locationCheckboxes,
       otherLocationName: ""
     };
   }

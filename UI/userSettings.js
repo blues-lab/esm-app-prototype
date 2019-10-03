@@ -27,8 +27,7 @@ import utilities from "../controllers/utilities";
 import {
   USER_SETTINGS_FILE_PATH,
   LOG_FILE_PATH,
-  SURVEY_STATUS,
-  INTERNAL_TEST
+  SURVEY_STATUS
 } from "../controllers/constants";
 import * as strings from "../controllers/strings";
 import { uploadFiles } from "../controllers/backgroundJobs";
@@ -78,6 +77,10 @@ export default class UserSettingsScreen extends React.Component {
       backCallBack: null, // a callback function sent by Home screen
       wifiPermissionDialogVisible: false
     };
+
+    appStatus.loadStatus().then(status => {
+      this.state.debug = status.Debug;
+    });
   }
 
   async componentDidMount() {
@@ -467,7 +470,7 @@ export default class UserSettingsScreen extends React.Component {
           backgroundColor: "lavender"
         }}
       >
-        {INTERNAL_TEST && (
+        {this.state.debug && (
           <View>
             <Button
               title="Take the exit survey"

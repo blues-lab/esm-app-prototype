@@ -13,7 +13,6 @@ export const SURVEY_STATUS = {
   COMPLETED: "COMPLETED"
 };
 
-export const INTERNAL_TEST = true; //if INTERNAL_TEST is true, make certain test features visible
 export const SURVEY_ALLOWED_TO_COMPLETE = 5; //allow to complete max 1 surveys/day, when INTERNAL_TEST==false, make it 1
 
 export const MAX_SURVEY_PER_DAY = 5; //create max 5 surveys/day

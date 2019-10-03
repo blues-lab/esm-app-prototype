@@ -37,11 +37,13 @@ export const NOT_HOME_WIFI =
 
 /* Home screen */
 export const MIMI_ADVERTISEMENT =
-  "ALVA is an always-listening voice assistant, which is always ready" +
+  "Imagine that ALVA is an always-listening voice assistant, which is always ready" +
   " to help and provide services/suggestions" +
   " based on conversations you have with other people at your home without waiting for a wake-word.\n\n" +
   "The surveys in this app help improve ALVA's design." +
-  " You'll receive a notification when a new survey becomes available.";
+  " You'll receive a notification when a new survey becomes available." +
+  " Although for now ALVA is just a prototype and it won't actually record your conversations or offer suggestions," +
+  " answer the surveys as if ALVA was a real product.";
 export const NO_SURVEY_AVAILABLE = "No survey available yet. Hang tight!";
 export const TRY_LATER_BUTTON = "Ok, try later!";
 
@@ -54,6 +56,8 @@ export const INVITE_REQUIRED = "An invitation code is required to continue.";
 /* Initial prompt */
 export const NEW_SURVEY_HEADER = "New survey!";
 export const CONVERSATION_PROMPT = "Have you had a conversation recently?";
+export const NO_CONVERSATION_HEADER = "Thank you!";
+export const NO_CONVERSATION = "We will try again later.";
 
 /* Saving messages that appear between screens and at the end */
 export const SAVING_WAIT = "Saving response. Please wait...";
@@ -135,6 +139,17 @@ export const DATA_RETENTION_DENY =
 export const CONTEXT_INTRO =
   "Answer a few questions about the conversation you just had.";
 export const CONTEXT_WHERE = "Where were you talking?";
+export const CONTEXT_WHERE_LOCATIONS = [
+  "Bedroom",
+  "Living room",
+  "Garden",
+  "Kitchen",
+  "Garage",
+  "Bathroom",
+  "Patio/balcony/terrace",
+  "Office",
+  "Other"
+];
 export const CONTEXT_WHERE_SELECT_ALL = "Select all that apply.";
 export const CONTEXT_WHERE_OTHER = "Enter the location where you were talking:";
 export const CONTEXT_WHERE_OTHER_SUBMIT = "Save";
@@ -154,7 +169,7 @@ export const NO_RELATION_SELECTED_ERROR =
   "Please select relationships with the conversation participants to continue.";
 
 export const CHILDREN_ADOLESCENT = [
-  "Of the people who were talking, were there:",
+  "Of the people who were talking, were there any:",
   "Children (0-12 years old):",
   "Adolescents (13-17 years old):"
 ];
@@ -214,7 +229,8 @@ export const EXIT_SURVEY_DONE = "You have earned $1!";
 
 export const FINAL_THANK = "Thank you for participating in our study!";
 
-export const CONTACT_TEXT = "For any question or comment, contact at";
+export const CONTACT_TEXT =
+  "If you have any questions or comments, contact us at";
 export const CONTACT_EMAIL = "blues-study-mimi@lists.eecs.berkeley.edu";
 
 /* Services */
@@ -231,15 +247,19 @@ export const SERVICES = [
   },
   {
     services: [
+      {
+        serviceName:
+          "Add an already-scheduled meeting or event to your calendar"
+      },
       { serviceName: "Schedule a get-together with friends/family" },
-      { serviceName: "Make doctor's/medical appointment" },
+      { serviceName: "Schedule doctor's/medical appointment" },
       { serviceName: "Schedule a meeting with a colleague" },
       {
         serviceName:
           "Schedule personal care appointment (hair, nails, spa, etc.)"
       }
     ],
-    categoryName: "Add calendar event"
+    categoryName: "Schedule appointment or add event"
   },
   {
     services: [

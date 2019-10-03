@@ -26,11 +26,47 @@ import utilities from "../controllers/utilities";
 import {
   USER_SETTINGS_FILE_PATH,
   INVITATION_CODE_FILE_PATH,
-  SURVEY_STATUS,
-  INTERNAL_TEST
+  SURVEY_STATUS
 } from "../controllers/constants";
 
 const codeFileName = "home.js";
+
+/**
+ * Return true if the invitation code is a debug code
+ *
+ * Debug codes start with a period
+ * @param {string} codeString
+ */
+function isDebugCode(codeString) {
+  return codeString.charAt(0) === ".";
+}
+
+/**
+ * Return true if the invitation code is valid
+ *
+ * In a valid invitation code, the last digit equals the sum of the remaining digits, mod 10.
+ * @param {string} codeString
+ */
+function isValidInvitationCode(codeString) {
+  const code = parseInt(codeString, 10);
+  if (Number.isNaN(code)) {
+    return false;
+  }
+
+  const checkDigit = code % 10;
+  let sum = 0;
+
+  let num = Math.floor(code / 10);
+  while (num > 10) {
+    sum += num % 10;
+    num = Math.floor(num / 10);
+  }
+  sum += num % 10;
+
+  const checkValue = sum % 10;
+
+  return checkDigit === checkValue;
+}
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -95,6 +131,57 @@ export default class HomeScreen extends React.Component {
     }
   }
 
+  hadConversationYes() {
+    logger.info(
+      `${codeFileName}`,
+      "'Yes' to recent conversation",
+      "Navigating to StartSurvey page."
+    );
+
+    this.props.navigation.navigate("StartSurvey");
+    notificationController.cancelNotifications();
+  }
+
+  async hadConversationNo() {
+    logger.info(
+      `${codeFileName}`,
+      "'No' to recent conversation",
+      "Uploading response and exiting App."
+    );
+
+    const _appStatus = await appStatus.loadStatus();
+    utilities.uploadData(
+      {
+        Stage: "Recent conversation.",
+        PartialResponse: "No recent conversation.",
+        Time: new Date()
+      },
+      _appStatus.UUID,
+      "NoConversationResponse",
+      codeFileName,
+      "startSurvey",
+      HomeScreen.fileUploadCallBack
+    );
+
+    if (_appStatus.Debug) {
+      _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+      await appStatus.setAppStatus(_appStatus);
+      this.initApp();
+      return;
+    }
+
+    Alert.alert(strings.NO_CONVERSATION_HEADER, strings.NO_CONVERSATION, [
+      {
+        text: "OK",
+        onPress: () => {
+          if (Platform.OS === "android") {
+            BackHandler.exitApp();
+          }
+        }
+      }
+    ]);
+  }
+
   async startSurvey() {
     //Will be called if participants indicate recent conversation
     Alert.alert(
@@ -103,58 +190,11 @@ export default class HomeScreen extends React.Component {
       [
         {
           text: "Yes",
-          onPress: () => {
-            logger.info(
-              `${codeFileName}`,
-              "'Yes' to recent conversation",
-              "Navigating to StartSurvey page."
-            );
-
-            this.props.navigation.navigate("StartSurvey");
-            notificationController.cancelNotifications();
-          }
+          onPress: this.hadConversationYes
         },
         {
           text: "No",
-          onPress: async () => {
-            logger.info(
-              `${codeFileName}`,
-              "'No' to recent conversation",
-              "Uploading response and exiting App."
-            );
-
-            const _appStatus = await appStatus.loadStatus();
-            utilities.uploadData(
-              {
-                Stage: "Recent conversation.",
-                PartialResponse: "No recent conversation.",
-                Time: new Date()
-              },
-              _appStatus.UUID,
-              "NoConversationResponse",
-              codeFileName,
-              "startSurvey",
-              HomeScreen.fileUploadCallBack
-            );
-
-            if (INTERNAL_TEST) {
-              _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-              await appStatus.setAppStatus(_appStatus);
-              this.initApp();
-              return;
-            }
-
-            Alert.alert("Thank you!", "We will try again later.", [
-              {
-                text: "OK",
-                onPress: () => {
-                  if (Platform.OS === "android") {
-                    BackHandler.exitApp();
-                  }
-                }
-              }
-            ]);
-          }
+          onPress: this.hadConversationNo
         }
       ],
       { cancelable: false }
@@ -509,11 +549,13 @@ export default class HomeScreen extends React.Component {
         <DialogInput
           isDialogVisible={this.state.invitationCodeDialogVisible}
           title={this.state.invitationCodePrompt + " Testing mode"} //reminder that it is in testing mode
+          textInputProps={{ keyboardType: "numeric" }}
           submitInput={async code => {
             await this.promisedSetState({ invitationCode: code });
-            //TODO: check validity of the code
+
             const _code = this.state.invitationCode;
-            if (_code.length >= 2 && _code.toLowerCase().startsWith("i")) {
+            const debugCode = isDebugCode(_code);
+            if (debugCode || isValidInvitationCode(_code)) {
               logger.info(
                 codeFileName,
                 "invitationCodeDialog",
@@ -537,6 +579,10 @@ export default class HomeScreen extends React.Component {
                   _appStatus.InstallationDate = _installationDate;
                   _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
                   _appStatus.UUID = _uuid;
+
+                  if (debugCode) {
+                    _appStatus.Debug = true;
+                  }
 
                   logger.info(
                     codeFileName,

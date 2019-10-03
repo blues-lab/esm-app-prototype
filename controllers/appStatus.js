@@ -15,6 +15,7 @@ class AppStatus {
       CompletedSurveys: 0,
       InstallationDate: null,
       UUID: null,
+      Debug: false,
       LastSurveyCreationDate: null, //date when the last survey was created. Needed to reset counts.
       CurrentSurveyID: null,
       ExitSurveyDone: false,
@@ -23,18 +24,12 @@ class AppStatus {
     };
   }
 
-  //    async getStatus()
-  //    {
-  //        //await this.loadStatus();
-  //        //logger.debug(codeFileName,'getStatus', 'Returning app status:'+JSON.stringify(this.status));
-  //        return this.status;
-  //    }
-
   async loadStatus() {
+    let _fileContent = null;
     try {
       const _fileExists = await RNFS.exists(APP_STATUS_FILE_PATH);
       if (_fileExists) {
-        const _fileContent = await RNFS.readFile(APP_STATUS_FILE_PATH);
+        _fileContent = await RNFS.readFile(APP_STATUS_FILE_PATH);
         this.status = JSON.parse(_fileContent);
         this.status.InstallationDate = new Date(this.status.InstallationDate);
         if (this.status.FirstNotificationTime != null) {
@@ -64,8 +59,6 @@ class AppStatus {
             this.status.LastLocationPromptTime
           );
         }
-
-        //logger.info(codeFileName, 'loadStatus', 'Successfully read app status file.');
       } else {
         await logger.info(
           codeFileName,
@@ -90,7 +83,6 @@ class AppStatus {
       );
     }
 
-    //logger.info(codeFileName, 'loadStatus', 'Returning current app status :'+JSON.stringify(this.status));
     return this.status;
   }
 
@@ -113,7 +105,6 @@ class AppStatus {
   }
 
   async saveAppStatus() {
-    //await logger.info(codeFileName, 'saveAppStatus', 'Current app status :'+JSON.stringify(this.status));
     await utilities.writeJSONFile(
       this.status,
       APP_STATUS_FILE_PATH,
