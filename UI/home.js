@@ -45,11 +45,17 @@ function isDebugCode(codeString) {
  * Return true if the invitation code is valid
  *
  * In a valid invitation code, the last digit equals the sum of the remaining digits, mod 10.
+ * All valid invitation codes are also greater than 1000.
+ *
  * @param {string} codeString
  */
 function isValidInvitationCode(codeString) {
   const code = parseInt(codeString, 10);
   if (Number.isNaN(code)) {
+    return false;
+  }
+
+  if (code < 1000) {
     return false;
   }
 
