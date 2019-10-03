@@ -26,11 +26,20 @@ import utilities from "../controllers/utilities";
 import {
   USER_SETTINGS_FILE_PATH,
   INVITATION_CODE_FILE_PATH,
-  SURVEY_STATUS,
-  INTERNAL_TEST
+  SURVEY_STATUS
 } from "../controllers/constants";
 
 const codeFileName = "home.js";
+
+/**
+ * Return true if the invitation code is a debug code
+ *
+ * Debug codes start with a period
+ * @param {string} codeString
+ */
+function isDebugCode(codeString) {
+  return codeString.charAt(0) === ".";
+}
 
 /**
  * Return true if the invitation code is valid
@@ -38,7 +47,7 @@ const codeFileName = "home.js";
  * In a valid invitation code, the last digit equals the sum of the remaining digits, mod 10.
  * @param {string} codeString
  */
-function validInvitationCode(codeString) {
+function isValidInvitationCode(codeString) {
   const code = parseInt(codeString, 10);
   if (Number.isNaN(code)) {
     return false;
@@ -154,7 +163,7 @@ export default class HomeScreen extends React.Component {
       HomeScreen.fileUploadCallBack
     );
 
-    if (INTERNAL_TEST) {
+    if (_appStatus.Debug) {
       _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
       await appStatus.setAppStatus(_appStatus);
       this.initApp();
@@ -540,11 +549,13 @@ export default class HomeScreen extends React.Component {
         <DialogInput
           isDialogVisible={this.state.invitationCodeDialogVisible}
           title={this.state.invitationCodePrompt + " Testing mode"} //reminder that it is in testing mode
-          textInputProps={{ keyboardType: "number-pad" }}
+          textInputProps={{ keyboardType: "numeric" }}
           submitInput={async code => {
             await this.promisedSetState({ invitationCode: code });
+
             const _code = this.state.invitationCode;
-            if (validInvitationCode(_code)) {
+            const debugCode = isDebugCode(_code);
+            if (debugCode || isValidInvitationCode(_code)) {
               logger.info(
                 codeFileName,
                 "invitationCodeDialog",
@@ -568,6 +579,10 @@ export default class HomeScreen extends React.Component {
                   _appStatus.InstallationDate = _installationDate;
                   _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
                   _appStatus.UUID = _uuid;
+
+                  if (debugCode) {
+                    _appStatus.Debug = true;
+                  }
 
                   logger.info(
                     codeFileName,
