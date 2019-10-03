@@ -32,6 +32,33 @@ import {
 
 const codeFileName = "home.js";
 
+/**
+ * Return true if the invitation code is valid
+ *
+ * In a valid invitation code, the last digit equals the sum of the remaining digits, mod 10.
+ * @param {string} codeString
+ */
+function validInvitationCode(codeString) {
+  const code = parseInt(codeString, 10);
+  if (Number.isNaN(code)) {
+    return false;
+  }
+
+  const checkDigit = code % 10;
+  let sum = 0;
+
+  let num = Math.floor(code / 10);
+  while (num > 10) {
+    sum += num % 10;
+    num = Math.floor(num / 10);
+  }
+  sum += num % 10;
+
+  const checkValue = sum % 10;
+
+  return checkDigit === checkValue;
+}
+
 export default class HomeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return {
@@ -509,11 +536,11 @@ export default class HomeScreen extends React.Component {
         <DialogInput
           isDialogVisible={this.state.invitationCodeDialogVisible}
           title={this.state.invitationCodePrompt + " Testing mode"} //reminder that it is in testing mode
+          textInputProps={{ keyboardType: "number-pad" }}
           submitInput={async code => {
             await this.promisedSetState({ invitationCode: code });
-            //TODO: check validity of the code
             const _code = this.state.invitationCode;
-            if (_code.length >= 2 && _code.toLowerCase().startsWith("i")) {
+            if (validInvitationCode(_code)) {
               logger.info(
                 codeFileName,
                 "invitationCodeDialog",
