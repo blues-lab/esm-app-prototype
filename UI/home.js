@@ -190,11 +190,15 @@ export default class HomeScreen extends React.Component {
       [
         {
           text: "Yes",
-          onPress: this.hadConversationYes
+          onPress: () => {
+            this.hadConversationYes();
+          }
         },
         {
           text: "No",
-          onPress: this.hadConversationNo
+          onPress: () => {
+            this.hadConversationNo();
+          }
         }
       ],
       { cancelable: false }
