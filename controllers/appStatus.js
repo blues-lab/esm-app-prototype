@@ -23,13 +23,6 @@ class AppStatus {
     };
   }
 
-  //    async getStatus()
-  //    {
-  //        //await this.loadStatus();
-  //        //logger.debug(codeFileName,'getStatus', 'Returning app status:'+JSON.stringify(this.status));
-  //        return this.status;
-  //    }
-
   async loadStatus() {
     let _fileContent = null;
     try {
@@ -65,8 +58,6 @@ class AppStatus {
             this.status.LastLocationPromptTime
           );
         }
-
-        //logger.info(codeFileName, 'loadStatus', 'Successfully read app status file.');
       } else {
         await logger.info(
           codeFileName,
@@ -91,7 +82,6 @@ class AppStatus {
       );
     }
 
-    //logger.info(codeFileName, 'loadStatus', 'Returning current app status :'+JSON.stringify(this.status));
     return this.status;
   }
 
@@ -114,7 +104,6 @@ class AppStatus {
   }
 
   async saveAppStatus() {
-    //await logger.info(codeFileName, 'saveAppStatus', 'Current app status :'+JSON.stringify(this.status));
     await utilities.writeJSONFile(
       this.status,
       APP_STATUS_FILE_PATH,
