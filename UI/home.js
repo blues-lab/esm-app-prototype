@@ -122,6 +122,57 @@ export default class HomeScreen extends React.Component {
     }
   }
 
+  hadConversationYes() {
+    logger.info(
+      `${codeFileName}`,
+      "'Yes' to recent conversation",
+      "Navigating to StartSurvey page."
+    );
+
+    this.props.navigation.navigate("StartSurvey");
+    notificationController.cancelNotifications();
+  }
+
+  async hadConversationNo() {
+    logger.info(
+      `${codeFileName}`,
+      "'No' to recent conversation",
+      "Uploading response and exiting App."
+    );
+
+    const _appStatus = await appStatus.loadStatus();
+    utilities.uploadData(
+      {
+        Stage: "Recent conversation.",
+        PartialResponse: "No recent conversation.",
+        Time: new Date()
+      },
+      _appStatus.UUID,
+      "NoConversationResponse",
+      codeFileName,
+      "startSurvey",
+      HomeScreen.fileUploadCallBack
+    );
+
+    if (INTERNAL_TEST) {
+      _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+      await appStatus.setAppStatus(_appStatus);
+      this.initApp();
+      return;
+    }
+
+    Alert.alert("Thank you!", "We will try again later.", [
+      {
+        text: "OK",
+        onPress: () => {
+          if (Platform.OS === "android") {
+            BackHandler.exitApp();
+          }
+        }
+      }
+    ]);
+  }
+
   async startSurvey() {
     //Will be called if participants indicate recent conversation
     Alert.alert(
@@ -130,58 +181,11 @@ export default class HomeScreen extends React.Component {
       [
         {
           text: "Yes",
-          onPress: () => {
-            logger.info(
-              `${codeFileName}`,
-              "'Yes' to recent conversation",
-              "Navigating to StartSurvey page."
-            );
-
-            this.props.navigation.navigate("StartSurvey");
-            notificationController.cancelNotifications();
-          }
+          onPress: this.hadConversationYes
         },
         {
           text: "No",
-          onPress: async () => {
-            logger.info(
-              `${codeFileName}`,
-              "'No' to recent conversation",
-              "Uploading response and exiting App."
-            );
-
-            const _appStatus = await appStatus.loadStatus();
-            utilities.uploadData(
-              {
-                Stage: "Recent conversation.",
-                PartialResponse: "No recent conversation.",
-                Time: new Date()
-              },
-              _appStatus.UUID,
-              "NoConversationResponse",
-              codeFileName,
-              "startSurvey",
-              HomeScreen.fileUploadCallBack
-            );
-
-            if (INTERNAL_TEST) {
-              _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-              await appStatus.setAppStatus(_appStatus);
-              this.initApp();
-              return;
-            }
-
-            Alert.alert("Thank you!", "We will try again later.", [
-              {
-                text: "OK",
-                onPress: () => {
-                  if (Platform.OS === "android") {
-                    BackHandler.exitApp();
-                  }
-                }
-              }
-            ]);
-          }
+          onPress: this.hadConversationNo
         }
       ],
       { cancelable: false }
