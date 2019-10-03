@@ -322,8 +322,8 @@ export default class ServicePermissionScreen extends React.Component {
             />
           )}
 
-          <View style={{ marginRight: 10 }}>
-            <Text style={{ fontSize: 20, paddingRight: 10 }}>{item.value}</Text>
+          <View style={{ marginRight: 20 }}>
+            <Text style={{ fontSize: 20 }}>{item.value}</Text>
           </View>
         </View>
       </TouchableOpacity>
