@@ -31,10 +31,11 @@ class AppStatus {
   //    }
 
   async loadStatus() {
+    let _fileContent = null;
     try {
       const _fileExists = await RNFS.exists(APP_STATUS_FILE_PATH);
       if (_fileExists) {
-        const _fileContent = await RNFS.readFile(APP_STATUS_FILE_PATH);
+        _fileContent = await RNFS.readFile(APP_STATUS_FILE_PATH);
         this.status = JSON.parse(_fileContent);
         this.status.InstallationDate = new Date(this.status.InstallationDate);
         if (this.status.FirstNotificationTime != null) {
