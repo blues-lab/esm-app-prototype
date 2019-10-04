@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import { Text } from "react-native";
 import Mailer from "react-native-mail";
 import * as RNFS from "react-native-fs";
+import VersionNumber from "react-native-version-number";
 import logger from "./logger";
-import { VERSION_NUMBER, STUDY_PERIOD, EXIT_SURVEY_PERIOD } from "./constants";
+import { STUDY_PERIOD, EXIT_SURVEY_PERIOD } from "./constants";
 
 const fetch = require("node-fetch");
 
@@ -166,7 +167,7 @@ export default class utilities extends Component {
     try {
       _body = JSON.stringify({
         uid: uuid,
-        client: VERSION_NUMBER,
+        client: VersionNumber.appVersion,
         key: type,
         value: data
       });
