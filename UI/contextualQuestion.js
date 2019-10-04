@@ -215,7 +215,9 @@ export default class ContextualQuestionScreen extends React.Component {
     this.setState({ saveWaitVisible: false }, () => {
       Alert.alert(
         strings.SURVEY_DONE_HEADER,
-        strings.SURVEY_DONE,
+        _appStatus.EligibleForBonus
+          ? strings.SURVEY_DONE_BONUS
+          : strings.SURVEY_DONE_NO_BONUS,
         [
           {
             text: "OK",

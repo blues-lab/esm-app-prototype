@@ -351,10 +351,14 @@ export async function showPrompt() {
           logger.info(
             codeFileName,
             "showPrompt",
-            "Survey not completed today. Already " +
+            "Surveys created today: " +
               _appStatus.SurveyCountToday +
-              " surveys were created. Returning"
+              "Max survey per day: " +
+              MAX_SURVEY_PER_DAY +
+              "No survey was not completed today.  Making this participant ineligible to get bonus."
           );
+          _appStatus.EligibleForBonus = false;
+          await appStatus.setAppStatus(_appStatus);
           return;
         }
         const _createSurvey = (Math.floor(Math.random() * 100) + 1) % 2 === 0;

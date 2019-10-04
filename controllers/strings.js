@@ -170,7 +170,9 @@ export const CHILDREN_ADOLESCENT = [
 
 /* Survey completion */
 export const SURVEY_DONE_HEADER = "Congratulations!";
-export const SURVEY_DONE = "You have earned $1!";
+export const SURVEY_DONE_NO_BONUS = "You have earned $1!";
+export const SURVEY_DONE_BONUS =
+  "You have earned $1! Keep on going! If you don't miss any daily surveys, you'll get a bonus at the end!";
 
 //********* Exit survey related texts ************//
 
