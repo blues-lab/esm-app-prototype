@@ -161,11 +161,15 @@ export default class utilities extends Component {
       callerFunc + "-->uploadData",
       "Uploading data. UUID:" + uuid
     );
+
+    const timestamp = new Date().toISOString();
+
     let _body = {};
     try {
       _body = JSON.stringify({
         uid: uuid,
         client: VersionNumber.appVersion,
+        sent: timestamp,
         key: type,
         value: data
       });
