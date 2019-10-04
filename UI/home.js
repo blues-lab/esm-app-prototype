@@ -464,24 +464,6 @@ export default class HomeScreen extends React.Component {
             <Text style={{ fontSize: 16, margin: 10, marginTop: 10 }}>
               {strings.MIMI_ADVERTISEMENT}
             </Text>
-            {Platform.OS === "android" && (
-              <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
-                <Button
-                  title={strings.TRY_LATER_BUTTON + " test"}
-                  color="#20B2AA"
-                  onPress={() => {
-                    Alert.alert("Hi");
-                    logger.info(
-                      `${codeFileName}`,
-                      "No survey modal",
-                      "Closing app"
-                    );
-                    this.setState({ noSurveyDialogVisible: false });
-                    BackHandler.exitApp();
-                  }}
-                />
-              </TouchableHighlight>
-            )}
           </View>
         )}
 
@@ -584,7 +566,7 @@ export default class HomeScreen extends React.Component {
             justifyContent: "center",
             alignItems: "flex-end",
             margin: 10,
-            marginTop: 20,
+            marginTop: 5,
             marginBottom: 20
           }}
         >
