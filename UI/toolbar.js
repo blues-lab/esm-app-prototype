@@ -286,8 +286,14 @@ class ToolBar extends React.Component {
               alignItems: "center"
             }}
           >
-            <Text style={{ fontSize: 16 }}>
-              {"Survey expires in " + this.state.minRemaining + " minutes"}
+            <Text style={{ fontSize: 20 }}>
+              {this.state.minRemaining > 9
+                ? this.state.minRemaining
+                : "0" + this.state.minRemaining}
+              :
+              {this.state.secRemaining > 9
+                ? this.state.secRemaining
+                : "0" + this.state.secRemaining}
             </Text>
 
             <ProgressBarAnimated
