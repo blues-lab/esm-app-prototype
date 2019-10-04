@@ -81,6 +81,9 @@ export default class UserSettingsScreen extends React.Component {
 
     appStatus.loadStatus().then(status => {
       this.state.debug = status.Debug;
+      this.state.invitationCode = status.InvitationCode
+        ? status.InvitationCode
+        : "not available";
     });
   }
 
@@ -499,6 +502,14 @@ export default class UserSettingsScreen extends React.Component {
         />
 
         <Text>ALVA version: {VersionNumber.appVersion}</Text>
+        <Text>Invitation code: {this.state.invitationCode}</Text>
+        <Text
+          style={{
+            width: Math.floor(Dimensions.get("window").width * 0.9),
+            borderBottomColor: "black",
+            borderBottomWidth: StyleSheet.hairlineWidth
+          }}
+        />
 
         {this.state.debug && (
           <View>

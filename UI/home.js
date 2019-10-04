@@ -623,6 +623,7 @@ export default class HomeScreen extends React.Component {
                   _appStatus.InstallationDate = _installationDate;
                   _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
                   _appStatus.UUID = _uuid;
+                  _appStatus.InvitationCode = _code;
 
                   if (debugCode) {
                     _appStatus.Debug = true;
