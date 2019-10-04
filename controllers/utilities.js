@@ -12,7 +12,7 @@ const codeFileName = "utilities.js";
 class Utilities extends Component {
   serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
 
-  async fileExists(path, fileName, callerClass, callerFunc) {
+  static async fileExists(path, fileName, callerClass, callerFunc) {
     logger.info(
       `${callerClass}`,
       `${callerFunc}-->fileExists`,
@@ -24,7 +24,12 @@ class Utilities extends Component {
     return false;
   }
 
-  async writeJSONFile(contentToWrite, fileName, callerClass, callerFunc) {
+  static async writeJSONFile(
+    contentToWrite,
+    fileName,
+    callerClass,
+    callerFunc
+  ) {
     try {
       let content = contentToWrite;
       if (typeof content === "object") {
@@ -86,7 +91,7 @@ class Utilities extends Component {
     return true;
   }
 
-  async readJSONFile(filePath, callerClass, callerFunc) {
+  static async readJSONFile(filePath, callerClass, callerFunc) {
     let result = null;
     try {
       const _fileExists = await RNFS.exists(filePath);
@@ -115,7 +120,7 @@ class Utilities extends Component {
     return result;
   }
 
-  sendEmail(recipients, subject, body) {
+  static sendEmail(recipients, subject, body) {
     try {
       Mailer.mail(
         {
@@ -141,7 +146,7 @@ class Utilities extends Component {
     }
   }
 
-  async uploadData(
+  static async uploadData(
     data,
     uuid,
     type,
@@ -199,7 +204,7 @@ class Utilities extends Component {
     return _uploaded;
   }
 
-  surveyPeriodEnded(appStatus) {
+  static surveyPeriodEnded(appStatus) {
     let result = false;
     const _installationDate = appStatus.InstallationDate;
     logger.info(
@@ -228,7 +233,7 @@ class Utilities extends Component {
     return result;
   }
 
-  exitSurveyAvailableDays(appStatus) {
+  static exitSurveyAvailableDays(appStatus) {
     //returns how many days are available until exit survey period ends
     const _installationDate = appStatus.InstallationDate;
     let _remainingDays = 0;
@@ -257,7 +262,7 @@ class Utilities extends Component {
     return _remainingDays;
   }
 
-  getDateTime() {
+  static getDateTime() {
     const date = new Date();
     const day = date.getDate();
     const m = date.getMonth() + 1; //Month from 0 to 11
@@ -275,12 +280,12 @@ class Utilities extends Component {
     return y + "-" + m + "-" + day + " " + time;
   }
 
-  isNumeric(num) {
+  static isNumeric(num) {
     const _num = "" + num; //coerce num to be a string
     return !Number.isNaN(_num) && !Number.isNaN(parseFloat(_num));
   }
 
-  shuffleArray(array) {
+  static shuffleArray(array) {
     const a = array;
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
