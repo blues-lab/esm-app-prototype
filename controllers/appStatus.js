@@ -20,7 +20,8 @@ class AppStatus {
       CurrentSurveyID: null,
       ExitSurveyDone: false,
       LastLocationAccess: null, //when was the last time location sharing was enabled.
-      LastLocationPromptTime: null //when was the last time location sharing prompt was shown.
+      LastLocationPromptTime: null, //when was the last time location sharing prompt was shown.
+      EligibleForBonus: true // indicates whether this person is eligible to receive bonus for daily survey
     };
   }
 
