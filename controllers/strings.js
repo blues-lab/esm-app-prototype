@@ -314,23 +314,27 @@ export const SERVICES = [
   },
   {
     services: [
-      { serviceName: "Add task in a to-do list" },
-      {
-        serviceName:
-          "Keep track of the price of some item and notify when lower price available"
-      },
+      { serviceName: "Add task to a to-do list" },
       {
         serviceName:
           "Keep track of medication/exercise/other recurrent activities "
       },
-      { serviceName: "Track a package shipping and confirm when delivered" },
       {
         serviceName:
-          "Keep track of the opinion/preference expressed in this conversation"
+          "Keep track of information mentioned in the conversation (such as dates, names, phone numbers)"
       },
+      {
+        serviceName:
+          "Keep track of opinions/preferences expressed in this conversation"
+      },
+      {
+        serviceName:
+          "Keep track of the price of some item and notify when a lower price is available"
+      },
+      { serviceName: "Track a package and confirm when delivered" },
       { serviceName: "Keep track of travel schedules" }
     ],
-    categoryName: "Keep track of information"
+    categoryName: "Remember or keep track of information"
   },
   {
     services: [
