@@ -10,6 +10,7 @@ import {
   BackHandler,
   Dimensions
 } from "react-native";
+import { NavigationEvents } from "react-navigation";
 import PropTypes from "prop-types";
 import Mailer from "react-native-mail";
 import DateTimePicker from "react-native-modal-datetime-picker";
@@ -84,7 +85,7 @@ export default class UserSettingsScreen extends React.Component {
   }
 
   async componentDidMount() {
-    logger.info(codeFileName, "componentDidMount", "Setting event handlers.");
+    logger.info(codeFileName, "componentDidMount", "Mounting components.");
 
     await this.promisedSetState({
       backCallBack: this.props.navigation.getParam("backCallBack", null)
@@ -94,33 +95,31 @@ export default class UserSettingsScreen extends React.Component {
       backHandler: this.handleBackNavigation.bind(this)
     });
 
-    if (Platform.OS === "android") {
-      BackHandler.addEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPressAndroid.bind(this)
-      );
-    }
-
     this.loadSettings();
   }
 
   componentWillUnmount() {
-    logger.info(
-      codeFileName,
-      "componentWillUnmount",
-      "Removing event handlers."
-    );
-    if (Platform.OS === "android") {
-      BackHandler.removeEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPressAndroid
-      );
-    }
+    logger.info(codeFileName, "componentWillUnmount", "Unmounting components.");
   }
 
   onBackButtonPressAndroid = () => {
-    this.handleBackNavigation();
-    return true;
+    if (this.props.navigation.state.routeName === "UserSettings") {
+      logger.info(
+        codeFileName,
+        "onBackButtonPressAndroid",
+        "Calling handleBackNavigation."
+      );
+      this.handleBackNavigation();
+      return true;
+    }
+
+    logger.error(
+      codeFileName,
+      "onBackButtonPressAndroid",
+      "This should not be the event handler for page: " +
+        this.props.navigation.state.routeName
+    );
+    return false;
   };
 
   async getHomeSSID() {
@@ -300,8 +299,6 @@ export default class UserSettingsScreen extends React.Component {
       }
       this.props.navigation.goBack(null);
     }
-
-    return true;
   }
 
   handleDatePicked = time => {
@@ -470,6 +467,39 @@ export default class UserSettingsScreen extends React.Component {
           backgroundColor: "lavender"
         }}
       >
+        {
+          <NavigationEvents
+            onDidFocus={payload => {
+              if (Platform.OS === "android") {
+                logger.info(
+                  codeFileName,
+                  "onDidFocus",
+                  "Adding back button event handler. Payload: " +
+                    JSON.stringify(payload)
+                );
+                BackHandler.addEventListener(
+                  "hardwareBackPress",
+                  this.onBackButtonPressAndroid
+                );
+              }
+            }}
+            onWillBlur={payload => {
+              if (Platform.OS === "android") {
+                logger.info(
+                  codeFileName,
+                  "onWillBlur",
+                  "Removing back button event handler. Payload: " +
+                    JSON.stringify(payload)
+                );
+                BackHandler.removeEventListener(
+                  "hardwareBackPress",
+                  this.onBackButtonPressAndroid
+                );
+              }
+            }}
+          />
+        }
+
         {this.state.debug && (
           <View>
             <Button
@@ -749,7 +779,7 @@ export default class UserSettingsScreen extends React.Component {
                 );
                 await this.getHomeSSID();
                 //send log data to the server
-                await uploadFiles();
+                //await uploadFiles();
               }
             }}
           />

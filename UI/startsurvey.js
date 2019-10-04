@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard
 } from "react-native";
+import { NavigationEvents } from "react-navigation";
 import PropTypes from "prop-types";
 import { ProgressDialog } from "react-native-simple-dialogs";
 import * as RNFS from "react-native-fs";
@@ -39,14 +40,7 @@ export default class SurveyStartScreen extends React.Component {
   }
 
   async componentDidMount() {
-    logger.info(codeFileName, "componentDidMount", "Setting event handlers.");
-
-    if (Platform.OS === "android") {
-      BackHandler.addEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPressAndroid.bind(this)
-      );
-    }
+    logger.info(codeFileName, "componentDidMount", "Mounting components.");
 
     const _surveyID = "SurveyID-" + Date.now();
 
@@ -62,22 +56,26 @@ export default class SurveyStartScreen extends React.Component {
   }
 
   onBackButtonPressAndroid = () => {
-    //BackHandler.exitApp();
-    return true; //make it true to prevent going back
+    if (this.props.navigation.state.routeName === "StartSurvey") {
+      logger.info(
+        codeFileName,
+        "onBackButtonPressAndroid",
+        "Preventing to go back."
+      );
+      return true; //make it true to prevent going back
+    }
+
+    logger.error(
+      codeFileName,
+      "onBackButtonPressAndroid",
+      "This should not be the event handler for page: " +
+        this.props.navigation.state.routeName
+    );
+    return false;
   };
 
   componentWillUnmount() {
-    logger.info(
-      codeFileName,
-      "componentWillUnmount",
-      "Removing event handlers."
-    );
-    if (Platform.OS === "android") {
-      BackHandler.removeEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPressAndroid
-      );
-    }
+    logger.info(codeFileName, "componentWillUnmount", "Unmounting components.");
   }
 
   static fileUploadCallBack(success, error = null, data = null) {
@@ -114,6 +112,39 @@ export default class SurveyStartScreen extends React.Component {
           margin: 5
         }}
       >
+        {
+          <NavigationEvents
+            onDidFocus={payload => {
+              if (Platform.OS === "android") {
+                logger.info(
+                  codeFileName,
+                  "onDidFocus",
+                  "Adding back button event handler. Payload: " +
+                    JSON.stringify(payload)
+                );
+                BackHandler.addEventListener(
+                  "hardwareBackPress",
+                  this.onBackButtonPressAndroid
+                );
+              }
+            }}
+            onWillBlur={payload => {
+              if (Platform.OS === "android") {
+                logger.info(
+                  codeFileName,
+                  "onWillBlur",
+                  "Removing back button event handler. Payload: " +
+                    JSON.stringify(payload)
+                );
+                BackHandler.removeEventListener(
+                  "hardwareBackPress",
+                  this.onBackButtonPressAndroid
+                );
+              }
+            }}
+          />
+        }
+
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <View
             style={{

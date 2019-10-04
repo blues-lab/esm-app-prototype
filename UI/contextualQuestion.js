@@ -11,6 +11,7 @@ import {
   Switch,
   BackHandler
 } from "react-native";
+import { NavigationEvents } from "react-navigation";
 import PropTypes from "prop-types";
 import * as RNFS from "react-native-fs";
 import { ProgressDialog } from "react-native-simple-dialogs";
@@ -89,6 +90,7 @@ export default class ContextualQuestionScreen extends React.Component {
   }
 
   componentDidMount() {
+    logger.info(codeFileName, "componentDidMount", "Mounting components.");
     const { navigation } = this.props;
     const _surveyResponseJS = navigation.getParam("surveyResponseJS", null);
 
@@ -96,25 +98,29 @@ export default class ContextualQuestionScreen extends React.Component {
       surveyResponseJS: _surveyResponseJS,
       surveyProgress: navigation.getParam("surveyProgress", 0)
     });
-    if (Platform.OS === "android") {
-      BackHandler.addEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPressAndroid.bind(this)
-      );
-    }
   }
 
   onBackButtonPressAndroid = () => {
-    return true; //make it false to enable going back
+    if (this.props.navigation.state.routeName === "ContextualQuestion") {
+      logger.info(
+        codeFileName,
+        "onBackButtonPressAndroid",
+        "Preventing to go back."
+      );
+      return true; //make it true to prevent going back
+    }
+
+    logger.error(
+      codeFileName,
+      "onBackButtonPressAndroid",
+      "This should not be the event handler for page: " +
+        this.props.navigation.state.routeName
+    );
+    return false;
   };
 
   componentWillUnmount() {
-    if (Platform.OS === "android") {
-      BackHandler.removeEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPressAndroid
-      );
-    }
+    logger.info(codeFileName, "componentWillUnmount", "Unmounting components.");
   }
 
   relationSelectionHandler = selectedRelations => {
@@ -234,6 +240,38 @@ export default class ContextualQuestionScreen extends React.Component {
   render() {
     return (
       <ScrollView contentContainerStyle={{ backgroundColor: "lavender" }}>
+        {
+          <NavigationEvents
+            onDidFocus={payload => {
+              if (Platform.OS === "android") {
+                logger.info(
+                  codeFileName,
+                  "onDidFocus",
+                  "Adding back button event handler. Payload: " +
+                    JSON.stringify(payload)
+                );
+                BackHandler.addEventListener(
+                  "hardwareBackPress",
+                  this.onBackButtonPressAndroid
+                );
+              }
+            }}
+            onWillBlur={payload => {
+              if (Platform.OS === "android") {
+                logger.info(
+                  codeFileName,
+                  "onWillBlur",
+                  "Removing back button event handler. Payload: " +
+                    JSON.stringify(payload)
+                );
+                BackHandler.removeEventListener(
+                  "hardwareBackPress",
+                  this.onBackButtonPressAndroid
+                );
+              }
+            }}
+          />
+        }
         <View style={{ margin: 10 }}>
           <View style={styles.verticalViewStyle}>
             {this.state.surrounding && (

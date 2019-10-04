@@ -9,6 +9,7 @@ import {
   TouchableHighlight,
   BackHandler
 } from "react-native";
+import { NavigationEvents } from "react-navigation";
 import * as RNFS from "react-native-fs";
 import DialogInput from "react-native-dialog-input";
 import UUIDGenerator from "react-native-uuid-generator";
@@ -211,8 +212,20 @@ export default class HomeScreen extends React.Component {
     );
   }
 
-  onBackButtonPress = () => {
-    BackHandler.exitApp();
+  onBackButtonPressAndroid = () => {
+    if (this.props.navigation.state.routeName === "Home") {
+      logger.info(codeFileName, "onBackButtonPressAndroid", "Exiting app.");
+      BackHandler.exitApp();
+      return true; //make it true to prevent going back
+    }
+
+    logger.error(
+      codeFileName,
+      "onBackButtonPressAndroid",
+      "This should not be the event handler for page: " +
+        this.props.navigation.state.routeName
+    );
+    return false;
   };
 
   initApp = async () => {
@@ -291,23 +304,20 @@ export default class HomeScreen extends React.Component {
                 "Home Wifi not set. Navigating to settings page."
               );
               this.props.navigation.navigate("UserSettings");
-            } else if (_appStatus.SurveyStatus === SURVEY_STATUS.AVAILABLE) {
+            } else if (
+              _appStatus.SurveyStatus === SURVEY_STATUS.AVAILABLE ||
+              _appStatus.SurveyStatus === SURVEY_STATUS.ONGOING
+            ) {
               //check if survey is available from app settings
               logger.info(
                 codeFileName,
                 "initApp",
-                "New survey available. Asking for conversation."
+                "Survey status is " +
+                  _appStatus.SurveyStatus +
+                  ". Asking for conversation."
               );
               this.setState({ noSurveyDialogVisible: false });
               await this.startSurvey();
-            } else if (_appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) {
-              //Survey is ongoing
-              logger.info(
-                codeFileName,
-                "initApp",
-                "Survey is ongoing. Returning"
-              );
-              this.setState({ noSurveyDialogVisible: false });
               return;
             } else {
               logger.info(codeFileName, "initApp", "No survey available.");
@@ -333,15 +343,9 @@ export default class HomeScreen extends React.Component {
   };
 
   async componentDidMount() {
-    if (Platform.OS === "android") {
-      BackHandler.addEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPress.bind(this)
-      );
-    }
+    logger.info(codeFileName, "componentDidMount", "Mounting components.");
     this.props.navigation.setParams({ backCallBack: this.initApp.bind(this) });
     onAppOpen.backCallBack = this.initApp.bind(this);
-    await this.initApp();
   }
 
   promisedSetState = newState => {
@@ -388,6 +392,41 @@ export default class HomeScreen extends React.Component {
           margin: 5
         }}
       >
+        {
+          <NavigationEvents
+            onDidFocus={async payload => {
+              if (Platform.OS === "android") {
+                logger.info(
+                  codeFileName,
+                  "onDidFocus",
+                  "Adding back button event handler. Payload: " +
+                    JSON.stringify(payload)
+                );
+                BackHandler.addEventListener(
+                  "hardwareBackPress",
+                  this.onBackButtonPressAndroid
+                );
+              }
+
+              logger.info(codeFileName, "onDidFocus", "Calling initApp.");
+              await this.initApp();
+            }}
+            onWillBlur={payload => {
+              if (Platform.OS === "android") {
+                logger.info(
+                  codeFileName,
+                  "onWillBlur",
+                  "Removing back button event handler. Payload: " +
+                    JSON.stringify(payload)
+                );
+                BackHandler.removeEventListener(
+                  "hardwareBackPress",
+                  this.onBackButtonPressAndroid
+                );
+              }
+            }}
+          />
+        }
         {this.state.noSurveyDialogVisible && (
           <View
             style={{
@@ -416,9 +455,10 @@ export default class HomeScreen extends React.Component {
             {Platform.OS === "android" && (
               <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
                 <Button
-                  title={strings.TRY_LATER_BUTTON}
+                  title={strings.TRY_LATER_BUTTON + " test"}
                   color="#20B2AA"
                   onPress={() => {
+                    Alert.alert("Hi");
                     logger.info(
                       `${codeFileName}`,
                       "No survey modal",
@@ -658,17 +698,7 @@ export default class HomeScreen extends React.Component {
   }
 
   componentWillUnmount() {
-    logger.info(
-      codeFileName,
-      "componentWillUnmount",
-      "Removing listeners and event handlers"
-    );
-    if (Platform.OS === "android") {
-      BackHandler.removeEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPress
-      );
-    }
+    logger.info(codeFileName, "componentWillUnmount", "Unmounting components.");
   }
 }
 

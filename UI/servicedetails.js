@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   BackHandler
 } from "react-native";
+import { NavigationEvents } from "react-navigation";
 import PropTypes from "prop-types";
 import DialogInput from "react-native-dialog-input";
 import Icon from "react-native-vector-icons/Fontisto";
@@ -95,6 +96,7 @@ export default class ServiceDetailsScreen extends React.Component {
   }
 
   componentDidMount() {
+    logger.info(codeFileName, "componentDidMount", "Mounting components.");
     const { navigation } = this.props;
     const _serviceCategory = navigation.getParam(
       "serviceCategory",
@@ -102,7 +104,7 @@ export default class ServiceDetailsScreen extends React.Component {
     );
 
     this.props.navigation.setParams({
-      backHandler: this.onBackButtonPress.bind(this)
+      backHandler: this.onBackButtonPressAndroid.bind(this)
     });
 
     this.setState(
@@ -116,30 +118,27 @@ export default class ServiceDetailsScreen extends React.Component {
         }));
       }
     );
-
-    if (Platform.OS === "android") {
-      BackHandler.addEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPress.bind(this)
-      );
-    }
   }
+
+  onBackButtonPressAndroid = () => {
+    if (this.props.navigation.state.routeName === "ServiceDetails") {
+      logger.info(codeFileName, "onBackButtonPressAndroid", "Going back.");
+      this.props.navigation.goBack(null);
+      return true; //make it true to prevent going back
+    }
+
+    logger.error(
+      codeFileName,
+      "onBackButtonPressAndroid",
+      "This should not be the event handler for page: " +
+        this.props.navigation.state.routeName
+    );
+    return false;
+  };
 
   componentWillUnmount() {
-    if (Platform.OS === "android") {
-      BackHandler.removeEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPress
-      );
-    }
+    logger.info(codeFileName, "componentWillUnmount", "Unmounting components.");
   }
-
-  onBackButtonPress = () => {
-    //this.handleBackNavigation();
-    //Alert.alert("Back pressed!");
-    this.props.navigation.goBack(null);
-    return true;
-  };
 
   promisedSetState = newState => {
     return new Promise(resolve => {
@@ -274,6 +273,38 @@ export default class ServiceDetailsScreen extends React.Component {
   render() {
     return (
       <ScrollView contentContainerStyle={{ backgroundColor: "lavender" }}>
+        {
+          <NavigationEvents
+            onDidFocus={payload => {
+              if (Platform.OS === "android") {
+                logger.info(
+                  codeFileName,
+                  "onDidFocus",
+                  "Adding back button event handler. Payload: " +
+                    JSON.stringify(payload)
+                );
+                BackHandler.addEventListener(
+                  "hardwareBackPress",
+                  this.onBackButtonPressAndroid
+                );
+              }
+            }}
+            onWillBlur={payload => {
+              if (Platform.OS === "android") {
+                logger.info(
+                  codeFileName,
+                  "onWillBlur",
+                  "Removing back button event handler. Payload: " +
+                    JSON.stringify(payload)
+                );
+                BackHandler.removeEventListener(
+                  "hardwareBackPress",
+                  this.onBackButtonPressAndroid
+                );
+              }
+            }}
+          />
+        }
         <View
           style={{
             flex: 1,

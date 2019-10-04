@@ -6,15 +6,17 @@ import {
   View,
   Button,
   BackHandler,
-  TouchableHighlight
+  TouchableHighlight,
+  Alert
 } from "react-native";
+import { NavigationEvents } from "react-navigation";
 import PropTypes from "prop-types";
 import logger from "../controllers/logger";
 import commonStyles from "./Style";
 import ToolBar from "./toolbar";
 import * as strings from "../controllers/strings";
 
-const codeFileName = "startsurvey.js";
+const codeFileName = "alvaPrompt.js";
 
 export default class AlvaPromptScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -26,7 +28,7 @@ export default class AlvaPromptScreen extends React.Component {
         />
       ),
       headerLeft: (
-        <TouchableHighlight>
+        <TouchableHighlight style={{ margin: 1 }}>
           <Button title="<" onPress={navigation.getParam("backHandler")}>
             {" "}
           </Button>
@@ -40,44 +42,35 @@ export default class AlvaPromptScreen extends React.Component {
     this.state = { conversationTopic: "" };
   }
 
-  startNewSurvey = () =>
-    //Will be called if participants indicate recent conversation
-    {
-      //this.props.navigation.navigate('StartSurvey');
-    };
-
   componentDidMount() {
+    logger.info(codeFileName, "componentDidMount", "Mounting components.");
+
     const { navigation } = this.props;
     const _topic = navigation.getParam("conversationTopic", "");
     this.props.navigation.setParams({
-      backHandler: this.onBackButtonPress.bind(this)
+      backHandler: this.onBackButtonPressAndroid.bind(this)
     });
     this.setState({ conversationTopic: _topic });
-    if (Platform.OS === "android") {
-      BackHandler.addEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPress.bind(this)
-      );
-    }
   }
 
-  onBackButtonPress = () => {
-    this.props.navigation.goBack(null);
-    return true;
+  onBackButtonPressAndroid = () => {
+    if (this.props.navigation.state.routeName === "AlvaPrompt") {
+      logger.info(codeFileName, "onBackButtonPressAndroid", "Going back.");
+      this.props.navigation.goBack(null);
+      return true;
+    }
+
+    logger.error(
+      codeFileName,
+      "onBackButtonPressAndroid",
+      "This should not be the event handler for page: " +
+        this.props.navigation.state.routeName
+    );
+    return false;
   };
 
   componentWillUnmount() {
-    logger.info(
-      codeFileName,
-      "componentWillUnmount",
-      "Removing event listeners."
-    );
-    if (Platform.OS === "android") {
-      BackHandler.removeEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPress
-      );
-    }
+    logger.info(codeFileName, "componentWillUnmount", "Unmounting components.");
   }
 
   render() {
@@ -92,6 +85,38 @@ export default class AlvaPromptScreen extends React.Component {
           margin: 5
         }}
       >
+        {
+          <NavigationEvents
+            onDidFocus={payload => {
+              if (Platform.OS === "android") {
+                logger.info(
+                  codeFileName,
+                  "onDidFocus",
+                  "Adding back button event handler. Payload: " +
+                    JSON.stringify(payload)
+                );
+                BackHandler.addEventListener(
+                  "hardwareBackPress",
+                  this.onBackButtonPressAndroid
+                );
+              }
+            }}
+            onWillBlur={payload => {
+              if (Platform.OS === "android") {
+                logger.info(
+                  codeFileName,
+                  "onWillBlur",
+                  "Removing back button event handler. Payload: " +
+                    JSON.stringify(payload)
+                );
+                BackHandler.removeEventListener(
+                  "hardwareBackPress",
+                  this.onBackButtonPressAndroid
+                );
+              }
+            }}
+          />
+        }
         <View
           style={{
             flex: 1,

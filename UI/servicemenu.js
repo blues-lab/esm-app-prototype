@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   BackHandler
 } from "react-native";
+import { NavigationEvents } from "react-navigation";
 import PropTypes from "prop-types";
 import Icon from "react-native-vector-icons/Fontisto";
 import { ProgressDialog } from "react-native-simple-dialogs";
@@ -291,6 +292,7 @@ export default class ServiceMenuScreen extends React.Component {
   }
 
   async componentDidMount() {
+    logger.info(codeFileName, "componentDidMount", "Mounting components.");
     const { navigation } = this.props;
     const _topic = navigation.getParam("conversationTopic", "");
 
@@ -304,14 +306,26 @@ export default class ServiceMenuScreen extends React.Component {
     });
 
     await this.loadServices();
-
-    if (Platform.OS === "android") {
-      BackHandler.addEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPressAndroid.bind(this)
-      );
-    }
   }
+
+  onBackButtonPressAndroid = () => {
+    if (this.props.navigation.state.routeName === "ServiceMenu") {
+      logger.info(
+        codeFileName,
+        "onBackButtonPressAndroid",
+        "Preventing to go back."
+      );
+      return true; //make it true to prevent going back
+    }
+
+    logger.error(
+      codeFileName,
+      "onBackButtonPressAndroid",
+      "This should not be the event handler for page: " +
+        this.props.navigation.state.routeName
+    );
+    return false;
+  };
 
   flatListItemSeparator = () => {
     return (
@@ -526,6 +540,38 @@ export default class ServiceMenuScreen extends React.Component {
   render() {
     return (
       <ScrollView contentContainerStyle={{ backgroundColor: "lavender" }}>
+        {
+          <NavigationEvents
+            onDidFocus={payload => {
+              if (Platform.OS === "android") {
+                logger.info(
+                  codeFileName,
+                  "onDidFocus",
+                  "Adding back button event handler. Payload: " +
+                    JSON.stringify(payload)
+                );
+                BackHandler.addEventListener(
+                  "hardwareBackPress",
+                  this.onBackButtonPressAndroid
+                );
+              }
+            }}
+            onWillBlur={payload => {
+              if (Platform.OS === "android") {
+                logger.info(
+                  codeFileName,
+                  "onWillBlur",
+                  "Removing back button event handler. Payload: " +
+                    JSON.stringify(payload)
+                );
+                BackHandler.removeEventListener(
+                  "hardwareBackPress",
+                  this.onBackButtonPressAndroid
+                );
+              }
+            }}
+          />
+        }
         <View
           style={{
             flex: 1,
@@ -700,17 +746,8 @@ export default class ServiceMenuScreen extends React.Component {
   }
 
   componentWillUnmount() {
-    if (Platform.OS === "android") {
-      BackHandler.removeEventListener(
-        "hardwareBackPress",
-        this.onBackButtonPressAndroid
-      );
-    }
+    logger.info(codeFileName, "componentDidMount", "Unmounting components.");
   }
-
-  onBackButtonPressAndroid = () => {
-    return true;
-  };
 }
 
 ServiceMenuScreen.propTypes = {
