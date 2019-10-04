@@ -19,6 +19,7 @@ import Dialog from "react-native-dialog";
 import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions";
 import { NetworkInfo } from "react-native-network-info";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
+import VersionNumber from "react-native-version-number";
 
 import appStatus from "../controllers/appStatus";
 import notificationController from "../controllers/notificationController";
@@ -31,7 +32,6 @@ import {
   SURVEY_STATUS
 } from "../controllers/constants";
 import * as strings from "../controllers/strings";
-import { uploadFiles } from "../controllers/backgroundJobs";
 
 const codeFileName = "userSettings.js";
 
@@ -467,38 +467,38 @@ export default class UserSettingsScreen extends React.Component {
           backgroundColor: "lavender"
         }}
       >
-        {
-          <NavigationEvents
-            onDidFocus={payload => {
-              if (Platform.OS === "android") {
-                logger.info(
-                  codeFileName,
-                  "onDidFocus",
-                  "Adding back button event handler. Payload: " +
-                    JSON.stringify(payload)
-                );
-                BackHandler.addEventListener(
-                  "hardwareBackPress",
-                  this.onBackButtonPressAndroid
-                );
-              }
-            }}
-            onWillBlur={payload => {
-              if (Platform.OS === "android") {
-                logger.info(
-                  codeFileName,
-                  "onWillBlur",
-                  "Removing back button event handler. Payload: " +
-                    JSON.stringify(payload)
-                );
-                BackHandler.removeEventListener(
-                  "hardwareBackPress",
-                  this.onBackButtonPressAndroid
-                );
-              }
-            }}
-          />
-        }
+        <NavigationEvents
+          onDidFocus={payload => {
+            if (Platform.OS === "android") {
+              logger.info(
+                codeFileName,
+                "onDidFocus",
+                "Adding back button event handler. Payload: " +
+                  JSON.stringify(payload)
+              );
+              BackHandler.addEventListener(
+                "hardwareBackPress",
+                this.onBackButtonPressAndroid
+              );
+            }
+          }}
+          onWillBlur={payload => {
+            if (Platform.OS === "android") {
+              logger.info(
+                codeFileName,
+                "onWillBlur",
+                "Removing back button event handler. Payload: " +
+                  JSON.stringify(payload)
+              );
+              BackHandler.removeEventListener(
+                "hardwareBackPress",
+                this.onBackButtonPressAndroid
+              );
+            }
+          }}
+        />
+
+        <Text>ALVA version: {VersionNumber.appVersion}</Text>
 
         {this.state.debug && (
           <View>
