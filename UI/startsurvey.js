@@ -41,18 +41,6 @@ export default class SurveyStartScreen extends React.Component {
 
   async componentDidMount() {
     logger.info(codeFileName, "componentDidMount", "Mounting components.");
-
-    const _surveyID = "SurveyID-" + Date.now();
-
-    const _appStatus = await appStatus.loadStatus();
-    _appStatus.CurrentSurveyID = _surveyID;
-    _appStatus.SurveyStatus = SURVEY_STATUS.ONGOING;
-    await appStatus.setAppStatus(_appStatus);
-    logger.info(
-      codeFileName,
-      "componentDidMount",
-      "Starting new survey with id: " + _surveyID
-    );
   }
 
   onBackButtonPressAndroid = () => {

@@ -138,15 +138,27 @@ export default class HomeScreen extends React.Component {
     }
   }
 
-  hadConversationYes() {
+  async hadConversationYes() {
+    const _surveyID = "SurveyID-" + Date.now();
     logger.info(
       `${codeFileName}`,
-      "'Yes' to recent conversation",
-      "Navigating to StartSurvey page."
+      "hadConversationYes",
+      "Starting new survey with id: " + _surveyID
     );
 
-    this.props.navigation.navigate("StartSurvey");
+    const _appStatus = await appStatus.loadStatus();
+    _appStatus.CurrentSurveyID = _surveyID;
+    _appStatus.SurveyStatus = SURVEY_STATUS.ONGOING;
+
+    logger.info(
+      codeFileName,
+      "hadConversationYes",
+      "Updating app status and navigating to startSurvey."
+    );
+
+    await appStatus.setAppStatus(_appStatus);
     notificationController.cancelNotifications();
+    this.props.navigation.navigate("StartSurvey");
   }
 
   async hadConversationNo() {
