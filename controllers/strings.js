@@ -83,7 +83,7 @@ export const TALKING_ABOUT_REQUIRED =
 /* Questions about relevant services*/
 export const PROMPT_SCREEN_TITLE = "ALVA"; // TODO: I don't think this is actually seen anywhere?
 export const IMAGINE_TEXT = format(
-  "Imagine an **always-listening voice assistant**, ALVA, was able to offer you services that were **relevant to your conversation**."
+  "Imagine that ALVA, the **always-listening voice assistant**, was able to offer you services that were **relevant to the conversation you just had.**."
 );
 export const SELECT_RELEVANT_SERVICES = format(
   "What services could ALVA offer **based on the conversation you just had**? (They don't have to be services you would want or use.)"
