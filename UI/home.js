@@ -11,10 +11,10 @@ import {
 } from "react-native";
 import { NavigationEvents } from "react-navigation";
 import * as RNFS from "react-native-fs";
-import DialogInput from "react-native-dialog-input";
 import UUIDGenerator from "react-native-uuid-generator";
 import AsyncStorage from "@react-native-community/async-storage";
 import PropTypes from "prop-types";
+import DialogInput from "./vendor/DialogInput";
 import notificationController, {
   onAppOpen
 } from "../controllers/notificationController";
