@@ -9,7 +9,7 @@ const fetch = require("node-fetch");
 
 const codeFileName = "utilities.js";
 
-class Utilities extends Component {
+export default class utilities extends Component {
   serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
 
   static async fileExists(path, fileName, callerClass, callerFunc) {
@@ -294,8 +294,8 @@ class Utilities extends Component {
     return a;
   }
 }
-const utilities = new Utilities();
-export default utilities;
+//const utilities = new Utilities();
+//export default utilities;
 
 const BOLD_MARKER = "**";
 /**
