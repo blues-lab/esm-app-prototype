@@ -33,7 +33,7 @@ import ContextualQuestionScreen from "./UI/contextualQuestion";
 import ExitSurveyScreen from "./UI/exitSurvey";
 import UserSettingsScreen from "./UI/userSettings";
 import AlvaPromptScreen from "./UI/alvaPrompt";
-import utilities from "./controllers/utilities";
+import * as utilities from "./controllers/utilities";
 import {
   USER_SETTINGS_FILE_PATH,
   SERVICE_FILE_LOCAL

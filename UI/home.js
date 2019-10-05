@@ -23,7 +23,7 @@ import appStatus from "../controllers/appStatus";
 import * as strings from "../controllers/strings";
 import commonStyles from "./Style";
 import ToolBar from "./toolbar";
-import utilities from "../controllers/utilities";
+import * as utilities from "../controllers/utilities";
 import {
   USER_SETTINGS_FILE_PATH,
   INVITATION_CODE_FILE_PATH,

@@ -20,7 +20,7 @@ import appStatus from "../controllers/appStatus";
 import { SELECTED_SERVICES_FILE } from "../controllers/constants";
 import logger from "../controllers/logger";
 import * as strings from "../controllers/strings";
-import utilities from "../controllers/utilities";
+import * as utilities from "../controllers/utilities";
 import commonStyle from "./Style";
 
 const codeFileName = "exitSurvey.js";

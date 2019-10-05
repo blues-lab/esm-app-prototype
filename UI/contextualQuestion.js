@@ -22,7 +22,7 @@ import appStatus from "../controllers/appStatus";
 import notificationController from "../controllers/notificationController";
 import Locations from "./locations";
 import Relations from "./relations";
-import utilities from "../controllers/utilities";
+import * as utilities from "../controllers/utilities";
 import { SURVEY_STATUS } from "../controllers/constants";
 import ToolBar from "./toolbar";
 import * as strings from "../controllers/strings";

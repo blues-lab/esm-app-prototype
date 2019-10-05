@@ -25,7 +25,7 @@ import appStatus from "../controllers/appStatus";
 import notificationController from "../controllers/notificationController";
 import logger from "../controllers/logger";
 import commonStyle from "./Style";
-import utilities from "../controllers/utilities";
+import * as utilities from "../controllers/utilities";
 import {
   USER_SETTINGS_FILE_PATH,
   LOG_FILE_PATH,

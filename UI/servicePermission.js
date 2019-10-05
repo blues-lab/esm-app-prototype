@@ -20,7 +20,7 @@ import { ProgressDialog } from "react-native-simple-dialogs";
 import Icon from "react-native-vector-icons/Fontisto";
 import commonStyle from "./Style";
 import logger from "../controllers/logger";
-import utilities from "../controllers/utilities";
+import * as utilities from "../controllers/utilities";
 import ToolBar from "./toolbar";
 import appStatus from "../controllers/appStatus";
 import * as strings from "../controllers/strings";

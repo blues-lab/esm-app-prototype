@@ -1,6 +1,6 @@
 import * as RNFS from "react-native-fs";
 import logger from "./logger";
-import utilities from "./utilities";
+import * as utilities from "./utilities";
 import { SURVEY_STATUS, APP_STATUS_FILE_PATH } from "./constants";
 
 const codeFileName = "appStatus.js";

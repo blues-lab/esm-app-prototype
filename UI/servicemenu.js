@@ -24,7 +24,7 @@ import commonStyles from "./Style";
 import ToolBar from "./toolbar";
 import * as strings from "../controllers/strings";
 import logger from "../controllers/logger";
-import utilities from "../controllers/utilities";
+import * as utilities from "../controllers/utilities";
 import {
   SELECTED_SERVICES_FILE,
   SERVICE_FILE_LOCAL
