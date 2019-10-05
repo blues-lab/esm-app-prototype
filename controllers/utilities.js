@@ -10,20 +10,6 @@ const fetch = require("node-fetch");
 
 const codeFileName = "utilities.js";
 
-const serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
-
-async function fileExists(path, fileName, callerClass, callerFunc) {
-  logger.info(
-    `${callerClass}`,
-    `${callerFunc}-->fileExists`,
-    "Checking if file exists:" + fileName
-  );
-  if (await RNFS.exists(path)) {
-    return true;
-  }
-  return false;
-}
-
 export async function writeJSONFile(
   contentToWrite,
   fileName,
