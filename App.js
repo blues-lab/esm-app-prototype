@@ -140,9 +140,12 @@ const AppNavigator = createStackNavigator(
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends Component {
-  state = {};
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
 
-  async generateInitialFiles() {
+  static async generateInitialFiles() {
     logger.info(codeFileName, "generateInitialFiles", "Writing initial files.");
     if (!(await RNFS.exists(USER_SETTINGS_FILE_PATH))) {
       //write default settings
@@ -262,7 +265,7 @@ export default class App extends Component {
       });
     }
 
-    await this.generateInitialFiles();
+    await App.generateInitialFiles();
   }
 
   componentWillUnmount() {
