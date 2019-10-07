@@ -16,7 +16,7 @@ import appStatus from "../controllers/appStatus";
 import { SURVEY_STATUS, PROMPT_DURATION } from "../controllers/constants";
 import notificationController from "../controllers/notificationController";
 import logger from "../controllers/logger";
-import { SURVEY_EXPIRED } from "../controllers/strings";
+import { SURVEY_EXPIRED, SURVEY_EXPIRED_HEADER } from "../controllers/strings";
 
 const codeFileName = "toolbar.js";
 
@@ -224,7 +224,7 @@ class ToolBar extends React.Component {
 
           if (this.props.title !== "Settings") {
             Alert.alert(
-              "Survey expired!",
+              SURVEY_EXPIRED_HEADER,
               SURVEY_EXPIRED,
               [
                 {
@@ -286,7 +286,7 @@ class ToolBar extends React.Component {
               alignItems: "center"
             }}
           >
-            {this.state.minRemaining <= 15 && (
+            {this.state.minRemaining <= 15 && this.state.minRemaining >= 0 && (
               <Text style={{ fontSize: 20 }}>
                 {this.state.minRemaining > 9
                   ? this.state.minRemaining

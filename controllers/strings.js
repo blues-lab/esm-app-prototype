@@ -9,6 +9,7 @@ export const SAVE_CHANGES_PROMPT = "Do you want to save changes?";
 
 export const SURVEY_EXPIRED =
   "Sorry, the current survey expired. We will notify you once new surveys become available.";
+export const SURVEY_EXPIRED_HEADER = "Survey expired!";
 
 export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
 
@@ -52,6 +53,7 @@ export const NEW_SURVEY_HEADER = "New survey!";
 export const CONVERSATION_PROMPT = "Have you had a conversation recently?";
 export const NO_CONVERSATION_HEADER = "Thank you!";
 export const NO_CONVERSATION = "We will try again later.";
+export const TAKE_NEW_SURVEY = "Take the new survey!";
 
 /* Saving messages that appear between screens and at the end */
 export const SAVING_WAIT = "Saving response. Please wait...";
