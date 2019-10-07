@@ -122,27 +122,27 @@ export const ACCESS_SELECTION_REQUIRED_HEADER = "Error";
 export const ACCESS_SELECTION_REQUIRED = "Please select an option to continue.";
 
 export const DATA_RETENTION_QUESTION_TRANSCRIPT =
-  "Should ALVA store a transcript of this conversation, " +
+  "Would you want ALVA to store a transcript of this conversation, " +
   "so you can check that it provided the services correctly?";
 export const DATA_RETENTION_QUESTION_LENGTH =
-  "How long should ALVA store the " +
+  "How long would you want ALVA to store the " +
   "audio recording of this conversation for the purpose of improving its functionality?";
 export const DATA_RETENTION_TRANSCRIPT_OPTIONS = [
-  "Yes, keep the transcript for my review.",
-  "No, don't keep the transcript for my review.",
-  "Other."
+  "Yes, keep the transcript for my review",
+  "No, don't keep the transcript for my review",
+  "Other"
 ];
 export const DATA_RETENTION_LENGTH_OPTIONS = [
-  "Store until the service has been provided.",
-  "Store until I request to delete it.",
-  "Store for a specific amount of time.",
+  "Store until the service has been provided",
+  "Store until I request to delete it",
+  "Store for a specific amount of time",
   "Other"
 ];
 export const PLEASE_EXPLAIN = "Please explain";
 
 /* Contextual questions */
 export const CONTEXT_INTRO =
-  "Answer a few questions about the conversation you just had.";
+  "Please answer a few questions about the conversation you just had.";
 export const CONTEXT_WHERE = "Where were you talking?";
 export const CONTEXT_WHERE_LOCATIONS = [
   "Bedroom",
