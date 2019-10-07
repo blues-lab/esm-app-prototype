@@ -362,19 +362,19 @@ export default class UserSettingsScreen extends React.Component {
     let ret = "";
 
     if (_hour === 12) {
-      ret = _hour.toString() + ":" + _min + " pm";
+      ret = _hour.toString() + ":" + _min + " PM";
     } else if (_hour === 0) {
-      ret = "12:" + _min + " am";
+      ret = "12:" + _min + " AM";
     } else if (_hour >= 13) {
       _hour -= 12;
       _hour = _hour > 9 ? _hour.toString() : "0" + _hour.toString();
-      ret = _hour + ":" + _min + " pm";
+      ret = _hour + ":" + _min + " PM";
     } else {
       ret =
         (_hour > 9 ? _hour.toString() : "0" + _hour.toString()) +
         ":" +
         _min +
-        " am";
+        " AM";
     }
 
     return ret;
