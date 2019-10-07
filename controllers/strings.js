@@ -123,10 +123,10 @@ export const ACCESS_SELECTION_REQUIRED_HEADER = "Error";
 export const ACCESS_SELECTION_REQUIRED = "Please select an option to continue.";
 
 export const DATA_RETENTION_QUESTION_TRANSCRIPT =
-  "Should ALVA store a transcript of this conversation, " +
+  "Would you want ALVA to store a transcript of this conversation, " +
   "so you can check that it provided the services correctly?";
 export const DATA_RETENTION_QUESTION_LENGTH =
-  "How long should ALVA store the " +
+  "How long would you want ALVA to store the " +
   "audio recording of this conversation for the purpose of improving its functionality?";
 export const DATA_RETENTION_TRANSCRIPT_OPTIONS = [
   "Yes, keep the transcript for my review",
