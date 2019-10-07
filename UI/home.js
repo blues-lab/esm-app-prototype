@@ -27,7 +27,8 @@ import utilities from "../controllers/utilities";
 import {
   USER_SETTINGS_FILE_PATH,
   INVITATION_CODE_FILE_PATH,
-  SURVEY_STATUS
+  SURVEY_STATUS,
+  PROMPT_DURATION
 } from "../controllers/constants";
 
 const codeFileName = "home.js";
@@ -182,27 +183,17 @@ export default class HomeScreen extends React.Component {
       HomeScreen.fileUploadCallBack
     );
 
-    if (_appStatus.Debug) {
-      _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-      await appStatus.setAppStatus(_appStatus);
-      this.initApp();
-      return;
-    }
+    //    if (_appStatus.Debug) {
+    //      _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+    //      await appStatus.setAppStatus(_appStatus);
+    //      this.initApp();
+    //      return;
+    //    }
 
-    Alert.alert(strings.NO_CONVERSATION_HEADER, strings.NO_CONVERSATION, [
-      {
-        text: "OK",
-        onPress: () => {
-          if (Platform.OS === "android") {
-            BackHandler.exitApp();
-          }
-        }
-      }
-    ]);
+    Alert.alert(strings.NO_CONVERSATION_HEADER, strings.NO_CONVERSATION);
   }
 
   async startSurvey() {
-    //Will be called if participants indicate recent conversation
     Alert.alert(
       strings.NEW_SURVEY_HEADER,
       strings.CONVERSATION_PROMPT,
@@ -317,8 +308,9 @@ export default class HomeScreen extends React.Component {
               );
               this.props.navigation.navigate("UserSettings");
             } else if (
-              _appStatus.SurveyStatus === SURVEY_STATUS.AVAILABLE ||
-              _appStatus.SurveyStatus === SURVEY_STATUS.ONGOING
+              (_appStatus.SurveyStatus === SURVEY_STATUS.AVAILABLE ||
+                _appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) &&
+              !(await utilities.currentSurveyExpired())
             ) {
               //check if survey is available from app settings
               logger.info(
@@ -356,6 +348,7 @@ export default class HomeScreen extends React.Component {
 
   async componentDidMount() {
     logger.info(codeFileName, "componentDidMount", "Mounting components.");
+    onAppOpen.backCallBack = this.initApp.bind(this);
   }
 
   promisedSetState = newState => {
@@ -437,6 +430,54 @@ export default class HomeScreen extends React.Component {
             }}
           />
         }
+
+        {!this.state.noSurveyDialogVisible &&
+          !this.state.studyPeriodEnded &&
+          !this.state.exitSurveyDone &&
+          !this.state.exitSurveyAvailable && (
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "column",
+                justifyContent: "space-around",
+                alignItems: "center",
+                margin: 5
+              }}
+            >
+              <Text
+                style={{
+                  color: "green",
+                  fontSize: 22,
+                  margin: 0,
+                  textAlign: "center",
+                  textDecorationLine: "underline"
+                }}
+                onPress={async () => {
+                  if (await utilities.currentSurveyExpired()) {
+                    logger.info(
+                      codeFileName,
+                      "TakeSurveyButton",
+                      "Survey expired, updating home screen and returning."
+                    );
+
+                    Alert.alert(
+                      strings.SURVEY_EXPIRED_HEADER,
+                      strings.SURVEY_EXPIRED
+                    );
+                    this.setState({ noSurveyDialogVisible: true });
+                    await appStatus.setSurveyStatus(
+                      SURVEY_STATUS.NOT_AVAILABLE
+                    );
+                  } else {
+                    this.startSurvey();
+                  }
+                }}
+              >
+                {strings.TAKE_NEW_SURVEY}
+              </Text>
+            </View>
+          )}
+
         {this.state.noSurveyDialogVisible && (
           <View
             style={{

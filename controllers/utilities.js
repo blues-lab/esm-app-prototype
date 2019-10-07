@@ -4,8 +4,8 @@ import Mailer from "react-native-mail";
 import * as RNFS from "react-native-fs";
 import VersionNumber from "react-native-version-number";
 import logger from "./logger";
-import { STUDY_PERIOD, EXIT_SURVEY_PERIOD } from "./constants";
-
+import { STUDY_PERIOD, EXIT_SURVEY_PERIOD, PROMPT_DURATION } from "./constants";
+import appStatus from "./appStatus";
 const fetch = require("node-fetch");
 
 const codeFileName = "utilities.js";
@@ -205,6 +205,42 @@ export default class utilities extends Component {
     }
 
     return _uploaded;
+  }
+
+  static async currentSurveyExpired() {
+    const _appStatus = await appStatus.loadStatus();
+
+    const _firstNotificationTime = _appStatus.FirstNotificationTime;
+    if (_appStatus.SurveyCountToday === 0 || _firstNotificationTime === null) {
+      logger.info(
+        codeFileName,
+        "currentSurveyExpired",
+        "_appStatus.SurveyCountToday: " +
+          _appStatus.SurveyCountToday +
+          "_appStatus.FirstNotificationTime: " +
+          _firstNotificationTime +
+          ", returning true."
+      );
+      return true;
+    }
+    const _minPassed = Math.floor(
+      (Date.now() - _firstNotificationTime) / 60000
+    );
+    const _remainingTime = PROMPT_DURATION - _minPassed;
+    const _expired = _remainingTime <= 0;
+
+    logger.info(
+      codeFileName,
+      "currentSurveyExpired",
+      "_firstNotificationTime:" +
+        _firstNotificationTime +
+        ", _remainingTime:" +
+        _remainingTime +
+        " minutes, expired:" +
+        _expired
+    );
+
+    return _expired;
   }
 
   static surveyPeriodEnded(appStatus) {
