@@ -129,14 +129,14 @@ export const DATA_RETENTION_QUESTION_LENGTH =
   "How long should ALVA store the " +
   "audio recording of this conversation for the purpose of improving its functionality?";
 export const DATA_RETENTION_TRANSCRIPT_OPTIONS = [
-  "Yes, keep the transcript for my review.",
-  "No, don't keep the transcript for my review.",
-  "Other."
+  "Yes, keep the transcript for my review",
+  "No, don't keep the transcript for my review",
+  "Other"
 ];
 export const DATA_RETENTION_LENGTH_OPTIONS = [
-  "Store until the service has been provided.",
-  "Store until I request to delete it.",
-  "Store for a specific amount of time.",
+  "Store until the service has been provided",
+  "Store until I request to delete it",
+  "Store for a specific amount of time",
   "Other"
 ];
 export const PLEASE_EXPLAIN = "Please explain";
