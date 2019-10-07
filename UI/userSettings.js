@@ -790,7 +790,7 @@ export default class UserSettingsScreen extends React.Component {
                 );
                 await this.getHomeSSID();
                 //send log data to the server
-                //await uploadFiles();
+                await uploadFiles();
               }
             }}
           />
