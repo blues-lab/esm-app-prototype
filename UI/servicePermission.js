@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   BackHandler
 } from "react-native";
+import DialogInput from "react-native-dialog-input";
 import { NavigationEvents } from "react-navigation";
 import PropTypes from "prop-types";
 import * as RNFS from "react-native-fs";
@@ -60,10 +61,18 @@ export default class ServicePermissionScreen extends React.Component {
       permissionResponses: [],
       surveyResponseJS: null, // full survey response so far sent from the serviceMenu page
       saveWaitVisible: false,
-      followUpQuestions: false, //indicates whether permission options or follow up questions should be shown
-      permissionQuestions: true,
-      dataRetentionQuestions: false, //should the data retention question be shown?
-      dataRetentionDecision: ""
+      askingPermissionFollowUpQuestions: false, //indicates whether permission options or follow up questions should be shown
+      askingPermissionQuestions: true,
+      askingDataRetentionQuestions: false, //should the data retention question be shown?
+      askingDataRetentionLengthQuestions: false, //should the data retention length question be shown?
+      dataRetentionTranscriptDecision: "", //selected decision about transcript
+      dataRetentionLengthDecision: "", //selected decision about data retention length
+      dataRetentionTranscriptDialogVisible: false, // dialog visible to explain 'other' option for transcript question?
+      dataRetentionLengthSpecificDialogVisible: false, // dialog visible to explain 'specific_text' option for length question?
+      dataRetentionLengthOtherDialogVisible: false, // dialog visible to explain 'other' option for length question?
+      dataRetentionTranscriptOtherText: "", //  explanation for 'other' option for transcript question
+      dataRetentionLengthSpecificText: "", //response for 'store for a specific amount of time ______ (open-ended answer)'
+      dataRetentionLengthOtherText: "" //  explanation for 'other' option for length question
     };
 
     this.permissionOptions = [
@@ -81,15 +90,39 @@ export default class ServicePermissionScreen extends React.Component {
       }
     ];
 
-    this.dataRetentionOptions = [
+    this.dataRetentionTranscriptOptions = [
       {
         key: "agree",
-        value: strings.DATA_RETENTION_AGREE
+        value: strings.DATA_RETENTION_TRANSCRIPT_OPTIONS[0]
       },
 
       {
         key: "deny",
-        value: strings.DATA_RETENTION_DENY
+        value: strings.DATA_RETENTION_TRANSCRIPT_OPTIONS[1]
+      },
+      {
+        key: "other",
+        value: strings.DATA_RETENTION_TRANSCRIPT_OPTIONS[2]
+      }
+    ];
+
+    this.dataRetentionLengthOptions = [
+      {
+        key: "service_provided",
+        value: strings.DATA_RETENTION_LENGTH_OPTIONS[0]
+      },
+
+      {
+        key: "deliberate_delete",
+        value: strings.DATA_RETENTION_LENGTH_OPTIONS[1]
+      },
+      {
+        key: "specific_time",
+        value: strings.DATA_RETENTION_LENGTH_OPTIONS[2]
+      },
+      {
+        key: "other",
+        value: strings.DATA_RETENTION_LENGTH_OPTIONS[3]
       }
     ];
   }
@@ -113,8 +146,8 @@ export default class ServicePermissionScreen extends React.Component {
       services: _services,
       surveyProgress: _surveyProgress,
       surveyResponseJS: _surveyResponseJS,
-      permissionQuestions: _services !== null,
-      dataRetentionQuestions: _services === null
+      askingPermissionQuestions: _services !== null,
+      askingDataRetentionQuestions: _services === null
     });
   }
 
@@ -144,137 +177,234 @@ export default class ServicePermissionScreen extends React.Component {
     await this.promisedSetState({ sharingDecision: item.key });
   };
 
-  dataRetentionSelectionChangedHandler = async item => {
-    await this.promisedSetState({ dataRetentionDecision: item.key });
+  dataRetentionTranscriptSelectionChangedHandler = async item => {
+    await this.promisedSetState({
+      dataRetentionTranscriptDialogVisible: item.key === "other",
+      dataRetentionTranscriptDecision: item.key
+    });
   };
 
-  async saveResponse() {
-    if (this.state.permissionQuestions) {
+  dataRetentionLengthSelectionChangedHandler = async item => {
+    await this.promisedSetState({
+      dataRetentionLengthSpecificDialogVisible: item.key === "specific_time",
+      dataRetentionLengthOtherDialogVisible: item.key === "other",
+      dataRetentionLengthDecision: item.key
+    });
+  };
+
+  async savePermissionQuestionResponses() {
+    /* 1. Check response validity and save them (if valid) to the questions asking about sharing conversation to
+          receive a service.
+       2. Go to the next service OR
+       3. If no service remaining, then go the the data retention questions.
+    */
+
+    logger.info(
+      codeFileName,
+      "savePermissionQuestionResponses",
+      `service:${this.state.services[this.state.currentServiceIdx].serviceName},
+           sharingDecision:${this.state.sharingDecision},
+           whyPartShare:${this.state.whyPartShare},
+           partsToRedact:${this.state.partsToRedact},
+           whyNoShare:${this.state.whyNoShare}`
+    );
+
+    // 1. Check validity
+    const _notAllAnswered =
+      this.state.sharingDecision.length === 0 ||
+      (this.state.sharingDecision === partialShare &&
+        (this.state.whyPartShare.length === 0 ||
+          this.state.partsToRedact.length === 0)) ||
+      (this.state.sharingDecision === noShare &&
+        this.state.whyNoShare.length === 0);
+
+    if (_notAllAnswered) {
+      Alert.alert("Error", strings.ANSWER_TO_CONTINUE);
+      logger.warn(
+        codeFileName,
+        "savePermissionQuestionResponses",
+        "Not all questions were answered, returning."
+      );
+      return;
+    }
+
+    // 2. Save response
+    const _permissionResponse = {
+      ServiceCategory: this.state.services[this.state.currentServiceIdx]
+        .categoryName,
+      ServiceName: this.state.services[this.state.currentServiceIdx]
+        .serviceName,
+      Sharing: this.state.sharingDecision,
+      PartsToRedact: this.state.partsToRedact,
+      WhyPartShare: this.state.whyPartShare,
+      WhyNoShare: this.state.whyNoShare
+    };
+
+    const _permissionResponses = this.state.permissionResponses;
+    _permissionResponses.push(_permissionResponse);
+    const _surveyResponseJS = this.state.surveyResponseJS;
+    _surveyResponseJS.PermissionResponses = _permissionResponses;
+
+    // 3. Go to the next service or data retention questions
+    const _nextServiceIdx = this.state.currentServiceIdx + 1;
+    if (_nextServiceIdx < this.state.services.length) {
+      //more services remaining
       logger.info(
         codeFileName,
-        "saveResponse",
-        `service:${this.state.services[this.state.currentServiceIdx].serviceName}, sharingDecision:${this.state.sharingDecision}`
+        "savePermissionQuestionResponses",
+        "Saving response and going to the next service."
       );
-
-      if (this.state.sharingDecision === partialShare) {
-        if (
-          this.state.whyPartShare.length === 0 ||
-          this.state.partsToRedact.length === 0
-        ) {
-          Alert.alert("Error", strings.ANSWER_TO_CONTINUE);
-          logger.info(
-            codeFileName,
-            "saveResponse",
-            "Not all questions regarding partial share is answered. Returning"
-          );
-          return;
-        }
-      }
-      if (this.state.sharingDecision === noShare) {
-        if (this.state.whyNoShare.length === 0) {
-          Alert.alert("Error", strings.ANSWER_TO_CONTINUE);
-          logger.info(
-            codeFileName,
-            "saveResponse",
-            "Not all questions regarding no share is answered. Returning"
-          );
-          return;
-        }
-      }
-
-      const _permissionResponse = {
-        ServiceCategory: this.state.services[this.state.currentServiceIdx]
-          .categoryName,
-        ServiceName: this.state.services[this.state.currentServiceIdx]
-          .serviceName,
-        Sharing: this.state.sharingDecision,
-        PartsToRedact: this.state.partsToRedact,
-        WhyPartShare: this.state.whyPartShare,
-        WhyNoShare: this.state.whyNoShare
-      };
-
-      const _permissionResponses = this.state.permissionResponses;
-      _permissionResponses.push(_permissionResponse);
-      const _surveyResponseJS = this.state.surveyResponseJS;
-      _surveyResponseJS.PermissionResponses = _permissionResponses;
-
-      const _nextServiceIdx = this.state.currentServiceIdx + 1;
-      if (_nextServiceIdx < this.state.services.length) {
-        //more services remaining
-        logger.info(
-          codeFileName,
-          "saveResponse",
-          "Saving response and going to the next service."
-        );
-        const _surveyProgress =
-          this.state.surveyProgress +
-          Math.floor(35 / this.state.services.length);
-        await this.promisedSetState({
-          surveyResponseJS: _surveyResponseJS,
-          currentServiceIdx: _nextServiceIdx,
-          surveyProgress: _surveyProgress,
-          whyNoShare: "",
-          whyPartShare: "",
-          partsToRedact: "",
-          sharingDecision: "",
-          followUpQuestions: false
-        });
-        this.props.navigation.setParams({ surveyProgress: _surveyProgress });
-      } //no more service, ask data retention question
-      else {
-        await this.promisedSetState({
-          permissionQuestions: false,
-          followUpQuestions: false,
-          dataRetentionQuestions: true
-        });
-      }
-    } else if (this.state.dataRetentionQuestions) {
-      if (this.state.dataRetentionDecision.length === 0) {
-        Alert.alert("Error", strings.ANSWER_TO_CONTINUE);
-        logger.info(
-          codeFileName,
-          "saveResponse",
-          "Not all questions regarding data retention is answered. Returning."
-        );
-        return;
-      }
-      await this.promisedSetState(prevState => {
-        const _surveyResponseJS = prevState.surveyResponseJS;
-        _surveyResponseJS.dataRetentionDecision =
-          prevState.dataRetentionDecision;
-
-        return { surveyResponseJS: _surveyResponseJS };
+      const _surveyProgress =
+        this.state.surveyProgress + Math.floor(35 / this.state.services.length);
+      await this.promisedSetState({
+        surveyResponseJS: _surveyResponseJS,
+        currentServiceIdx: _nextServiceIdx,
+        surveyProgress: _surveyProgress,
+        whyNoShare: "",
+        whyPartShare: "",
+        partsToRedact: "",
+        sharingDecision: "",
+        askingPermissionQuestions: true,
+        askingPermissionFollowUpQuestions: false
       });
-
-      //all done, save response and go to the contextual questions page
+      this.props.navigation.setParams({ surveyProgress: _surveyProgress });
+    } //no more permission question, ask data retention questions
+    else {
       logger.info(
         codeFileName,
         "saveResponse",
-        "Uploading partial response and going to ContextualQuestion page."
+        "Done with permission questions. Going to data retention questions."
       );
+      await this.promisedSetState({
+        askingPermissionQuestions: false,
+        askingPermissionFollowUpQuestions: false,
+        askingDataRetentionQuestions: true
+      });
+    }
+  }
+
+  async saveDataRetentionQuestionResponses() {
+    /* 1. Check response validity and save them (if valid) to the questions asking about retention of conversation transcript.
+       2. Go to the data retention length questions
+    */
+
+    // 1. Check validity
+    const _allAnswered =
+      this.state.dataRetentionTranscriptDecision.length > 0 && //data retention decision was made
+      (this.state.dataRetentionTranscriptDecision !== "other" || //data retention decision != other
+        this.state.dataRetentionTranscriptOtherText.length > 0); // OR explanation for 'other' was provided
+
+    if (!_allAnswered) {
+      Alert.alert(
+        strings.ACCESS_SELECTION_REQUIRED_HEADER,
+        strings.ACCESS_SELECTION_REQUIRED
+      );
+      logger.warn(
+        codeFileName,
+        "saveDataRetentionQuestionResponses",
+        "Not all questions regarding data retention were answered, returning."
+      );
+      return;
+    }
+
+    // 2. Save response
+    await this.promisedSetState(prevState => {
+      const _surveyResponseJS = prevState.surveyResponseJS;
+      _surveyResponseJS.dataRetentionTranscriptDecision =
+        prevState.dataRetentionTranscriptDecision;
+      _surveyResponseJS.dataRetentionTranscriptOtherText =
+        prevState.dataRetentionTranscriptOtherText;
+
+      return { surveyResponseJS: _surveyResponseJS };
+    });
+
+    logger.info(
+      codeFileName,
+      "saveDataRetentionQuestionResponses",
+      "Going to data retention length questions."
+    );
+    this.setState({
+      askingDataRetentionQuestions: false,
+      askingDataRetentionLengthQuestions: true
+    });
+  }
+
+  async saveDataRetentionLengthQuestionResponses() {
+    /*
+        Check response validity and save them (if valid) to the questions asking about retention length of conversation transcript.
+    */
+    const _allAnswered =
+      this.state.dataRetentionLengthDecision.length > 0 && //data retention length decision was made
+      (this.state.dataRetentionLengthDecision !== "specific_time" ||
+        this.state.dataRetentionLengthSpecificText.length > 0) &&
+      (this.state.dataRetentionLengthDecision !== "other" || //data retention length decision != other
+        this.state.dataRetentionLengthOtherText.length > 0); // OR explanation for 'other' was provided
+
+    if (!_allAnswered) {
+      Alert.alert(
+        strings.ACCESS_SELECTION_REQUIRED_HEADER,
+        strings.ACCESS_SELECTION_REQUIRED
+      );
+      logger.warn(
+        codeFileName,
+        "saveDataRetentionLengthQuestionResponses",
+        "Not all questions regarding data retention length were answered, returning."
+      );
+      return;
+    }
+
+    await this.promisedSetState(prevState => {
+      const _surveyResponseJS = prevState.surveyResponseJS;
+      _surveyResponseJS.dataRetentionLengthDecision =
+        prevState.dataRetentionLengthDecision;
+      _surveyResponseJS.dataRetentionLengthSpecificText =
+        prevState.dataRetentionLengthSpecificText;
+      _surveyResponseJS.dataRetentionLengthOtherText =
+        prevState.dataRetentionLengthOtherText;
+
+      return { surveyResponseJS: _surveyResponseJS };
+    });
+
+    //save response and go to the contextual questions page
+    logger.info(
+      codeFileName,
+      "saveResponse",
+      "Uploading partial response and going to ContextualQuestion page."
+    );
+
+    await this.promisedSetState({ saveWaitVisible: true });
+    const _appStatus = await appStatus.loadStatus();
+    utilities.uploadData(
       {
-        await this.promisedSetState({ saveWaitVisible: true });
-        const _appStatus = await appStatus.loadStatus();
-        utilities.uploadData(
-          {
-            SurveyID: _appStatus.CurrentSurveyID,
-            Stage: "Permission complete.",
-            PartialResponse: this.state.surveyResponseJS
-          },
-          _appStatus.UUID,
-          "PartialSurveyResponse",
-          codeFileName,
-          "saveResponse",
-          ServicePermissionScreen.fileUploadCallBack
-        );
-      }
+        SurveyID: _appStatus.CurrentSurveyID,
+        Stage: "Permission complete.",
+        PartialResponse: this.state.surveyResponseJS
+      },
+      _appStatus.UUID,
+      "PartialSurveyResponse",
+      codeFileName,
+      "saveResponse",
+      ServicePermissionScreen.fileUploadCallBack
+    );
 
-      //go to the contextual question page
-      await this.promisedSetState({ saveWaitVisible: false });
-      this.props.navigation.navigate("ContextualQuestion", {
-        surveyResponseJS: this.state.surveyResponseJS,
-        surveyProgress: 80
-      });
+    //go to the contextual question page
+    await this.promisedSetState({ saveWaitVisible: false });
+    this.props.navigation.navigate("ContextualQuestion", {
+      surveyResponseJS: this.state.surveyResponseJS,
+      surveyProgress: 80
+    });
+  }
+
+  async saveResponse() {
+    if (
+      this.state.askingPermissionQuestions ||
+      this.state.askingPermissionFollowUpQuestions
+    ) {
+      await this.savePermissionQuestionResponses();
+    } else if (this.state.askingDataRetentionQuestions) {
+      await this.saveDataRetentionQuestionResponses();
+    } else if (this.state.askingDataRetentionLengthQuestions) {
+      await this.saveDataRetentionLengthQuestionResponses();
     }
   }
 
@@ -282,6 +412,10 @@ export default class ServicePermissionScreen extends React.Component {
     return (
       <View style={{ height: 0.5, width: "100%", backgroundColor: "grey" }} />
     );
+  };
+
+  radioListItemSeparator = () => {
+    return <View />;
   };
 
   renderListItem = ({ item }) => {
@@ -325,12 +459,12 @@ export default class ServicePermissionScreen extends React.Component {
     );
   };
 
-  renderListItemDataRetention = ({ item }) => {
+  renderListItemDataRetentionTranscript = ({ item }) => {
     return (
       <TouchableOpacity
         style={{ backgroundColor: "lavender", margin: 5 }}
         onPress={() => {
-          this.dataRetentionSelectionChangedHandler(item);
+          this.dataRetentionTranscriptSelectionChangedHandler(item);
         }}
       >
         <View
@@ -341,7 +475,7 @@ export default class ServicePermissionScreen extends React.Component {
             justifyContent: "flex-start"
           }}
         >
-          {item.key === this.state.dataRetentionDecision && (
+          {item.key === this.state.dataRetentionTranscriptDecision && (
             <Icon
               name="radio-btn-active"
               size={20}
@@ -349,7 +483,48 @@ export default class ServicePermissionScreen extends React.Component {
               style={{ margin: 5 }}
             />
           )}
-          {item.key !== this.state.dataRetentionDecision && (
+          {item.key !== this.state.dataRetentionTranscriptDecision && (
+            <Icon
+              name="radio-btn-passive"
+              size={20}
+              color="grey"
+              style={{ margin: 5 }}
+            />
+          )}
+
+          <View style={{ marginRight: 10 }}>
+            <Text style={{ fontSize: 20, paddingRight: 10 }}>{item.value}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  renderListItemDataRetentionLength = ({ item }) => {
+    return (
+      <TouchableOpacity
+        style={{ backgroundColor: "lavender", margin: 5 }}
+        onPress={() => {
+          this.dataRetentionLengthSelectionChangedHandler(item);
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            padding: 2,
+            justifyContent: "flex-start"
+          }}
+        >
+          {item.key === this.state.dataRetentionLengthDecision && (
+            <Icon
+              name="radio-btn-active"
+              size={20}
+              color="grey"
+              style={{ margin: 5 }}
+            />
+          )}
+          {item.key !== this.state.dataRetentionLengthDecision && (
             <Icon
               name="radio-btn-passive"
               size={20}
@@ -412,9 +587,9 @@ export default class ServicePermissionScreen extends React.Component {
             backgroundColor: "lavendar"
           }}
         >
-          {this.state.permissionQuestions &&
+          {this.state.askingPermissionQuestions &&
             this.state.services != null &&
-            !this.state.followUpQuestions && (
+            !this.state.askingPermissionFollowUpQuestions && (
               <View>
                 <Text style={[commonStyle.questionStyle, { fontSize: 22 }]}>
                   {strings.WOULD_ALLOW_1}
@@ -460,7 +635,10 @@ export default class ServicePermissionScreen extends React.Component {
                         if (this.state.sharingDecision === fullShare) {
                           this.saveResponse();
                         } else {
-                          this.setState({ followUpQuestions: true });
+                          this.setState({
+                            askingPermissionQuestions: false,
+                            askingPermissionFollowUpQuestions: true
+                          });
                         }
                       }}
                       title={strings.NEXT_BUTTON}
@@ -472,7 +650,7 @@ export default class ServicePermissionScreen extends React.Component {
               </View>
             )}
 
-          {this.state.followUpQuestions &&
+          {this.state.askingPermissionFollowUpQuestions &&
             this.state.sharingDecision === partialShare && (
               <View
                 style={{
@@ -504,7 +682,7 @@ export default class ServicePermissionScreen extends React.Component {
                 />
               </View>
             )}
-          {this.state.followUpQuestions &&
+          {this.state.askingPermissionFollowUpQuestions &&
             this.state.sharingDecision === noShare && (
               <View
                 style={{
@@ -527,7 +705,40 @@ export default class ServicePermissionScreen extends React.Component {
             )}
         </View>
 
-        {this.state.followUpQuestions && (
+        {this.state.askingDataRetentionQuestions && (
+          <View style={commonStyle.dividerStyle}>
+            <Text style={commonStyle.questionStyle}>
+              {strings.DATA_RETENTION_QUESTION_TRANSCRIPT}
+            </Text>
+            <View style={commonStyle.listContainerStyle}>
+              <FlatList
+                data={this.dataRetentionTranscriptOptions}
+                ItemSeparatorComponent={this.radioListItemSeparator}
+                renderItem={this.renderListItemDataRetentionTranscript}
+                keyExtractor={(item, index) => index.toString()}
+                extraData={this.state}
+              />
+            </View>
+          </View>
+        )}
+        {this.state.askingDataRetentionLengthQuestions && (
+          <View style={[commonStyle.dividerStyle]}>
+            <Text style={commonStyle.questionStyle}>
+              {strings.DATA_RETENTION_QUESTION_LENGTH}
+            </Text>
+            <View style={commonStyle.listContainerStyle}>
+              <FlatList
+                data={this.dataRetentionLengthOptions}
+                ItemSeparatorComponent={this.radioListItemSeparator}
+                renderItem={this.renderListItemDataRetentionLength}
+                keyExtractor={(item, index) => index.toString()}
+                extraData={this.state}
+              />
+            </View>
+          </View>
+        )}
+
+        {!this.state.askingPermissionQuestions && (
           <View style={commonStyle.buttonViewStyle}>
             <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
               <Button
@@ -542,40 +753,94 @@ export default class ServicePermissionScreen extends React.Component {
           </View>
         )}
 
-        {this.state.dataRetentionQuestions && (
-          <View>
-            <Text style={commonStyle.questionStyle}>
-              {strings.DATA_RETENTION_QUESTION}
-            </Text>
-            <View style={commonStyle.listContainerStyle}>
-              <FlatList
-                data={this.dataRetentionOptions}
-                ItemSeparatorComponent={this.flatListItemSeparator}
-                renderItem={this.renderListItemDataRetention}
-                keyExtractor={(item, index) => index.toString()}
-                extraData={this.state}
-              />
-            </View>
-
-            <View style={commonStyle.buttonViewStyle}>
-              <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
-                <Button
-                  onPress={() => {
-                    this.saveResponse();
-                  }}
-                  title={strings.NEXT_BUTTON}
-                  color="#20B2AA"
-                  accessibilityLabel="Next"
-                />
-              </TouchableHighlight>
-            </View>
-          </View>
-        )}
-
         <ProgressDialog
           visible={this.state.saveWaitVisible}
           title={strings.SAVING_HEADER}
           message={strings.SAVING_WAIT}
+        />
+
+        <DialogInput
+          isDialogVisible={this.state.dataRetentionTranscriptDialogVisible}
+          title={strings.PLEASE_EXPLAIN}
+          multiline
+          numberOfLines={4}
+          submitInput={async inputText => {
+            logger.info(
+              codeFileName,
+              "dataRetentionTranscriptDialog.Submit",
+              "Entered: " + inputText
+            );
+
+            if (inputText.length > 0) {
+              await this.promisedSetState({
+                dataRetentionTranscriptOtherText: inputText,
+                dataRetentionTranscriptDialogVisible: false
+              });
+            }
+          }}
+          closeDialog={async () => {
+            await this.promisedSetState({
+              dataRetentionTranscriptDecision: "",
+              dataRetentionTranscriptOtherText: "",
+              dataRetentionTranscriptDialogVisible: false
+            });
+          }}
+        />
+
+        <DialogInput
+          isDialogVisible={this.state.dataRetentionLengthOtherDialogVisible}
+          title={strings.PLEASE_EXPLAIN}
+          multiline
+          numberOfLines={4}
+          submitInput={async inputText => {
+            logger.info(
+              codeFileName,
+              "dataRetentionLengthOtherDialogVisible.Submit",
+              "Entered: " + inputText
+            );
+
+            if (inputText.length > 0) {
+              await this.promisedSetState({
+                dataRetentionLengthOtherText: inputText,
+                dataRetentionLengthOtherDialogVisible: false
+              });
+            }
+          }}
+          closeDialog={() => {
+            this.setState({
+              dataRetentionLengthOtherText: "",
+              dataRetentionLengthDecision: "",
+              dataRetentionLengthOtherDialogVisible: false
+            });
+          }}
+        />
+
+        <DialogInput
+          isDialogVisible={this.state.dataRetentionLengthSpecificDialogVisible}
+          title={strings.PLEASE_EXPLAIN}
+          multiline
+          numberOfLines={4}
+          submitInput={async inputText => {
+            logger.info(
+              codeFileName,
+              "dataRetentionLengthSpecificDialogVisible.Submit",
+              "Entered: " + inputText
+            );
+
+            if (inputText.length > 0) {
+              await this.promisedSetState({
+                dataRetentionLengthSpecificText: inputText,
+                dataRetentionLengthSpecificDialogVisible: false
+              });
+            }
+          }}
+          closeDialog={() => {
+            this.setState({
+              dataRetentionLengthSpecificText: "",
+              dataRetentionLengthDecision: "",
+              dataRetentionLengthSpecificDialogVisible: false
+            });
+          }}
         />
       </ScrollView>
     );
