@@ -3,6 +3,7 @@ package edu.berkeley.cs.blues.alva;;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.apsl.versionnumber.RNVersionNumberPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import com.chirag.RNMail.RNMail;
@@ -37,6 +38,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNVersionNumberPackage(),
             new RNDeviceInfo(),
             new RNPermissionsPackage(),
             new RNMail(),

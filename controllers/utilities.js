@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import { Text } from "react-native";
 import Mailer from "react-native-mail";
 import * as RNFS from "react-native-fs";
+import VersionNumber from "react-native-version-number";
 import logger from "./logger";
-import { VERSION_NUMBER, STUDY_PERIOD, EXIT_SURVEY_PERIOD } from "./constants";
+import { STUDY_PERIOD, EXIT_SURVEY_PERIOD } from "./constants";
 
 const fetch = require("node-fetch");
 
@@ -33,11 +34,9 @@ export default class utilities extends Component {
     try {
       let content = contentToWrite;
       if (typeof content === "object") {
-        //logger.info(callerClass, `${callerFunc}-->writeJSONFile`, 'Converting content.');
         content = JSON.stringify(content);
       }
 
-      //logger.info(callerClass, `${callerFunc}-->writeJSONFile`, 'content:'+content);
       const _fileExists = await RNFS.exists(fileName); //if there is an existing file, create a backup first
       if (_fileExists) {
         logger.info(
@@ -129,7 +128,7 @@ export default class utilities extends Component {
           body: `<b>${body}</b>`,
           isHTML: true
         },
-        (error, event) => {
+        error => {
           logger.error(
             codeFileName,
             "sendEmail",
@@ -162,11 +161,15 @@ export default class utilities extends Component {
       callerFunc + "-->uploadData",
       "Uploading data. UUID:" + uuid
     );
+
+    const timestamp = new Date().toISOString();
+
     let _body = {};
     try {
       _body = JSON.stringify({
         uid: uuid,
-        client: VERSION_NUMBER,
+        client: VersionNumber.appVersion,
+        sent: timestamp,
         key: type,
         value: data
       });
@@ -294,8 +297,6 @@ export default class utilities extends Component {
     return a;
   }
 }
-//const utilities = new Utilities();
-//export default utilities;
 
 const BOLD_MARKER = "**";
 /**

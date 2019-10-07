@@ -11,10 +11,10 @@ import {
 } from "react-native";
 import { NavigationEvents } from "react-navigation";
 import * as RNFS from "react-native-fs";
-import DialogInput from "react-native-dialog-input";
 import UUIDGenerator from "react-native-uuid-generator";
 import AsyncStorage from "@react-native-community/async-storage";
 import PropTypes from "prop-types";
+import DialogInput from "./vendor/DialogInput";
 import notificationController, {
   onAppOpen
 } from "../controllers/notificationController";
@@ -623,6 +623,7 @@ export default class HomeScreen extends React.Component {
                   _appStatus.InstallationDate = _installationDate;
                   _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
                   _appStatus.UUID = _uuid;
+                  _appStatus.InvitationCode = _code;
 
                   if (debugCode) {
                     _appStatus.Debug = true;
