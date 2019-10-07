@@ -562,15 +562,18 @@ export default class HomeScreen extends React.Component {
         <View
           style={{
             flex: 1,
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "flex-end",
+            flexDirection: "column",
+            justifyContent: "flex-end",
+            alignItems: "center",
             margin: 10,
             marginTop: 5,
             marginBottom: 20
           }}
         >
-          <Text style={{ fontSize: 16, margin: 0 }}>
+          <View
+            style={{ height: 0.5, width: "100%", backgroundColor: "grey" }}
+          />
+          <Text style={{ fontSize: 16, margin: 0, textAlign: "center" }}>
             {strings.CONTACT_TEXT}
             <Text
               style={{
