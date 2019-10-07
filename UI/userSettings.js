@@ -20,7 +20,7 @@ import { check, request, PERMISSIONS, RESULTS } from "react-native-permissions";
 import { NetworkInfo } from "react-native-network-info";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import VersionNumber from "react-native-version-number";
-
+import { uploadFiles } from "../controllers/backgroundJobs";
 import appStatus from "../controllers/appStatus";
 import notificationController from "../controllers/notificationController";
 import logger from "../controllers/logger";
@@ -790,7 +790,7 @@ export default class UserSettingsScreen extends React.Component {
                 );
                 await this.getHomeSSID();
                 //send log data to the server
-                //await uploadFiles();
+                await uploadFiles();
               }
             }}
           />
