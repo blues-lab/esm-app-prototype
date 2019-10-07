@@ -32,6 +32,7 @@ import {
   SURVEY_STATUS
 } from "../controllers/constants";
 import * as strings from "../controllers/strings";
+import { uploadFiles } from "../controllers/backgroundJobs";
 
 const codeFileName = "userSettings.js";
 
