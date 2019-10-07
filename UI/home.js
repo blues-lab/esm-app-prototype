@@ -356,8 +356,6 @@ export default class HomeScreen extends React.Component {
 
   async componentDidMount() {
     logger.info(codeFileName, "componentDidMount", "Mounting components.");
-    this.props.navigation.setParams({ backCallBack: this.initApp.bind(this) });
-    onAppOpen.backCallBack = this.initApp.bind(this);
   }
 
   promisedSetState = newState => {
@@ -658,7 +656,7 @@ export default class HomeScreen extends React.Component {
 
                 this.props.navigation.navigate("UserSettings", {
                   firstLaunch: true,
-                  backCallBack: this.initApp.bind(this)
+                  backCallBack: null
                 });
               } else {
                 logger.error(
