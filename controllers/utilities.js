@@ -5,10 +5,24 @@ import * as RNFS from "react-native-fs";
 import VersionNumber from "react-native-version-number";
 import logger from "./logger";
 import { STUDY_PERIOD, EXIT_SURVEY_PERIOD, PROMPT_DURATION } from "./constants";
-import appStatus from "./appStatus";
+
 const fetch = require("node-fetch");
 
 const codeFileName = "utilities.js";
+
+const serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
+
+async function fileExists(path, fileName, callerClass, callerFunc) {
+  logger.info(
+    `${callerClass}`,
+    `${callerFunc}-->fileExists`,
+    "Checking if file exists:" + fileName
+  );
+  if (await RNFS.exists(path)) {
+    return true;
+  }
+  return false;
+}
 
 export async function writeJSONFile(
   contentToWrite,
@@ -126,50 +140,6 @@ export function sendEmail(recipients, subject, body) {
       codeFileName,
       "sendEmail",
       "Error sending email:" + error.message
-    );
-  }
-}
-
-export async function currentSurveyExpired() {
-  try {
-    const _appStatus = await appStatus.loadStatus();
-
-    const _firstNotificationTime = _appStatus.FirstNotificationTime;
-    if (_appStatus.SurveyCountToday === 0 || _firstNotificationTime === null) {
-      logger.info(
-        codeFileName,
-        "currentSurveyExpired",
-        "_appStatus.SurveyCountToday: " +
-          _appStatus.SurveyCountToday +
-          "_appStatus.FirstNotificationTime: " +
-          _firstNotificationTime +
-          ", returning true."
-      );
-      return true;
-    }
-    const _minPassed = Math.floor(
-      (Date.now() - _firstNotificationTime) / 60000
-    );
-    const _remainingTime = PROMPT_DURATION - _minPassed;
-    const _expired = _remainingTime <= 0;
-
-    logger.info(
-      codeFileName,
-      "currentSurveyExpired",
-      "_firstNotificationTime:" +
-        _firstNotificationTime +
-        ", _remainingTime:" +
-        _remainingTime +
-        " minutes, expired:" +
-        _expired
-    );
-
-    return _expired;
-  } catch (error) {
-    logger.error(
-      codeFileName,
-      "currentSurveyExpired",
-      "Error: " + error.message
     );
   }
 }
@@ -364,3 +334,35 @@ export const format = string => {
 
   return texts;
 };
+
+export async function currentSurveyExpired(_appStatus) {
+  const _firstNotificationTime = _appStatus.FirstNotificationTime;
+  if (_appStatus.SurveyCountToday === 0 || _firstNotificationTime === null) {
+    logger.info(
+      codeFileName,
+      "currentSurveyExpired",
+      "_appStatus.SurveyCountToday: " +
+        _appStatus.SurveyCountToday +
+        "_appStatus.FirstNotificationTime: " +
+        _firstNotificationTime +
+        ", returning true."
+    );
+    return true;
+  }
+  const _minPassed = Math.floor((Date.now() - _firstNotificationTime) / 60000);
+  const _remainingTime = PROMPT_DURATION - _minPassed;
+  const _expired = _remainingTime <= 0;
+
+  logger.info(
+    codeFileName,
+    "currentSurveyExpired",
+    "_firstNotificationTime:" +
+      _firstNotificationTime +
+      ", _remainingTime:" +
+      _remainingTime +
+      " minutes, expired:" +
+      _expired
+  );
+
+  return _expired;
+}

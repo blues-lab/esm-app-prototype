@@ -310,7 +310,7 @@ export default class HomeScreen extends React.Component {
             } else if (
               (_appStatus.SurveyStatus === SURVEY_STATUS.AVAILABLE ||
                 _appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) &&
-              !(await utilities.currentSurveyExpired())
+              !(await utilities.currentSurveyExpired(_appStatus))
             ) {
               //check if survey is available from app settings
               logger.info(
@@ -457,7 +457,8 @@ export default class HomeScreen extends React.Component {
                   textDecorationLine: "underline"
                 }}
                 onPress={async () => {
-                  if (await utilities.currentSurveyExpired()) {
+                  const _appStatus = await appStatus.loadStatus();
+                  if (await utilities.currentSurveyExpired(_appStatus)) {
                     logger.info(
                       codeFileName,
                       "TakeSurveyButton",
