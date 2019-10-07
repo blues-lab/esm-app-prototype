@@ -17,7 +17,7 @@ export const SURVEY_ALLOWED_TO_COMPLETE = 5; //allow to complete max 1 surveys/d
 
 export const MAX_SURVEY_PER_DAY = 5; //create max 5 surveys/day
 
-export const PROMPT_DURATION = 2; //60 minutes
+export const PROMPT_DURATION = 60; //60 minutes
 
 export const USER_SETTINGS_FILE_PATH =
   RNFS.DocumentDirectoryPath + "/usersettings.js";

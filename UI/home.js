@@ -347,7 +347,11 @@ export default class HomeScreen extends React.Component {
   };
 
   async componentDidMount() {
-    logger.info(codeFileName, "componentDidMount", "Mounting components.");
+    logger.info(
+      codeFileName,
+      "componentDidMount",
+      "Mounting components and setting backCallBack to initApp."
+    );
     onAppOpen.backCallBack = this.initApp.bind(this);
   }
 
