@@ -143,7 +143,7 @@ export const PLEASE_EXPLAIN = "Please explain";
 
 /* Contextual questions */
 export const CONTEXT_INTRO =
-  "Answer a few questions about the conversation you just had.";
+  "Please answer a few questions about the conversation you just had.";
 export const CONTEXT_WHERE = "Where were you talking?";
 export const CONTEXT_WHERE_LOCATIONS = [
   "Bedroom",
