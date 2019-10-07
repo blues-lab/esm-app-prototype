@@ -6,7 +6,7 @@ import LocationServicesDialogBox from "react-native-android-location-services-di
 import logger from "./logger";
 import notificationController from "./notificationController";
 import appStatus from "./appStatus";
-import utilities from "./utilities";
+import * as utilities from "./utilities";
 import {
   USER_SETTINGS_FILE_PATH,
   SURVEY_STATUS,

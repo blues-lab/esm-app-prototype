@@ -19,7 +19,7 @@ import logger from "../controllers/logger";
 import commonStyles from "./Style";
 import appStatus from "../controllers/appStatus";
 import ToolBar from "./toolbar";
-import utilities from "../controllers/utilities";
+import * as utilities from "../controllers/utilities";
 import * as strings from "../controllers/strings";
 import { SURVEY_STATUS } from "../controllers/constants";
 
