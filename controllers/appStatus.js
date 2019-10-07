@@ -1,6 +1,8 @@
 import * as RNFS from "react-native-fs";
+import { Alert } from "react-native";
 import logger from "./logger";
 import * as utilities from "./utilities";
+import * as strings from "./strings";
 import { SURVEY_STATUS, APP_STATUS_FILE_PATH } from "./constants";
 
 const codeFileName = "appStatus.js";
@@ -83,6 +85,28 @@ class AppStatus {
           ". _fileContent:" +
           _fileContent
       );
+
+      Alert.alert(
+        strings.ERROR_MESSAGE_HEADER,
+        strings.LOADING_ERROR_MESSAGE,
+        [
+          {
+            text: strings.SEND_ERROR_EMAIL,
+            onPress: async () => {
+              const _body = await utilities.gatherErrorData(
+                codeFileName,
+                "fileUploadCallBack"
+              );
+              utilities.sendEmail(
+                [strings.CONTACT_EMAIL],
+                "Error loading app status. Error: " + error.message,
+                JSON.stringify(_body)
+              );
+            }
+          }
+        ],
+        { cancelable: false }
+      );
     }
 
     return this.status;
@@ -98,12 +122,36 @@ class AppStatus {
       "setAppStatus",
       "Current app status :" + JSON.stringify(this.status)
     );
-    await utilities.writeJSONFile(
+    const _saved = await utilities.writeJSONFile(
       this.status,
       APP_STATUS_FILE_PATH,
       codeFileName,
       "saveAppStatus"
     );
+
+    if (!_saved) {
+      Alert.alert(
+        strings.ERROR_MESSAGE_HEADER,
+        strings.SAVING_ERROR_MESSAGE,
+        [
+          {
+            text: strings.SEND_ERROR_EMAIL,
+            onPress: async () => {
+              const _body = await utilities.gatherErrorData(
+                codeFileName,
+                "fileUploadCallBack"
+              );
+              utilities.sendEmail(
+                [strings.CONTACT_EMAIL],
+                "Error saving app status.",
+                JSON.stringify(_body)
+              );
+            }
+          }
+        ],
+        { cancelable: false }
+      );
+    }
   }
 
   async saveAppStatus() {

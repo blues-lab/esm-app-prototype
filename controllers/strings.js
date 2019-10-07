@@ -1,5 +1,4 @@
 import { format } from "./utilities";
-
 /* Unsorted */
 
 export const INVITATION_CODE_FAIL =
@@ -240,6 +239,17 @@ export const FINAL_THANK = "Thank you for participating in our study!";
 export const CONTACT_TEXT =
   "If you have any questions or comments, contact us at";
 export const CONTACT_EMAIL = "blues-study-mimi@lists.eecs.berkeley.edu";
+
+export const ERROR_MESSAGE_HEADER = "Error";
+export const SAVING_ERROR_MESSAGE =
+  "An error occurred saving your response. Please send an email to " +
+  CONTACT_EMAIL +
+  " with the error log.";
+export const LOADING_ERROR_MESSAGE =
+  "An error occurred loading data from file. Please send an email to " +
+  CONTACT_EMAIL +
+  " with the error log.";
+export const SEND_ERROR_EMAIL = "Send email";
 
 /* Services */
 export const SERVICES = [

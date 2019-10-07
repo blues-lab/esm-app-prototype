@@ -151,7 +151,7 @@ export default class ServicePermissionScreen extends React.Component {
     });
   }
 
-  static fileUploadCallBack(success, error = null, data = null) {
+  static async fileUploadCallBack(success, error = null, data = null) {
     if (!success) {
       logger.error(
         codeFileName,
@@ -160,7 +160,7 @@ export default class ServicePermissionScreen extends React.Component {
           null}`
       );
       if (data != null) {
-        utilities.writeJSONFile(
+        const _saved = await utilities.writeJSONFile(
           data,
           RNFS.DocumentDirectoryPath +
             "/partial-survey--response--" +
@@ -169,6 +169,31 @@ export default class ServicePermissionScreen extends React.Component {
           codeFileName,
           "fileUploadCallBack"
         );
+
+        if (!_saved) {
+          Alert.alert(
+            strings.ERROR_MESSAGE_HEADER,
+            strings.SAVING_ERROR_MESSAGE,
+            [
+              {
+                text: strings.SEND_ERROR_EMAIL,
+                onPress: async () => {
+                  const _body = await utilities.gatherErrorData(
+                    codeFileName,
+                    "fileUploadCallBack"
+                  );
+                  utilities.sendEmail(
+                    [strings.CONTACT_EMAIL],
+                    "Error saving partial survey response. Page: " +
+                      codeFileName,
+                    JSON.stringify(_body)
+                  );
+                }
+              }
+            ],
+            { cancelable: false }
+          );
+        }
       }
     }
   }

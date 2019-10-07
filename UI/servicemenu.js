@@ -352,7 +352,7 @@ export default class ServiceMenuScreen extends React.Component {
     });
   }
 
-  static fileUploadCallBack(success, error = null, data = null) {
+  static async fileUploadCallBack(success, error = null, data = null) {
     if (!success) {
       logger.error(
         codeFileName,
@@ -361,7 +361,7 @@ export default class ServiceMenuScreen extends React.Component {
           null}`
       );
       if (data != null) {
-        utilities.writeJSONFile(
+        const _saved = await utilities.writeJSONFile(
           data,
           RNFS.DocumentDirectoryPath +
             "/partial-survey--response--" +
@@ -370,6 +370,31 @@ export default class ServiceMenuScreen extends React.Component {
           codeFileName,
           "fileUploadCallBack"
         );
+
+        if (!_saved) {
+          Alert.alert(
+            strings.ERROR_MESSAGE_HEADER,
+            strings.SAVING_ERROR_MESSAGE,
+            [
+              {
+                text: strings.SEND_ERROR_EMAIL,
+                onPress: async () => {
+                  const _body = await utilities.gatherErrorData(
+                    codeFileName,
+                    "fileUploadCallBack"
+                  );
+                  utilities.sendEmail(
+                    [strings.CONTACT_EMAIL],
+                    "Error saving partial survey response. Page: " +
+                      codeFileName,
+                    JSON.stringify(_body)
+                  );
+                }
+              }
+            ],
+            { cancelable: false }
+          );
+        }
       }
     }
   }
@@ -540,38 +565,36 @@ export default class ServiceMenuScreen extends React.Component {
   render() {
     return (
       <ScrollView contentContainerStyle={{ backgroundColor: "lavender" }}>
-        {
-          <NavigationEvents
-            onDidFocus={payload => {
-              if (Platform.OS === "android") {
-                logger.info(
-                  codeFileName,
-                  "onDidFocus",
-                  "Adding back button event handler. Payload: " +
-                    JSON.stringify(payload)
-                );
-                BackHandler.addEventListener(
-                  "hardwareBackPress",
-                  this.onBackButtonPressAndroid
-                );
-              }
-            }}
-            onWillBlur={payload => {
-              if (Platform.OS === "android") {
-                logger.info(
-                  codeFileName,
-                  "onWillBlur",
-                  "Removing back button event handler. Payload: " +
-                    JSON.stringify(payload)
-                );
-                BackHandler.removeEventListener(
-                  "hardwareBackPress",
-                  this.onBackButtonPressAndroid
-                );
-              }
-            }}
-          />
-        }
+        <NavigationEvents
+          onDidFocus={payload => {
+            if (Platform.OS === "android") {
+              logger.info(
+                codeFileName,
+                "onDidFocus",
+                "Adding back button event handler. Payload: " +
+                  JSON.stringify(payload)
+              );
+              BackHandler.addEventListener(
+                "hardwareBackPress",
+                this.onBackButtonPressAndroid
+              );
+            }
+          }}
+          onWillBlur={payload => {
+            if (Platform.OS === "android") {
+              logger.info(
+                codeFileName,
+                "onWillBlur",
+                "Removing back button event handler. Payload: " +
+                  JSON.stringify(payload)
+              );
+              BackHandler.removeEventListener(
+                "hardwareBackPress",
+                this.onBackButtonPressAndroid
+              );
+            }
+          }}
+        />
         <View
           style={{
             flex: 1,

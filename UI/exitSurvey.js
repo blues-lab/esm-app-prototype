@@ -186,84 +186,105 @@ export default class ExitSurveyScreen extends React.Component {
     }
   }
 
-  saveResponse() {
+  async saveResponse() {
     logger.info(codeFileName, "saveResponse", "Saving exit survey response.");
 
-    appStatus.loadStatus().then(_appStatus => {
-      this.setState({ saveWaitVisible: true });
+    this.setState({ saveWaitVisible: true });
 
-      const _response = {
-        serviceResponses: this.state.serviceResponses,
-        whyNoService: this.state.whyNoService,
-        priceCondition: this.state.priceCondition,
-        model1Price: this.state.model1Price,
-        model2Price: this.state.model2Price,
-        CompletionTime: new Date(),
-        UIID: _appStatus.UIID
-      };
+    const _appStatus = await appStatus.loadStatus();
 
+    const _response = {
+      serviceResponses: this.state.serviceResponses,
+      whyNoService: this.state.whyNoService,
+      priceCondition: this.state.priceCondition,
+      model1Price: this.state.model1Price,
+      model2Price: this.state.model2Price,
+      CompletionTime: new Date(),
+      UIID: _appStatus.UIID
+    };
+
+    logger.info(
+      codeFileName,
+      "saveResponse",
+      "Uploading exit survey response to the server:" +
+        JSON.stringify(_response)
+    );
+    const _uploaded = await utilities.uploadData(
+      {
+        SurveyID: "Exit survey",
+        Stage: "Completed.",
+        Response: _response
+      },
+      _appStatus.UUID,
+      "ExitSurveyResponse",
+      codeFileName,
+      "saveResponse"
+    );
+
+    if (_uploaded) {
       logger.info(
         codeFileName,
         "saveResponse",
-        "Uploading exit survey response to the server:" +
-          JSON.stringify(_response)
+        "Uploading exit survey response done!"
       );
-      utilities
-        .uploadData(
-          {
-            SurveyID: "Exit survey",
-            Stage: "Completed.",
-            Response: _response
-          },
-          _appStatus.UUID,
-          "ExitSurveyResponse",
-          codeFileName,
-          "saveResponse"
-        )
-        .then(_uploaded => {
-          if (_uploaded) {
-            logger.info(
-              codeFileName,
-              "saveResponse",
-              "Uploading exit survey response done!"
-            );
-          } else {
-            logger.error(
-              codeFileName,
-              "saveResponse",
-              "Failed to upload exit survey response. Saving in local file for now."
-            );
-            utilities.writeJSONFile(
-              _response,
-              RNFS.DocumentDirectoryPath + "/exit-survey-response.js",
-              codeFileName,
-              "saveResponse"
-            );
-          }
-        });
+    } else {
+      logger.error(
+        codeFileName,
+        "saveResponse",
+        "Failed to upload exit survey response. Saving in local file for now."
+      );
+      const _saved = utilities.writeJSONFile(
+        _response,
+        RNFS.DocumentDirectoryPath + "/exit-survey-response.js",
+        codeFileName,
+        "saveResponse"
+      );
 
-      logger.info(codeFileName, "saveResponse", "Updating app status.");
-
-      const _newStatus = _appStatus;
-      _newStatus.ExitSurveyDone = true;
-      appStatus.setAppStatus(_newStatus).then(() => {
-        this.setState({ saveWaitVisible: false }, () => {
-          Alert.alert(
-            strings.EXIT_SURVEY_DONE_HEADER,
-            strings.EXIT_SURVEY_DONE,
-            [
-              {
-                text: "OK",
-                onPress: () => {
-                  BackHandler.exitApp();
-                }
+      if (!_saved) {
+        Alert.alert(
+          strings.ERROR_MESSAGE_HEADER,
+          strings.SAVING_ERROR_MESSAGE,
+          [
+            {
+              text: strings.SEND_ERROR_EMAIL,
+              onPress: async () => {
+                const _body = await utilities.gatherErrorData(
+                  codeFileName,
+                  "fileUploadCallBack"
+                );
+                utilities.sendEmail(
+                  [strings.CONTACT_EMAIL],
+                  "Error saving exit survey response.",
+                  JSON.stringify(_body)
+                );
               }
-            ],
-            { cancelable: false }
-          );
-        });
-      });
-    });
+            }
+          ],
+          { cancelable: false }
+        );
+        return;
+      }
+    }
+
+    logger.info(codeFileName, "saveResponse", "Updating app status.");
+
+    const _newStatus = _appStatus;
+    _newStatus.ExitSurveyDone = true;
+    await appStatus.setAppStatus(_newStatus);
+    this.setState({ saveWaitVisible: false });
+    Alert.alert(
+      strings.EXIT_SURVEY_DONE_HEADER,
+      strings.EXIT_SURVEY_DONE,
+      [
+        {
+          text: "OK",
+          onPress: () => {
+            BackHandler.exitApp();
+          }
+        }
+      ],
+      { cancelable: false }
+    );
   }
 
   handleUsefulnessSelection = async item => {
@@ -278,7 +299,7 @@ export default class ExitSurveyScreen extends React.Component {
     this.setState({ usefulness: item });
   };
 
-  handleNextButtonPress = () => {
+  handleNextButtonPress = async () => {
     logger.info(
       codeFileName,
       "handleNextButtonPress",
@@ -428,90 +449,7 @@ export default class ExitSurveyScreen extends React.Component {
       //save response
 
       logger.info(codeFileName, "saveResponse", "Saving exit survey response.");
-
-      try {
-        appStatus.loadStatus().then(_appStatus => {
-          this.setState({ saveWaitVisible: true });
-
-          const _response = {
-            serviceResponses: this.state.serviceResponses,
-            whyNoService: this.state.whyNoService,
-            priceCondition: this.state.priceCondition,
-            model1Price: this.state.model1Price,
-            model2Price: this.state.model2Price,
-            CompletionTime: new Date(),
-            UIID: _appStatus.UIID
-          };
-
-          logger.info(
-            codeFileName,
-            "saveResponse",
-            "Uploading exit survey response to the server:" +
-              JSON.stringify(_response)
-          );
-          utilities
-            .uploadData(
-              {
-                SurveyID: "Exit survey",
-                Stage: "Completed.",
-                Response: _response
-              },
-              _appStatus.UUID,
-              "ExitSurveyResponse",
-              codeFileName,
-              "saveResponse"
-            )
-            .then(_uploaded => {
-              if (_uploaded) {
-                logger.info(
-                  codeFileName,
-                  "saveResponse",
-                  "Uploading exit survey response done!"
-                );
-              } else {
-                logger.error(
-                  codeFileName,
-                  "saveResponse",
-                  "Failed to upload exit survey response. Saving in local file for now."
-                );
-                utilities.writeJSONFile(
-                  _response,
-                  RNFS.DocumentDirectoryPath + "/exit-survey-response.js",
-                  codeFileName,
-                  "saveResponse"
-                );
-              }
-            });
-
-          logger.info(codeFileName, "saveResponse", "Updating app status.");
-
-          const _newStatus = _appStatus;
-          _newStatus.ExitSurveyDone = true;
-          appStatus.setAppStatus(_newStatus).then(() => {
-            this.setState({ saveWaitVisible: false }, () => {
-              Alert.alert(
-                strings.EXIT_SURVEY_DONE_HEADER,
-                strings.EXIT_SURVEY_DONE,
-                [
-                  {
-                    text: "OK",
-                    onPress: () => {
-                      BackHandler.exitApp();
-                    }
-                  }
-                ],
-                { cancelable: false }
-              );
-            });
-          });
-        });
-      } catch (error) {
-        logger.error(
-          codeFileName,
-          "handleNextButtonPress",
-          "Failed to save exit survey response: " + error.message
-        );
-      }
+      await this.saveResponse();
     }
   };
 
@@ -782,7 +720,9 @@ export default class ExitSurveyScreen extends React.Component {
         >
           <TouchableHighlight style={commonStyle.buttonTouchHLStyle}>
             <Button
-              onPress={this.handleNextButtonPress}
+              onPress={async () => {
+                await this.handleNextButtonPress();
+              }}
               title="Next"
               color="#20B2AA"
               accessibilityLabel="Save"

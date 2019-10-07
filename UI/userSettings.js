@@ -158,7 +158,9 @@ export default class UserSettingsScreen extends React.Component {
                   "getHomeSSID",
                   "Connected to home WiFi. Saving home WiFi:" + _ssid
                 );
-                this.setState({ homeWifi: _ssid }, () => this.saveSettings());
+                this.setState({ homeWifi: _ssid }, async () =>
+                  this.saveSettings()
+                );
               }
             }
           ],
@@ -238,7 +240,7 @@ export default class UserSettingsScreen extends React.Component {
         await this.getHomeWiFi();
       }
     } else {
-      this.saveSettings(); //save the default settings
+      await this.saveSettings(); //save the default settings
       await this.getHomeWiFi();
     }
   }
@@ -273,13 +275,13 @@ export default class UserSettingsScreen extends React.Component {
         },
         {
           text: "YES",
-          onPress: () => {
+          onPress: async () => {
             logger.info(
               codeFileName,
               "handleBackNavigation",
               "Agreed to save settings, saving and then going to previous page."
             );
-            this.saveSettings();
+            await this.saveSettings();
             Alert.alert("Settings saved.", "", [
               { text: "OK", onPress: () => this.props.navigation.goBack(null) }
             ]);
@@ -322,19 +324,43 @@ export default class UserSettingsScreen extends React.Component {
     this.setState({ isDateTimePickerVisible: false });
   };
 
-  saveSettings() {
+  async saveSettings() {
     const _settings = {
       homeWifi: this.state.homeWifi,
       askWifi: this.state.askWifi,
       afterTime: this.state.afterTime,
       beforeTime: this.state.beforeTime
     };
-    utilities.writeJSONFile(
+    const _saved = await utilities.writeJSONFile(
       _settings,
       USER_SETTINGS_FILE_PATH,
       codeFileName,
       "saveSettings"
     );
+
+    if (!_saved) {
+      Alert.alert(
+        strings.ERROR_MESSAGE_HEADER,
+        strings.SAVING_ERROR_MESSAGE,
+        [
+          {
+            text: strings.SEND_ERROR_EMAIL,
+            onPress: async () => {
+              const _body = await utilities.gatherErrorData(
+                codeFileName,
+                "fileUploadCallBack"
+              );
+              utilities.sendEmail(
+                [strings.CONTACT_EMAIL],
+                "Error saving user settings. Page: " + codeFileName,
+                JSON.stringify(_body)
+              );
+            }
+          }
+        ],
+        { cancelable: false }
+      );
+    }
 
     logger.info(
       codeFileName,
@@ -343,14 +369,14 @@ export default class UserSettingsScreen extends React.Component {
     );
   }
 
-  changeWifi = () => {
+  changeWifi = async () => {
     logger.info(
       codeFileName,
       "changeWifi",
       "Setting current wifi to empty and getting new wifi info."
     );
-    this.setState({ homeWifi: "" }, () => {
-      this.saveSettings();
+    this.setState({ homeWifi: "" }, async () => {
+      await this.saveSettings();
       this.getHomeWiFi();
     });
   };
@@ -691,7 +717,7 @@ export default class UserSettingsScreen extends React.Component {
               title="Save settings"
               color="#20B2AA"
               onPress={async () => {
-                this.saveSettings();
+                await this.saveSettings();
                 this.setState({ stateSaved: true });
                 const _firstLaunch = this.props.navigation.getParam(
                   "firstLaunch",

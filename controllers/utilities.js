@@ -7,9 +7,7 @@ import logger from "./logger";
 import { STUDY_PERIOD, EXIT_SURVEY_PERIOD, PROMPT_DURATION } from "./constants";
 
 const fetch = require("node-fetch");
-
 const codeFileName = "utilities.js";
-
 const serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
 
 async function fileExists(path, fileName, callerClass, callerFunc) {
@@ -118,6 +116,37 @@ export async function readJSONFile(filePath, callerClass, callerFunc) {
   return result;
 }
 
+export async function gatherErrorData(callerFunc, callerClass) {
+  let _data = {};
+  try {
+    let _log = "";
+    let _settings = "";
+    let _appStatus = "";
+
+    if (await RNFS.exists(LOG_FILE_PATH)) {
+      _log = await RNFS.readFile(LOG_FILE_PATH);
+    }
+    if (await RNFS.exists(USER_SETTINGS_FILE_PATH)) {
+      _settings = await readJSONFile(USER_SETTINGS_FILE_PATH);
+    }
+    if (await RNFS.exists(APP_STATUS_FILE_PATH)) {
+      _appStatus = await readJSONFile(APP_STATUS_FILE_PATH);
+    }
+
+    _data = {
+      File: callerClass,
+      CallerFunc: callerFunc,
+      Log: _log,
+      Settings: _settings,
+      Status: _appStatus
+    };
+  } catch (error) {
+    logger.error(codeFileName, "sendErrorEmail", "Error: " + error.message);
+  }
+
+  return _data;
+}
+
 export function sendEmail(recipients, subject, body) {
   try {
     Mailer.mail(
@@ -197,7 +226,7 @@ export async function uploadData(
   }
 
   if (callBackFunc !== null) {
-    callBackFunc(_uploaded, _error, _body);
+    await callBackFunc(_uploaded, _error, _body);
   }
 
   return _uploaded;
