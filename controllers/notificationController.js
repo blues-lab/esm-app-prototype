@@ -6,10 +6,10 @@ const PushNotification = require("react-native-push-notification");
 const codeFileName = "notificationController.js";
 
 export function onAppOpen() {
-  if (onAppOpen.backCallBack !== null) {
-    logger.info(codeFileName, "onAppOpen", "Calling backCallBack.");
-    onAppOpen.backCallBack();
-  }
+  //  if (onAppOpen.backCallBack !== null) {
+  //    logger.info(codeFileName, "onAppOpen", "Calling backCallBack.");
+  //    onAppOpen.backCallBack();
+  //  }
 }
 
 class NotificationController {
