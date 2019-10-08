@@ -542,13 +542,18 @@ export default class UserSettingsScreen extends React.Component {
             <Button
               title="Take the exit survey"
               color="#20B2AA"
-              onPress={() => {
+              onPress={async () => {
                 logger.info(
                   codeFileName,
                   "StartExitSurveyButton",
                   "Starting exit survey."
                 );
-                this.props.navigation.navigate("ExitSurvey");
+                //this.props.navigation.navigate("ExitSurvey");
+                const _body = await utilities.gatherErrorData(
+                  codeFileName,
+                  "StartExitSurveyButton"
+                );
+                Alert.alert("Error", JSON.stringify(_body));
               }}
             />
             <Button
