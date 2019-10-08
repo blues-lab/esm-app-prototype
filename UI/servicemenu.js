@@ -390,6 +390,9 @@ export default class ServiceMenuScreen extends React.Component {
                     JSON.stringify(_body)
                   );
                 }
+              },
+              {
+                text: "Cancel"
               }
             ],
             { cancelable: false }

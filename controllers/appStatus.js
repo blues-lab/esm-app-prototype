@@ -103,6 +103,9 @@ class AppStatus {
                 JSON.stringify(_body)
               );
             }
+          },
+          {
+            text: "Cancel"
           }
         ],
         { cancelable: false }
@@ -147,6 +150,9 @@ class AppStatus {
                 JSON.stringify(_body)
               );
             }
+          },
+          {
+            text: "Cancel"
           }
         ],
         { cancelable: false }

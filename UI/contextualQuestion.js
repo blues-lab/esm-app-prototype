@@ -218,6 +218,9 @@ export default class ContextualQuestionScreen extends React.Component {
                   JSON.stringify(_body)
                 );
               }
+            },
+            {
+              text: "Cancel"
             }
           ],
           { cancelable: false }
