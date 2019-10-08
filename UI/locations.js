@@ -254,7 +254,9 @@ export default class Locations extends React.Component {
               </Text>
             </View>
           </TouchableOpacity>
+        </View>
 
+        <View style={styles.rowView}>
           <TouchableOpacity
             style={this.state.locationNames[7].renderStyle}
             onPress={() => {
@@ -270,6 +272,25 @@ export default class Locations extends React.Component {
               />
               <Text style={styles.itemTextStyle}>
                 {this.state.locationNames[7].name}
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={this.state.locationNames[8].renderStyle}
+            onPress={() => {
+              this.handleSelectionChange(8);
+            }}
+          >
+            <View style={styles.rowView}>
+              <Icon
+                name={this.state.locationNames[8].iconName}
+                size={18}
+                color="#66cc94"
+                style={{ margin: 5 }}
+              />
+              <Text style={styles.itemTextStyle}>
+                {this.state.locationNames[8].name}
               </Text>
             </View>
           </TouchableOpacity>
