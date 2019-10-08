@@ -183,12 +183,12 @@ export default class HomeScreen extends React.Component {
       HomeScreen.fileUploadCallBack
     );
 
-    //    if (_appStatus.Debug) {
-    //      _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-    //      await appStatus.setAppStatus(_appStatus);
-    //      this.initApp();
-    //      return;
-    //    }
+    if (_appStatus.Debug) {
+      _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+      await appStatus.setAppStatus(_appStatus);
+      this.initApp();
+      return;
+    }
 
     Alert.alert(strings.NO_CONVERSATION_HEADER, strings.NO_CONVERSATION);
   }
