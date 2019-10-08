@@ -4,11 +4,18 @@ import Mailer from "react-native-mail";
 import * as RNFS from "react-native-fs";
 import VersionNumber from "react-native-version-number";
 import logger from "./logger";
-import { STUDY_PERIOD, EXIT_SURVEY_PERIOD, PROMPT_DURATION } from "./constants";
+import {
+  STUDY_PERIOD,
+  EXIT_SURVEY_PERIOD,
+  PROMPT_DURATION,
+  LOG_FILE_PATH,
+  APP_STATUS_FILE_PATH,
+  USER_SETTINGS_FILE_PATH
+} from "./constants";
 
 const fetch = require("node-fetch");
+
 const codeFileName = "utilities.js";
-const serviceFileLocal = RNFS.DocumentDirectoryPath + "/services.js";
 
 async function fileExists(path, fileName, callerClass, callerFunc) {
   logger.info(
@@ -117,34 +124,52 @@ export async function readJSONFile(filePath, callerClass, callerFunc) {
 }
 
 export async function gatherErrorData(callerFunc, callerClass) {
-  let _data = {};
-  try {
-    let _log = "";
-    let _settings = "";
-    let _appStatus = "";
+  let _log = "";
+  let _settings = "";
+  let _appStatus = "";
 
+  try {
     if (await RNFS.exists(LOG_FILE_PATH)) {
       _log = await RNFS.readFile(LOG_FILE_PATH);
     }
+  } catch (error) {
+    logger.error(
+      codeFileName,
+      "sendErrorEmail",
+      "Error reading log file: " + error.message
+    );
+  }
+
+  try {
     if (await RNFS.exists(USER_SETTINGS_FILE_PATH)) {
       _settings = await readJSONFile(USER_SETTINGS_FILE_PATH);
     }
+  } catch (error) {
+    logger.error(
+      codeFileName,
+      "sendErrorEmail",
+      "Error reading settings file: " + error.message
+    );
+  }
+  try {
     if (await RNFS.exists(APP_STATUS_FILE_PATH)) {
       _appStatus = await readJSONFile(APP_STATUS_FILE_PATH);
     }
-
-    _data = {
-      File: callerClass,
-      CallerFunc: callerFunc,
-      Log: _log,
-      Settings: _settings,
-      Status: _appStatus
-    };
   } catch (error) {
-    logger.error(codeFileName, "sendErrorEmail", "Error: " + error.message);
+    logger.error(
+      codeFileName,
+      "sendErrorEmail",
+      "Error reading status file: " + error.message
+    );
   }
 
-  return _data;
+  return {
+    File: callerClass,
+    CallerFunc: callerFunc,
+    Log: _log,
+    Settings: _settings,
+    Status: _appStatus
+  };
 }
 
 export function sendEmail(recipients, subject, body) {
