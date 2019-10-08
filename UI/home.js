@@ -166,7 +166,7 @@ export default class HomeScreen extends React.Component {
     logger.info(
       `${codeFileName}`,
       "'No' to recent conversation",
-      "Uploading response and exiting App."
+      "Uploading response and updating app status."
     );
 
     const _appStatus = await appStatus.loadStatus();
@@ -183,37 +183,35 @@ export default class HomeScreen extends React.Component {
       HomeScreen.fileUploadCallBack
     );
 
-    if (_appStatus.Debug) {
-      _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-      await appStatus.setAppStatus(_appStatus);
-      this.initApp();
-      return;
-    }
+    _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+    await appStatus.setAppStatus(_appStatus);
+    notificationController.cancelNotifications();
+    this.initApp();
 
     Alert.alert(strings.NO_CONVERSATION_HEADER, strings.NO_CONVERSATION);
   }
 
-  async startSurvey() {
-    Alert.alert(
-      strings.NEW_SURVEY_HEADER,
-      strings.CONVERSATION_PROMPT,
-      [
-        {
-          text: "Yes",
-          onPress: () => {
-            this.hadConversationYes();
-          }
-        },
-        {
-          text: "No",
-          onPress: () => {
-            this.hadConversationNo();
-          }
-        }
-      ],
-      { cancelable: false }
-    );
-  }
+  //  async startSurvey() {
+  ////    Alert.alert(
+  ////      strings.NEW_SURVEY_HEADER,
+  ////      strings.CONVERSATION_PROMPT,
+  ////      [
+  ////        {
+  ////          text: "Yes",
+  ////          onPress: () => {
+  ////            this.hadConversationYes();
+  ////          }
+  ////        },
+  ////        {
+  ////          text: "No",
+  ////          onPress: () => {
+  ////            this.hadConversationNo();
+  ////          }
+  ////        }
+  ////      ],
+  ////      { cancelable: false }
+  ////    );
+  //  }
 
   onBackButtonPressAndroid = () => {
     if (this.props.navigation.state.routeName === "Home") {
@@ -321,7 +319,7 @@ export default class HomeScreen extends React.Component {
                   ". Asking for conversation."
               );
               this.setState({ noSurveyDialogVisible: false });
-              await this.startSurvey();
+              //await this.startSurvey();
               return;
             } else {
               logger.info(codeFileName, "initApp", "No survey available.");
@@ -451,35 +449,65 @@ export default class HomeScreen extends React.Component {
               <Text
                 style={{
                   color: "green",
-                  fontSize: 22,
+                  fontSize: 24,
                   margin: 0,
-                  textAlign: "center",
-                  textDecorationLine: "underline"
-                }}
-                onPress={async () => {
-                  const _appStatus = await appStatus.loadStatus();
-                  if (await utilities.currentSurveyExpired(_appStatus)) {
-                    logger.info(
-                      codeFileName,
-                      "TakeSurveyButton",
-                      "Survey expired, updating home screen and returning."
-                    );
-
-                    Alert.alert(
-                      strings.SURVEY_EXPIRED_HEADER,
-                      strings.SURVEY_EXPIRED
-                    );
-                    this.setState({ noSurveyDialogVisible: true });
-                    await appStatus.setSurveyStatus(
-                      SURVEY_STATUS.NOT_AVAILABLE
-                    );
-                  } else {
-                    this.startSurvey();
-                  }
+                  textAlign: "center"
                 }}
               >
-                {strings.TAKE_NEW_SURVEY}
+                {strings.NEW_SURVEY_HEADER}
               </Text>
+              <Text
+                style={{
+                  fontSize: 20,
+                  margin: 0,
+                  marginTop: 20,
+                  textAlign: "center"
+                }}
+              >
+                {strings.CONVERSATION_PROMPT}
+              </Text>
+
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  margin: 10
+                }}
+              >
+                <TouchableHighlight
+                  style={[commonStyles.buttonTouchHLStyle, { width: 100 }]}
+                >
+                  <Button
+                    title="Yes"
+                    color="#20B2AA"
+                    onPress={() => {
+                      logger.info(
+                        codeFileName,
+                        "ConversationButtonYes",
+                        "Calling hadConversationYes()."
+                      );
+                      this.hadConversationYes();
+                    }}
+                  />
+                </TouchableHighlight>
+                <TouchableHighlight
+                  style={[commonStyles.buttonTouchHLStyle, { width: 100 }]}
+                >
+                  <Button
+                    title="No"
+                    color="#20B2AA"
+                    onPress={() => {
+                      logger.info(
+                        codeFileName,
+                        "ConversationButtonNo",
+                        "Calling hadConversationNo()."
+                      );
+                      this.hadConversationNo();
+                    }}
+                  />
+                </TouchableHighlight>
+              </View>
             </View>
           )}
 
@@ -544,22 +572,20 @@ export default class HomeScreen extends React.Component {
                   )}
                 </Text>
 
-                {
-                  <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
-                    <Button
-                      title="Take the exit survey"
-                      color="#20B2AA"
-                      onPress={() => {
-                        logger.info(
-                          codeFileName,
-                          "Study ended modal",
-                          "Starting exit survey."
-                        );
-                        this.props.navigation.navigate("ExitSurvey");
-                      }}
-                    />
-                  </TouchableHighlight>
-                }
+                <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
+                  <Button
+                    title="Take the exit survey"
+                    color="#20B2AA"
+                    onPress={() => {
+                      logger.info(
+                        codeFileName,
+                        "Study ended modal",
+                        "Starting exit survey."
+                      );
+                      this.props.navigation.navigate("ExitSurvey");
+                    }}
+                  />
+                </TouchableHighlight>
               </View>
             )}
 
