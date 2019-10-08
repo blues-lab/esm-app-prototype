@@ -569,38 +569,36 @@ export default class ServicePermissionScreen extends React.Component {
   render() {
     return (
       <ScrollView contentContainerStyle={{ backgroundColor: "lavender" }}>
-        {
-          <NavigationEvents
-            onDidFocus={payload => {
-              if (Platform.OS === "android") {
-                logger.info(
-                  codeFileName,
-                  "onDidFocus",
-                  "Adding back button event handler. Payload: " +
-                    JSON.stringify(payload)
-                );
-                BackHandler.addEventListener(
-                  "hardwareBackPress",
-                  this.onBackButtonPressAndroid
-                );
-              }
-            }}
-            onWillBlur={payload => {
-              if (Platform.OS === "android") {
-                logger.info(
-                  codeFileName,
-                  "onWillBlur",
-                  "Removing back button event handler. Payload: " +
-                    JSON.stringify(payload)
-                );
-                BackHandler.removeEventListener(
-                  "hardwareBackPress",
-                  this.onBackButtonPressAndroid
-                );
-              }
-            }}
-          />
-        }
+        <NavigationEvents
+          onDidFocus={payload => {
+            if (Platform.OS === "android") {
+              logger.info(
+                codeFileName,
+                "onDidFocus",
+                "Adding back button event handler. Payload: " +
+                  JSON.stringify(payload)
+              );
+              BackHandler.addEventListener(
+                "hardwareBackPress",
+                this.onBackButtonPressAndroid
+              );
+            }
+          }}
+          onWillBlur={payload => {
+            if (Platform.OS === "android") {
+              logger.info(
+                codeFileName,
+                "onWillBlur",
+                "Removing back button event handler. Payload: " +
+                  JSON.stringify(payload)
+              );
+              BackHandler.removeEventListener(
+                "hardwareBackPress",
+                this.onBackButtonPressAndroid
+              );
+            }
+          }}
+        />
         <View
           style={{
             flex: 1,
@@ -618,7 +616,7 @@ export default class ServicePermissionScreen extends React.Component {
               <View>
                 <Text style={[commonStyle.questionStyle, { fontSize: 22 }]}>
                   {strings.WOULD_ALLOW_1}
-                  <Text> {'"'}</Text>
+                  <Text> "</Text>
                   <Text style={{ fontWeight: "bold" }}>
                     {this.state.services[
                       this.state.currentServiceIdx
@@ -626,7 +624,7 @@ export default class ServicePermissionScreen extends React.Component {
                       .trim()
                       .toLowerCase()}
                   </Text>
-                  <Text>?{'"'}</Text>
+                  <Text>?"</Text>
                 </Text>
 
                 <View style={commonStyle.listContainerStyle}>
@@ -842,7 +840,7 @@ export default class ServicePermissionScreen extends React.Component {
 
         <DialogInput
           isDialogVisible={this.state.dataRetentionLengthSpecificDialogVisible}
-          title={strings.PLEASE_EXPLAIN}
+          title={strings.EXPLAIN_SPECIFIC_RETENTION_POLICY}
           multiline
           numberOfLines={4}
           submitInput={async inputText => {

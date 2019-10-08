@@ -121,12 +121,14 @@ export const WHY_DENY =
 export const ACCESS_SELECTION_REQUIRED_HEADER = "Error";
 export const ACCESS_SELECTION_REQUIRED = "Please select an option to continue.";
 
-export const DATA_RETENTION_QUESTION_TRANSCRIPT =
+export const DATA_RETENTION_QUESTION_TRANSCRIPT = format(
   "Would you want ALVA to store a transcript of this conversation, " +
-  "so you can check that it provided the services correctly?";
-export const DATA_RETENTION_QUESTION_LENGTH =
+    "**so you can check that it provided the services correctly**?"
+);
+export const DATA_RETENTION_QUESTION_LENGTH = format(
   "How long would you want ALVA to store the " +
-  "audio recording of this conversation for the purpose of improving its functionality?";
+    "audio recording of this conversation **for the purpose of improving its functionality**?"
+);
 export const DATA_RETENTION_TRANSCRIPT_OPTIONS = [
   "Yes, keep the transcript for my review",
   "No, don't keep the transcript for my review",
@@ -138,6 +140,8 @@ export const DATA_RETENTION_LENGTH_OPTIONS = [
   "Store for a specific amount of time",
   "Other"
 ];
+export const EXPLAIN_SPECIFIC_RETENTION_POLICY =
+  "For how long should ALVA store the audio recording, and why?";
 export const PLEASE_EXPLAIN = "Please explain";
 
 /* Contextual questions */
