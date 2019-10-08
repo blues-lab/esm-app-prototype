@@ -201,7 +201,7 @@ export async function uploadData(
       key: type,
       value: data
     });
-    const response = await fetch("https://mimi.research.icsi.institute/save/", {
+    const response = await fetch("https://alva.research.icsi.institute/save/", {
       method: "POST",
       headers: {
         Accept: "application/json",
