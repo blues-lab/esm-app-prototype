@@ -31,39 +31,40 @@ class AppStatus {
 
   async loadStatus() {
     let _fileContent = null;
+    let status = {};
     try {
       const _fileExists = await RNFS.exists(APP_STATUS_FILE_PATH);
       if (_fileExists) {
         _fileContent = await RNFS.readFile(APP_STATUS_FILE_PATH);
-        this.status = JSON.parse(_fileContent);
-        this.status.InstallationDate = new Date(this.status.InstallationDate);
-        if (this.status.FirstNotificationTime != null) {
-          this.status.FirstNotificationTime = new Date(
-            this.status.FirstNotificationTime
-          );
-        }
-        if (this.status.LastNotificationTime != null) {
-          this.status.LastNotificationTime = new Date(
-            this.status.LastNotificationTime
-          );
-        }
-        if (this.setLastSurveyCreationDate != null) {
-          this.status.LastSurveyCreationDate = new Date(
-            this.status.LastSurveyCreationDate
-          );
-        }
+        status = JSON.parse(_fileContent);
 
-        if (this.status.LastLocationAccess != null) {
-          this.status.LastLocationAccess = new Date(
-            this.status.LastLocationAccess
-          );
-        }
+        Object.keys(this.status).forEach(key => {
+          if (key in status) {
+            this.status[key] = status[key];
+          }
+        });
 
-        if (this.status.LastLocationPromptTime != null) {
-          this.status.LastLocationPromptTime = new Date(
-            this.status.LastLocationPromptTime
-          );
-        }
+        this.status.InstallationDate = new Date(status.InstallationDate);
+        this.status.FirstNotificationTime =
+          "FirstNotificationTime" in status
+            ? new Date(status.FirstNotificationTime)
+            : null;
+        this.status.LastNotificationTime =
+          "LastNotificationTime" in status
+            ? new Date(status.LastNotificationTime)
+            : null;
+        this.status.LastSurveyCreationDate =
+          "LastSurveyCreationDate" in status
+            ? new Date(status.LastSurveyCreationDate)
+            : null;
+        this.status.LastLocationAccess =
+          "LastLocationAccess" in status
+            ? new Date(status.LastLocationAccess)
+            : null;
+        this.status.LastLocationPromptTime =
+          "LastLocationPromptTime" in status
+            ? new Date(status.LastLocationPromptTime)
+            : null;
       } else {
         await logger.info(
           codeFileName,
@@ -86,31 +87,6 @@ class AppStatus {
           ". _fileContent:" +
           _fileContent
       );
-
-      Alert.alert(
-        strings.ERROR_MESSAGE_HEADER,
-        strings.LOADING_ERROR_MESSAGE,
-        [
-          {
-            text: strings.SEND_ERROR_EMAIL,
-            onPress: async () => {
-              const _body = await utilities.gatherErrorData(
-                codeFileName,
-                "fileUploadCallBack"
-              );
-              utilities.sendEmail(
-                [strings.CONTACT_EMAIL],
-                "Error loading app status. Error: " + error.message,
-                JSON.stringify(_body)
-              );
-            }
-          },
-          {
-            text: "Cancel"
-          }
-        ],
-        { cancelable: false }
-      );
     }
 
     return this.status;
@@ -132,33 +108,6 @@ class AppStatus {
       codeFileName,
       "saveAppStatus"
     );
-
-    if (!_saved) {
-      Alert.alert(
-        strings.ERROR_MESSAGE_HEADER,
-        strings.SAVING_ERROR_MESSAGE,
-        [
-          {
-            text: strings.SEND_ERROR_EMAIL,
-            onPress: async () => {
-              const _body = await utilities.gatherErrorData(
-                codeFileName,
-                "fileUploadCallBack"
-              );
-              utilities.sendEmail(
-                [strings.CONTACT_EMAIL],
-                "Error saving app status.",
-                JSON.stringify(_body)
-              );
-            }
-          },
-          {
-            text: "Cancel"
-          }
-        ],
-        { cancelable: false }
-      );
-    }
   }
 
   async saveAppStatus() {
