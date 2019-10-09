@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "react-native";
+import { Text, Alert } from "react-native";
 import Mailer from "react-native-mail";
 import * as RNFS from "react-native-fs";
 import VersionNumber from "react-native-version-number";
@@ -123,7 +123,7 @@ export async function readJSONFile(filePath, callerClass, callerFunc) {
   return result;
 }
 
-export async function gatherErrorData(callerFunc, callerClass) {
+async function gatherErrorData(callerFunc, callerClass) {
   let _log = "";
   let _settings = "";
   let _appStatus = "";
@@ -172,7 +172,7 @@ export async function gatherErrorData(callerFunc, callerClass) {
   };
 }
 
-export function sendEmail(recipients, subject, body) {
+function sendEmail(recipients, subject, body) {
   try {
     Mailer.mail(
       {
@@ -196,6 +196,32 @@ export function sendEmail(recipients, subject, body) {
       "Error sending email:" + error.message
     );
   }
+}
+
+export async function showErrorDialog(callerClass, callerFunc, emailSubject) {
+  Alert.alert(
+    "Error",
+    "An error occurred loading data from file. Please send an email to " +
+      "blues-study-mimi@lists.eecs.berkeley.edu with the error log.",
+    [
+      {
+        text: "Send Email",
+        onPress: async () => {
+          const _body = await gatherErrorData(callerClass, callerFunc);
+          sendEmail(
+            ["blues-study-mimi@lists.eecs.berkeley.edu"],
+            emailSubject,
+            JSON.stringify(_body)
+          );
+        }
+      },
+      {
+        text: "Cancel",
+        style: "cancel"
+      }
+    ],
+    { cancelable: false }
+  );
 }
 
 export async function uploadData(
