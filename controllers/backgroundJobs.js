@@ -194,26 +194,11 @@ export async function showPrompt() {
     "Current app status:" + JSON.stringify(_appStatus)
   );
 
-  let _userSettingsData = null;
-  try {
-    const _fileExists = await RNFS.exists(USER_SETTINGS_FILE_PATH);
-    if (_fileExists) {
-      const _fileContent = await RNFS.readFile(USER_SETTINGS_FILE_PATH);
-      logger.info(
-        codeFileName,
-        "showPrompt",
-        "Read user settings file:" + _fileContent
-      );
-      _userSettingsData = JSON.parse(_fileContent);
-    }
-  } catch (error) {
-    logger.error(
-      codeFileName,
-      "showPrompt",
-      "Failed to read user settings file:" + error.message
-    );
-  }
-
+  const _userSettingsData = await utilities.readJSONFile(
+    USER_SETTINGS_FILE_PATH,
+    codeFileName,
+    "showPrompt"
+  );
   if (_userSettingsData === null) {
     logger.error(
       codeFileName,
