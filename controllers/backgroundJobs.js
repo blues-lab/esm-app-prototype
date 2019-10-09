@@ -13,7 +13,8 @@ import {
   INVITATION_CODE_FILE_PATH,
   MAX_SURVEY_PER_DAY,
   LOG_FILE_PATH,
-  PROMPT_DURATION
+  PROMPT_DURATION,
+  SURVEY_ALLOWED_TO_COMPLETE
 } from "./constants";
 import {
   LOCATION_SHARE_PROMPT,
@@ -186,23 +187,270 @@ async function promptToShareLocation(_appStatus) {
   return _showPrompt;
 }
 
-export async function showPrompt() {
-  const _appStatus = await appStatus.loadStatus();
+async function handleSurveyNotAvailableState(_appStatus) {
+  /*
+        Function to handle when currently no survey is available.
+        Depending on the status variables, it will (not) create new surveys.
+    */
+
+  const funcName = "handleSurveyNotAvailableState";
+
   logger.info(
     codeFileName,
     "showPrompt",
+    "No survey available now" +
+      ". Surveys created today: " +
+      _appStatus.SurveyCountToday +
+      ". Surveys answered today: " +
+      _appStatus.SurveysAnsweredToday +
+      ". Max survey per day: " +
+      MAX_SURVEY_PER_DAY +
+      ". Participant eligible for bonus: " +
+      _appStatus.EligibleForBonus
+  );
+
+  if (_appStatus.SurveyCountToday >= MAX_SURVEY_PER_DAY) {
+    //Already max surveys were created, check if this participant is eligible for bonus or not
+    if (
+      _appStatus.EligibleForBonus &&
+      _appStatus.SurveysAnsweredToday < SURVEY_ALLOWED_TO_COMPLETE
+    ) {
+      logger.info(
+        codeFileName,
+        "showPrompt",
+        "Making this participant ineligible to get bonus."
+      );
+      _appStatus.EligibleForBonus = false;
+      await appStatus.setAppStatus(_appStatus);
+    }
+  } else {
+    //If not max number of surveys were taken already, randomly create a new survey
+    if (_appStatus.SurveysAnsweredToday < SURVEY_ALLOWED_TO_COMPLETE) {
+      // Randomly create a new survey
+      const _createSurvey = (Math.floor(Math.random() * 100) + 1) % 2 === 0;
+      logger.info(
+        codeFileName,
+        funcName,
+        "Randomly creating survey:" + _createSurvey
+      );
+
+      if (_createSurvey) {
+        const _remainingTime = PROMPT_DURATION;
+        notificationController.cancelNotifications();
+        notificationController.showNotification(
+          NEW_SURVEY_AVAILABLE,
+          SURVEY_TIME(_remainingTime)
+        );
+
+        logger.info(
+          codeFileName,
+          funcName,
+          "Created new survey. Updating app status."
+        );
+        const _currentDate = new Date();
+        _appStatus.SurveyCountToday += 1;
+        _appStatus.SurveyStatus = SURVEY_STATUS.AVAILABLE;
+        _appStatus.LastSurveyCreationDate = _currentDate;
+        _appStatus.FirstNotificationTime = _currentDate;
+        _appStatus.LastNotificationTime = _currentDate;
+        await appStatus.setAppStatus(_appStatus);
+
+        logger.info(
+          codeFileName,
+          funcName,
+          "Notification for new survey is shown."
+        );
+      }
+    } else {
+      logger.info(
+        codeFileName,
+        funcName,
+        "Max allowable number of surveys were already completed today."
+      );
+    }
+  }
+}
+
+async function handleESMPeriodEnded(_appStatus) {
+  const funcName = "handleESMPeriodEnded";
+  const _remainingDays = utilities.exitSurveyAvailableDays(_appStatus);
+  logger.info(
+    codeFileName,
+    funcName,
+    "ESM period ended. Exit survey done? " +
+      _appStatus.ExitSurveyDone +
+      ". Exit survey remaining days: " +
+      _remainingDays +
+      ". Last notification was shown:" +
+      _appStatus.LastNotificationTime
+  );
+
+  if (_appStatus.ExitSurveyDone || _remainingDays <= 0) {
+    return;
+  }
+
+  const _hourPassed = Math.floor(
+    (Date.now() - _appStatus.LastNotificationTime) / (60 * 60000)
+  );
+  logger.info(
+    codeFileName,
+    funcName,
+    "Hours passed since last notification:" + _hourPassed
+  );
+  if (_hourPassed >= 24) {
+    logger.info(
+      codeFileName,
+      funcName,
+      "Showing new notification for exit survey and updating app status."
+    );
+    notificationController.cancelNotifications();
+    notificationController.showNotification(
+      FINAL_SURVEY_AVAILABLE,
+      FINAL_SURVEY_TIME(_remainingDays)
+    );
+
+    _appStatus.LastNotificationTime = new Date();
+    await appStatus.setAppStatus(_appStatus);
+  }
+}
+
+async function resetVariables(_appStatus) {
+  const funcName = "resetVariables";
+  await logger.info(
+    codeFileName,
+    funcName,
+    "Last survey creation date: " + _appStatus.LastSurveyCreationDate
+  );
+  if (
+    _appStatus.LastSurveyCreationDate === null ||
+    before(_appStatus.LastSurveyCreationDate, new Date())
+  ) {
+    logger.info(
+      codeFileName,
+      funcName,
+      "Last survey was created on a previous day." +
+        " Setting SurveyCountToday=0 and survey status to NOT_AVAILABLE."
+    );
+
+    _appStatus.SurveyCountToday = 0;
+    _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+    await appStatus.setAppStatus(_appStatus);
+  }
+}
+
+async function handleSurveyAvailableState(_appStatus) {
+  //Survey is available, show prompt if there is still time, or make survey expired
+  const funcName = "handleSurveyAvailableState";
+
+  logger.info(codeFileName, funcName, "Survey available.");
+  const _firstNotificationTime = _appStatus.FirstNotificationTime;
+  if (_firstNotificationTime === null) {
+    logger.error(
+      codeFileName,
+      funcName,
+      "Fatal error: FirstNotificationTime is null. Returning."
+    );
+    return;
+  }
+
+  const _minPassed = Math.floor((Date.now() - _firstNotificationTime) / 60000);
+  logger.info(
+    codeFileName,
+    funcName,
+    _minPassed.toString() +
+      " minutes have passed since the first notification time at " +
+      _firstNotificationTime
+  );
+
+  const _remainingTime = PROMPT_DURATION - _minPassed;
+  if (_remainingTime <= 0) {
+    //survey expired, remove all existing notification
+    logger.info(
+      codeFileName,
+      funcName,
+      "Remaining time " + _remainingTime + ", cancelling notifications."
+    );
+    notificationController.cancelNotifications();
+    logger.info(
+      codeFileName,
+      funcName,
+      "Changing survey status to NOT_AVAILABLE."
+    );
+
+    await appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
+  }
+}
+
+async function handleSurveyOngoingState(_appStatus) {
+  const funcName = "handleSurveyOngoingState";
+
+  //if ongoing and app not in 'active' mode, prompt again
+  if (AppState.currentState === "background") {
+    logger.info(
+      codeFileName,
+      funcName,
+      "Survey is ongoing but app is in " +
+        AppState.currentState +
+        ". Updating notification."
+    );
+    const _firstNotificationTime = _appStatus.FirstNotificationTime;
+    if (_firstNotificationTime === null) {
+      logger.error(
+        codeFileName,
+        funcName,
+        "Fatal error: FirstNotificationTime is null. Returning."
+      );
+      return;
+    }
+
+    const _minPassed = Math.floor(
+      (Date.now() - _firstNotificationTime) / 60000
+    );
+    logger.info(
+      codeFileName,
+      funcName,
+      _minPassed.toString() +
+        " minutes have passed since the last notification date at " +
+        _firstNotificationTime
+    );
+
+    const _remainingTime = PROMPT_DURATION - _minPassed;
+    if (_remainingTime > 0) {
+      logger.info(
+        codeFileName,
+        funcName,
+        "Remaining time:" + _remainingTime + ". Updating notification."
+      );
+
+      notificationController.cancelNotifications();
+      notificationController.showNotification(ONGOING_SURVEY, SURVEY_TIME);
+      logger.info(
+        codeFileName,
+        funcName,
+        "Showing latest notification at: " + new Date()
+      );
+      await appStatus.setLastNotificationTime(new Date());
+    }
+  }
+}
+export async function showPrompt() {
+  const funcName = "showPrompt";
+  const _appStatus = await appStatus.loadStatus();
+  logger.info(
+    codeFileName,
+    funcName,
     "Current app status:" + JSON.stringify(_appStatus)
   );
 
   const _userSettingsData = await utilities.readJSONFile(
     USER_SETTINGS_FILE_PATH,
     codeFileName,
-    "showPrompt"
+    funcName
   );
   if (_userSettingsData === null) {
     logger.error(
       codeFileName,
-      "showPrompt",
+      funcName,
       "Fatal error: user settings data is null!"
     );
     return;
@@ -211,7 +459,7 @@ export async function showPrompt() {
   if (await promptToShareLocation(_appStatus)) {
     logger.info(
       codeFileName,
-      "showPrompt",
+      funcName,
       "promptToShareLocation returned true. Returning."
     );
     return;
@@ -225,13 +473,14 @@ export async function showPrompt() {
   ) {
     logger.info(
       codeFileName,
-      "showPrompt",
+      funcName,
       `Current SSID: ${_ssid}. Home Wifi: ${_userSettingsData.homeWifi} . Returning.`
     );
     notificationController.cancelNotifications();
     return;
   }
-  logger.info(codeFileName, "showPrompt", "Obtained wifi:" + _ssid + ".");
+
+  logger.info(codeFileName, funcName, "Obtained wifi:" + _ssid + ".");
 
   //Check if in "Don't disturb" times (Sunday is 0, Monday is 1)
   const _doNotDisturb = isInDoNotDisturbTime(_userSettingsData);
@@ -239,270 +488,31 @@ export async function showPrompt() {
   if (_doNotDisturb) {
     logger.info(
       codeFileName,
-      "showPrompt",
+      funcName,
       'Inside "Do not disturb" mode. Canceling all notification and returning.'
     );
     notificationController.cancelNotifications();
   } else {
-    logger.info(codeFileName, "showPrompt", 'Not in "Do not disturb" mode.');
+    logger.info(codeFileName, funcName, 'Not in "Do not disturb" mode.');
 
-    //Check if study period has ended
     if (utilities.surveyPeriodEnded(_appStatus)) {
-      const _remainingDays = utilities.exitSurveyAvailableDays(_appStatus);
-      logger.info(
-        codeFileName,
-        "initApp",
-        "ESM period ended. Exit survey done? " +
-          _appStatus.ExitSurveyDone +
-          ". Exit survey remaining days: " +
-          _remainingDays
-      );
-
-      if (!_appStatus.ExitSurveyDone && _remainingDays > 0) {
-        return;
-      }
-      logger.info(
-        codeFileName,
-        "showPrompt",
-        "Remaining days for exit survey:" +
-          _remainingDays +
-          ". Last notification was shown:" +
-          _appStatus.LastNotificationTime
-      );
-      const _hourPassed = Math.floor(
-        (Date.now() - _appStatus.LastNotificationTime) / (60 * 60000)
-      );
-      logger.info(
-        codeFileName,
-        "showPrompt",
-        "Hours passed since last notification:" + _hourPassed
-      );
-      if (_hourPassed >= 24) {
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          "Showing new notification for exit survey and updating app status."
-        );
-        notificationController.cancelNotifications();
-        notificationController.showNotification(
-          FINAL_SURVEY_AVAILABLE,
-          FINAL_SURVEY_TIME(_remainingDays)
-        );
-
-        _appStatus.LastNotificationTime = new Date();
-        await appStatus.setAppStatus(_appStatus);
-      }
-
+      // ESM study period has ended
+      handleESMPeriodEnded(_appStatus);
       return;
     }
 
+    //ESM study period has not ended
     logger.info(codeFileName, "showPrompt", "Still in ESM study period.");
 
     //check if the date of last survey creation was before today, if so, reset variables.
-    await logger.info(
-      codeFileName,
-      "showPrompt",
-      "_appStatus.LastSurveyCreationDate:" +
-        _appStatus.LastSurveyCreationDate +
-        " type:" +
-        typeof _appStatus.LastSurveyCreationDate
-    );
-    if (
-      _appStatus.LastSurveyCreationDate === null ||
-      before(_appStatus.LastSurveyCreationDate, new Date())
-    ) {
-      logger.info(
-        codeFileName,
-        "showPrompt",
-        "Last survey was created at a previous day:" +
-          _appStatus.setLastNotificationTime +
-          ". Resetting appStatus.SurveyCountToday and setting survey status to NOT_AVAILABLE."
-      );
-
-      _appStatus.SurveyCountToday = 0;
-      _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-      await appStatus.setAppStatus(_appStatus);
-    }
+    await resetVariables(_appStatus);
 
     if (_appStatus.SurveyStatus === SURVEY_STATUS.NOT_AVAILABLE) {
-      //if no survey is available, randomly create one
-      logger.info(
-        codeFileName,
-        "showPrompt",
-        "No survey available; checking if already completed survey today."
-      );
-      if (_appStatus.SurveyStatus !== SURVEY_STATUS.COMPLETED) {
-        if (_appStatus.SurveyCountToday >= MAX_SURVEY_PER_DAY) {
-          logger.info(
-            codeFileName,
-            "showPrompt",
-            "Surveys created today: " +
-              _appStatus.SurveyCountToday +
-              "Max survey per day: " +
-              MAX_SURVEY_PER_DAY +
-              "No survey was not completed today.  Making this participant ineligible to get bonus."
-          );
-          _appStatus.EligibleForBonus = false;
-          await appStatus.setAppStatus(_appStatus);
-          return;
-        }
-        const _createSurvey = (Math.floor(Math.random() * 100) + 1) % 2 === 0;
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          "Randomly creating survey:" + _createSurvey
-        );
-
-        if (_createSurvey) {
-          const _remainingTime = PROMPT_DURATION;
-          notificationController.cancelNotifications();
-          notificationController.showNotification(
-            NEW_SURVEY_AVAILABLE,
-            SURVEY_TIME(_remainingTime)
-          );
-
-          logger.info(
-            codeFileName,
-            "showPrompt",
-            "Created new survey. Updating app status."
-          );
-          const _currentDate = new Date();
-          _appStatus.SurveyCountToday += 1;
-          _appStatus.SurveyStatus = SURVEY_STATUS.AVAILABLE;
-          _appStatus.LastSurveyCreationDate = _currentDate;
-          _appStatus.FirstNotificationTime = _currentDate;
-          _appStatus.LastNotificationTime = _currentDate;
-          await appStatus.setAppStatus(_appStatus);
-
-          logger.info(
-            codeFileName,
-            "showPrompt",
-            "Notification for new survey is shown."
-          );
-        }
-      } else {
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          "Survey already completed today."
-        );
-      }
+      await handleSurveyNotAvailableState(_appStatus);
     } else if (_appStatus.SurveyStatus === SURVEY_STATUS.AVAILABLE) {
-      //Survey is available, show prompt if there is still time, or make survey expired
-
-      logger.info(codeFileName, "showPrompt", "Survey available.");
-      const _firstNotificationTime = _appStatus.FirstNotificationTime;
-      if (_firstNotificationTime === null) {
-        logger.error(
-          codeFileName,
-          "showPrompt",
-          "Fatal error: FirstNotificationTime is null. Returning."
-        );
-        return;
-      }
-
-      const _minPassed = Math.floor(
-        (Date.now() - _firstNotificationTime) / 60000
-      );
-      logger.info(
-        codeFileName,
-        "showPrompt",
-        _minPassed.toString() +
-          " minutes have passed since the first notification date at " +
-          _firstNotificationTime
-      );
-
-      const _remainingTime = PROMPT_DURATION - _minPassed;
-      if (_remainingTime <= 0) {
-        //survey expired, remove all existing notification
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          "Remaining time " + _remainingTime + ", cancelling notifications."
-        );
-        notificationController.cancelNotifications();
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          "Changing survey status to NOT_AVAILABLE."
-        );
-        await appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
-      } else if (_remainingTime >= 15) {
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          "Remaining time:" + _remainingTime + ". Updating notification."
-        );
-
-        notificationController.cancelNotifications();
-        notificationController.showNotification(
-          NEW_SURVEY_AVAILABLE,
-          SURVEY_TIME(_remainingTime)
-        );
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          "Showing latest notification at: " + new Date()
-        );
-        await appStatus.setLastNotificationTime(new Date());
-      } else {
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          "Remaining time:" +
-            _remainingTime +
-            ". Not showing any new notification."
-        );
-      }
+      handleSurveyAvailableState(_appStatus);
     } else if (_appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) {
-      //if ongoing and app not in 'active' mode, prompt again
-      if (AppState.currentState === "background") {
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          "Survey is ongoing but app is in " +
-            AppState.currentState +
-            ". Updating notification."
-        );
-        const _firstNotificationTime = _appStatus.FirstNotificationTime;
-        if (_firstNotificationTime === null) {
-          logger.error(
-            codeFileName,
-            "showPrompt",
-            "Fatal error: FirstNotificationTime is null. Returning."
-          );
-          return;
-        }
-
-        const _minPassed = Math.floor(
-          (Date.now() - _firstNotificationTime) / 60000
-        );
-        logger.info(
-          codeFileName,
-          "showPrompt",
-          _minPassed.toString() +
-            " minutes have passed since the last notification date at " +
-            _firstNotificationTime
-        );
-
-        const _remainingTime = PROMPT_DURATION - _minPassed;
-        if (_remainingTime > 0) {
-          logger.info(
-            codeFileName,
-            "showPrompt",
-            "Remaining time:" + _remainingTime + ". Updating notification."
-          );
-
-          notificationController.cancelNotifications();
-          notificationController.showNotification(ONGOING_SURVEY, SURVEY_TIME);
-          logger.info(
-            codeFileName,
-            "showPrompt",
-            "Showing latest notification at: " + new Date()
-          );
-          await appStatus.setLastNotificationTime(new Date());
-        }
-      }
+      await handleSurveyOngoingState(_appStatus);
     }
   }
 }

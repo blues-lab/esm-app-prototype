@@ -9,11 +9,10 @@ export const SELECTED_SERVICES_FILE =
 export const SURVEY_STATUS = {
   NOT_AVAILABLE: "NOT_AVAILABLE",
   AVAILABLE: "AVAILABLE",
-  ONGOING: "ONGOING",
-  COMPLETED: "COMPLETED"
+  ONGOING: "ONGOING"
 };
 
-export const SURVEY_ALLOWED_TO_COMPLETE = 5; //allow to complete max 1 surveys/day, when INTERNAL_TEST==false, make it 1
+export const SURVEY_ALLOWED_TO_COMPLETE = 2; //allow to complete max n surveys/day
 
 export const MAX_SURVEY_PER_DAY = 5; //create max 5 surveys/day
 

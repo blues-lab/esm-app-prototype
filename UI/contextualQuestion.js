@@ -234,7 +234,8 @@ export default class ContextualQuestionScreen extends React.Component {
       "Updating app status and cancelling all notifications."
     );
     _appStatus.CompletedSurveys += 1;
-    _appStatus.SurveyStatus = SURVEY_STATUS.COMPLETED;
+    _appStatus.SurveysAnsweredToday += 1;
+    _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
     _appStatus.CurrentSurveyID = null;
     await appStatus.setAppStatus(_appStatus);
     notificationController.cancelNotifications();

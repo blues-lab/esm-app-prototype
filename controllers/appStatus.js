@@ -15,6 +15,7 @@ class AppStatus {
       FirstNotificationTime: null,
       LastNotificationTime: null,
       CompletedSurveys: 0,
+      SurveysAnsweredToday: 0,
       InstallationDate: null,
       UUID: null,
       InvitationCode: null,
