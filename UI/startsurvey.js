@@ -83,33 +83,6 @@ export default class SurveyStartScreen extends React.Component {
           codeFileName,
           "fileUploadCallBack"
         );
-        if (!_saved) {
-          Alert.alert(
-            strings.ERROR_MESSAGE_HEADER,
-            strings.SAVING_ERROR_MESSAGE,
-            [
-              {
-                text: strings.SEND_ERROR_EMAIL,
-                onPress: async () => {
-                  const _body = await utilities.gatherErrorData(
-                    codeFileName,
-                    "fileUploadCallBack"
-                  );
-                  utilities.sendEmail(
-                    [strings.CONTACT_EMAIL],
-                    "Error saving partial survey response. Page: " +
-                      codeFileName,
-                    JSON.stringify(_body)
-                  );
-                }
-              },
-              {
-                text: "Cancel"
-              }
-            ],
-            { cancelable: false }
-          );
-        }
       }
     }
   }

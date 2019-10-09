@@ -338,33 +338,6 @@ export default class UserSettingsScreen extends React.Component {
       "saveSettings"
     );
 
-    if (!_saved) {
-      Alert.alert(
-        strings.ERROR_MESSAGE_HEADER,
-        strings.SAVING_ERROR_MESSAGE,
-        [
-          {
-            text: strings.SEND_ERROR_EMAIL,
-            onPress: async () => {
-              const _body = await utilities.gatherErrorData(
-                codeFileName,
-                "fileUploadCallBack"
-              );
-              utilities.sendEmail(
-                [strings.CONTACT_EMAIL],
-                "Error saving user settings. Page: " + codeFileName,
-                JSON.stringify(_body)
-              );
-            }
-          },
-          {
-            text: "Cancel"
-          }
-        ],
-        { cancelable: false }
-      );
-    }
-
     logger.info(
       codeFileName,
       "saveSettings",
@@ -551,7 +524,8 @@ export default class UserSettingsScreen extends React.Component {
                   "StartExitSurveyButton",
                   "Starting exit survey."
                 );
-                this.props.navigation.navigate("ExitSurvey");
+                //this.props.navigation.navigate("ExitSurvey");
+                utilities.showErrorDialog(codeFileName, "SSS", "Test");
               }}
             />
             <Button

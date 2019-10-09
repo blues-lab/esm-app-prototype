@@ -239,34 +239,6 @@ export default class ExitSurveyScreen extends React.Component {
         codeFileName,
         "saveResponse"
       );
-
-      if (!_saved) {
-        Alert.alert(
-          strings.ERROR_MESSAGE_HEADER,
-          strings.SAVING_ERROR_MESSAGE,
-          [
-            {
-              text: strings.SEND_ERROR_EMAIL,
-              onPress: async () => {
-                const _body = await utilities.gatherErrorData(
-                  codeFileName,
-                  "fileUploadCallBack"
-                );
-                utilities.sendEmail(
-                  [strings.CONTACT_EMAIL],
-                  "Error saving exit survey response.",
-                  JSON.stringify(_body)
-                );
-              }
-            },
-            {
-              text: "Cancel"
-            }
-          ],
-          { cancelable: false }
-        );
-        return;
-      }
     }
 
     logger.info(codeFileName, "saveResponse", "Updating app status.");

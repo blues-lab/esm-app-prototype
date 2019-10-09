@@ -199,33 +199,6 @@ export default class ContextualQuestionScreen extends React.Component {
         codeFileName,
         "saveResponse"
       );
-
-      if (!_saved) {
-        Alert.alert(
-          strings.ERROR_MESSAGE_HEADER,
-          strings.SAVING_ERROR_MESSAGE,
-          [
-            {
-              text: strings.SEND_ERROR_EMAIL,
-              onPress: async () => {
-                const _body = await utilities.gatherErrorData(
-                  codeFileName,
-                  "fileUploadCallBack"
-                );
-                utilities.sendEmail(
-                  [strings.CONTACT_EMAIL],
-                  "Error saving full survey response. Page: " + codeFileName,
-                  JSON.stringify(_body)
-                );
-              }
-            },
-            {
-              text: "Cancel"
-            }
-          ],
-          { cancelable: false }
-        );
-      }
     }
 
     logger.info(
