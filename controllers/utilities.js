@@ -123,14 +123,15 @@ export async function readJSONFile(filePath, callerClass, callerFunc) {
   return result;
 }
 
-async function gatherErrorData(callerFunc, callerClass) {
-  let _log = "";
+async function gatherErrorData(callerClass, callerFunc) {
+  //let _log = "";
   let _settings = "";
   let _appStatus = "";
 
   try {
     if (await RNFS.exists(LOG_FILE_PATH)) {
-      _log = await RNFS.readFile(LOG_FILE_PATH);
+      //not sending logs, since the file can be huge and not fit in an email, causing sending email fail altogether.
+      //_log = await RNFS.readFile(LOG_FILE_PATH);
     }
   } catch (error) {
     logger.error(
@@ -142,7 +143,11 @@ async function gatherErrorData(callerFunc, callerClass) {
 
   try {
     if (await RNFS.exists(USER_SETTINGS_FILE_PATH)) {
-      _settings = await readJSONFile(USER_SETTINGS_FILE_PATH);
+      _settings = await readJSONFile(
+        USER_SETTINGS_FILE_PATH,
+        callerClass,
+        callerFunc
+      );
     }
   } catch (error) {
     logger.error(
@@ -153,7 +158,11 @@ async function gatherErrorData(callerFunc, callerClass) {
   }
   try {
     if (await RNFS.exists(APP_STATUS_FILE_PATH)) {
-      _appStatus = await readJSONFile(APP_STATUS_FILE_PATH);
+      _appStatus = await readJSONFile(
+        APP_STATUS_FILE_PATH,
+        callerClass,
+        callerFunc
+      );
     }
   } catch (error) {
     logger.error(
@@ -166,13 +175,13 @@ async function gatherErrorData(callerFunc, callerClass) {
   return {
     File: callerClass,
     CallerFunc: callerFunc,
-    Log: _log,
+    //Log: _log,
     Settings: _settings,
     Status: _appStatus
   };
 }
 
-function sendEmail(recipients, subject, body) {
+export function sendEmail(recipients, subject, body) {
   try {
     Mailer.mail(
       {
@@ -198,30 +207,45 @@ function sendEmail(recipients, subject, body) {
   }
 }
 
-export async function showErrorDialog(callerClass, callerFunc, emailSubject) {
-  Alert.alert(
-    "Error",
-    "An error occurred loading data from file. Please send an email to " +
-      "blues-study-mimi@lists.eecs.berkeley.edu with the error log.",
-    [
-      {
-        text: "Send Email",
-        onPress: async () => {
-          const _body = await gatherErrorData(callerClass, callerFunc);
-          sendEmail(
-            ["blues-study-mimi@lists.eecs.berkeley.edu"],
-            emailSubject,
-            JSON.stringify(_body)
-          );
+const AsyncAlert = async (callerClass, callerFunc, emailSubject) =>
+  new Promise(resolve => {
+    Alert.alert(
+      "Error",
+      "An error occurred loading data from file. Please send an email to " +
+        "blues-study-mimi@lists.eecs.berkeley.edu with the error log.",
+      [
+        {
+          text: "Send Email",
+          onPress: async () => {
+            await logger.info(
+              codeFileName,
+              "AsyncAlert",
+              "Gathering error report."
+            );
+            const _body = await gatherErrorData(callerClass, callerFunc);
+            await sendEmail(
+              ["blues-study-mimi@lists.eecs.berkeley.edu"],
+              emailSubject,
+              JSON.stringify(_body)
+            );
+            await logger.info(
+              codeFileName,
+              "AsyncAlert",
+              "Emailed error report."
+            );
+          }
+        },
+        {
+          text: "Cancel",
+          style: "cancel"
         }
-      },
-      {
-        text: "Cancel",
-        style: "cancel"
-      }
-    ],
-    { cancelable: false }
-  );
+      ],
+      { cancelable: false }
+    );
+  });
+
+export async function showErrorDialog(callerClass, callerFunc, emailSubject) {
+  await AsyncAlert(callerClass, callerFunc, emailSubject);
 }
 
 export async function uploadData(

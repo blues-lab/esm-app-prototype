@@ -344,6 +344,14 @@ export default class UserSettingsScreen extends React.Component {
       codeFileName,
       "saveSettings"
     );
+
+    if (!_saved) {
+      await utilities.showErrorDialog(
+        codeFileName,
+        "loadStatus",
+        "Failed to load settings file."
+      );
+    }
   }
 
   changeWifi = async () => {
