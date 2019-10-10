@@ -524,8 +524,7 @@ export default class UserSettingsScreen extends React.Component {
                   "StartExitSurveyButton",
                   "Starting exit survey."
                 );
-                //this.props.navigation.navigate("ExitSurvey");
-                utilities.showErrorDialog(codeFileName, "SSS", "Test");
+                this.props.navigation.navigate("ExitSurvey");
               }}
             />
             <Button
