@@ -102,7 +102,8 @@ export default class HomeScreen extends React.Component {
       exitSurveyDone: false,
       exitSurveyAvailable: false,
       invitationCodeObtained: false,
-      ExitSurveyRemainingDays: 0
+      ExitSurveyRemainingDays: 0,
+      canUninstallApp: false
     };
   }
 
@@ -278,6 +279,7 @@ export default class HomeScreen extends React.Component {
             exitSurveyDone: _appStatus.ExitSurveyDone,
             exitSurveyAvailable:
               !_appStatus.ExitSurveyDone && _remainingDays > 0,
+            canUninstallApp: !_appStatus.ExitSurveyDone && _remainingDays < 7,
             noSurveyDialogVisible: false,
             ExitSurveyRemainingDays: _remainingDays
           });
@@ -606,24 +608,10 @@ export default class HomeScreen extends React.Component {
                     padding: 5
                   }}
                 >
-                  {strings.FINAL_THANK}
+                  {this.state.canUninstallApp
+                    ? strings.FINAL_THANK_EXTENDED
+                    : strings.FINAL_THANK}
                 </Text>
-                {Platform.OS === "android" && (
-                  <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
-                    <Button
-                      title="Close app"
-                      color="#20B2AA"
-                      onPress={() => {
-                        logger.info(
-                          codeFileName,
-                          "Study ended modal",
-                          "Closing app"
-                        );
-                        BackHandler.exitApp();
-                      }}
-                    />
-                  </TouchableHighlight>
-                )}
               </View>
             )}
           </View>

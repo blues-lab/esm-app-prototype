@@ -242,6 +242,8 @@ export const EXIT_SURVEY_DONE = "You have earned $1!";
 //********* End exit survey related texts ************//
 
 export const FINAL_THANK = "Thank you for participating in our study!";
+export const FINAL_THANK_EXTENDED =
+  "Thank you for participating in our study! Please feel free to uninstall this app.";
 
 export const CONTACT_TEXT =
   "If you have any questions or comments, contact us at";
