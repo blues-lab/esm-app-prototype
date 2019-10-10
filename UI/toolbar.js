@@ -8,8 +8,7 @@ import {
 } from "react-native";
 
 import PropTypes from "prop-types";
-
-import { withNavigation } from "react-navigation";
+import { NavigationEvents, withNavigation } from "react-navigation";
 import Icon from "react-native-vector-icons/Feather";
 import ProgressBarAnimated from "react-native-progress-bar-animated";
 import appStatus from "../controllers/appStatus";
@@ -31,6 +30,28 @@ class ToolBar extends React.Component {
     });
   };
 
+  async expireSurvey() {
+    Alert.alert(
+      SURVEY_EXPIRED_HEADER,
+      SURVEY_EXPIRED,
+      [
+        {
+          text: "OK",
+          onPress: async () => {
+            await logger.info(
+              codeFileName,
+              "updateTimeDisplay",
+              "Page:" + this.props.title + ". Survey expired, exiting app."
+            );
+            notificationController.cancelNotifications();
+            this.props.navigation.navigate("Home");
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
   async initToolbar() {
     const _appStatus = await appStatus.loadStatus();
 
@@ -47,13 +68,27 @@ class ToolBar extends React.Component {
       "initToolbar",
       "Page:" +
         this.props.title +
+        ". Route name: " +
+        this.props.navigation.state.routeName +
         ". Progress:" +
         this.props.progress +
+        ". Survey status:" +
+        _appStatus.SurveyStatus +
         ". Current appStatus:" +
         JSON.stringify(_appStatus)
     );
 
-    if (_appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) {
+    if (
+      _appStatus.SurveyStatus !== SURVEY_STATUS.ONGOING &&
+      this.props.navigation.state.routeName !== "Home"
+    ) {
+      logger.error(
+        codeFileName,
+        "initToolbar",
+        "Should not be in this page unless survey is ongoing. Expiring any previous survey."
+      );
+      await this.expireSurvey();
+    } else if (_appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) {
       await logger.info(
         codeFileName,
         "initToolbar",
@@ -113,12 +148,6 @@ class ToolBar extends React.Component {
             ". Timer to update remaining time is already running."
         );
       }
-    } else {
-      await logger.info(
-        codeFileName,
-        "initToolbar",
-        "Page:" + this.props.title + ". No survey is ONGOING. Returning."
-      );
     }
   }
 
@@ -127,7 +156,7 @@ class ToolBar extends React.Component {
     await logger.info(
       codeFileName,
       "componentDidMount",
-      "Page:" + this.props.title + ". Initializing toolbar."
+      "Mounting components. Page: " + this.props.navigation.state.routeName
     );
     await this.initToolbar();
   }
@@ -137,11 +166,8 @@ class ToolBar extends React.Component {
     logger.info(
       codeFileName,
       "componentWillUnmount",
-      "Page:" + this.props.title + ". Removing event listeners."
+      "Unmounting components. Page:" + this.props.navigation.state.routeName
     );
-    if (this.interval !== null) {
-      clearInterval(this.interval);
-    }
   }
 
   constructor(props) {
@@ -223,27 +249,7 @@ class ToolBar extends React.Component {
           await appStatus.setAppStatus(_appStatus);
 
           if (this.props.title !== "Settings") {
-            Alert.alert(
-              SURVEY_EXPIRED_HEADER,
-              SURVEY_EXPIRED,
-              [
-                {
-                  text: "OK",
-                  onPress: async () => {
-                    await logger.info(
-                      codeFileName,
-                      "updateTimeDisplay",
-                      "Page:" +
-                        this.props.title +
-                        ". Survey expired, exiting app."
-                    );
-                    notificationController.cancelNotifications();
-                    BackHandler.exitApp();
-                  }
-                }
-              ],
-              { cancelable: false }
-            );
+            await this.expireSurvey();
           }
         }
       }
@@ -261,6 +267,34 @@ class ToolBar extends React.Component {
           margin: 5
         }}
       >
+        <NavigationEvents
+          onDidFocus={async payload => {
+            logger.info(
+              codeFileName,
+              "onDidFocus",
+              "Current page:" +
+                this.props.navigation.state.routeName +
+                ". Initializing toolbar. Payload:" +
+                JSON.stringify(payload)
+            );
+            await this.initToolbar();
+          }}
+          onWillBlur={payload => {
+            logger.info(
+              codeFileName,
+              "onWillBlur",
+              "Current page:" +
+                this.props.navigation.state.routeName +
+                ". Removing timer. Payload: " +
+                JSON.stringify(payload)
+            );
+
+            if (this.interval !== null) {
+              clearInterval(this.interval);
+            }
+          }}
+        />
+
         <TouchableHighlight
           style={{ height: 30 }}
           onPress={() => {
