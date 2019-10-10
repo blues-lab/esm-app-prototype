@@ -282,7 +282,7 @@ export default class UserSettingsScreen extends React.Component {
               "Agreed to save settings, saving and then going to previous page."
             );
             await this.saveSettings();
-            Alert.alert("Settings saved.", "", [
+            Alert.alert(strings.SETTINGS_SAVED, "", [
               { text: "OK", onPress: () => this.props.navigation.goBack(null) }
             ]);
           }
@@ -331,17 +331,18 @@ export default class UserSettingsScreen extends React.Component {
       afterTime: this.state.afterTime,
       beforeTime: this.state.beforeTime
     };
-    const _saved = await utilities.writeJSONFile(
-      _settings,
-      USER_SETTINGS_FILE_PATH,
-      codeFileName,
-      "saveSettings"
-    );
 
     logger.info(
       codeFileName,
       "saveSettings",
       "Saving settings:" + JSON.stringify(_settings)
+    );
+
+    const _saved = await utilities.writeJSONFile(
+      _settings,
+      USER_SETTINGS_FILE_PATH,
+      codeFileName,
+      "saveSettings"
     );
   }
 
@@ -702,7 +703,7 @@ export default class UserSettingsScreen extends React.Component {
                 if (_firstLaunch) {
                   Alert.alert(
                     "Thank you!",
-                    "Your settings have been saved. We will prompt you when a new survey becomes available.",
+                    strings.SETTINGS_SAVED_FIRST_TIME,
                     [
                       {
                         text: "OK",
@@ -719,7 +720,7 @@ export default class UserSettingsScreen extends React.Component {
                     { cancelable: false }
                   );
                 } else {
-                  Alert.alert("Settings saved.");
+                  Alert.alert(strings.SETTINGS_SAVED);
                 }
               }}
             />

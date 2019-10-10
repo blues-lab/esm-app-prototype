@@ -65,6 +65,9 @@ export const DONT_DISTURB =
 export const DONT_DISTURB_AFTER = "Do not show notifications after";
 export const DONT_DISTURB_BEFORE = "And before";
 
+export const SETTINGS_SAVED_FIRST_TIME =
+  "Your settings have been saved. We will prompt you when a new survey becomes available.";
+export const SETTINGS_SAVED = "Settings saved.";
 /* Notifications */
 export const NEW_SURVEY_AVAILABLE = "New survey available!";
 export const SURVEY_TIME = remainingTime =>
