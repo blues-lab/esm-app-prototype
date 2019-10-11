@@ -270,6 +270,12 @@ class ToolBar extends React.Component {
           await this.expireSurvey();
         }
       }
+    } else {
+      logger.warn(
+        codeFileName,
+        "updateTimeDisplay",
+        "Component not mounted! Should not come to this point."
+      );
     }
   }
 
