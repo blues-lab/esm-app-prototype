@@ -22,7 +22,10 @@ import LocationServicesDialogBox from "react-native-android-location-services-di
 import VersionNumber from "react-native-version-number";
 import { uploadFiles } from "../controllers/backgroundJobs";
 import appStatus from "../controllers/appStatus";
-import notificationController from "../controllers/notificationController";
+import notificationController, {
+  onAppOpen
+} from "../controllers/notificationController";
+
 import logger from "../controllers/logger";
 import commonStyle from "./Style";
 import * as utilities from "../controllers/utilities";
@@ -98,6 +101,8 @@ export default class UserSettingsScreen extends React.Component {
       backHandler: this.handleBackNavigation.bind(this)
     });
 
+    onAppOpen.userSettingsCallBack = this.userSettingsCallBack.bind(this);
+
     this.loadSettings();
   }
 
@@ -124,6 +129,15 @@ export default class UserSettingsScreen extends React.Component {
     );
     return false;
   };
+
+  userSettingsCallBack() {
+    logger.info(
+      codeFileName,
+      "userSettingsCallBack",
+      "Going back to the previous page."
+    );
+    this.props.navigation.goBack(null);
+  }
 
   async getHomeSSID() {
     try {
@@ -495,6 +509,9 @@ export default class UserSettingsScreen extends React.Component {
                 this.onBackButtonPressAndroid
               );
             }
+            onAppOpen.userSettingsCallBack = this.userSettingsCallBack.bind(
+              this
+            );
           }}
           onWillBlur={payload => {
             if (Platform.OS === "android") {

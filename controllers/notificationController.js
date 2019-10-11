@@ -10,6 +10,10 @@ export function onAppOpen() {
     logger.info(codeFileName, "onAppOpen", "Calling backCallBack.");
     onAppOpen.backCallBack();
   }
+  if (onAppOpen.userSettingsCallBack !== null) {
+    logger.info(codeFileName, "onAppOpen", "Calling userSettingsCallBack.");
+    onAppOpen.userSettingsCallBack();
+  }
 }
 
 class NotificationController {

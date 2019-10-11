@@ -351,7 +351,7 @@ export default class HomeScreen extends React.Component {
     logger.info(
       codeFileName,
       "componentDidMount",
-      "Mounting components and setting backCallBack to initApp."
+      "Mounting components and setting callback for opening app via notification."
     );
     onAppOpen.backCallBack = this.initApp.bind(this);
   }
@@ -417,6 +417,7 @@ export default class HomeScreen extends React.Component {
                   );
                 }
 
+                onAppOpen.backCallBack = this.initApp.bind(this);
                 logger.info(codeFileName, "onDidFocus", "Calling initApp.");
                 await this.initApp();
               }}
