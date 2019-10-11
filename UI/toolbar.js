@@ -40,25 +40,23 @@ class ToolBar extends React.Component {
       surveyStatus: SURVEY_STATUS.NOT_AVAILABLE
     });
 
-    Alert.alert(
-      SURVEY_EXPIRED_HEADER,
-      SURVEY_EXPIRED,
-      [
-        {
-          text: "OK",
-          onPress: async () => {
-            await logger.info(
-              codeFileName,
-              "updateTimeDisplay",
-              "Page:" + this.props.title + ". Survey expired, exiting app."
-            );
-            notificationController.cancelNotifications();
-            this.props.navigation.navigate("Home");
-          }
-        }
-      ],
-      { cancelable: false }
+    if (this.interval != null) {
+      clearInterval(this.interval);
+    }
+
+    logger.info(
+      codeFileName,
+      "expireSurvey",
+      "Page:" +
+        this.props.title +
+        ". Survey expired, going back to the Home page."
     );
+    notificationController.cancelNotifications();
+    this.props.navigation.navigate("Home");
+
+    if (this._isMounted) {
+      Alert.alert(SURVEY_EXPIRED_HEADER, SURVEY_EXPIRED);
+    }
   }
 
   async initToolbar() {
@@ -207,14 +205,14 @@ class ToolBar extends React.Component {
 
       if (await utilities.currentSurveyExpired(_appStatus)) {
         //if no survey is ongoing, no point in updating time.
-        logger.log(
+        logger.info(
           codeFileName,
           "updateTimeDisplay",
           "Current page:" +
             this.props.navigation.state.routeName +
-            ". Expiring survey."
+            ". Expiring survey and clearing timer."
         );
-        await this.expireSurvey();
+        await this.expireSurvey(_appStatus);
         return;
       }
 
@@ -257,19 +255,22 @@ class ToolBar extends React.Component {
           }
         } else {
           //ongoing survey expired, go back to home
-          if (this.interval != null) {
-            clearInterval(this.interval);
-          }
-          logger.log(
+          logger.info(
             codeFileName,
             "updateTimeDisplay",
             "Current page:" +
               this.props.navigation.state.routeName +
-              ". Expiring survey."
+              ". Survey time ended. Expiring survey and clearing timer."
           );
-          await this.expireSurvey();
+          await this.expireSurvey(_appStatus);
         }
       }
+    } else {
+      //      logger.warn(
+      //        codeFileName,
+      //        "updateTimeDisplay",
+      //        "Component not mounted! Should not come to this point."
+      //      );
     }
   }
 
