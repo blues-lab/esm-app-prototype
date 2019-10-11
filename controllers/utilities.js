@@ -471,7 +471,7 @@ export async function currentSurveyExpired(_appStatus) {
       _firstNotificationTime +
       ", _remainingSec:" +
       _remainingSec +
-      " minutes, expired:" +
+      " seconds, expired:" +
       _expired
   );
 
