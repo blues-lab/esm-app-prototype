@@ -10,7 +10,8 @@ import {
   PROMPT_DURATION,
   LOG_FILE_PATH,
   APP_STATUS_FILE_PATH,
-  USER_SETTINGS_FILE_PATH
+  USER_SETTINGS_FILE_PATH,
+  SURVEY_STATUS
 } from "./constants";
 
 const fetch = require("node-fetch");
@@ -441,12 +442,18 @@ export const format = string => {
 
 export async function currentSurveyExpired(_appStatus) {
   const _firstNotificationTime = _appStatus.FirstNotificationTime;
-  if (_appStatus.SurveyCountToday === 0 || _firstNotificationTime === null) {
+  if (
+    _appStatus.SurveyStatus === SURVEY_STATUS.NOT_AVAILABLE ||
+    _appStatus.SurveyCountToday === 0 ||
+    _firstNotificationTime === null
+  ) {
     logger.info(
       codeFileName,
       "currentSurveyExpired",
       "_appStatus.SurveyCountToday: " +
         _appStatus.SurveyCountToday +
+        "_appStatus.SurveyStatus:" +
+        _appStatus.SurveyStatus +
         "_appStatus.FirstNotificationTime: " +
         _firstNotificationTime +
         ", returning true."
