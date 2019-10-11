@@ -54,7 +54,9 @@ class ToolBar extends React.Component {
     notificationController.cancelNotifications();
     this.props.navigation.navigate("Home");
 
-    Alert.alert(SURVEY_EXPIRED_HEADER, SURVEY_EXPIRED);
+    if (this._isMounted) {
+      Alert.alert(SURVEY_EXPIRED_HEADER, SURVEY_EXPIRED);
+    }
   }
 
   async initToolbar() {
