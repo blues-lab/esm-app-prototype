@@ -21,6 +21,8 @@ import appStatus from "../controllers/appStatus";
 import ToolBar from "./toolbar";
 import * as utilities from "../controllers/utilities";
 import * as strings from "../controllers/strings";
+import notificationController from "../controllers/notificationController";
+import { SURVEY_STATUS } from "../controllers/constants";
 
 const codeFileName = "startsurvey.js";
 
@@ -85,6 +87,68 @@ export default class SurveyStartScreen extends React.Component {
         );
       }
     }
+  }
+
+  async expireSurvey(_appStatus) {
+    const funcName = "expireSurvey";
+    _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+    _appStatus.CurrentSurveyID = null;
+    await appStatus.setAppStatus(_appStatus);
+
+    Alert.alert(
+      strings.SURVEY_EXPIRED_HEADER,
+      strings.SURVEY_EXPIRED,
+      [
+        {
+          text: "OK",
+          onPress: async () => {
+            await logger.info(
+              codeFileName,
+              funcName,
+              "Survey expired, going back to home."
+            );
+            notificationController.cancelNotifications();
+            this.props.navigation.navigate("Home");
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
+  async saveResponse() {
+    const _appStatus = await appStatus.loadStatus();
+    if (await utilities.currentSurveyExpired()) {
+      await this.expireSurvey(_appStatus);
+      return;
+    }
+
+    //upload partial survey response
+    this.setState({ saveWaitVisible: true });
+    logger.info(
+      codeFileName,
+      "NextButtonPress",
+      "Uploading partial response and navigating to AlvaPrompt."
+    );
+    utilities.uploadData(
+      {
+        SurveyID: _appStatus.CurrentSurveyID,
+        Stage: "Conversation topic.",
+        PartialResponse: this.state.conversationTopic
+      },
+      _appStatus.UUID,
+      "PartialSurveyResponse",
+      codeFileName,
+      "NextButtonPress",
+      SurveyStartScreen.fileUploadCallBack
+    );
+
+    this.setState({ saveWaitVisible: false });
+
+    this.props.navigation.navigate("AlvaPrompt", {
+      conversationTopic: this.state.conversationTopic,
+      surveyProgress: 20
+    });
   }
 
   render() {
@@ -164,34 +228,7 @@ export default class SurveyStartScreen extends React.Component {
                     if (this.state.conversationTopic.length === 0) {
                       Alert.alert("Error", strings.TALKING_ABOUT_REQUIRED);
                     } else {
-                      //upload partial survey response
-                      {
-                        this.setState({ saveWaitVisible: true });
-                        const _appStatus = await appStatus.loadStatus();
-                        logger.info(
-                          codeFileName,
-                          "NextButtonPress",
-                          "Uploading partial response and navigating to AlvaPrompt."
-                        );
-                        utilities.uploadData(
-                          {
-                            SurveyID: _appStatus.CurrentSurveyID,
-                            Stage: "Conversation topic.",
-                            PartialResponse: this.state.conversationTopic
-                          },
-                          _appStatus.UUID,
-                          "PartialSurveyResponse",
-                          codeFileName,
-                          "NextButtonPress",
-                          SurveyStartScreen.fileUploadCallBack
-                        );
-
-                        this.setState({ saveWaitVisible: false });
-                      }
-                      this.props.navigation.navigate("AlvaPrompt", {
-                        conversationTopic: this.state.conversationTopic,
-                        surveyProgress: 20
-                      });
+                      await this.saveResponse();
                     }
                   }}
                 />

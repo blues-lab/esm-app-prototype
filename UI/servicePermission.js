@@ -24,6 +24,8 @@ import * as utilities from "../controllers/utilities";
 import ToolBar from "./toolbar";
 import appStatus from "../controllers/appStatus";
 import * as strings from "../controllers/strings";
+import notificationController from "../controllers/notificationController";
+import { SURVEY_STATUS } from "../controllers/constants";
 
 const codeFileName = "servicePermission.js";
 
@@ -395,7 +397,40 @@ export default class ServicePermissionScreen extends React.Component {
     });
   }
 
+  async expireSurvey(_appStatus) {
+    const funcName = "expireSurvey";
+    _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+    _appStatus.CurrentSurveyID = null;
+    await appStatus.setAppStatus(_appStatus);
+
+    Alert.alert(
+      strings.SURVEY_EXPIRED_HEADER,
+      strings.SURVEY_EXPIRED,
+      [
+        {
+          text: "OK",
+          onPress: async () => {
+            await logger.info(
+              codeFileName,
+              funcName,
+              "Survey expired, going back to home."
+            );
+            notificationController.cancelNotifications();
+            this.props.navigation.navigate("Home");
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
   async saveResponse() {
+    const _appStatus = await appStatus.loadStatus();
+    if (await utilities.currentSurveyExpired()) {
+      await this.expireSurvey(_appStatus);
+      return;
+    }
+
     if (
       this.state.askingPermissionQuestions ||
       this.state.askingPermissionFollowUpQuestions
