@@ -15,6 +15,10 @@ import logger from "../controllers/logger";
 import commonStyles from "./Style";
 import ToolBar from "./toolbar";
 import * as strings from "../controllers/strings";
+import * as utilities from "../controllers/utilities";
+import notificationController from "../controllers/notificationController";
+import appStatus from "../controllers/appStatus";
+import { SURVEY_STATUS } from "../controllers/constants";
 
 const codeFileName = "alvaPrompt.js";
 
@@ -73,6 +77,33 @@ export default class AlvaPromptScreen extends React.Component {
     logger.info(codeFileName, "componentWillUnmount", "Unmounting components.");
   }
 
+  async expireSurvey(_appStatus) {
+    const funcName = "expireSurvey";
+    _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+    _appStatus.CurrentSurveyID = null;
+    await appStatus.setAppStatus(_appStatus);
+
+    Alert.alert(
+      strings.SURVEY_EXPIRED_HEADER,
+      strings.SURVEY_EXPIRED,
+      [
+        {
+          text: "OK",
+          onPress: async () => {
+            await logger.info(
+              codeFileName,
+              funcName,
+              "Survey expired, going back to home."
+            );
+            notificationController.cancelNotifications();
+            this.props.navigation.navigate("Home");
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
   render() {
     return (
       <View
@@ -85,38 +116,36 @@ export default class AlvaPromptScreen extends React.Component {
           margin: 5
         }}
       >
-        {
-          <NavigationEvents
-            onDidFocus={payload => {
-              if (Platform.OS === "android") {
-                logger.info(
-                  codeFileName,
-                  "onDidFocus",
-                  "Adding back button event handler. Payload: " +
-                    JSON.stringify(payload)
-                );
-                BackHandler.addEventListener(
-                  "hardwareBackPress",
-                  this.onBackButtonPressAndroid
-                );
-              }
-            }}
-            onWillBlur={payload => {
-              if (Platform.OS === "android") {
-                logger.info(
-                  codeFileName,
-                  "onWillBlur",
-                  "Removing back button event handler. Payload: " +
-                    JSON.stringify(payload)
-                );
-                BackHandler.removeEventListener(
-                  "hardwareBackPress",
-                  this.onBackButtonPressAndroid
-                );
-              }
-            }}
-          />
-        }
+        <NavigationEvents
+          onDidFocus={payload => {
+            if (Platform.OS === "android") {
+              logger.info(
+                codeFileName,
+                "onDidFocus",
+                "Adding back button event handler. Payload: " +
+                  JSON.stringify(payload)
+              );
+              BackHandler.addEventListener(
+                "hardwareBackPress",
+                this.onBackButtonPressAndroid
+              );
+            }
+          }}
+          onWillBlur={payload => {
+            if (Platform.OS === "android") {
+              logger.info(
+                codeFileName,
+                "onWillBlur",
+                "Removing back button event handler. Payload: " +
+                  JSON.stringify(payload)
+              );
+              BackHandler.removeEventListener(
+                "hardwareBackPress",
+                this.onBackButtonPressAndroid
+              );
+            }
+          }}
+        />
         <View
           style={{
             flex: 1,
@@ -141,11 +170,16 @@ export default class AlvaPromptScreen extends React.Component {
               <Button
                 title={strings.NEXT_BUTTON}
                 color="#20B2AA"
-                onPress={() => {
-                  this.props.navigation.navigate("ServiceMenu", {
-                    conversationTopic: this.state.conversationTopic,
-                    surveyProgress: 30
-                  });
+                onPress={async () => {
+                  const _appStatus = await appStatus.loadStatus();
+                  if (await utilities.currentSurveyExpired(_appStatus)) {
+                    await this.expireSurvey(_appStatus);
+                  } else {
+                    this.props.navigation.navigate("ServiceMenu", {
+                      conversationTopic: this.state.conversationTopic,
+                      surveyProgress: 30
+                    });
+                  }
                 }}
               />
             </TouchableHighlight>

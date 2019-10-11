@@ -19,6 +19,7 @@ import * as RNFS from "react-native-fs";
 import Dialog from "react-native-dialog";
 import DialogInput from "react-native-dialog-input";
 
+import notificationController from "../controllers/notificationController";
 import appStatus from "../controllers/appStatus";
 import commonStyles from "./Style";
 import ToolBar from "./toolbar";
@@ -27,7 +28,8 @@ import logger from "../controllers/logger";
 import * as utilities from "../controllers/utilities";
 import {
   SELECTED_SERVICES_FILE,
-  SERVICE_FILE_LOCAL
+  SERVICE_FILE_LOCAL,
+  SURVEY_STATUS
 } from "../controllers/constants";
 
 const codeFileName = "servicemenu.js";
@@ -374,7 +376,40 @@ export default class ServiceMenuScreen extends React.Component {
     }
   }
 
+  async expireSurvey(_appStatus) {
+    const funcName = "expireSurvey";
+    _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+    _appStatus.CurrentSurveyID = null;
+    await appStatus.setAppStatus(_appStatus);
+
+    Alert.alert(
+      strings.SURVEY_EXPIRED_HEADER,
+      strings.SURVEY_EXPIRED,
+      [
+        {
+          text: "OK",
+          onPress: async () => {
+            await logger.info(
+              codeFileName,
+              funcName,
+              "Survey expired, going back to home."
+            );
+            notificationController.cancelNotifications();
+            this.props.navigation.navigate("Home");
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
   async showPermissionPage() {
+    const _appStatus = await appStatus.loadStatus();
+    if (await utilities.currentSurveyExpired(_appStatus)) {
+      await this.expireSurvey(_appStatus);
+      return;
+    }
+
     //After service selection is done, show permission page for at most 3 selected services
     let _services = [];
     for (let i = 0; i < this.state.serviceCategories.length; i++) {
@@ -442,7 +477,6 @@ export default class ServiceMenuScreen extends React.Component {
       await this.promisedSetState({ saveWaitVisible: true });
       const _surveyResponseJS = this.state.surveyResponseJS;
       _surveyResponseJS.SelectedServices = _selectedServices;
-      const _appStatus = await appStatus.loadStatus();
 
       utilities.uploadData(
         {

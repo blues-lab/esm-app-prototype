@@ -141,10 +141,41 @@ export default class ContextualQuestionScreen extends React.Component {
     );
   };
 
-  async saveResponse() {
-    this.setState({ saveWaitVisible: true });
+  async expireSurvey(_appStatus) {
+    const funcName = "expireSurvey";
+    _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+    _appStatus.CurrentSurveyID = null;
+    await appStatus.setAppStatus(_appStatus);
 
+    Alert.alert(
+      strings.SURVEY_EXPIRED_HEADER,
+      strings.SURVEY_EXPIRED,
+      [
+        {
+          text: "OK",
+          onPress: async () => {
+            await logger.info(
+              codeFileName,
+              funcName,
+              "Survey expired, going back to home."
+            );
+            notificationController.cancelNotifications();
+            this.props.navigation.navigate("Home");
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
+  async saveResponse() {
     const _appStatus = await appStatus.loadStatus();
+    if (await utilities.currentSurveyExpired()) {
+      await this.expireSurvey(_appStatus);
+      return;
+    }
+
+    this.setState({ saveWaitVisible: true });
 
     const _contextResponseJS = {
       NumOfPeopleAround: this.state.numOfPeople,
