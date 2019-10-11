@@ -32,9 +32,11 @@ class ToolBar extends React.Component {
   };
 
   async expireSurvey(_appStatus) {
-    _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-    _appStatus.CurrentSurveyID = null;
-    await appStatus.setAppStatus(_appStatus);
+    const funcName = "expireSurvey";
+    const _newStatus = _appStatus;
+    _newStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+    _newStatus.CurrentSurveyID = null;
+    await appStatus.setAppStatus(_newStatus);
 
     await this.promisedSetState({
       surveyStatus: SURVEY_STATUS.NOT_AVAILABLE
@@ -46,7 +48,7 @@ class ToolBar extends React.Component {
 
     logger.info(
       codeFileName,
-      "expireSurvey",
+      funcName,
       "Page:" +
         this.props.title +
         ". Survey expired, going back to the Home page."

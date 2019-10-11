@@ -399,9 +399,10 @@ export default class ServicePermissionScreen extends React.Component {
 
   async expireSurvey(_appStatus) {
     const funcName = "expireSurvey";
-    _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-    _appStatus.CurrentSurveyID = null;
-    await appStatus.setAppStatus(_appStatus);
+    const _newStatus = _appStatus;
+    _newStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+    _newStatus.CurrentSurveyID = null;
+    await appStatus.setAppStatus(_newStatus);
 
     await logger.info(
       codeFileName,
