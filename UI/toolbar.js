@@ -207,7 +207,7 @@ class ToolBar extends React.Component {
 
       if (await utilities.currentSurveyExpired(_appStatus)) {
         //if no survey is ongoing, no point in updating time.
-        logger.log(
+        logger.info(
           codeFileName,
           "updateTimeDisplay",
           "Current page:" +
@@ -260,7 +260,7 @@ class ToolBar extends React.Component {
           if (this.interval != null) {
             clearInterval(this.interval);
           }
-          logger.log(
+          logger.info(
             codeFileName,
             "updateTimeDisplay",
             "Current page:" +
