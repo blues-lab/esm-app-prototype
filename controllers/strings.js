@@ -247,7 +247,7 @@ export const FINAL_THANK_EXTENDED =
 
 export const CONTACT_TEXT =
   "If you have any questions or comments, contact us at";
-export const CONTACT_EMAIL = "blues-study-mimi@lists.eecs.berkeley.edu";
+export const CONTACT_EMAIL = "researchlab@icsi.berkeley.edu";
 
 export const ERROR_MESSAGE_HEADER = "Error";
 export const SAVING_ERROR_MESSAGE =

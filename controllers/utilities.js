@@ -213,7 +213,7 @@ const AsyncAlert = async (callerClass, callerFunc, emailSubject) =>
     Alert.alert(
       "Error",
       "An error occurred loading data from file. Please send an email to " +
-        "blues-study-mimi@lists.eecs.berkeley.edu with the error log.",
+        "researchlab@icsi.berkeley.edu with the error log.",
       [
         {
           text: "Send Email",
@@ -225,7 +225,7 @@ const AsyncAlert = async (callerClass, callerFunc, emailSubject) =>
             );
             const _body = await gatherErrorData(callerClass, callerFunc);
             await sendEmail(
-              ["blues-study-mimi@lists.eecs.berkeley.edu"],
+              ["researchlab@icsi.berkeley.edu"],
               emailSubject,
               JSON.stringify(_body)
             );
