@@ -7,7 +7,8 @@ import {
   Button,
   Alert,
   TouchableHighlight,
-  BackHandler
+  BackHandler,
+  ScrollView
 } from "react-native";
 import { NavigationEvents } from "react-navigation";
 import * as RNFS from "react-native-fs";
@@ -389,367 +390,369 @@ export default class HomeScreen extends React.Component {
 
   render() {
     return (
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "column",
-          justifyContent: "space-around",
-          alignItems: "stretch",
-          backgroundColor: "lavender",
-          margin: 5
-        }}
-      >
-        {
-          <NavigationEvents
-            onDidFocus={async payload => {
-              if (Platform.OS === "android") {
-                logger.info(
-                  codeFileName,
-                  "onDidFocus",
-                  "Adding back button event handler. Payload: " +
-                    JSON.stringify(payload)
-                );
-                BackHandler.addEventListener(
-                  "hardwareBackPress",
-                  this.onBackButtonPressAndroid
-                );
-              }
-
-              logger.info(codeFileName, "onDidFocus", "Calling initApp.");
-              await this.initApp();
-            }}
-            onWillBlur={payload => {
-              if (Platform.OS === "android") {
-                logger.info(
-                  codeFileName,
-                  "onWillBlur",
-                  "Removing back button event handler. Payload: " +
-                    JSON.stringify(payload)
-                );
-                BackHandler.removeEventListener(
-                  "hardwareBackPress",
-                  this.onBackButtonPressAndroid
-                );
-              }
-            }}
-          />
-        }
-
-        {!this.state.noSurveyDialogVisible &&
-          !this.state.studyPeriodEnded &&
-          !this.state.exitSurveyDone &&
-          !this.state.exitSurveyAvailable && (
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "column",
-                justifyContent: "space-around",
-                alignItems: "center",
-                margin: 5
-              }}
-            >
-              <Text
-                style={{
-                  color: "green",
-                  fontSize: 24,
-                  margin: 0,
-                  textAlign: "center"
-                }}
-              >
-                {strings.NEW_SURVEY_HEADER}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 20,
-                  margin: 0,
-                  marginTop: 20,
-                  textAlign: "center"
-                }}
-              >
-                {strings.CONVERSATION_PROMPT}
-              </Text>
-
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  margin: 10
-                }}
-              >
-                <TouchableHighlight
-                  style={[commonStyles.buttonTouchHLStyle, { width: 100 }]}
-                >
-                  <Button
-                    title="Yes"
-                    color="#20B2AA"
-                    onPress={() => {
-                      logger.info(
-                        codeFileName,
-                        "ConversationButtonYes",
-                        "Calling hadConversationYes()."
-                      );
-                      this.hadConversationYes();
-                    }}
-                  />
-                </TouchableHighlight>
-                <TouchableHighlight
-                  style={[commonStyles.buttonTouchHLStyle, { width: 100 }]}
-                >
-                  <Button
-                    title="No"
-                    color="#20B2AA"
-                    onPress={() => {
-                      logger.info(
-                        codeFileName,
-                        "ConversationButtonNo",
-                        "Calling hadConversationNo()."
-                      );
-                      this.hadConversationNo();
-                    }}
-                  />
-                </TouchableHighlight>
-              </View>
-            </View>
-          )}
-
-        {this.state.noSurveyDialogVisible && (
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              backgroundColor: "lavender",
-              margin: 20
-            }}
-          >
-            <Text
-              style={{
-                margin: 5,
-                fontSize: 18,
-                borderBottomColor: "black",
-                borderBottomWidth: StyleSheet.hairlineWidth,
-                padding: 5
-              }}
-            >
-              {strings.NO_SURVEY_AVAILABLE}
-            </Text>
-            <Text style={{ fontSize: 16, margin: 10, marginTop: 10 }}>
-              {strings.MIMI_ADVERTISEMENT}
-            </Text>
-          </View>
-        )}
-
-        {this.state.studyPeriodEnded && (
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              backgroundColor: "lavender",
-              margin: 20
-            }}
-          >
-            {this.state.exitSurveyAvailable && !this.state.exitSurveyDone && (
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "column",
-                  alignItems: "center"
-                }}
-              >
-                <Text
-                  style={{
-                    margin: 5,
-                    fontSize: 18,
-                    borderBottomColor: "black",
-                    borderBottomWidth: StyleSheet.hairlineWidth,
-                    padding: 5
-                  }}
-                >
-                  {strings.EXIT_SURVEY_INTRO(
-                    this.state.ExitSurveyRemainingDays
-                  )}
-                </Text>
-
-                <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
-                  <Button
-                    title="Take the exit survey"
-                    color="#20B2AA"
-                    onPress={() => {
-                      logger.info(
-                        codeFileName,
-                        "Study ended modal",
-                        "Starting exit survey."
-                      );
-                      this.props.navigation.navigate("ExitSurvey");
-                    }}
-                  />
-                </TouchableHighlight>
-              </View>
-            )}
-
-            {!this.state.exitSurveyAvailable && (
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "column",
-                  alignItems: "center"
-                }}
-              >
-                <Text
-                  style={{
-                    margin: 5,
-                    fontSize: 18,
-                    borderBottomColor: "black",
-                    borderBottomWidth: StyleSheet.hairlineWidth,
-                    padding: 5
-                  }}
-                >
-                  {this.state.canUninstallApp
-                    ? strings.FINAL_THANK_EXTENDED
-                    : strings.FINAL_THANK}
-                </Text>
-              </View>
-            )}
-          </View>
-        )}
-
+      <ScrollView contentContainerStyle={{ backgroundColor: "lavender" }}>
         <View
           style={{
             flex: 1,
             flexDirection: "column",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            margin: 10,
-            marginTop: 5,
-            marginBottom: 20
+            justifyContent: "space-around",
+            alignItems: "stretch",
+            backgroundColor: "lavender",
+            margin: 5
           }}
         >
-          <View
-            style={{ height: 0.5, width: "100%", backgroundColor: "grey" }}
-          />
-          <Text style={{ fontSize: 16, margin: 0, textAlign: "center" }}>
-            {strings.CONTACT_TEXT}
-            <Text
-              style={{
-                color: "blue",
-                fontSize: 16,
-                margin: 0,
-                textDecorationLine: "underline"
-              }}
-              onPress={() => {
-                logger.info(codeFileName, "Contact link", "Sending email.");
-                utilities.sendEmail([strings.CONTACT_EMAIL], "", "");
-              }}
-            >
-              {" "}
-              {strings.CONTACT_EMAIL}
-            </Text>
-          </Text>
-        </View>
-
-        <DialogInput
-          isDialogVisible={this.state.invitationCodeDialogVisible}
-          title={this.state.invitationCodePrompt}
-          textInputProps={{ keyboardType: "numeric" }}
-          submitInput={async code => {
-            await this.promisedSetState({ invitationCode: code });
-
-            const _code = this.state.invitationCode;
-            const debugCode = isDebugCode(_code);
-            if (debugCode || isValidInvitationCode(_code)) {
-              logger.info(
-                codeFileName,
-                "invitationCodeDialog",
-                "Entered invitation code:" +
-                  this.state.invitationCode +
-                  ". Writing it to file."
-              );
-              const _written = await utilities.writeJSONFile(
-                { InvitationCode: _code },
-                INVITATION_CODE_FILE_PATH,
-                codeFileName,
-                "invitationCodeDialog"
-              );
-              if (_written) {
-                try {
-                  await AsyncStorage.setItem("@HAS_LAUNCHED", "true");
-                  const _uuid = await UUIDGenerator.getRandomUUID();
-                  const _installationDate = new Date();
-
-                  const _appStatus = appStatus.loadStatus();
-                  _appStatus.InstallationDate = _installationDate;
-                  _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
-                  _appStatus.UUID = _uuid;
-                  _appStatus.InvitationCode = _code;
-
-                  if (debugCode) {
-                    _appStatus.Debug = true;
-                  }
-
+          {
+            <NavigationEvents
+              onDidFocus={async payload => {
+                if (Platform.OS === "android") {
                   logger.info(
                     codeFileName,
-                    "invitationCodeDialog",
-                    "Setting app status properties."
+                    "onDidFocus",
+                    "Adding back button event handler. Payload: " +
+                      JSON.stringify(payload)
                   );
-                  await appStatus.setAppStatus(_appStatus);
-                } catch (e) {
-                  logger.error(
-                    codeFileName,
-                    "invitationCodeDialog",
-                    "Failed to set installation flag:" + e.message
+                  BackHandler.addEventListener(
+                    "hardwareBackPress",
+                    this.onBackButtonPressAndroid
                   );
                 }
 
-                await this.promisedSetState({
-                  invitationCodeDialogVisible: false,
-                  invitationCodeObtained: true
-                });
+                logger.info(codeFileName, "onDidFocus", "Calling initApp.");
+                await this.initApp();
+              }}
+              onWillBlur={payload => {
+                if (Platform.OS === "android") {
+                  logger.info(
+                    codeFileName,
+                    "onWillBlur",
+                    "Removing back button event handler. Payload: " +
+                      JSON.stringify(payload)
+                  );
+                  BackHandler.removeEventListener(
+                    "hardwareBackPress",
+                    this.onBackButtonPressAndroid
+                  );
+                }
+              }}
+            />
+          }
+
+          {!this.state.noSurveyDialogVisible &&
+            !this.state.studyPeriodEnded &&
+            !this.state.exitSurveyDone &&
+            !this.state.exitSurveyAvailable && (
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "column",
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                  margin: 5
+                }}
+              >
+                <Text
+                  style={{
+                    color: "green",
+                    fontSize: 24,
+                    margin: 0,
+                    textAlign: "center"
+                  }}
+                >
+                  {strings.NEW_SURVEY_HEADER}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    margin: 0,
+                    marginTop: 20,
+                    textAlign: "center"
+                  }}
+                >
+                  {strings.CONVERSATION_PROMPT}
+                </Text>
+
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    margin: 10
+                  }}
+                >
+                  <TouchableHighlight
+                    style={[commonStyles.buttonTouchHLStyle, { width: 100 }]}
+                  >
+                    <Button
+                      title="Yes"
+                      color="#20B2AA"
+                      onPress={() => {
+                        logger.info(
+                          codeFileName,
+                          "ConversationButtonYes",
+                          "Calling hadConversationYes()."
+                        );
+                        this.hadConversationYes();
+                      }}
+                    />
+                  </TouchableHighlight>
+                  <TouchableHighlight
+                    style={[commonStyles.buttonTouchHLStyle, { width: 100 }]}
+                  >
+                    <Button
+                      title="No"
+                      color="#20B2AA"
+                      onPress={() => {
+                        logger.info(
+                          codeFileName,
+                          "ConversationButtonNo",
+                          "Calling hadConversationNo()."
+                        );
+                        this.hadConversationNo();
+                      }}
+                    />
+                  </TouchableHighlight>
+                </View>
+              </View>
+            )}
+
+          {this.state.noSurveyDialogVisible && (
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                alignItems: "center",
+                backgroundColor: "lavender",
+                margin: 20
+              }}
+            >
+              <Text
+                style={{
+                  margin: 5,
+                  fontSize: 18,
+                  borderBottomColor: "black",
+                  borderBottomWidth: StyleSheet.hairlineWidth,
+                  padding: 5
+                }}
+              >
+                {strings.NO_SURVEY_AVAILABLE}
+              </Text>
+              <Text style={{ fontSize: 16, margin: 10, marginTop: 10 }}>
+                {strings.MIMI_ADVERTISEMENT}
+              </Text>
+            </View>
+          )}
+
+          {this.state.studyPeriodEnded && (
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                alignItems: "center",
+                backgroundColor: "lavender",
+                margin: 20
+              }}
+            >
+              {this.state.exitSurveyAvailable && !this.state.exitSurveyDone && (
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "column",
+                    alignItems: "center"
+                  }}
+                >
+                  <Text
+                    style={{
+                      margin: 5,
+                      fontSize: 18,
+                      borderBottomColor: "black",
+                      borderBottomWidth: StyleSheet.hairlineWidth,
+                      padding: 5
+                    }}
+                  >
+                    {strings.EXIT_SURVEY_INTRO(
+                      this.state.ExitSurveyRemainingDays
+                    )}
+                  </Text>
+
+                  <TouchableHighlight style={[commonStyles.buttonTouchHLStyle]}>
+                    <Button
+                      title="Take the exit survey"
+                      color="#20B2AA"
+                      onPress={() => {
+                        logger.info(
+                          codeFileName,
+                          "Study ended modal",
+                          "Starting exit survey."
+                        );
+                        this.props.navigation.navigate("ExitSurvey");
+                      }}
+                    />
+                  </TouchableHighlight>
+                </View>
+              )}
+
+              {!this.state.exitSurveyAvailable && (
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "column",
+                    alignItems: "center"
+                  }}
+                >
+                  <Text
+                    style={{
+                      margin: 5,
+                      fontSize: 18,
+                      borderBottomColor: "black",
+                      borderBottomWidth: StyleSheet.hairlineWidth,
+                      padding: 5
+                    }}
+                  >
+                    {this.state.canUninstallApp
+                      ? strings.FINAL_THANK_EXTENDED
+                      : strings.FINAL_THANK}
+                  </Text>
+                </View>
+              )}
+            </View>
+          )}
+
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              margin: 10,
+              marginTop: 5,
+              marginBottom: 20
+            }}
+          >
+            <View
+              style={{ height: 0.5, width: "100%", backgroundColor: "grey" }}
+            />
+            <Text style={{ fontSize: 16, margin: 0, textAlign: "center" }}>
+              {strings.CONTACT_TEXT}
+              <Text
+                style={{
+                  color: "blue",
+                  fontSize: 16,
+                  margin: 0,
+                  textDecorationLine: "underline"
+                }}
+                onPress={() => {
+                  logger.info(codeFileName, "Contact link", "Sending email.");
+                  utilities.sendEmail([strings.CONTACT_EMAIL], "", "");
+                }}
+              >
+                {" "}
+                {strings.CONTACT_EMAIL}
+              </Text>
+            </Text>
+          </View>
+
+          <DialogInput
+            isDialogVisible={this.state.invitationCodeDialogVisible}
+            title={this.state.invitationCodePrompt}
+            textInputProps={{ keyboardType: "numeric" }}
+            submitInput={async code => {
+              await this.promisedSetState({ invitationCode: code });
+
+              const _code = this.state.invitationCode;
+              const debugCode = isDebugCode(_code);
+              if (debugCode || isValidInvitationCode(_code)) {
                 logger.info(
                   codeFileName,
                   "invitationCodeDialog",
-                  "Navigating to settings page."
+                  "Entered invitation code:" +
+                    this.state.invitationCode +
+                    ". Writing it to file."
                 );
+                const _written = await utilities.writeJSONFile(
+                  { InvitationCode: _code },
+                  INVITATION_CODE_FILE_PATH,
+                  codeFileName,
+                  "invitationCodeDialog"
+                );
+                if (_written) {
+                  try {
+                    await AsyncStorage.setItem("@HAS_LAUNCHED", "true");
+                    const _uuid = await UUIDGenerator.getRandomUUID();
+                    const _installationDate = new Date();
 
-                this.props.navigation.navigate("UserSettings", {
-                  firstLaunch: true,
-                  backCallBack: null
+                    const _appStatus = appStatus.loadStatus();
+                    _appStatus.InstallationDate = _installationDate;
+                    _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
+                    _appStatus.UUID = _uuid;
+                    _appStatus.InvitationCode = _code;
+
+                    if (debugCode) {
+                      _appStatus.Debug = true;
+                    }
+
+                    logger.info(
+                      codeFileName,
+                      "invitationCodeDialog",
+                      "Setting app status properties."
+                    );
+                    await appStatus.setAppStatus(_appStatus);
+                  } catch (e) {
+                    logger.error(
+                      codeFileName,
+                      "invitationCodeDialog",
+                      "Failed to set installation flag:" + e.message
+                    );
+                  }
+
+                  await this.promisedSetState({
+                    invitationCodeDialogVisible: false,
+                    invitationCodeObtained: true
+                  });
+                  logger.info(
+                    codeFileName,
+                    "invitationCodeDialog",
+                    "Navigating to settings page."
+                  );
+
+                  this.props.navigation.navigate("UserSettings", {
+                    firstLaunch: true,
+                    backCallBack: null
+                  });
+                } else {
+                  logger.error(
+                    codeFileName,
+                    "invitationCodeDialog",
+                    "Error saving invitation code. Asking to try again."
+                  );
+                  Alert.alert(
+                    "Error",
+                    strings.INVITATION_CODE_FAIL,
+                    [{ text: "OK", onPress: () => BackHandler.exitApp() }],
+                    { cancelable: false }
+                  );
+                }
+              } else {
+                this.setState({
+                  invitationCodePrompt: strings.INVALID_INVITE
+                });
+              }
+            }}
+            closeDialog={async () => {
+              if (this.state.invitationCodeObtained) {
+                await this.promisedSetState({
+                  invitationCodeDialogVisible: false
                 });
               } else {
-                logger.error(
-                  codeFileName,
-                  "invitationCodeDialog",
-                  "Error saving invitation code. Asking to try again."
-                );
-                Alert.alert(
-                  "Error",
-                  strings.INVITATION_CODE_FAIL,
-                  [{ text: "OK", onPress: () => BackHandler.exitApp() }],
-                  { cancelable: false }
-                );
+                await this.promisedSetState({
+                  invitationCodePrompt: strings.INVITE_REQUIRED
+                });
               }
-            } else {
-              this.setState({
-                invitationCodePrompt: strings.INVALID_INVITE
-              });
-            }
-          }}
-          closeDialog={async () => {
-            if (this.state.invitationCodeObtained) {
-              await this.promisedSetState({
-                invitationCodeDialogVisible: false
-              });
-            } else {
-              await this.promisedSetState({
-                invitationCodePrompt: strings.INVITE_REQUIRED
-              });
-            }
-          }}
-        />
-      </View>
+            }}
+          />
+        </View>
+      </ScrollView>
     );
   }
 
