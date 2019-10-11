@@ -214,7 +214,7 @@ class ToolBar extends React.Component {
             this.props.navigation.state.routeName +
             ". Expiring survey."
         );
-        await this.expireSurvey();
+        await this.expireSurvey(_appStatus);
         return;
       }
 
@@ -267,15 +267,15 @@ class ToolBar extends React.Component {
               this.props.navigation.state.routeName +
               ". Expiring survey."
           );
-          await this.expireSurvey();
+          await this.expireSurvey(_appStatus);
         }
       }
     } else {
-      logger.warn(
-        codeFileName,
-        "updateTimeDisplay",
-        "Component not mounted! Should not come to this point."
-      );
+      //      logger.warn(
+      //        codeFileName,
+      //        "updateTimeDisplay",
+      //        "Component not mounted! Should not come to this point."
+      //      );
     }
   }
 
