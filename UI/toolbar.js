@@ -36,6 +36,10 @@ class ToolBar extends React.Component {
     _appStatus.CurrentSurveyID = null;
     await appStatus.setAppStatus(_appStatus);
 
+    await this.promisedSetState({
+      surveyStatus: SURVEY_STATUS.NOT_AVAILABLE
+    });
+
     Alert.alert(
       SURVEY_EXPIRED_HEADER,
       SURVEY_EXPIRED,
@@ -103,6 +107,7 @@ class ToolBar extends React.Component {
       );
       if (await utilities.currentSurveyExpired(_appStatus)) {
         await this.expireSurvey(_appStatus);
+        return;
       }
 
       const _firstNotificationTime = _appStatus.FirstNotificationTime;
@@ -200,8 +205,16 @@ class ToolBar extends React.Component {
         await this.promisedSetState({ surveyStatus: _appStatus.SurveyStatus });
       }
 
-      if (_appStatus.SurveyStatus !== SURVEY_STATUS.ONGOING) {
+      if (await utilities.currentSurveyExpired(_appStatus)) {
         //if no survey is ongoing, no point in updating time.
+        logger.log(
+          codeFileName,
+          "updateTimeDisplay",
+          "Current page:" +
+            this.props.navigation.state.routeName +
+            ". Expiring survey."
+        );
+        await this.expireSurvey();
         return;
       }
 
@@ -247,15 +260,14 @@ class ToolBar extends React.Component {
           if (this.interval != null) {
             clearInterval(this.interval);
           }
-          if (this._isMounted) {
-            await this.promisedSetState({
-              surveyStatus: SURVEY_STATUS.NOT_AVAILABLE
-            });
-          }
-
-          if (this.props.title !== "Settings") {
-            await this.expireSurvey();
-          }
+          logger.log(
+            codeFileName,
+            "updateTimeDisplay",
+            "Current page:" +
+              this.props.navigation.state.routeName +
+              ". Expiring survey."
+          );
+          await this.expireSurvey();
         }
       }
     }

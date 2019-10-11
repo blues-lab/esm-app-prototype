@@ -460,17 +460,17 @@ export async function currentSurveyExpired(_appStatus) {
     );
     return true;
   }
-  const _minPassed = Math.floor((Date.now() - _firstNotificationTime) / 60000);
-  const _remainingTime = PROMPT_DURATION - _minPassed;
-  const _expired = _remainingTime <= 0;
+  const _secPassed = Math.floor((Date.now() - _firstNotificationTime) / 1000);
+  const _remainingSec = 60 * PROMPT_DURATION - _secPassed;
+  const _expired = _remainingSec <= 0;
 
   logger.info(
     codeFileName,
     "currentSurveyExpired",
     "_firstNotificationTime:" +
       _firstNotificationTime +
-      ", _remainingTime:" +
-      _remainingTime +
+      ", _remainingSec:" +
+      _remainingSec +
       " minutes, expired:" +
       _expired
   );
