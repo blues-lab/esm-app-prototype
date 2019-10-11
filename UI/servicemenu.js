@@ -382,25 +382,17 @@ export default class ServiceMenuScreen extends React.Component {
     _appStatus.CurrentSurveyID = null;
     await appStatus.setAppStatus(_appStatus);
 
-    Alert.alert(
-      strings.SURVEY_EXPIRED_HEADER,
-      strings.SURVEY_EXPIRED,
-      [
-        {
-          text: "OK",
-          onPress: async () => {
-            await logger.info(
-              codeFileName,
-              funcName,
-              "Survey expired, going back to home."
-            );
-            notificationController.cancelNotifications();
-            this.props.navigation.navigate("Home");
-          }
-        }
-      ],
-      { cancelable: false }
+    await logger.info(
+      codeFileName,
+      funcName,
+      "Survey expired, going back to home from " +
+        this.props.navigation.state.routeName
     );
+
+    notificationController.cancelNotifications();
+    this.props.navigation.navigate("Home");
+
+    Alert.alert(strings.SURVEY_EXPIRED_HEADER, strings.SURVEY_EXPIRED);
   }
 
   async showPermissionPage() {
