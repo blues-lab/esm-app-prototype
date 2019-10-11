@@ -16,6 +16,7 @@ import { SURVEY_STATUS, PROMPT_DURATION } from "../controllers/constants";
 import notificationController from "../controllers/notificationController";
 import logger from "../controllers/logger";
 import { SURVEY_EXPIRED, SURVEY_EXPIRED_HEADER } from "../controllers/strings";
+import * as utilities from "../controllers/utilities";
 
 const codeFileName = "toolbar.js";
 
@@ -30,7 +31,11 @@ class ToolBar extends React.Component {
     });
   };
 
-  async expireSurvey() {
+  async expireSurvey(_appStatus) {
+    _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+    _appStatus.CurrentSurveyID = null;
+    await appStatus.setAppStatus(_appStatus);
+
     Alert.alert(
       SURVEY_EXPIRED_HEADER,
       SURVEY_EXPIRED,
@@ -82,20 +87,24 @@ class ToolBar extends React.Component {
       _appStatus.SurveyStatus !== SURVEY_STATUS.ONGOING &&
       this.props.navigation.state.routeName !== "Home"
     ) {
-      logger.error(
+      logger.warn(
         codeFileName,
         "initToolbar",
         "Should not be in this page unless survey is ongoing. Expiring any previous survey."
       );
-      await this.expireSurvey();
+      await this.expireSurvey(_appStatus);
     } else if (_appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) {
       await logger.info(
         codeFileName,
         "initToolbar",
         "Page:" +
           this.props.title +
-          ". Survey status is ONGOING, setting up toolbar to show remaining time."
+          ". Survey status is ONGOING in appStatus, checking if survey is expired."
       );
+      if (await utilities.currentSurveyExpired(_appStatus)) {
+        await this.expireSurvey(_appStatus);
+      }
+
       const _firstNotificationTime = _appStatus.FirstNotificationTime;
 
       if (_firstNotificationTime === null) {
@@ -243,10 +252,6 @@ class ToolBar extends React.Component {
               surveyStatus: SURVEY_STATUS.NOT_AVAILABLE
             });
           }
-
-          _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-          _appStatus.CurrentSurveyID = null;
-          await appStatus.setAppStatus(_appStatus);
 
           if (this.props.title !== "Settings") {
             await this.expireSurvey();
