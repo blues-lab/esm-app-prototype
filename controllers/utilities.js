@@ -50,7 +50,7 @@ export async function writeJSONFile(
         fileName + " already exists. Creating backup."
       );
       const _backupFileName = fileName + ".backup_" + Date.now().toString();
-      await RNFS.copyFile(fileName, _backupFileName);
+      await RNFS.moveFile(fileName, _backupFileName);
 
       try {
         logger.info(
@@ -64,7 +64,9 @@ export async function writeJSONFile(
           `${callerFunc}-->writeJSONFile`,
           "Deleting backup file."
         );
-        await RNFS.unlink(_backupFileName);
+        if (await RNFS.exists(_backupFileName)) {
+          await RNFS.unlink(_backupFileName);
+        }
       } catch (error) {
         logger.error(
           codeFileName,
@@ -73,7 +75,10 @@ export async function writeJSONFile(
             error.message +
             ". Restoring backup file."
         );
-        await RNFS.copyFile(_backupFileName, fileName);
+        if (await RNFS.exists(fileName)) {
+          await RNFS.unlink(fileName);
+        }
+        await RNFS.moveFile(_backupFileName, fileName);
         return false;
       }
     } else {
