@@ -36,7 +36,11 @@ class ToolBar extends React.Component {
     const _newStatus = _appStatus;
     _newStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
     _newStatus.CurrentSurveyID = null;
-    await appStatus.setAppStatus(_newStatus, codeFileName, funcName);
+    await appStatus.setAppStatus(
+      _newStatus,
+      codeFileName + "." + this.props.navigation.state.routeName,
+      funcName
+    );
 
     await this.promisedSetState({
       surveyStatus: SURVEY_STATUS.NOT_AVAILABLE
