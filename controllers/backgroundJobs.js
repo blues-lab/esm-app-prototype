@@ -258,7 +258,8 @@ async function handleSurveyNotAvailableState(_appStatus) {
         logger.info(
           codeFileName,
           funcName,
-          "Notification for new survey is shown."
+          "Notification for new survey is shown with remaining time: " +
+            _remainingTime
         );
       }
     } else {
@@ -377,7 +378,9 @@ async function handleSurveyAvailableState(_appStatus) {
       "Changing survey status to NOT_AVAILABLE."
     );
 
-    await appStatus.setSurveyStatus(SURVEY_STATUS.NOT_AVAILABLE);
+    const _newStatus = _appStatus;
+    _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+    await appStatus.setAppStatus(_newStatus);
   }
 }
 
@@ -429,7 +432,9 @@ async function handleSurveyOngoingState(_appStatus) {
         funcName,
         "Showing latest notification at: " + new Date()
       );
-      await appStatus.setLastNotificationTime(new Date());
+      const _newStatus = _appStatus;
+      _appStatus.LastNotificationTime = new Date();
+      await appStatus.setAppStatus(_newStatus);
     }
   }
 }

@@ -27,9 +27,15 @@ class AppStatus {
       LastLocationPromptTime: null, //when was the last time location sharing prompt was shown.
       EligibleForBonus: true // indicates whether this person is eligible to receive bonus for daily survey
     };
+
+    this.state = { saving: false };
   }
 
   async loadStatus() {
+    return this.status;
+  }
+
+  async loadStatusFromFile() {
     let _fileContent = null;
     let status = {};
     try {
@@ -87,21 +93,37 @@ class AppStatus {
           ". _fileContent:" +
           _fileContent
       );
+
+      await utilities.showErrorDialog(
+        codeFileName,
+        "loadStatus",
+        "Failed to load app status: " + error.message
+      );
     }
 
     return this.status;
   }
 
-  async setAppStatus(status) {
-    Object.keys(status).forEach(key => {
-      this.status[key] = status[key];
-    });
-
+  async setAppStatus(status, callerClass, callerFunc) {
     await logger.info(
       codeFileName,
       "setAppStatus",
-      "Current app status :" + JSON.stringify(this.status)
+      "Updating app status by " +
+        callerClass +
+        "." +
+        callerFunc +
+        "Current app status :" +
+        JSON.stringify(this.status) +
+        ". Next app status:" +
+        JSON.stringify(status)
     );
+
+    Object.keys(this.status).forEach(key => {
+      if (key in status) {
+        this.status[key] = status[key];
+      }
+    });
+
     const _saved = await utilities.writeJSONFile(
       this.status,
       APP_STATUS_FILE_PATH,
@@ -119,107 +141,11 @@ class AppStatus {
     );
   }
 
-  async incrementSurveyCountToday() {
-    this.status.SurveyCountToday += 1;
-    logger.info(
-      `${codeFileName}`,
-      "incrementSurveyCountToday",
-      "Incrementing survey count to " + this.status.SurveyCountToday
-    );
-    await this.saveAppStatus();
-  }
-
-  async resetSurveyCountToday() {
-    this.status.SurveyCountToday = 0;
-    logger.info(
-      `${codeFileName}`,
-      "resetSurveyCountToday",
-      "Resetting survey count to " + this.status.SurveyCountToday
-    );
-    await this.saveAppStatus();
-  }
-
-  async setLastNotificationTime(value) {
-    this.status.LastNotificationTime = value;
-    logger.info(
-      `${codeFileName}`,
-      "setLastNotificationTime",
-      "Setting last notification time to " + this.status.LastNotificationTime
-    );
-    await this.saveAppStatus();
-  }
-
-  async setFirstNotificationTime(value) {
-    this.status.FirstNotificationTime = value;
-    logger.info(
-      `${codeFileName}`,
-      "setFirstNotificationTime",
-      "Setting first notification time to " + this.status.FirstNotificationTime
-    );
-    await this.saveAppStatus();
-  }
-
-  async setSurveyStatus(value) {
-    this.status.SurveyStatus = value;
-    logger.info(
-      codeFileName,
-      "setSurveyStatus",
-      "Setting Survey Status to " + this.status.SurveyStatus
-    );
-    await this.saveAppStatus();
-  }
-
-  async increaseCompletedSurveys() {
-    this.status.CompletedSurveys += 1;
-    logger.info(
-      codeFileName,
-      "increaseCompletedSurveys",
-      "Increasing completed surveys to " + this.status.CompletedSurveys
-    );
-    await this.saveAppStatus();
-  }
-
-  async setInstallationDate(value) {
-    this.status.InstallationDate = value;
-    logger.info(
-      codeFileName,
-      "setInstallationDate",
-      "Setting installation date to " + this.status.InstallationDate
-    );
-    await this.saveAppStatus();
-  }
-
-  async setUUID(value) {
-    this.status.UUID = value;
-    logger.info(codeFileName, "setUUID", "Setting UUID to " + this.status.UUID);
-    await this.saveAppStatus();
-  }
-
-  async setLastSurveyCreationDate(value) {
-    this.status.LastSurveyCreationDate = value;
-    logger.info(
-      codeFileName,
-      "setLastSurveyCreationDate",
-      "Setting LastSurveyCreationDate to " + this.status.LastSurveyCreationDate
-    );
-    await this.saveAppStatus();
-  }
-
-  async setCurrentSurveyID(value) {
-    this.status.CurrentSurveyID = value;
-    logger.info(
-      codeFileName,
-      "setCurrentSurveyID",
-      "Setting CurrentSurveyID to " + this.status.CurrentSurveyID
-    );
-    await this.saveAppStatus();
-  }
-
   static getAppStatus() {
     let instance = null;
     if (instance == null) {
       instance = new AppStatus();
-      instance.loadStatus().then(_instance => {
+      instance.loadStatusFromFile().then(_instance => {
         logger.info(
           codeFileName,
           "getAppStatus",
