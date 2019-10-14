@@ -37,7 +37,7 @@ export const NOT_HOME_WIFI =
 
 /* Home screen */
 export const MIMI_ADVERTISEMENT =
-  "Imagine that ALVA is a voice assistant that's always listening. That means it's always ready to help and provide services/suggestions based on conversations you have with other people in your home. You don't even need to say its name!\n\nThe surveys in this app help improve ALVA's design. You'll receive a notification when a new survey becomes available.\n\nAlthough for now ALVA is just a prototype and it won't actually record your conversations or offer suggestions, answer the surveys as if ALVA was a real product.";
+  "Imagine that ALVA is a voice assistant that's always listening. That means it's always ready to help and provide services/suggestions based on conversations you have with other people in your home. You don't even need to say its name!\n\nThe surveys in this app help improve ALVA's design. You'll receive a notification when a new survey becomes available.\n\nFor now, ALVA is just a simulation (so it won't actually listen to your conversations or offer suggestions). Nevertheless, please answer the surveys as if ALVA was a real product.";
 export const NO_SURVEY_AVAILABLE = "No survey available right now. Hang tight!";
 export const TRY_LATER_BUTTON = "Ok, try later!";
 
