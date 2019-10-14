@@ -161,7 +161,7 @@ export default class AlvaPromptScreen extends React.Component {
           <View style={commonStyles.buttonViewStyle}>
             <TouchableHighlight style={commonStyles.buttonTouchHLStyle}>
               <Button
-                title={strings.NEXT_BUTTON}
+                title={strings.IMAGINE_NEXT}
                 color="#20B2AA"
                 onPress={async () => {
                   const _appStatus = await appStatus.loadStatus();
