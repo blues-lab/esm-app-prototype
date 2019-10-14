@@ -289,23 +289,38 @@ export default class HomeScreen extends React.Component {
               );
               this.props.navigation.navigate("UserSettings");
             } else if (
-              (_appStatus.SurveyStatus === SURVEY_STATUS.AVAILABLE ||
-                _appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) &&
-              !(await utilities.currentSurveyExpired(_appStatus))
+              _appStatus.SurveyStatus === SURVEY_STATUS.AVAILABLE ||
+              _appStatus.SurveyStatus === SURVEY_STATUS.ONGOING
             ) {
-              //check if survey is available from app settings
               logger.info(
                 codeFileName,
                 "initApp",
-                "Survey status is " +
+                "_appStatus.SurveyStatus is " +
                   _appStatus.SurveyStatus +
-                  ". Asking for conversation."
+                  ". Checking if survey was expired."
               );
-              this.setState({ noSurveyDialogVisible: false });
-              //await this.startSurvey();
-              return;
+
+              if (!(await utilities.currentSurveyExpired(_appStatus))) {
+                logger.info(
+                  codeFileName,
+                  "initApp",
+                  "Survey status is available. Asking for conversation."
+                );
+                this.setState({ noSurveyDialogVisible: false });
+              } else {
+                logger.info(
+                  codeFileName,
+                  "initApp",
+                  "Survey expired, updating app status."
+                );
+                _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
+                _appStatus.CurrentSurveyID = null;
+                await appStatus.setAppStatus(_appStatus);
+                this.setState({ noSurveyDialogVisible: true });
+              }
             } else {
               logger.info(codeFileName, "initApp", "No survey available.");
+
               this.setState({ noSurveyDialogVisible: true });
             }
           } else {
