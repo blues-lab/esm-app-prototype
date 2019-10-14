@@ -34,8 +34,8 @@ class Logger extends Component {
 
   async writeLog(type, className, funcName, message) {
     const dates = this.getDateTime();
-    const _version = await DeviceInfo.getSystemVersion();
-    const _build = await DeviceInfo.getBuildNumber();
+    const _version = DeviceInfo.getSystemVersion();
+    const _build = DeviceInfo.getBuildNumber();
     try {
       const _log = {
         Type: type,
