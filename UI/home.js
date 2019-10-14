@@ -193,28 +193,6 @@ export default class HomeScreen extends React.Component {
     Alert.alert(strings.NO_CONVERSATION_HEADER, strings.NO_CONVERSATION);
   }
 
-  //  async startSurvey() {
-  ////    Alert.alert(
-  ////      strings.NEW_SURVEY_HEADER,
-  ////      strings.CONVERSATION_PROMPT,
-  ////      [
-  ////        {
-  ////          text: "Yes",
-  ////          onPress: () => {
-  ////            this.hadConversationYes();
-  ////          }
-  ////        },
-  ////        {
-  ////          text: "No",
-  ////          onPress: () => {
-  ////            this.hadConversationNo();
-  ////          }
-  ////        }
-  ////      ],
-  ////      { cancelable: false }
-  ////    );
-  //  }
-
   onBackButtonPressAndroid = () => {
     if (this.props.navigation.state.routeName === "Home") {
       logger.info(codeFileName, "onBackButtonPressAndroid", "Exiting app.");
