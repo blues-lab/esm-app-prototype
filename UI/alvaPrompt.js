@@ -168,6 +168,11 @@ export default class AlvaPromptScreen extends React.Component {
                   if (await utilities.currentSurveyExpired(_appStatus)) {
                     await this.expireSurvey(_appStatus);
                   } else {
+                    logger.info(
+                      codeFileName,
+                      "NextButton.OnPress",
+                      "Going to service menu page."
+                    );
                     this.props.navigation.navigate("ServiceMenu", {
                       conversationTopic: this.state.conversationTopic,
                       surveyProgress: 30
