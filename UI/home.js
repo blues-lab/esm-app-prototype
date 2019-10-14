@@ -161,7 +161,11 @@ export default class HomeScreen extends React.Component {
       "Updating app status and navigating to startSurvey."
     );
 
-    await appStatus.setAppStatus(_appStatus);
+    await appStatus.setAppStatus(
+      _appStatus,
+      codeFileName,
+      "hadConversationYes"
+    );
     notificationController.cancelNotifications();
     this.props.navigation.navigate("StartSurvey");
   }
@@ -188,7 +192,7 @@ export default class HomeScreen extends React.Component {
     );
 
     _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-    await appStatus.setAppStatus(_appStatus);
+    await appStatus.setAppStatus(_appStatus, codeFileName, "hadConversationNo");
     notificationController.cancelNotifications();
     this.initApp();
 
@@ -315,7 +319,11 @@ export default class HomeScreen extends React.Component {
                 );
                 _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
                 _appStatus.CurrentSurveyID = null;
-                await appStatus.setAppStatus(_appStatus);
+                await appStatus.setAppStatus(
+                  _appStatus,
+                  codeFileName,
+                  "initApp"
+                );
                 this.setState({ noSurveyDialogVisible: true });
               }
             } else {
@@ -693,7 +701,11 @@ export default class HomeScreen extends React.Component {
                       "invitationCodeDialog",
                       "Setting app status properties."
                     );
-                    await appStatus.setAppStatus(_appStatus);
+                    await appStatus.setAppStatus(
+                      _appStatus,
+                      codeFileName,
+                      "invitationCodeDialog"
+                    );
                   } catch (e) {
                     logger.error(
                       codeFileName,

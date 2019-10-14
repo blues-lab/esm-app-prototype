@@ -576,7 +576,11 @@ export default class UserSettingsScreen extends React.Component {
                 _appStatus.LastSurveyCreationDate = _currentDate;
                 _appStatus.FirstNotificationTime = _currentDate;
                 _appStatus.LastNotificationTime = _currentDate;
-                await appStatus.setAppStatus(_appStatus);
+                await appStatus.setAppStatus(
+                  _appStatus,
+                  codeFileName,
+                  "StartSurveyButton"
+                );
 
                 if (this.state.backCallBack != null) {
                   logger.info(

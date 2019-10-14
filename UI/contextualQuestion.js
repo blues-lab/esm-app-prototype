@@ -146,7 +146,7 @@ export default class ContextualQuestionScreen extends React.Component {
     const _newStatus = _appStatus;
     _newStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
     _newStatus.CurrentSurveyID = null;
-    await appStatus.setAppStatus(_newStatus);
+    await appStatus.setAppStatus(_newStatus, codeFileName, funcName);
 
     await logger.info(
       codeFileName,
@@ -234,7 +234,7 @@ export default class ContextualQuestionScreen extends React.Component {
     _appStatus.SurveysAnsweredToday += 1;
     _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
     _appStatus.CurrentSurveyID = null;
-    await appStatus.setAppStatus(_appStatus);
+    await appStatus.setAppStatus(_appStatus, codeFileName, "saveResponse");
     notificationController.cancelNotifications();
 
     this.setState({ saveWaitVisible: false }, () => {

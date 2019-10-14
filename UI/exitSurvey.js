@@ -245,7 +245,7 @@ export default class ExitSurveyScreen extends React.Component {
 
     const _newStatus = _appStatus;
     _newStatus.ExitSurveyDone = true;
-    await appStatus.setAppStatus(_newStatus);
+    await appStatus.setAppStatus(_newStatus, codeFileName, "saveResponse");
     this.setState({ saveWaitVisible: false });
     Alert.alert(
       strings.EXIT_SURVEY_DONE_HEADER,
