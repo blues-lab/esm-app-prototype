@@ -112,7 +112,7 @@ class AppStatus {
         callerClass +
         "." +
         callerFunc +
-        "Current app status :" +
+        ". Current app status :" +
         JSON.stringify(this.status) +
         ". Next app status:" +
         JSON.stringify(status)
