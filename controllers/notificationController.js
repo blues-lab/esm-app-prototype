@@ -6,12 +6,29 @@ const PushNotification = require("react-native-push-notification");
 const codeFileName = "notificationController.js";
 
 export function onAppOpen() {
-  if (onAppOpen.backCallBack !== null) {
-    logger.info(codeFileName, "onAppOpen", "Calling backCallBack.");
+  if (onAppOpen.backCallBack === null) {
+    logger.warn(codeFileName, "onAppOpen", "backCallBack is null.");
+  } else if (typeof onAppOpen.backCallBack !== "function") {
+    logger.warn(
+      codeFileName,
+      "onAppOpen",
+      "backCallBack is not a function! type: " + typeof onAppOpen.backCallBack
+    );
+  } else {
+    logger.info(codeFileName, "onAppOpen", "Calling backCallback");
     onAppOpen.backCallBack();
   }
-  if (onAppOpen.userSettingsCallBack !== null) {
-    logger.info(codeFileName, "onAppOpen", "Calling userSettingsCallBack.");
+  if (onAppOpen.userSettingsCallBack === null) {
+    logger.warn(codeFileName, "onAppOpen", "userSettingsCallBack is null");
+  } else if (typeof onAppOpen.userSettingsCallBack !== "function") {
+    logger.warn(
+      codeFileName,
+      "onAppOpen",
+      "userSettingsCallBack is not a function! type: " +
+        typeof onAppOpen.backCallBack
+    );
+  } else {
+    logger.info(codeFileName, "onAppOpen", "Calling userSettingsCallBack");
     onAppOpen.userSettingsCallBack();
   }
 }

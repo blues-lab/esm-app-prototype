@@ -106,6 +106,8 @@ export default class HomeScreen extends React.Component {
       ExitSurveyRemainingDays: 0,
       canUninstallApp: false
     };
+
+    this.onAppOpen = this.initApp.bind(this);
   }
 
   isFirstLaunch = async () => {
@@ -331,7 +333,7 @@ export default class HomeScreen extends React.Component {
       "componentDidMount",
       "Mounting components and setting callback for opening app via notification."
     );
-    onAppOpen.backCallBack = this.initApp.bind(this);
+    onAppOpen.backCallBack = this.onAppOpen;
   }
 
   promisedSetState = newState => {
@@ -395,7 +397,7 @@ export default class HomeScreen extends React.Component {
                   );
                 }
 
-                onAppOpen.backCallBack = this.initApp.bind(this);
+                onAppOpen.backCallBack = this.onAppOpen;
                 logger.info(codeFileName, "onDidFocus", "Calling initApp.");
                 await this.initApp();
               }}

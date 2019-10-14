@@ -88,6 +88,8 @@ export default class UserSettingsScreen extends React.Component {
         ? status.InvitationCode
         : "not available";
     });
+
+    this.userSettingsCallBack = this.userSettingsCallBack.bind(this);
   }
 
   async componentDidMount() {
@@ -101,7 +103,7 @@ export default class UserSettingsScreen extends React.Component {
       backHandler: this.handleBackNavigation.bind(this)
     });
 
-    onAppOpen.userSettingsCallBack = this.userSettingsCallBack.bind(this);
+    onAppOpen.userSettingsCallBack = this.userSettingsCallBack;
 
     this.loadSettings();
   }
@@ -509,9 +511,7 @@ export default class UserSettingsScreen extends React.Component {
                 this.onBackButtonPressAndroid
               );
             }
-            onAppOpen.userSettingsCallBack = this.userSettingsCallBack.bind(
-              this
-            );
+            onAppOpen.userSettingsCallBack = this.userSettingsCallBack;
           }}
           onWillBlur={payload => {
             if (Platform.OS === "android") {
