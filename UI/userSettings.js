@@ -364,7 +364,7 @@ export default class UserSettingsScreen extends React.Component {
     if (!_saved) {
       await utilities.showErrorDialog(
         codeFileName,
-        "loadStatus",
+        "saveSettings",
         "Failed to load settings file."
       );
     }
