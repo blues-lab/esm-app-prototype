@@ -209,17 +209,19 @@ class ToolBar extends React.Component {
         await this.promisedSetState({ surveyStatus: _appStatus.SurveyStatus });
       }
 
-      if (await utilities.currentSurveyExpired(_appStatus)) {
-        //if no survey is ongoing, no point in updating time.
-        logger.info(
-          codeFileName,
-          "updateTimeDisplay",
-          "Current page:" +
-            this.props.navigation.state.routeName +
-            ". Expiring survey and clearing timer."
-        );
-        await this.expireSurvey(_appStatus);
-        return;
+      if (_appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) {
+        if (await utilities.currentSurveyExpired(_appStatus)) {
+          //if no survey is ongoing, no point in updating time.
+          logger.info(
+            codeFileName,
+            "updateTimeDisplay",
+            "Current page:" +
+              this.props.navigation.state.routeName +
+              ". Expiring survey and clearing timer."
+          );
+          await this.expireSurvey(_appStatus);
+          return;
+        }
       }
 
       const _firstNotificationTime = _appStatus.FirstNotificationTime;
