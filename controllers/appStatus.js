@@ -130,15 +130,14 @@ class AppStatus {
       codeFileName,
       "saveAppStatus"
     );
-  }
 
-  async saveAppStatus() {
-    await utilities.writeJSONFile(
-      this.status,
-      APP_STATUS_FILE_PATH,
-      codeFileName,
-      "saveAppStatus"
-    );
+    if (!_saved) {
+      await utilities.showErrorDialog(
+        codeFileName,
+        "saveStatus",
+        "Failed to save app status."
+      );
+    }
   }
 
   static getAppStatus() {
