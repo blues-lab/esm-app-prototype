@@ -602,7 +602,7 @@ export default class UserSettingsScreen extends React.Component {
                   Mailer.mail(
                     {
                       subject: "ALVA log",
-                      recipients: ["rakhasan@iu.edu"],
+                      recipients: ["researchlab@icsi.berkeley.edu"],
                       body: `<b>${_fileContent}</b>`,
                       isHTML: true,
                       attachment: {
