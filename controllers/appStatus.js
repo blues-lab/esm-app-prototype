@@ -21,6 +21,7 @@ class AppStatus {
       InvitationCode: null,
       Debug: false,
       LastSurveyCreationDate: null, //date when the last survey was created. Needed to reset counts.
+      LastSurveyAnsweredTime: null, //when was the last time a survey was completed?
       CurrentSurveyID: null,
       ExitSurveyDone: false,
       LastLocationAccess: null, //when was the last time location sharing was enabled.
@@ -70,6 +71,10 @@ class AppStatus {
         this.status.LastLocationPromptTime =
           "LastLocationPromptTime" in status
             ? new Date(status.LastLocationPromptTime)
+            : null;
+        this.status.LastSurveyAnsweredTime =
+          "LastSurveyAnsweredTime" in status
+            ? new Date(status.LastSurveyAnsweredTime)
             : null;
       } else {
         await logger.info(

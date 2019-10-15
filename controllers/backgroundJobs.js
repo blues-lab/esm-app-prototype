@@ -224,8 +224,28 @@ async function handleSurveyNotAvailableState(_appStatus) {
       await appStatus.setAppStatus(_appStatus);
     }
   } else {
-    //If not max number of surveys were taken already, randomly create a new survey
+    //May be randomly create a new survey
     if (_appStatus.SurveysAnsweredToday < SURVEY_ALLOWED_TO_COMPLETE) {
+      //check if any survey was answered in past two hours
+      if (_appStatus.LastSurveyAnsweredTime !== null) {
+        const _hourPassed = Math.floor(
+          (Date.now() - _appStatus.LastSurveyAnsweredTime) / (60 * 60000)
+        );
+        logger.info(
+          codeFileName,
+          funcName,
+          "Hours passed since last survey answered:" + _hourPassed
+        );
+        if (_hourPassed < 2) {
+          logger.info(
+            codeFileName,
+            funcName,
+            "Last survey was answered less than 2 hours ago. Returning."
+          );
+          return;
+        }
+      }
+
       // Randomly create a new survey
       const _createSurvey = (Math.floor(Math.random() * 100) + 1) % 2 === 0;
       logger.info(

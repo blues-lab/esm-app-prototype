@@ -234,6 +234,7 @@ export default class ContextualQuestionScreen extends React.Component {
     _appStatus.SurveysAnsweredToday += 1;
     _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
     _appStatus.CurrentSurveyID = null;
+    _appStatus.LastSurveyAnsweredTime = new Date();
     await appStatus.setAppStatus(_appStatus, codeFileName, "saveResponse");
     notificationController.cancelNotifications();
 
