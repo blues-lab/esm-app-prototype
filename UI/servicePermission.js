@@ -619,7 +619,7 @@ export default class ServicePermissionScreen extends React.Component {
               <View>
                 <Text style={[commonStyle.questionStyle, { fontSize: 22 }]}>
                   {strings.WOULD_ALLOW_1}
-                  <Text> "</Text>
+                  <Text> &ldquo;</Text>
                   <Text style={{ fontWeight: "bold" }}>
                     {this.state.services[
                       this.state.currentServiceIdx
@@ -627,7 +627,7 @@ export default class ServicePermissionScreen extends React.Component {
                       .trim()
                       .toLowerCase()}
                   </Text>
-                  <Text>?"</Text>
+                  <Text>?&rdquo;</Text>
                 </Text>
 
                 <View style={commonStyle.listContainerStyle}>
