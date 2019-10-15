@@ -26,10 +26,10 @@ import commonStyle from "./Style";
 const codeFileName = "exitSurvey.js";
 
 const usefulnessOptions = [
-  "Not useful at all",
-  "Slightly useful",
+  "Very useless",
+  "Moderately useless",
+  "Neutral",
   "Moderately useful",
-  "Useful",
   "Very useful"
 ];
 const styles = StyleSheet.create({

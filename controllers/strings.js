@@ -210,7 +210,7 @@ export const EXIT_SURVEY_CONSENT =
   "This survey will take 8-10 minutes and you will receive $1 for completing it.";
 
 export const SERVICE_USEFULNESS = serviceName =>
-  "How useful is '" + serviceName + "' to you?";
+  "How useful is the service '" + serviceName + "' to you?";
 
 export const MODEL1_FEATURES = [
   "• used to provide the relevant services",
