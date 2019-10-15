@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.6.2",
+    "@sentry/react-native": "^1.0.9",
     "file-exists": "^5.0.1",
     "fs": "^0.0.1-security",
     "install": "^0.13.0",
