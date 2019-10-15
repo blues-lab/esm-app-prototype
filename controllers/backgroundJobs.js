@@ -522,7 +522,7 @@ export async function showPrompt() {
   }
 }
 
-async function uploadFilesInDir(dirName, fileNamePattern, _appStatus) {
+async function uploadFilesInDir(dirName, fileNamePattern, _appStatus, key) {
   const _files = await RNFS.readdir(dirName);
   await logger.info(
     codeFileName,
@@ -542,7 +542,7 @@ async function uploadFilesInDir(dirName, fileNamePattern, _appStatus) {
       const _uploaded = await utilities.uploadData(
         _fileContent,
         _appStatus.UUID,
-        "SurveyResponse",
+        key,
         codeFileName,
         "uploadFiles"
       );
@@ -602,7 +602,8 @@ async function _uploadFiles(_appStatus) {
   await uploadFilesInDir(
     RNFS.DocumentDirectoryPath,
     "survey--response--",
-    _appStatus
+    _appStatus,
+    "SurveyResponse"
   );
   await logger.info(
     codeFileName,
@@ -612,7 +613,8 @@ async function _uploadFiles(_appStatus) {
   await uploadFilesInDir(
     RNFS.DocumentDirectoryPath,
     "partial-survey--response--",
-    _appStatus
+    _appStatus,
+    "PartialSurveyResponse"
   );
 
   //upload log file
