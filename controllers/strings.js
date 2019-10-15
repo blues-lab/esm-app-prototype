@@ -71,11 +71,11 @@ export const SETTINGS_SAVED = "Settings saved.";
 /* Notifications */
 export const NEW_SURVEY_AVAILABLE = "New survey available!";
 export const SURVEY_TIME = remainingTime =>
-  "Complete within " + remainingTime + " minutes to get $1!";
+  "Complete it within " + remainingTime + " minutes to get $1!";
 export const ONGOING_SURVEY = "Survey is still available!";
 export const FINAL_SURVEY_AVAILABLE = "Final survey available!";
 export const FINAL_SURVEY_TIME = remainingDays =>
-  "Complete within " + remainingDays + " days to get $1!";
+  "Complete it within " + remainingDays + " days to get $1!";
 
 /* Conversation topic */
 export const TALKING_ABOUT_HEADER = "Conversation topic";
