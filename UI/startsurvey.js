@@ -110,6 +110,7 @@ export default class SurveyStartScreen extends React.Component {
   }
 
   async saveResponse() {
+    const funcName = "saveResponse";
     const _appStatus = await appStatus.loadStatus();
     if (await utilities.currentSurveyExpired(_appStatus)) {
       await this.expireSurvey(_appStatus);
@@ -120,7 +121,7 @@ export default class SurveyStartScreen extends React.Component {
     this.setState({ saveWaitVisible: true });
     logger.info(
       codeFileName,
-      "NextButtonPress",
+      funcName,
       "Uploading partial response and navigating to AlvaPrompt."
     );
     utilities.uploadData(
@@ -132,7 +133,7 @@ export default class SurveyStartScreen extends React.Component {
       _appStatus.UUID,
       "PartialSurveyResponse",
       codeFileName,
-      "NextButtonPress",
+      funcName,
       SurveyStartScreen.fileUploadCallBack
     );
 
@@ -221,6 +222,12 @@ export default class SurveyStartScreen extends React.Component {
                     if (this.state.conversationTopic.length === 0) {
                       Alert.alert("Error", strings.TALKING_ABOUT_REQUIRED);
                     } else {
+                      logger.info(
+                        codeFileName,
+                        "NextButtonPress",
+                        "Entered conversation topic: " +
+                          this.state.conversationTopic
+                      );
                       await this.saveResponse();
                     }
                   }}
