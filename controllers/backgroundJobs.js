@@ -265,7 +265,7 @@ async function handleSurveyNotAvailableState(_appStatus) {
         logger.info(
           codeFileName,
           funcName,
-          "Created new survey. Updating app status."
+          "Created new survey. Updating app status and uploading survey create event."
         );
         const _currentDate = new Date();
         _appStatus.SurveyCountToday += 1;
@@ -274,6 +274,19 @@ async function handleSurveyNotAvailableState(_appStatus) {
         _appStatus.FirstNotificationTime = _currentDate;
         _appStatus.LastNotificationTime = _currentDate;
         await appStatus.setAppStatus(_appStatus);
+
+        utilities.uploadData(
+          {
+            Stage: "BackgroundJobs.",
+            SurveyStatus: "Survey created.",
+            Time: _currentDate
+          },
+          _appStatus.UUID,
+          "SurveyStatusChanged",
+          codeFileName,
+          funcName
+          //HomeScreen.fileUploadCallBack
+        );
 
         logger.info(
           codeFileName,
@@ -635,6 +648,19 @@ async function _uploadFiles(_appStatus) {
     "partial-survey--response--",
     _appStatus,
     "PartialSurveyResponse"
+  );
+
+  //upload survey status change files
+  await logger.info(
+    codeFileName,
+    "uploadFiles",
+    "Attempting to upload survey status change files."
+  );
+  await uploadFilesInDir(
+    RNFS.DocumentDirectoryPath,
+    "survey--status--changed--",
+    _appStatus,
+    "SurveyStatusChanged"
   );
 
   //upload log file

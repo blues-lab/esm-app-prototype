@@ -133,7 +133,7 @@ export default class HomeScreen extends React.Component {
         utilities.writeJSONFile(
           data,
           RNFS.DocumentDirectoryPath +
-            "/partial-survey--response--" +
+            "/survey--status--changed--" +
             Date.now().toString() +
             ".js",
           codeFileName,
@@ -161,6 +161,20 @@ export default class HomeScreen extends React.Component {
       "Updating app status and navigating to startSurvey."
     );
 
+    utilities.uploadData(
+      {
+        Stage: "Recent conversation.",
+        SurveyStatus: "Survey accepted.",
+        SurveyID: _surveyID,
+        Time: new Date()
+      },
+      _appStatus.UUID,
+      "SurveyStatusChanged",
+      codeFileName,
+      "startSurvey",
+      HomeScreen.fileUploadCallBack
+    );
+
     await appStatus.setAppStatus(
       _appStatus,
       codeFileName,
@@ -181,11 +195,11 @@ export default class HomeScreen extends React.Component {
     utilities.uploadData(
       {
         Stage: "Recent conversation.",
-        PartialResponse: "No recent conversation.",
+        SurveyStatus: "Survey declined.",
         Time: new Date()
       },
       _appStatus.UUID,
-      "NoConversationResponse",
+      "SurveyStatusChanged",
       codeFileName,
       "startSurvey",
       HomeScreen.fileUploadCallBack
