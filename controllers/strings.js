@@ -7,8 +7,8 @@ export const INVITATION_CODE_FAIL =
 export const SAVE_CHANGES_PROMPT = "Do you want to save changes?";
 
 export const SURVEY_EXPIRED =
-  "Sorry, the current survey expired. We will notify you once new surveys become available.";
-export const SURVEY_EXPIRED_HEADER = "Survey expired!";
+  "Sorry, the current survey expired. We will notify you once a new survey become available.";
+export const SURVEY_EXPIRED_HEADER = "Survey expired";
 
 export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
 
@@ -23,11 +23,11 @@ export const WIFI_PERMISSION_MSG =
   "We will not collect or store your location data." +
   " However, for the app to send you surveys only when you are at home, we need you to:\n" +
   " • grant the app location permission\n" +
-  " • keep location sharing enabled at home throughout the study.";
+  " • keep location services enabled at home throughout the study";
 
 export const HOME_WIFI_NOT_CONNECTED =
   "We will only send surveys when you are connected to your home WiFi." +
-  " We will check again when you are connected to WiFi network.";
+  " We will check again when you are connected to a WiFi network.";
 
 export const HOME_WIFI_PROMPT = wifiName =>
   'Is "' + wifiName + '" your home WiFi?';
@@ -63,11 +63,11 @@ export const DONT_DISTURB =
   "If there is a specific time of day you don't want to receive surveys, " +
   "please indicate it below.";
 export const DONT_DISTURB_AFTER = "Do not show notifications after";
-export const DONT_DISTURB_BEFORE = "And before";
+export const DONT_DISTURB_BEFORE = "and before";
 
 export const SETTINGS_SAVED_FIRST_TIME =
-  "Your settings have been saved. We will prompt you when a new survey becomes available.";
-export const SETTINGS_SAVED = "Settings saved.";
+  "Your settings have been saved. We will prompt you when a survey becomes available.";
+export const SETTINGS_SAVED = "Settings saved";
 /* Notifications */
 export const NEW_SURVEY_AVAILABLE = "New survey available!";
 export const SURVEY_TIME = remainingTime =>
@@ -82,7 +82,7 @@ export const TALKING_ABOUT_HEADER = "Conversation topic";
 export const TALKING_ABOUT = "What were you talking about?";
 export const TALKING_ABOUT_SKIP_HINT = "Enter 'Prefer not to answer' to skip";
 export const TALKING_ABOUT_REQUIRED =
-  "Please enter conversation topic to continue.";
+  "Please enter conversation topic to continue";
 
 /* Questions about relevant services*/
 export const PROMPT_SCREEN_TITLE = "ALVA"; // TODO: I don't think this is actually seen anywhere?
@@ -95,10 +95,11 @@ export const SELECT_RELEVANT_SERVICES = format(
   "What services could ALVA offer **based on the conversation you just had**? (They don't have to be services you would want or use.)"
 );
 
-export const OTHER_SERVICE_PROMPT = "What other service?";
+export const OTHER_SERVICE_PROMPT =
+  "Please describe the service ALVA could offer";
 
 export const WHY_NO_RELEVANT =
-  "Please explain why no service would be relevant in this situation.";
+  "Please explain why no service would be relevant in this situation";
 
 /* Questions about access */
 export const WOULD_ALLOW_1 = format(
@@ -124,7 +125,7 @@ export const WHY_DENY =
   "Why would you completely deny access to the conversation?";
 
 export const ACCESS_SELECTION_REQUIRED_HEADER = "Error";
-export const ACCESS_SELECTION_REQUIRED = "Please select an option to continue.";
+export const ACCESS_SELECTION_REQUIRED = "Please select an option to continue";
 
 export const DATA_RETENTION_QUESTION_TRANSCRIPT = format(
   "Would you want ALVA to store a transcript of this conversation, " +
@@ -171,16 +172,16 @@ export const CONTEXT_COULD_HEAR =
   "How many people could hear the conversation but did not participate in it?";
 export const CONTEXT_HOW_MANY_TALKING =
   "Not including yourself, how many people were talking?";
-export const CONTEXT_RELATE = "Who are they? (Select all that apply.)";
+export const CONTEXT_RELATE = "Who are they? (select all that apply)";
 export const CONTEXT_RELATE_OTHER =
   "What is your relationship with this person?";
 export const CONTEXT_RELATE_OTHER_SUBMIT = "Save";
 export const CONTEXT_PRESENT =
   "Was everyone talking physically present (e.g., rather than talking over the phone)?";
 export const NO_LOCATION_SELECTED_ERROR =
-  "Please select conversation location to continue.";
+  "Please select conversation location to continue";
 export const NO_RELATION_SELECTED_ERROR =
-  "Please select relationships with the conversation participants to continue.";
+  "Please select relationships with the conversation participants to continue";
 
 export const CHILDREN_ADOLESCENT = [
   "Of the people who were talking, were there any:",
@@ -206,37 +207,37 @@ export const EXIT_SURVEY_INTRO = _remainingDays =>
 export const EXIT_SURVEY_CONSENT =
   "Welcome to the final part of the study! \n\n" +
   "In this survey, we will ask questions about the importance of " +
-  "the services that you have selected in the past weeks.\n\n" +
+  "the services that you selected in the past weeks.\n\n" +
   "This survey will take 8-10 minutes and you will receive $1 for completing it.";
 
 export const SERVICE_USEFULNESS = serviceName =>
-  "How useful is the service '" + serviceName + "' to you?";
+  "How useful is the service &lsquo;" + serviceName + "&rsquo; to you?";
 
 export const MODEL1_FEATURES = [
-  "• used to provide the relevant services",
+  "• used to provide relevant services",
   "• stored until the relevant service is provided",
   "• processed and analyzed directly on the device",
-  "• processed and analyzed by algorithms"
+  "• processed and analyzed without human intervention"
 ];
 
 export const MODEL2_FEATURES = [
-  "• used to provide the relevant services and personalized offers from companies other than the manufacturer of the device",
+  "• used to provide relevant services and personalized offers from companies other than the manufacturer of the device",
   "• stored forever",
   "• processed and analyzed after being sent over the Internet to the manufacturer’s server",
-  "• processed and analyzed by humans"
+  "• processed and analyzed with human assistance"
 ];
 
 export const SINGLE_MODEL_INTRO_TEXT =
-  "Suppose you could actually buy a real version of ALVA, which " +
+  "Suppose you could actually buy a real version of ALVA that " +
   "offered the services you suggested during the past week. It would also have additional features." +
   " To provide them, audio recordings are:";
 export const BOTH_MODEL_INTRO_TEXT =
-  "Suppose you could actually buy a real version of ALVA, which" +
+  "Suppose you could actually buy a real version of ALVA that" +
   " offered the services you suggested during the past week as well as additional features. Imagine" +
   " there are two models of ALVA.";
 
 export const EXPLAIN_WHY_NO_SERVICES =
-  "Please explain in a few sentences why you did not find any services relevant.";
+  "Please explain in a few sentences why you did not find any services relevant";
 
 export const EXIT_SURVEY_DONE_HEADER = "Congratulations!";
 export const EXIT_SURVEY_DONE = "You have earned $1!";
@@ -259,7 +260,7 @@ export const SAVING_ERROR_MESSAGE =
 export const LOADING_ERROR_MESSAGE =
   "An error occurred loading data from file. Please send an email to " +
   CONTACT_EMAIL +
-  " with the error log.";
+  " to let us know about this issue.";
 export const SEND_ERROR_EMAIL = "Send email";
 
 /* Services */
