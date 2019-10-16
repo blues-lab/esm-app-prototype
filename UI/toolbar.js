@@ -46,7 +46,7 @@ class ToolBar extends React.Component {
       surveyStatus: SURVEY_STATUS.NOT_AVAILABLE
     });
 
-    if (this.interval != null) {
+    if (this.interval !== null) {
       clearInterval(this.interval);
     }
 
@@ -148,7 +148,7 @@ class ToolBar extends React.Component {
         secRemaining: Math.floor(_secRemaining % 60)
       });
 
-      if (this.interval == null) {
+      if (this.interval === null) {
         await logger.info(
           codeFileName,
           "initToolbar",
@@ -263,6 +263,7 @@ class ToolBar extends React.Component {
           }
         } else {
           //ongoing survey expired, go back to home
+
           logger.info(
             codeFileName,
             "updateTimeDisplay",
