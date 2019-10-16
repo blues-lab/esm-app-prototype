@@ -277,7 +277,7 @@ export const SERVICES = [
       { serviceName: "Call/text/email for work" },
       { serviceName: "Call a store/restaurant/office" },
       { serviceName: "Call doctor/hospital" },
-      { serviceName: "Call the police/emergency service" }
+      { serviceName: "Call the police/emergency services" }
     ],
     categoryName: "Call/email/text"
   },
@@ -287,15 +287,15 @@ export const SERVICES = [
         serviceName:
           "Add an already-scheduled meeting or event to your calendar"
       },
-      { serviceName: "Schedule a get-together with friends/family" },
-      { serviceName: "Schedule doctor's/medical appointment" },
-      { serviceName: "Schedule a meeting with a colleague" },
+      { serviceName: "Arrange a time to get together with friends/family" },
+      { serviceName: "Schedule medical appointment" },
       {
         serviceName:
           "Schedule personal care appointment (hair, nails, spa, etc.)"
-      }
+      },
+      { serviceName: "Schedule a meeting with a colleague" }
     ],
-    categoryName: "Schedule appointment or add event"
+    categoryName: "Schedule appointment or save event"
   },
   {
     services: [
@@ -304,7 +304,8 @@ export const SERVICES = [
       { serviceName: "Remind to call/text/email someone" },
       { serviceName: "Remind about a meeting" },
       { serviceName: "Remind to take medication" },
-      { serviceName: "Remind about doctor's/medical appointment" },
+      { serviceName: "Remind about medical appointment" },
+      { serviceName: "Remind about personal care appointment" },
       { serviceName: "Remind to avoid some food/drink" }
     ],
     categoryName: "Set a reminder"
@@ -317,7 +318,7 @@ export const SERVICES = [
       { serviceName: "Buy a gift" },
       { serviceName: "Buy clothes" },
       { serviceName: "Buy book" },
-      { serviceName: "Book flight/hotel/rent car" },
+      { serviceName: "Book travel (flight/hotel/rental car)" },
       { serviceName: "Call a taxi/rideshare" }
     ],
     categoryName: "Purchase a product/service"
@@ -325,12 +326,11 @@ export const SERVICES = [
   {
     services: [
       {
-        serviceName:
-          "Search for health/disease/medical condition related information"
+        serviceName: "Search for health/medical information"
       },
       { serviceName: "Search for restaurant(s)" },
       { serviceName: "Search for address or location" },
-      { serviceName: "Search for food recipe" },
+      { serviceName: "Search for food recipes" },
       { serviceName: "Search for song/artist/lyric" },
       {
         serviceName:
@@ -341,8 +341,8 @@ export const SERVICES = [
         serviceName:
           "Search for promo code/discount offer for some product/service"
       },
-      { serviceName: "Search for travel info (flights/hotels/rental cars)" },
-      { serviceName: "Search for weather information at a location" },
+      { serviceName: "Search for travel info (flight/hotel/rental car)" },
+      { serviceName: "Search for weather information" },
       { serviceName: "Search for the nearest hospital/pharmacy" },
       { serviceName: "Search for job opportunities" }
     ],
