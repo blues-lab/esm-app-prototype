@@ -235,6 +235,12 @@ export const BOTH_MODEL_INTRO_TEXT =
   "Suppose you could actually buy a real version of ALVA that" +
   " offered the services you suggested during the past week as well as additional features. Imagine" +
   " there are two models of ALVA.";
+export const BOTH_MODEL_1 = format(
+  "To provide them, in **Model 1**, audio recordings are:"
+);
+export const BOTH_MODEL_2 = format(
+  "To provide the same functionality, in **Model 2**, audio recordings are:"
+);
 
 export const EXPLAIN_WHY_NO_SERVICES =
   "Please explain in a few sentences why you did not find any services relevant";
