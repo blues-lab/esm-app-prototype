@@ -71,11 +71,11 @@ export const SETTINGS_SAVED = "Settings saved.";
 /* Notifications */
 export const NEW_SURVEY_AVAILABLE = "New survey available!";
 export const SURVEY_TIME = remainingTime =>
-  "Complete within " + remainingTime + " minutes to get $1!";
+  "Complete it within " + remainingTime + " minutes to get $1!";
 export const ONGOING_SURVEY = "Survey is still available!";
 export const FINAL_SURVEY_AVAILABLE = "Final survey available!";
 export const FINAL_SURVEY_TIME = remainingDays =>
-  "Complete within " + remainingDays + " days to get $1!";
+  "Complete it within " + remainingDays + " days to get $1!";
 
 /* Conversation topic */
 export const TALKING_ABOUT_HEADER = "Conversation topic";
@@ -135,8 +135,8 @@ export const DATA_RETENTION_QUESTION_LENGTH = format(
     "audio recording of this conversation **for the purpose of improving its functionality**?"
 );
 export const DATA_RETENTION_TRANSCRIPT_OPTIONS = [
-  "Yes, keep the transcript for my review",
-  "No, don't keep the transcript for my review",
+  "Yes, keep the transcript for me to review",
+  "No, don't keep the transcript for me to review",
   "Other"
 ];
 export const DATA_RETENTION_LENGTH_OPTIONS = [

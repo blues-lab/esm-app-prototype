@@ -22,6 +22,7 @@ module.exports = {
     "import/first": 1,
     "spaced-comment": 0,
     "prefer-template": 0,
+    "no-param-reassign": [1, { props: false }],
     "no-plusplus": 0,
     "no-underscore-dangle": 0,
     "react/destructuring-assignment": 0,

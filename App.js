@@ -13,6 +13,7 @@ import { Platform, BackHandler } from "react-native";
 import * as RNFS from "react-native-fs";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
+import * as Sentry from "@sentry/react-native";
 
 import BackgroundJob from "react-native-background-job";
 import BackgroundFetch from "react-native-background-fetch";
@@ -36,9 +37,14 @@ import AlvaPromptScreen from "./UI/alvaPrompt";
 import * as utilities from "./controllers/utilities";
 import {
   USER_SETTINGS_FILE_PATH,
+  SENTRY_DSN,
   SERVICE_FILE_LOCAL
 } from "./controllers/constants";
 import { SERVICES } from "./controllers/strings";
+
+Sentry.init({
+  dsn: SENTRY_DSN
+});
 
 const codeFileName = "App.js";
 
