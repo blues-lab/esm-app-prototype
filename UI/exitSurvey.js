@@ -490,11 +490,7 @@ export default class ExitSurveyScreen extends React.Component {
       return (
         <View>
           <Text style={{ fontSize: 20 }}> {strings.BOTH_MODEL_INTRO_TEXT}</Text>
-          <Text style={{ fontSize: 20 }}>
-            To provide them, in
-            <Text style={{ fontWeight: "bold" }}> Model 1</Text>, audio
-            recordings are:{" "}
-          </Text>
+          <Text style={{ fontSize: 20 }}>{strings.BOTH_MODEL_1}</Text>
           <View style={commonStyle.listContainerStyle}>
             <FlatList
               data={strings.MODEL1_FEATURES}
@@ -503,11 +499,7 @@ export default class ExitSurveyScreen extends React.Component {
             />
           </View>
 
-          <Text style={{ fontSize: 20 }}>
-            {"\n"}To provide the similar services, in
-            <Text style={{ fontWeight: "bold" }}> Model 2</Text>, audio
-            recordings are:{" "}
-          </Text>
+          <Text style={{ fontSize: 20 }}>{strings.BOTH_MODEL_2}</Text>
           <View style={commonStyle.listContainerStyle}>
             <FlatList
               data={strings.MODEL2_FEATURES}
