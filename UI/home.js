@@ -28,8 +28,7 @@ import * as utilities from "../controllers/utilities";
 import {
   USER_SETTINGS_FILE_PATH,
   INVITATION_CODE_FILE_PATH,
-  SURVEY_STATUS,
-  PROMPT_DURATION
+  SURVEY_STATUS
 } from "../controllers/constants";
 
 const codeFileName = "home.js";
