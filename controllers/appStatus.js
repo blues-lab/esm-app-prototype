@@ -1,4 +1,6 @@
 import * as RNFS from "react-native-fs";
+import * as Sentry from "@sentry/react-native";
+
 import logger from "./logger";
 import * as utilities from "./utilities";
 import { SURVEY_STATUS, APP_STATUS_FILE_PATH } from "./constants";
@@ -154,6 +156,12 @@ class AppStatus {
           "Creating static AppStatus instance. Current status: " +
             JSON.stringify(_instance)
         );
+
+        // Associate invitation code with Sentry errors
+        const invitationCode = _instance.InvitationCode;
+        if (invitationCode) {
+          Sentry.setUser({ id: _instance.InvitationCode });
+        }
       });
     }
     return instance;

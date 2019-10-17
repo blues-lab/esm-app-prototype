@@ -15,6 +15,8 @@ import * as RNFS from "react-native-fs";
 import UUIDGenerator from "react-native-uuid-generator";
 import AsyncStorage from "@react-native-community/async-storage";
 import PropTypes from "prop-types";
+import * as Sentry from "@sentry/react-native";
+
 import DialogInput from "./vendor/DialogInput";
 import notificationController, {
   onAppOpen
@@ -680,6 +682,8 @@ export default class HomeScreen extends React.Component {
               const _code = this.state.invitationCode;
               const debugCode = isDebugCode(_code);
               if (debugCode || isValidInvitationCode(_code)) {
+                Sentry.setUser({ id: _code });
+
                 logger.info(
                   codeFileName,
                   "invitationCodeDialog",
