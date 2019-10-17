@@ -20,7 +20,7 @@ import Dialog from "react-native-dialog";
 import DialogInput from "react-native-dialog-input";
 
 import notificationController from "../controllers/notificationController";
-import appStatus from "../controllers/appStatus";
+import AppStatus from "../controllers/appStatus";
 import commonStyles from "./Style";
 import ToolBar from "./toolbar";
 import * as strings from "../controllers/strings";
@@ -381,7 +381,7 @@ export default class ServiceMenuScreen extends React.Component {
     const _newStatus = _appStatus;
     _newStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
     _newStatus.CurrentSurveyID = null;
-    await appStatus.setAppStatus(_newStatus, codeFileName, funcName);
+    await AppStatus.setAppStatus(_newStatus, codeFileName, funcName);
 
     await logger.info(
       codeFileName,
@@ -397,7 +397,7 @@ export default class ServiceMenuScreen extends React.Component {
   }
 
   async showPermissionPage() {
-    const _appStatus = await appStatus.loadStatus();
+    const _appStatus = await AppStatus.getStatus();
     if (await utilities.currentSurveyExpired(_appStatus)) {
       await this.expireSurvey(_appStatus);
       return;
@@ -719,7 +719,7 @@ export default class ServiceMenuScreen extends React.Component {
                 //upload partial survey response
                 {
                   this.setState({ saveWaitVisible: true });
-                  const _appStatus = await appStatus.loadStatus();
+                  const _appStatus = await AppStatus.getStatus();
                   logger.info(
                     codeFileName,
                     "NoRelevantService.SaveButton.onPress",

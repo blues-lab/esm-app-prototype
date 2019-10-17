@@ -18,7 +18,7 @@ import { ProgressDialog } from "react-native-simple-dialogs";
 import CustomNumericInput from "./customNumericInput";
 import commonStyle from "./Style";
 import logger from "../controllers/logger";
-import appStatus from "../controllers/appStatus";
+import AppStatus from "../controllers/appStatus";
 import notificationController from "../controllers/notificationController";
 import Locations from "./locations";
 import Relations from "./relations";
@@ -146,7 +146,7 @@ export default class ContextualQuestionScreen extends React.Component {
     const _newStatus = _appStatus;
     _newStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
     _newStatus.CurrentSurveyID = null;
-    await appStatus.setAppStatus(_newStatus, codeFileName, funcName);
+    await AppStatus.setAppStatus(_newStatus, codeFileName, funcName);
 
     await logger.info(
       codeFileName,
@@ -162,7 +162,7 @@ export default class ContextualQuestionScreen extends React.Component {
   }
 
   async saveResponse() {
-    const _appStatus = await appStatus.loadStatus();
+    const _appStatus = await AppStatus.getStatus();
     if (await utilities.currentSurveyExpired(_appStatus)) {
       await this.expireSurvey(_appStatus);
       return;
@@ -235,7 +235,7 @@ export default class ContextualQuestionScreen extends React.Component {
     _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
     _appStatus.CurrentSurveyID = null;
     _appStatus.LastSurveyAnsweredTime = new Date();
-    await appStatus.setAppStatus(_appStatus, codeFileName, "saveResponse");
+    await AppStatus.setAppStatus(_appStatus, codeFileName, "saveResponse");
     notificationController.cancelNotifications();
 
     this.setState({ saveWaitVisible: false }, () => {

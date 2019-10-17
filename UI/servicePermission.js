@@ -22,7 +22,7 @@ import commonStyle from "./Style";
 import logger from "../controllers/logger";
 import * as utilities from "../controllers/utilities";
 import ToolBar from "./toolbar";
-import appStatus from "../controllers/appStatus";
+import AppStatus from "../controllers/appStatus";
 import * as strings from "../controllers/strings";
 import notificationController from "../controllers/notificationController";
 import { SURVEY_STATUS } from "../controllers/constants";
@@ -375,7 +375,7 @@ export default class ServicePermissionScreen extends React.Component {
     );
 
     await this.promisedSetState({ saveWaitVisible: true });
-    const _appStatus = await appStatus.loadStatus();
+    const _appStatus = await AppStatus.getStatus();
     utilities.uploadData(
       {
         SurveyID: _appStatus.CurrentSurveyID,
@@ -402,7 +402,7 @@ export default class ServicePermissionScreen extends React.Component {
     const _newStatus = _appStatus;
     _newStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
     _newStatus.CurrentSurveyID = null;
-    await appStatus.setAppStatus(_newStatus, codeFileName, funcName);
+    await AppStatus.setAppStatus(_newStatus, codeFileName, funcName);
 
     await logger.info(
       codeFileName,
@@ -418,7 +418,7 @@ export default class ServicePermissionScreen extends React.Component {
   }
 
   async saveResponse() {
-    const _appStatus = await appStatus.loadStatus();
+    const _appStatus = await AppStatus.getStatus();
     if (await utilities.currentSurveyExpired(_appStatus)) {
       await this.expireSurvey(_appStatus);
       return;

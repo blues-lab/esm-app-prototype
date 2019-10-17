@@ -21,7 +21,7 @@ import { NetworkInfo } from "react-native-network-info";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import VersionNumber from "react-native-version-number";
 import { uploadFiles } from "../controllers/backgroundJobs";
-import appStatus from "../controllers/appStatus";
+import AppStatus from "../controllers/appStatus";
 import notificationController, {
   onAppOpen
 } from "../controllers/notificationController";
@@ -82,7 +82,7 @@ export default class UserSettingsScreen extends React.Component {
       wifiPermissionDialogVisible: false
     };
 
-    appStatus.loadStatus().then(status => {
+    AppStatus.getStatus().then(status => {
       this.state.debug = status.Debug;
       this.state.invitationCode = status.InvitationCode
         ? status.InvitationCode
@@ -544,13 +544,15 @@ export default class UserSettingsScreen extends React.Component {
             <Button
               title="Take the exit survey"
               color="#20B2AA"
-              onPress={() => {
+              onPress={async () => {
                 logger.info(
                   codeFileName,
                   "StartExitSurveyButton",
                   "Starting exit survey."
                 );
-                this.props.navigation.navigate("ExitSurvey");
+                //this.props.navigation.navigate("ExitSurvey");
+                const c = await AppStatus.getStatus();
+                Alert.alert("Status", JSON.stringify(c));
               }}
             />
             <Button
@@ -569,14 +571,14 @@ export default class UserSettingsScreen extends React.Component {
                   strings.SURVEY_TIME(60)
                 );
 
-                const _appStatus = await appStatus.loadStatus();
+                const _appStatus = await AppStatus.getStatus();
                 const _currentDate = new Date();
                 _appStatus.SurveyCountToday += 1;
                 _appStatus.SurveyStatus = SURVEY_STATUS.AVAILABLE;
                 _appStatus.LastSurveyCreationDate = _currentDate;
                 _appStatus.FirstNotificationTime = _currentDate;
                 _appStatus.LastNotificationTime = _currentDate;
-                await appStatus.setAppStatus(
+                await AppStatus.setAppStatus(
                   _appStatus,
                   codeFileName,
                   "StartSurveyButton"

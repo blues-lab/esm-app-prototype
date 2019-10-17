@@ -17,7 +17,7 @@ import ToolBar from "./toolbar";
 import * as strings from "../controllers/strings";
 import * as utilities from "../controllers/utilities";
 import notificationController from "../controllers/notificationController";
-import appStatus from "../controllers/appStatus";
+import AppStatus from "../controllers/appStatus";
 import { SURVEY_STATUS } from "../controllers/constants";
 
 const codeFileName = "alvaPrompt.js";
@@ -82,7 +82,7 @@ export default class AlvaPromptScreen extends React.Component {
     const _newStatus = _appStatus;
     _newStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
     _newStatus.CurrentSurveyID = null;
-    await appStatus.setAppStatus(_newStatus, codeFileName, funcName);
+    await AppStatus.setAppStatus(_newStatus, codeFileName, funcName);
 
     await logger.info(
       codeFileName,
@@ -164,7 +164,7 @@ export default class AlvaPromptScreen extends React.Component {
                 title={strings.IMAGINE_NEXT}
                 color="#20B2AA"
                 onPress={async () => {
-                  const _appStatus = await appStatus.loadStatus();
+                  const _appStatus = await AppStatus.getStatus();
                   if (await utilities.currentSurveyExpired(_appStatus)) {
                     await this.expireSurvey(_appStatus);
                   } else {

@@ -5,7 +5,7 @@ import LocationServicesDialogBox from "react-native-android-location-services-di
 
 import logger from "./logger";
 import notificationController from "./notificationController";
-import appStatus from "./appStatus";
+import AppStatus from "./appStatus";
 import * as utilities from "./utilities";
 import {
   USER_SETTINGS_FILE_PATH,
@@ -121,7 +121,7 @@ async function promptToShareLocation(_appStatus) {
 
     if (_locationSharingEnabled) {
       _appStatus.LastLocationAccess = new Date();
-      await appStatus.setAppStatus(_appStatus);
+      await AppStatus.setAppStatus(_appStatus);
       _showPrompt = false;
     } else {
       logger.info(
@@ -179,7 +179,7 @@ async function promptToShareLocation(_appStatus) {
         );
 
         _appStatus.LastLocationPromptTime = new Date();
-        await appStatus.setAppStatus(_appStatus);
+        await AppStatus.setAppStatus(_appStatus);
       }
     }
   }
@@ -221,7 +221,7 @@ async function handleSurveyNotAvailableState(_appStatus) {
         "Making this participant ineligible to get bonus."
       );
       _appStatus.EligibleForBonus = false;
-      await appStatus.setAppStatus(_appStatus);
+      await AppStatus.setAppStatus(_appStatus);
     }
   } else {
     //May be randomly create a new survey
@@ -273,7 +273,7 @@ async function handleSurveyNotAvailableState(_appStatus) {
         _appStatus.LastSurveyCreationDate = _currentDate;
         _appStatus.FirstNotificationTime = _currentDate;
         _appStatus.LastNotificationTime = _currentDate;
-        await appStatus.setAppStatus(_appStatus);
+        await AppStatus.setAppStatus(_appStatus, codeFileName, funcName);
 
         utilities.uploadData(
           {
@@ -344,7 +344,7 @@ async function handleESMPeriodEnded(_appStatus) {
     );
 
     _appStatus.LastNotificationTime = new Date();
-    await appStatus.setAppStatus(_appStatus);
+    await AppStatus.setAppStatus(_appStatus);
   }
 }
 
@@ -368,7 +368,7 @@ async function resetVariables(_appStatus) {
 
     _appStatus.SurveyCountToday = 0;
     _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-    await appStatus.setAppStatus(_appStatus);
+    await AppStatus.setAppStatus(_appStatus);
   }
 }
 
@@ -413,7 +413,7 @@ async function handleSurveyAvailableState(_appStatus) {
 
     const _newStatus = _appStatus;
     _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-    await appStatus.setAppStatus(_newStatus);
+    await AppStatus.setAppStatus(_newStatus);
   }
 }
 
@@ -467,13 +467,13 @@ async function handleSurveyOngoingState(_appStatus) {
       );
       const _newStatus = _appStatus;
       _appStatus.LastNotificationTime = new Date();
-      await appStatus.setAppStatus(_newStatus);
+      await AppStatus.setAppStatus(_newStatus);
     }
   }
 }
 export async function showPrompt() {
   const funcName = "showPrompt";
-  const _appStatus = await appStatus.loadStatus();
+  const _appStatus = await AppStatus.getStatus();
   logger.info(
     codeFileName,
     funcName,
@@ -695,7 +695,7 @@ async function _uploadFiles(_appStatus) {
 
 export async function uploadFiles() {
   //return if any survey is ongoing
-  const _appStatus = await appStatus.loadStatus();
+  const _appStatus = await AppStatus.getStatus();
   if (_appStatus.SURVEY_STATUS === SURVEY_STATUS.ONGOING) {
     logger.info(codeFileName, "uploadFiles", "A survey is ongoing. Returning.");
     return;

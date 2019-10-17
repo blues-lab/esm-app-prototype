@@ -20,7 +20,7 @@ import notificationController, {
   onAppOpen
 } from "../controllers/notificationController";
 import logger from "../controllers/logger";
-import appStatus from "../controllers/appStatus";
+import AppStatus from "../controllers/appStatus";
 import * as strings from "../controllers/strings";
 import commonStyles from "./Style";
 import ToolBar from "./toolbar";
@@ -151,7 +151,7 @@ export default class HomeScreen extends React.Component {
       "Starting new survey with id: " + _surveyID
     );
 
-    const _appStatus = await appStatus.loadStatus();
+    const _appStatus = await AppStatus.getStatus();
     _appStatus.CurrentSurveyID = _surveyID;
     _appStatus.SurveyStatus = SURVEY_STATUS.ONGOING;
 
@@ -175,7 +175,7 @@ export default class HomeScreen extends React.Component {
       HomeScreen.fileUploadCallBack
     );
 
-    await appStatus.setAppStatus(
+    await AppStatus.setAppStatus(
       _appStatus,
       codeFileName,
       "hadConversationYes"
@@ -191,7 +191,7 @@ export default class HomeScreen extends React.Component {
       "Uploading response and updating app status."
     );
 
-    const _appStatus = await appStatus.loadStatus();
+    const _appStatus = await AppStatus.getStatus();
     utilities.uploadData(
       {
         Stage: "Recent conversation.",
@@ -206,7 +206,7 @@ export default class HomeScreen extends React.Component {
     );
 
     _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-    await appStatus.setAppStatus(_appStatus, codeFileName, "hadConversationNo");
+    await AppStatus.setAppStatus(_appStatus, codeFileName, "hadConversationNo");
     notificationController.cancelNotifications();
     this.initApp();
 
@@ -238,14 +238,14 @@ export default class HomeScreen extends React.Component {
       );
 
       logger.info(codeFileName, "initApp", "Reloading app status.");
-      const _appStatus = await appStatus.loadStatus();
+      const _appStatus = await AppStatus.getStatus();
       logger.info(
         codeFileName,
         "initApp",
         "Current app status:" + JSON.stringify(_appStatus)
       );
 
-      if ((await this.isFirstLaunch()) === null) {
+      if (_appStatus.InstallationDate === null) {
         //first launch
         logger.info(
           codeFileName,
@@ -333,7 +333,7 @@ export default class HomeScreen extends React.Component {
                 );
                 _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
                 _appStatus.CurrentSurveyID = null;
-                await appStatus.setAppStatus(
+                await AppStatus.setAppStatus(
                   _appStatus,
                   codeFileName,
                   "initApp"
@@ -368,8 +368,11 @@ export default class HomeScreen extends React.Component {
     logger.info(
       codeFileName,
       "componentDidMount",
-      "Mounting components and setting callback for opening app via notification."
+      "Initializing app status and setting callback for opening app via notification."
     );
+
+    await AppStatus.initAppStatus();
+
     onAppOpen.backCallBack = this.onAppOpen;
   }
 
@@ -700,7 +703,7 @@ export default class HomeScreen extends React.Component {
                     const _uuid = await UUIDGenerator.getRandomUUID();
                     const _installationDate = new Date();
 
-                    const _appStatus = appStatus.loadStatus();
+                    const _appStatus = await AppStatus.getStatus();
                     _appStatus.InstallationDate = _installationDate;
                     _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
                     _appStatus.UUID = _uuid;
@@ -715,7 +718,7 @@ export default class HomeScreen extends React.Component {
                       "invitationCodeDialog",
                       "Setting app status properties."
                     );
-                    await appStatus.setAppStatus(
+                    await AppStatus.setAppStatus(
                       _appStatus,
                       codeFileName,
                       "invitationCodeDialog"

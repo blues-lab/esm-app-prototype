@@ -316,11 +316,6 @@ export async function uploadData(
 export function surveyPeriodEnded(appStatus) {
   let result = false;
   const _installationDate = appStatus.InstallationDate;
-  logger.info(
-    codeFileName,
-    "surveyPeriodEnded",
-    "Checking if study period has ended. _installationDate:" + _installationDate
-  );
   if (_installationDate == null) {
     logger.error(
       codeFileName,
@@ -338,6 +333,18 @@ export function surveyPeriodEnded(appStatus) {
       result = true;
     }
   }
+
+  logger.info(
+    codeFileName,
+    "surveyPeriodEnded",
+    "Installation date: " +
+      _installationDate +
+      ", type: " +
+      typeof _installationDate +
+      ". ESM study period ended? " +
+      result
+  );
+
   return result;
 }
 

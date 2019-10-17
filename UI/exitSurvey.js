@@ -16,7 +16,7 @@ import {
 import * as RNFS from "react-native-fs";
 import Icon from "react-native-vector-icons/Fontisto";
 import { ProgressDialog } from "react-native-simple-dialogs";
-import appStatus from "../controllers/appStatus";
+import AppStatus from "../controllers/appStatus";
 import { SELECTED_SERVICES_FILE } from "../controllers/constants";
 import logger from "../controllers/logger";
 import * as strings from "../controllers/strings";
@@ -191,7 +191,7 @@ export default class ExitSurveyScreen extends React.Component {
 
     this.setState({ saveWaitVisible: true });
 
-    const _appStatus = await appStatus.loadStatus();
+    const _appStatus = await AppStatus.getStatus();
 
     const _response = {
       serviceResponses: this.state.serviceResponses,
@@ -245,7 +245,7 @@ export default class ExitSurveyScreen extends React.Component {
 
     const _newStatus = _appStatus;
     _newStatus.ExitSurveyDone = true;
-    await appStatus.setAppStatus(_newStatus, codeFileName, "saveResponse");
+    await AppStatus.setAppStatus(_newStatus, codeFileName, "saveResponse");
     this.setState({ saveWaitVisible: false });
     Alert.alert(
       strings.EXIT_SURVEY_DONE_HEADER,

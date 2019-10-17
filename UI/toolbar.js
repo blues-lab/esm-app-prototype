@@ -11,7 +11,7 @@ import PropTypes from "prop-types";
 import { NavigationEvents, withNavigation } from "react-navigation";
 import Icon from "react-native-vector-icons/Feather";
 import ProgressBarAnimated from "react-native-progress-bar-animated";
-import appStatus from "../controllers/appStatus";
+import AppStatus from "../controllers/appStatus";
 import { SURVEY_STATUS, PROMPT_DURATION } from "../controllers/constants";
 import notificationController from "../controllers/notificationController";
 import logger from "../controllers/logger";
@@ -36,7 +36,7 @@ class ToolBar extends React.Component {
     const _newStatus = _appStatus;
     _newStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
     _newStatus.CurrentSurveyID = null;
-    await appStatus.setAppStatus(
+    await AppStatus.setAppStatus(
       _newStatus,
       codeFileName + "." + this.props.navigation.state.routeName,
       funcName
@@ -66,7 +66,7 @@ class ToolBar extends React.Component {
   }
 
   async initToolbar() {
-    const _appStatus = await appStatus.loadStatus();
+    const _appStatus = await AppStatus.getStatus();
 
     if (this._isMounted) {
       await this.promisedSetState({
@@ -203,7 +203,7 @@ class ToolBar extends React.Component {
 
   async updateTimeDisplay() {
     if (this._isMounted) {
-      const _appStatus = await appStatus.loadStatus();
+      const _appStatus = await AppStatus.getStatus();
       // update self survey state
       if (this._isMounted) {
         await this.promisedSetState({ surveyStatus: _appStatus.SurveyStatus });
