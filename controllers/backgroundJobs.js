@@ -89,11 +89,14 @@ async function promptToShareLocation(_appStatus) {
 
   let _showPrompt = false;
   const _ssid = await NetworkInfo.getSSID();
+  logger.info(codeFileName, "getHomeSSID", "Obtained ssid. null? "+(_ssid===null)+"len(_ssid)>0? "+(_ssid.length>0)+
+     "_ssid ==<unknown ssid>? "+  (_ssid === "<unknown ssid>"));
+
   if (_ssid === null || _ssid.length === 0 || _ssid === "<unknown ssid>") {
     logger.info(
       codeFileName,
       "promptToShareLocation",
-      "Obtained ssid: " + _ssid + ". Checking if location sharing is enabled."
+      "Could not obtain a valid ssid. Checking if location sharing is enabled."
     );
 
     let _locationSharingEnabled = false;
@@ -505,6 +508,10 @@ export async function showPrompt() {
 
   //check if home wifi is set and connected to home wifi
   const _ssid = await NetworkInfo.getSSID();
+  logger.info(codeFileName, funcName, "Obtained ssid. null? "+(_ssid===null)+"len(_ssid)>0? "+(_ssid.length>0)+
+       "_ssid ==<unknown ssid>? "+  (_ssid === "<unknown ssid>") +
+       "len(homeWifi.length)>0? "+ (_userSettingsData.homeWifi.length>0));
+
   if (
     _userSettingsData.homeWifi.length === 0 ||
     _ssid !== _userSettingsData.homeWifi
@@ -512,13 +519,12 @@ export async function showPrompt() {
     logger.info(
       codeFileName,
       funcName,
-      `Current SSID: ${_ssid}. Home Wifi: ${_userSettingsData.homeWifi} . Returning.`
+      'Either home wifi is not set or not connected to. Returning.'
     );
     notificationController.cancelNotifications();
     return;
   }
 
-  logger.info(codeFileName, funcName, "Obtained wifi:" + _ssid + ".");
 
   //Check if in "Don't disturb" times (Sunday is 0, Monday is 1)
   const _doNotDisturb = isInDoNotDisturbTime(_userSettingsData);
@@ -710,10 +716,12 @@ export async function uploadFiles() {
 
   try {
     const _ssid = await NetworkInfo.getSSID();
+    logger.info(codeFileName, "uploadFiles", "Obtained ssid. null? "+(_ssid===null)+"len(_ssid)>0? "+(_ssid.length>0)+
+         "_ssid ==<unknown ssid>? "+  (_ssid === "<unknown ssid>"));
     await logger.info(
       codeFileName,
       "uploadFiles",
-      "SSID:" + _ssid + ". Attempting to upload files."
+      "Attempting to upload files."
     );
     _uploadFiles(_appStatus);
   } catch (error) {
