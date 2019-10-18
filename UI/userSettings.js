@@ -143,13 +143,16 @@ export default class UserSettingsScreen extends React.Component {
 
   async getHomeSSID() {
     try {
+
+
       const _ssid = await NetworkInfo.getSSID();
-      logger.info(codeFileName, "getHomeSSID", "SSID:" + _ssid);
+      logger.info(codeFileName, "getHomeSSID", "Obtained ssid. null? "+(_ssid===null)+"len(_ssid)>0? "+(_ssid.length>0));
+
       if (_ssid !== null && _ssid.length > 0 && _ssid !== "<unknown ssid>") {
         logger.info(
           codeFileName,
           "getHomeSSID",
-          `Connected WiFi:${_ssid}. Asking if this the is Home WiFi.`
+          'Connected to WiFi. Asking if this the is Home WiFi.'
         );
         Alert.alert(
           "Home WiFi",
@@ -172,7 +175,7 @@ export default class UserSettingsScreen extends React.Component {
                 logger.info(
                   codeFileName,
                   "getHomeSSID",
-                  "Connected to home WiFi. Saving home WiFi:" + _ssid
+                  "Connected to home WiFi. Saving home WiFi."
                 );
                 this.setState({ homeWifi: _ssid }, async () =>
                   this.saveSettings()

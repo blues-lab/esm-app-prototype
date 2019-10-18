@@ -296,7 +296,7 @@ export default class HomeScreen extends React.Component {
             logger.info(
               codeFileName,
               "initApp",
-              "Read user settings file:" + _fileContent
+              "Read user settings."
             );
 
             //Check if home wifi is set
