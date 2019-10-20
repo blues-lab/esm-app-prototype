@@ -15,6 +15,8 @@ import * as RNFS from "react-native-fs";
 import UUIDGenerator from "react-native-uuid-generator";
 import AsyncStorage from "@react-native-community/async-storage";
 import PropTypes from "prop-types";
+import * as Sentry from "@sentry/react-native";
+
 import DialogInput from "./vendor/DialogInput";
 import notificationController, {
   onAppOpen
@@ -28,8 +30,7 @@ import * as utilities from "../controllers/utilities";
 import {
   USER_SETTINGS_FILE_PATH,
   INVITATION_CODE_FILE_PATH,
-  SURVEY_STATUS,
-  PROMPT_DURATION
+  SURVEY_STATUS
 } from "../controllers/constants";
 
 const codeFileName = "home.js";
@@ -292,11 +293,7 @@ export default class HomeScreen extends React.Component {
           if (await RNFS.exists(USER_SETTINGS_FILE_PATH)) {
             const _fileContent = await RNFS.readFile(USER_SETTINGS_FILE_PATH);
             const _userSettingsData = JSON.parse(_fileContent);
-            logger.info(
-              codeFileName,
-              "initApp",
-              "Read user settings file:" + _fileContent
-            );
+            logger.info(codeFileName, "initApp", "Read user settings.");
 
             //Check if home wifi is set
             if (_userSettingsData.homeWifi.length === 0) {
@@ -684,6 +681,8 @@ export default class HomeScreen extends React.Component {
               const _code = this.state.invitationCode;
               const debugCode = isDebugCode(_code);
               if (debugCode || isValidInvitationCode(_code)) {
+                Sentry.setUser({ id: _code });
+
                 logger.info(
                   codeFileName,
                   "invitationCodeDialog",

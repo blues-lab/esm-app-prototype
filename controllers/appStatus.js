@@ -1,9 +1,9 @@
 import * as RNFS from "react-native-fs";
-import { Alert } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
+import * as Sentry from "@sentry/react-native";
+
 import logger from "./logger";
 import * as utilities from "./utilities";
-import * as strings from "./strings";
 import { SURVEY_STATUS, APP_STATUS_FILE_PATH } from "./constants";
 
 const codeFileName = "appStatus.js";
