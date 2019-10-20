@@ -146,7 +146,8 @@ export default class UserSettingsScreen extends React.Component {
 
 
       const _ssid = await NetworkInfo.getSSID();
-      logger.info(codeFileName, "getHomeSSID", "Obtained ssid. null? "+(_ssid===null)+"len(_ssid)>0? "+(_ssid.length>0));
+      logger.info(codeFileName, "getHomeSSID",
+      "Obtained ssid. null? "+ (_ssid===null));
 
       if (_ssid !== null && _ssid.length > 0 && _ssid !== "<unknown ssid>") {
         logger.info(

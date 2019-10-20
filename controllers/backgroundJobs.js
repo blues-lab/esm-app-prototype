@@ -89,7 +89,7 @@ async function promptToShareLocation(_appStatus) {
 
   let _showPrompt = false;
   const _ssid = await NetworkInfo.getSSID();
-  logger.info(codeFileName, "getHomeSSID", "Obtained ssid. null? "+(_ssid===null)+"len(_ssid)>0? "+(_ssid.length>0)+
+  logger.info(codeFileName, "getHomeSSID", "Obtained ssid. null? "+(_ssid===null)+"len(_ssid)>0? "+
      "_ssid ==<unknown ssid>? "+  (_ssid === "<unknown ssid>"));
 
   if (_ssid === null || _ssid.length === 0 || _ssid === "<unknown ssid>") {
@@ -508,7 +508,7 @@ export async function showPrompt() {
 
   //check if home wifi is set and connected to home wifi
   const _ssid = await NetworkInfo.getSSID();
-  logger.info(codeFileName, funcName, "Obtained ssid. null? "+(_ssid===null)+"len(_ssid)>0? "+(_ssid.length>0)+
+  logger.info(codeFileName, funcName, "Obtained ssid. null? "+(_ssid===null)+
        "_ssid ==<unknown ssid>? "+  (_ssid === "<unknown ssid>") +
        "len(homeWifi.length)>0? "+ (_userSettingsData.homeWifi.length>0));
 
@@ -716,7 +716,7 @@ export async function uploadFiles() {
 
   try {
     const _ssid = await NetworkInfo.getSSID();
-    logger.info(codeFileName, "uploadFiles", "Obtained ssid. null? "+(_ssid===null)+"len(_ssid)>0? "+(_ssid.length>0)+
+    logger.info(codeFileName, "uploadFiles", "Obtained ssid. null? "+(_ssid===null)+
          "_ssid ==<unknown ssid>? "+  (_ssid === "<unknown ssid>"));
     await logger.info(
       codeFileName,
