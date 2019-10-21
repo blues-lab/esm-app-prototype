@@ -611,12 +611,7 @@ export default class UserSettingsScreen extends React.Component {
                       subject: "ALVA log",
                       recipients: ["researchlab@icsi.berkeley.edu"],
                       body: `<b>${_fileContent}</b>`,
-                      isHTML: true,
-                      attachment: {
-                        path: LOG_FILE_PATH,
-                        type: "csv", // Mime Type: jpg, png, doc, ppt, html, pdf, csv
-                        name: "log-file.csv" // Optional: Custom filename for attachment
-                      }
+                      isHTML: true
                     },
                     (error, event) => {
                       Alert.alert(
