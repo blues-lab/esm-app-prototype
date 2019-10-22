@@ -17,7 +17,7 @@ export const NEXT_BUTTON = "Next";
 /* Permissions */
 
 export const LOCATION_SHARE_PROMPT =
-  "To receive surveys, please enable location sharing and WiFi.";
+  "To receive surveys, please enable location sharing and turn on WiFi.";
 
 export const WIFI_PERMISSION_MSG =
   "We will not collect or store your location data." +
