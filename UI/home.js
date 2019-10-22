@@ -362,6 +362,7 @@ export default class HomeScreen extends React.Component {
     }
   };
 
+  // eslint-disable-next-line camelcase
   async UNSAFE_componentWillMount() {
     logger.info(codeFileName, "componentWillMount", "Initializing app status.");
 
