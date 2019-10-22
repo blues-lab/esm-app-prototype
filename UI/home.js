@@ -361,14 +361,25 @@ export default class HomeScreen extends React.Component {
     }
   };
 
+  async UNSAFE_componentWillMount()
+  {
+    logger.info(
+        codeFileName,
+        "componentWillMount",
+        "Initializing app status."
+      );
+
+      await AppStatus.initAppStatus();
+  }
+
   async componentDidMount() {
     logger.info(
       codeFileName,
       "componentDidMount",
-      "Initializing app status and setting callback for opening app via notification."
+      "Components mounted."
     );
 
-    await AppStatus.initAppStatus();
+    //await AppStatus.initAppStatus();
 
     onAppOpen.backCallBack = this.onAppOpen;
   }
