@@ -106,7 +106,7 @@ export default class HomeScreen extends React.Component {
       invitationCodeObtained: false,
       ExitSurveyRemainingDays: 0,
       canUninstallApp: false,
-      locationEnabled:false
+      locationEnabled: false
     };
 
     this.onAppOpen = this.initApp.bind(this);
@@ -362,23 +362,14 @@ export default class HomeScreen extends React.Component {
     }
   };
 
-  async UNSAFE_componentWillMount()
-  {
-    logger.info(
-        codeFileName,
-        "componentWillMount",
-        "Initializing app status."
-      );
+  async UNSAFE_componentWillMount() {
+    logger.info(codeFileName, "componentWillMount", "Initializing app status.");
 
-      await AppStatus.initAppStatus();
+    await AppStatus.initAppStatus();
   }
 
   async componentDidMount() {
-    logger.info(
-      codeFileName,
-      "componentDidMount",
-      "Components mounted."
-    );
+    logger.info(codeFileName, "componentDidMount", "Components mounted.");
 
     //await AppStatus.initAppStatus();
 
@@ -448,7 +439,7 @@ export default class HomeScreen extends React.Component {
 
                 onAppOpen.backCallBack = this.onAppOpen;
                 const _locationEnabled = await utilities.isLocationSharingEnabled();
-                this.setState({locationEnabled: _locationEnabled})
+                this.setState({ locationEnabled: _locationEnabled });
 
                 logger.info(codeFileName, "onDidFocus", "Calling initApp.");
                 await this.initApp();
@@ -574,13 +565,18 @@ export default class HomeScreen extends React.Component {
                 {strings.MIMI_ADVERTISEMENT}
               </Text>
 
-              {!this.state.locationEnabled &&
-                  (
-                  <Text style={{ fontSize: 16, margin: 10, marginTop: 10 }}>
-                    {strings.LOCATION_SHARE_PROMPT}
-                  </Text>
-)
-              }
+              {!this.state.locationEnabled && (
+                <Text
+                  style={{
+                    fontSize: 16,
+                    margin: 10,
+                    marginTop: 10,
+                    fontWeight: "bold"
+                  }}
+                >
+                  {strings.LOCATION_SHARE_PROMPT}
+                </Text>
+              )}
             </View>
           )}
 
