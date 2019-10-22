@@ -90,70 +90,69 @@ async function promptToShareLocation(_appStatus) {
   let _showPrompt = false;
   const _locationSharingEnabled = utilities.isLocationSharingEnabled();
 
-    if (_locationSharingEnabled)
-    {
-      _appStatus.LastLocationAccess = new Date();
-      await AppStatus.setAppStatus(_appStatus);
-      _showPrompt = false;
+  if (_locationSharingEnabled) {
+    _appStatus.LastLocationAccess = new Date();
+    await AppStatus.setAppStatus(_appStatus);
+    _showPrompt = false;
+  } else {
+    logger.info(
+      codeFileName,
+      "promptToShareLocation",
+      "_appStatus.LastLocationAccess : " +
+        _appStatus.LastLocationAccess +
+        ", _appStatus.LastLocationPromptTime : " +
+        _appStatus.LastLocationPromptTime +
+        "."
+    );
+    let _hoursSinceAccess = 24;
+    let _hoursSincePrompt = 24;
+    if (_appStatus.LastLocationAccess != null) {
+      _hoursSinceAccess = Math.floor(
+        (Date.now() - _appStatus.LastLocationAccess) / (60 * 60000)
+      );
+    }
+    if (_appStatus.LastLocationPromptTime != null) {
+      _hoursSincePrompt = Math.floor(
+        (Date.now() - _appStatus.LastLocationPromptTime) / (60 * 60000)
+      );
+    }
+
+    logger.info(
+      codeFileName,
+      "promptToShareLocation",
+      "Last location access was " +
+        _hoursSinceAccess +
+        " hours ago. Last prompt was shown " +
+        _hoursSincePrompt +
+        " hours ago."
+    );
+
+    if (_hoursSinceAccess >= 24 && _hoursSincePrompt >= 24) {
+      _showPrompt = true;
     } else {
       logger.info(
         codeFileName,
         "promptToShareLocation",
-        "_appStatus.LastLocationAccess : " +
-          _appStatus.LastLocationAccess +
-          ", _appStatus.LastLocationPromptTime : " +
-          _appStatus.LastLocationPromptTime +
-          "."
+        "Not showing prompt to enable location sharing. Returning."
       );
-      let _hoursSinceAccess = 24;
-      let _hoursSincePrompt = 24;
-      if (_appStatus.LastLocationAccess != null) {
-        _hoursSinceAccess = Math.floor(
-          (Date.now() - _appStatus.LastLocationAccess) / (60 * 60000)
-        );
-      }
-      if (_appStatus.LastLocationPromptTime != null) {
-        _hoursSincePrompt = Math.floor(
-          (Date.now() - _appStatus.LastLocationPromptTime) / (60 * 60000)
-        );
-      }
+    }
 
+    if (_showPrompt) {
       logger.info(
         codeFileName,
         "promptToShareLocation",
-        "Last location access was " +
-          _hoursSinceAccess +
-          " hours ago. Last prompt was shown " +
-          _hoursSincePrompt +
-          " hours ago."
+        "Showing prompt to enable location sharing and returning."
+      );
+      notificationController.cancelNotifications();
+      notificationController.showNotification(
+        "Location",
+        LOCATION_SHARE_PROMPT
       );
 
-      if (_hoursSinceAccess >= 24 && _hoursSincePrompt >= 24) {
-        _showPrompt = true;
-      } else {
-        logger.info(
-          codeFileName,
-          "promptToShareLocation",
-          "Not showing prompt to enable location sharing. Returning."
-        );
-      }
-
-      if (_showPrompt) {
-        logger.info(
-          codeFileName,
-          "promptToShareLocation",
-          "Showing prompt to enable location sharing and returning."
-        );
-        notificationController.cancelNotifications();
-        notificationController.showNotification(
-          "Location",
-          LOCATION_SHARE_PROMPT
-        );
-
-        _appStatus.LastLocationPromptTime = new Date();
-        await AppStatus.setAppStatus(_appStatus);
-      }
+      _appStatus.LastLocationPromptTime = new Date();
+      await AppStatus.setAppStatus(_appStatus);
     }
+  }
 
   return _showPrompt;
 }
