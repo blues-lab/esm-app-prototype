@@ -105,7 +105,8 @@ export default class HomeScreen extends React.Component {
       exitSurveyAvailable: false,
       invitationCodeObtained: false,
       ExitSurveyRemainingDays: 0,
-      canUninstallApp: false
+      canUninstallApp: false,
+      locationEnabled:false
     };
 
     this.onAppOpen = this.initApp.bind(this);
@@ -446,6 +447,9 @@ export default class HomeScreen extends React.Component {
                 }
 
                 onAppOpen.backCallBack = this.onAppOpen;
+                const _locationEnabled = await utilities.isLocationSharingEnabled();
+                this.setState({locationEnabled: _locationEnabled})
+
                 logger.info(codeFileName, "onDidFocus", "Calling initApp.");
                 await this.initApp();
               }}
@@ -569,6 +573,14 @@ export default class HomeScreen extends React.Component {
               <Text style={{ fontSize: 16, margin: 10, marginTop: 10 }}>
                 {strings.MIMI_ADVERTISEMENT}
               </Text>
+
+              {!this.state.locationEnabled &&
+                  (
+                  <Text style={{ fontSize: 16, margin: 10, marginTop: 10 }}>
+                    {strings.LOCATION_SHARE_PROMPT}
+                  </Text>
+)
+              }
             </View>
           )}
 

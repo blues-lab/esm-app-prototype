@@ -1,6 +1,8 @@
 import React from "react";
 import { Text, Alert } from "react-native";
 import Mailer from "react-native-mail";
+import { NetworkInfo } from "react-native-network-info";
+import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import * as RNFS from "react-native-fs";
 import VersionNumber from "react-native-version-number";
 import logger from "./logger";
@@ -488,4 +490,53 @@ export async function currentSurveyExpired(_appStatus) {
   );
 
   return _expired;
+}
+
+
+export async function isLocationSharingEnabled()
+{
+      const funcName = 'isLocationSharingEnabled';
+
+      let _locationSharingEnabled = true;
+
+      const _ssid = await NetworkInfo.getSSID();
+
+      logger.info(codeFileName, funcName, "Obtained ssid. null? "+(_ssid===null)+", len(_ssid)>0? "+
+         ", _ssid ==<unknown ssid>? "+  (_ssid === "<unknown ssid>"));
+
+      if (_ssid === null || _ssid.length === 0 || _ssid === "<unknown ssid>") {
+        logger.info(
+          codeFileName,
+          funcName,
+          "Could not obtain a valid ssid. Checking if location sharing is enabled."
+        );
+
+        try {
+          const _locationEnabled = await LocationServicesDialogBox.checkLocationServicesIsEnabled(
+            {
+              showDialog: false, // false => Opens the Location access page directly
+              openLocationServices: false // false => Directly catch method is called if location services are turned off
+            }
+          );
+          logger.info(
+            codeFileName,
+            funcName,
+            JSON.stringify(_locationEnabled)
+          );
+
+          _locationSharingEnabled = _locationEnabled.status === "enabled";
+
+        } catch (error) {
+          logger.error(
+            codeFileName,
+            funcName,
+            "Error in getting location. May not be enabled. Returning false."
+          );
+          return false;
+        }
+
+      }
+
+      logger.info(codeFileName, funcName, 'Returning _locationSharingEnabled:'+ _locationSharingEnabled)
+      return _locationSharingEnabled;
 }

@@ -88,48 +88,10 @@ async function promptToShareLocation(_appStatus) {
   //else return false
 
   let _showPrompt = false;
-  const _ssid = await NetworkInfo.getSSID();
-  logger.info(
-    codeFileName,
-    "getHomeSSID",
-    "Obtained ssid. null? " +
-      (_ssid === null) +
-      "len(_ssid)>0? " +
-      "_ssid ==<unknown ssid>? " +
-      (_ssid === "<unknown ssid>")
-  );
+  const _locationSharingEnabled = utilities.isLocationSharingEnabled();
 
-  if (_ssid === null || _ssid.length === 0 || _ssid === "<unknown ssid>") {
-    logger.info(
-      codeFileName,
-      "promptToShareLocation",
-      "Could not obtain a valid ssid. Checking if location sharing is enabled."
-    );
-
-    let _locationSharingEnabled = false;
-    try {
-      const _locationEnabled = await LocationServicesDialogBox.checkLocationServicesIsEnabled(
-        {
-          showDialog: false, // false => Opens the Location access page directly
-          openLocationServices: false // false => Directly catch method is called if location services are turned off
-        }
-      );
-      logger.info(
-        codeFileName,
-        "promptToShareLocation",
-        JSON.stringify(_locationEnabled)
-      );
-
-      _locationSharingEnabled = _locationEnabled.status === "enabled";
-    } catch (error) {
-      logger.error(
-        codeFileName,
-        "promptToShareLocation",
-        "Error in getting location. May not be enabled."
-      );
-    }
-
-    if (_locationSharingEnabled) {
+    if (_locationSharingEnabled)
+    {
       _appStatus.LastLocationAccess = new Date();
       await AppStatus.setAppStatus(_appStatus);
       _showPrompt = false;
@@ -192,7 +154,6 @@ async function promptToShareLocation(_appStatus) {
         await AppStatus.setAppStatus(_appStatus);
       }
     }
-  }
 
   return _showPrompt;
 }
