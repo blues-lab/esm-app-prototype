@@ -356,7 +356,7 @@ export default class UserSettingsScreen extends React.Component {
     logger.info(
       codeFileName,
       "saveSettings",
-      "Saving settings:" + JSON.stringify(_settings)
+      "Saving settings. Do not disturb period: (" + _settings.afterTime + ', '+_settings.beforeTime+')'
     );
 
     const _saved = await utilities.writeJSONFile(
