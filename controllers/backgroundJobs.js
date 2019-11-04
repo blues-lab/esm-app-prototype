@@ -367,23 +367,41 @@ async function handleSurveyAvailableState(_appStatus) {
   );
 
   const _remainingTime = PROMPT_DURATION - _minPassed;
+  logger.info(
+    codeFileName,
+    funcName,
+    "Remaining time " + _remainingTime + "."
+  );
   if (_remainingTime <= 0) {
     //survey expired, remove all existing notification
     logger.info(
       codeFileName,
       funcName,
-      "Remaining time " + _remainingTime + ", cancelling notifications."
-    );
-    notificationController.cancelNotifications();
-    logger.info(
-      codeFileName,
-      funcName,
-      "Changing survey status to NOT_AVAILABLE."
+      "Cancelling notifications and changing survey status to NOT_AVAILABLE."
     );
 
+    notificationController.cancelNotifications();
     const _newStatus = _appStatus;
     _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
     await AppStatus.setAppStatus(_newStatus);
+  }
+  else if (_remainingTime>=15)
+  {
+    logger.info(
+        codeFileName,
+        funcName,
+        "Updating survey prompt."
+    );
+
+    notificationController.cancelNotifications();
+     notificationController.showNotification(
+       NEW_SURVEY_AVAILABLE,
+       SURVEY_TIME(_remainingTime)
+     );
+
+     const _newStatus = _appStatus;
+     _appStatus.LastNotificationTime = new Date();
+     await AppStatus.setAppStatus(_newStatus);
   }
 }
 

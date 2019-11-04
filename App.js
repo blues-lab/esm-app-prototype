@@ -64,7 +64,7 @@ if (Platform.OS === "android") {
   ////create schedule for the notification
   const notificationSchedulePrompt = {
     jobKey: "showNotification",
-    period: 61 * 60 * 1000 //making it 61 min so that at most one survey is created per hour
+    period: 15 * 60 * 1000 
   };
 
   ////schedule the 'schedule'
