@@ -87,12 +87,14 @@ async function promptToShareLocation(_appStatus) {
   //Return true if prompted for location sharing
   //else return false
 
+  const funcName='promptToShareLocation';
+
   let _showPrompt = false;
   const _locationSharingEnabled = utilities.isLocationSharingEnabled();
 
   if (_locationSharingEnabled) {
     _appStatus.LastLocationAccess = new Date();
-    await AppStatus.setAppStatus(_appStatus);
+    await AppStatus.setAppStatus(_appStatus, codeFileName, funcName);
     _showPrompt = false;
   } else {
     logger.info(
@@ -150,7 +152,7 @@ async function promptToShareLocation(_appStatus) {
       );
 
       _appStatus.LastLocationPromptTime = new Date();
-      await AppStatus.setAppStatus(_appStatus);
+      await AppStatus.setAppStatus(_appStatus, codeFileName, funcName);
     }
   }
 
@@ -218,7 +220,7 @@ async function handleSurveyNotAvailableState(_appStatus, userSettings) {
         "Making this participant ineligible to get bonus."
       );
       _appStatus.EligibleForBonus = false;
-      await AppStatus.setAppStatus(_appStatus);
+      await AppStatus.setAppStatus(_appStatus, codeFileName, funcName);
     }
   } else {
     //May be randomly create a new survey
@@ -336,7 +338,7 @@ async function handleESMPeriodEnded(_appStatus) {
     );
 
     _appStatus.LastNotificationTime = new Date();
-    await AppStatus.setAppStatus(_appStatus);
+    await AppStatus.setAppStatus(_appStatus, codeFileName, funcName);
   }
 }
 
@@ -360,7 +362,7 @@ async function resetVariables(_appStatus) {
 
     _appStatus.SurveyCountToday = 0;
     _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-    await AppStatus.setAppStatus(_appStatus);
+    await AppStatus.setAppStatus(_appStatus, codeFileName, funcName);
   }
 }
 
@@ -405,7 +407,7 @@ async function handleSurveyAvailableState(_appStatus) {
     notificationController.cancelNotifications();
     const _newStatus = _appStatus;
     _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
-    await AppStatus.setAppStatus(_newStatus);
+    await AppStatus.setAppStatus(_newStatus, codeFileName, funcName);
   }
   else if (_remainingTime>=15)
   {
@@ -423,7 +425,7 @@ async function handleSurveyAvailableState(_appStatus) {
 
      const _newStatus = _appStatus;
      _appStatus.LastNotificationTime = new Date();
-     await AppStatus.setAppStatus(_newStatus);
+     await AppStatus.setAppStatus(_newStatus, codeFileName, funcName);
   }
 }
 
@@ -477,7 +479,7 @@ async function handleSurveyOngoingState(_appStatus) {
       );
       const _newStatus = _appStatus;
       _appStatus.LastNotificationTime = new Date();
-      await AppStatus.setAppStatus(_newStatus);
+      await AppStatus.setAppStatus(_newStatus, codeFileName, funcName);
     }
   }
 }
