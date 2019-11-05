@@ -397,7 +397,8 @@ export default class ServiceMenuScreen extends React.Component {
   }
 
   async showPermissionPage() {
-    const _appStatus = await AppStatus.getStatus();
+  const funcName="showPermissionPage";
+    const _appStatus = await AppStatus.getStatus(codeFileName,funcName);
     if (await utilities.currentSurveyExpired(_appStatus)) {
       await this.expireSurvey(_appStatus);
       return;
@@ -719,7 +720,7 @@ export default class ServiceMenuScreen extends React.Component {
                 //upload partial survey response
                 {
                   this.setState({ saveWaitVisible: true });
-                  const _appStatus = await AppStatus.getStatus();
+                  const _appStatus = await AppStatus.getStatus(codeFileName,"NoRelevantService.SaveButton.onPress");
                   logger.info(
                     codeFileName,
                     "NoRelevantService.SaveButton.onPress",

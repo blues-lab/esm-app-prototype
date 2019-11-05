@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { NavigationEvents } from "react-navigation";
 import * as RNFS from "react-native-fs";
-import UUIDGenerator from "react-native-uuid-generator";
 import AsyncStorage from "@react-native-community/async-storage";
 import PropTypes from "prop-types";
 import * as Sentry from "@sentry/react-native";
@@ -146,6 +145,8 @@ export default class HomeScreen extends React.Component {
   }
 
   async hadConversationYes() {
+  const funcName = "hadConversationYes";
+
     const _surveyID = "SurveyID-" + Date.now();
     logger.info(
       `${codeFileName}`,
@@ -153,7 +154,7 @@ export default class HomeScreen extends React.Component {
       "Starting new survey with id: " + _surveyID
     );
 
-    const _appStatus = await AppStatus.getStatus();
+    const _appStatus = await AppStatus.getStatus(codeFileName, funcName);
     _appStatus.CurrentSurveyID = _surveyID;
     _appStatus.SurveyStatus = SURVEY_STATUS.ONGOING;
 
@@ -187,13 +188,14 @@ export default class HomeScreen extends React.Component {
   }
 
   async hadConversationNo() {
+  const funcName="hadConversationNo";
     logger.info(
       `${codeFileName}`,
       "'No' to recent conversation",
       "Uploading response and updating app status."
     );
 
-    const _appStatus = await AppStatus.getStatus();
+    const _appStatus = await AppStatus.getStatus(codeFileName, funcName);
     utilities.uploadData(
       {
         Stage: "Recent conversation.",
@@ -232,6 +234,9 @@ export default class HomeScreen extends React.Component {
   };
 
   initApp = async () => {
+
+    const funcName="initApp";
+
     if (this.props.navigation.state.routeName === "Home") {
       logger.info(
         codeFileName,
@@ -240,14 +245,14 @@ export default class HomeScreen extends React.Component {
       );
 
       logger.info(codeFileName, "initApp", "Reloading app status.");
-      const _appStatus = await AppStatus.getStatus();
+      const _appStatus = await AppStatus.getStatus(codeFileName, funcName);
       logger.info(
         codeFileName,
         "initApp",
         "Current app status:" + JSON.stringify(_appStatus)
       );
 
-      if (_appStatus.InstallationDate === null) {
+      if (_appStatus.InvitationCode === null) {
         //first launch
         logger.info(
           codeFileName,
@@ -362,12 +367,12 @@ export default class HomeScreen extends React.Component {
     }
   };
 
-  // eslint-disable-next-line camelcase
-  async UNSAFE_componentWillMount() {
-    logger.info(codeFileName, "componentWillMount", "Initializing app status.");
-
-    await AppStatus.initAppStatus();
-  }
+//  // eslint-disable-next-line camelcase
+//  async UNSAFE_componentWillMount() {
+//    logger.info(codeFileName, "componentWillMount", "Initializing app status.");
+//
+//    await AppStatus.initAppStatus();
+//  }
 
   async componentDidMount() {
     logger.info(codeFileName, "componentDidMount", "Components mounted.");
@@ -719,13 +724,9 @@ export default class HomeScreen extends React.Component {
                 if (_written) {
                   try {
                     await AsyncStorage.setItem("@HAS_LAUNCHED", "true");
-                    const _uuid = await UUIDGenerator.getRandomUUID();
-                    const _installationDate = new Date();
 
-                    const _appStatus = await AppStatus.getStatus();
-                    _appStatus.InstallationDate = _installationDate;
-                    _appStatus.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
-                    _appStatus.UUID = _uuid;
+                    const _appStatus = await AppStatus.getStatus(codeFileName,'invitationCodeDialog');
+
                     _appStatus.InvitationCode = _code;
 
                     if (debugCode) {

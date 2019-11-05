@@ -332,6 +332,7 @@ export default class ServicePermissionScreen extends React.Component {
   }
 
   async saveDataRetentionLengthQuestionResponses() {
+  const funcName="saveDataRetentionLengthQuestionResponses";
     /*
         Check response validity and save them (if valid) to the questions asking about retention length of conversation transcript.
     */
@@ -375,7 +376,7 @@ export default class ServicePermissionScreen extends React.Component {
     );
 
     await this.promisedSetState({ saveWaitVisible: true });
-    const _appStatus = await AppStatus.getStatus();
+    const _appStatus = await AppStatus.getStatus(codeFileName, funcName);
     utilities.uploadData(
       {
         SurveyID: _appStatus.CurrentSurveyID,
@@ -418,7 +419,9 @@ export default class ServicePermissionScreen extends React.Component {
   }
 
   async saveResponse() {
-    const _appStatus = await AppStatus.getStatus();
+  const funcName="saveResponse";
+
+    const _appStatus = await AppStatus.getStatus(codeFileName, funcName);
     if (await utilities.currentSurveyExpired(_appStatus)) {
       await this.expireSurvey(_appStatus);
       return;

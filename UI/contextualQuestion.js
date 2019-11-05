@@ -162,7 +162,9 @@ export default class ContextualQuestionScreen extends React.Component {
   }
 
   async saveResponse() {
-    const _appStatus = await AppStatus.getStatus();
+    const funcName= 'saveResponse';
+
+    const _appStatus = await AppStatus.getStatus(codeFileName, funcName);
     if (await utilities.currentSurveyExpired(_appStatus)) {
       await this.expireSurvey(_appStatus);
       return;

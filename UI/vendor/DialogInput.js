@@ -30,8 +30,8 @@ class DialogInput extends React.Component {
   }
 
   render() {
-    let title = this.props.title || "";
-    let hintInput = this.props.hintInput || "";
+    const title = this.props.title || "";
+    const hintInput = this.props.hintInput || "";
     let value = "";
     if (!this.state.openning) {
       value = this.state.inputModal;
@@ -41,18 +41,18 @@ class DialogInput extends React.Component {
         : "";
     }
 
-    let textProps = this.props.textInputProps || null;
-    let modalStyleProps = this.props.modalStyle || {};
-    let dialogStyleProps = this.props.dialogStyle || {};
-    var cancelText = this.props.cancelText || "Cancel";
-    var submitText = this.props.submitText || "Submit";
+    const textProps = this.props.textInputProps || null;
+    const modalStyleProps = this.props.modalStyle || {};
+    const dialogStyleProps = this.props.dialogStyle || {};
+    let cancelText = this.props.cancelText || "Cancel";
+    let submitText = this.props.submitText || "Submit";
     cancelText = Platform.OS === "ios" ? cancelText : cancelText.toUpperCase();
     submitText = Platform.OS === "ios" ? submitText : submitText.toUpperCase();
 
     return (
       <Modal
         animationType="fade"
-        transparent={true}
+        transparent
         visible={this.props.isDialogVisible}
         onRequestClose={() => {
           this.props.closeDialog();
@@ -81,7 +81,7 @@ class DialogInput extends React.Component {
                 <TextInput
                   style={styles.input_container}
                   autoCorrect={
-                    textProps && textProps.autoCorrect == false ? false : true
+                    !(textProps && textProps.autoCorrect == false)
                   }
                   autoCapitalize={
                     textProps && textProps.autoCapitalize
@@ -103,7 +103,7 @@ class DialogInput extends React.Component {
                       ? textProps.keyboardType
                       : "default"
                   }
-                  autoFocus={true}
+                  autoFocus
                   onKeyPress={() => this.setState({ openning: false })}
                   underlineColorAndroid="transparent"
                   placeholder={hintInput}
@@ -123,7 +123,7 @@ class DialogInput extends React.Component {
                 >
                   <Text style={styles.btn_modal_left}>{cancelText}</Text>
                 </TouchableOpacity>
-                <View style={styles.divider_btn}></View>
+                <View style={styles.divider_btn} />
                 <TouchableOpacity
                   style={styles.touch_modal}
                   onPress={() => {

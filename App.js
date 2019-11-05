@@ -9,11 +9,12 @@
 //might be useful to show status https://www.npmjs.com/package/react-native-flash-message
 
 import React, { Component } from "react";
-import { Platform, BackHandler } from "react-native";
+import { Platform, BackHandler, View, Text } from "react-native";
 import * as RNFS from "react-native-fs";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import * as Sentry from "@sentry/react-native";
+import { ProgressDialog } from "react-native-simple-dialogs";
 
 import BackgroundJob from "react-native-background-job";
 import BackgroundFetch from "react-native-background-fetch";
@@ -41,10 +42,12 @@ import {
   SERVICE_FILE_LOCAL
 } from "./controllers/constants";
 import { SERVICES } from "./controllers/strings";
+import AppStatus from "./controllers/appStatus";
 
 Sentry.init({
   dsn: SENTRY_DSN
 });
+
 
 const codeFileName = "App.js";
 
@@ -64,7 +67,7 @@ if (Platform.OS === "android") {
   ////create schedule for the notification
   const notificationSchedulePrompt = {
     jobKey: "showNotification",
-    period: 15 * 60 * 1000 
+    period: 15 * 60 * 1000
   };
 
   ////schedule the 'schedule'
@@ -148,7 +151,9 @@ const AppContainer = createAppContainer(AppNavigator);
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+             initialized: false
+           }
   }
 
   static async generateInitialFiles() {
@@ -274,6 +279,17 @@ export default class App extends Component {
     await App.generateInitialFiles();
   }
 
+  // eslint-disable-next-line camelcase
+    async UNSAFE_componentWillMount() {
+      logger.info(codeFileName, "componentWillMount", "Initializing app status.");
+
+      await AppStatus.initAppStatus();
+
+      logger.info(codeFileName, "componentWillMount", "Initializing app status done.");
+      this.setState({ initialized: true });
+
+    }
+
   componentWillUnmount() {
     logger.info(
       codeFileName,
@@ -283,6 +299,20 @@ export default class App extends Component {
   }
 
   render() {
-    return <AppContainer />;
+    const { initialized } = this.state;
+    if (initialized)
+        {
+            return <AppContainer />;
+        }
+    else
+        {
+            return (
+              <View style={{flex:1, flexDirection:'column', alignItems:'center', justifyContent:'center',backgroundColor:'lavendar'}}>
+                <Text style={{ color: 'orange', fontSize: 40, fontWeight: 'bold'}}>
+                  Loading...
+                </Text>
+              </View>
+            );
+        }
   }
 }

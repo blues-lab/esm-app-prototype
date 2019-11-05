@@ -1,6 +1,7 @@
 import * as RNFS from "react-native-fs";
 import AsyncStorage from "@react-native-community/async-storage";
 import * as Sentry from "@sentry/react-native";
+import UUIDGenerator from "react-native-uuid-generator";
 
 import logger from "./logger";
 import * as utilities from "./utilities";
@@ -70,8 +71,38 @@ export default class AppStatus {
     return status;
   }
 
-  static async getStatus() {
-    return AppStatus.status;
+  static async getStatus(callerClass, callerFunc) {
+
+    const funcName="getStatus";
+
+    const _status = AppStatus.status;
+    if(_status.UUID===null || _status.InstallationDate ===null)
+    {
+        logger.error(codeFileName, "getStatus", 'UUID or InstallationDate is null!'+
+        'UUID: '+ _status.UUID+', InstallationDate: '+ _status.InstallationDate+
+        ', caller: '+callerClass+":"+callerFunc+".");
+
+        await utilities.uploadData(
+                {
+                  UUID: _status.UUID,
+                  InstallationDate: _status.InstallationDate,
+                  Caller: callerClass+":"+callerFunc,
+                  Time: new Date(),
+                },
+                "DummyUUID",
+                "ErrorEvent",
+                codeFileName,
+                funcName,
+                AppStatus.fileUploadCallBack
+              );
+
+        await utilities.showErrorDialog(
+                codeFileName,
+                funcName,
+                "Failed to load app status."
+              );
+    }
+    return _status;
   }
 
   static async initAppStatus() {
@@ -89,9 +120,16 @@ export default class AppStatus {
         logger.info(
           codeFileName,
           funcName,
-          "AppStatus does not exist in the storage. Storing current status: " +
-            JSON.stringify(AppStatus.status)
+          "AppStatus does not exist in the storage. Initializing it for the first time."
         );
+
+        const _uuid = await UUIDGenerator.getRandomUUID();
+        const _installationDate = new Date();
+        AppStatus.status.InstallationDate = _installationDate;
+        AppStatus.status.LastSurveyCreationDate = _installationDate; //this should not be a problem, since survey count is still zero.
+        AppStatus.status.UUID = _uuid;
+
+        logger.info(codeFileName, funcName, "Current status: "+ JSON.stringify(AppStatus.status));
 
         try {
           await AsyncStorage.setItem(
@@ -208,11 +246,7 @@ export default class AppStatus {
         funcName,
         "Failed to store app status in async storage."
       );
-      await utilities.showErrorDialog(
-        codeFileName,
-        funcName,
-        "Failed to save app status."
-      );
+
     }
   }
 

@@ -483,7 +483,7 @@ async function handleSurveyOngoingState(_appStatus) {
 }
 export async function showPrompt() {
   const funcName = "showPrompt";
-  const _appStatus = await AppStatus.getStatus();
+  const _appStatus = await AppStatus.getStatus(codeFileName, funcName);
   logger.info(
     codeFileName,
     funcName,
@@ -713,8 +713,10 @@ async function _uploadFiles(_appStatus) {
 }
 
 export async function uploadFiles() {
+   const funcName = 'uploadFiles';
+
   //return if any survey is ongoing
-  const _appStatus = await AppStatus.getStatus();
+  const _appStatus = await AppStatus.getStatus(codeFileName, funcName);
   if (_appStatus.SURVEY_STATUS === SURVEY_STATUS.ONGOING) {
     logger.info(codeFileName, "uploadFiles", "A survey is ongoing. Returning.");
     return;

@@ -187,11 +187,13 @@ export default class ExitSurveyScreen extends React.Component {
   }
 
   async saveResponse() {
+  const funcName='saveResponse';
+
     logger.info(codeFileName, "saveResponse", "Saving exit survey response.");
 
     this.setState({ saveWaitVisible: true });
 
-    const _appStatus = await AppStatus.getStatus();
+    const _appStatus = await AppStatus.getStatus(codeFileName, funcName);
 
     const _response = {
       serviceResponses: this.state.serviceResponses,
