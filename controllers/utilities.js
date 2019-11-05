@@ -132,8 +132,7 @@ export async function readJSONFile(filePath, callerClass, callerFunc) {
 }
 
 async function gatherErrorData(callerClass, callerFunc) {
-  //let _log = "";
-  let _settings = "";
+
   let _appStatus = "";
 
   try {
@@ -149,21 +148,6 @@ async function gatherErrorData(callerClass, callerFunc) {
     );
   }
 
-  try {
-    if (await RNFS.exists(USER_SETTINGS_FILE_PATH)) {
-      _settings = await readJSONFile(
-        USER_SETTINGS_FILE_PATH,
-        callerClass,
-        callerFunc
-      );
-    }
-  } catch (error) {
-    logger.error(
-      codeFileName,
-      "sendErrorEmail",
-      "Error reading settings file: " + error.message
-    );
-  }
   try {
     if (await RNFS.exists(APP_STATUS_FILE_PATH)) {
       _appStatus = await readJSONFile(
@@ -183,8 +167,6 @@ async function gatherErrorData(callerClass, callerFunc) {
   return {
     File: callerClass,
     CallerFunc: callerFunc,
-    //Log: _log,
-    Settings: _settings,
     Status: _appStatus
   };
 }
