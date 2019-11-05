@@ -105,6 +105,70 @@ export default class AppStatus {
     return _status;
   }
 
+  static async reloadStatus(callerClass, callerFunc)
+  {
+    const funcName = "reloadStatus";
+    try
+    {
+        const _value = await AsyncStorage.getItem("@AppStatus");
+        if(_value===null)
+        {
+            logger.error(codeFileName, funcName, "AppStatus is null! Caller: "+callerClass+":"+callerFunc+".");
+
+             await utilities.uploadData(
+                {
+                  Message: "AppStatus is null",
+                  Caller: callerClass+":"+callerFunc,
+                  Time: new Date(),
+                },
+                "DummyUUID",
+                "ErrorEvent",
+                codeFileName,
+                funcName,
+                AppStatus.fileUploadCallBack
+              );
+        }
+        AppStatus.status = AppStatus.typeCast(JSON.parse(_value));
+        if(AppStatus.status.InstallationDate===null || AppStatus.status.UUID===null)
+        {
+            logger.error(codeFileName, "getStatus", 'UUID or InstallationDate is null!'+
+                'UUID: '+ AppStatus.status.UUID+', InstallationDate: '+ AppStatus.status.InstallationDate+
+                ', caller: '+callerClass+":"+callerFunc+".");
+
+             await utilities.uploadData(
+                {
+                  UUID: AppStatus.status.UUID,
+                  InstallationDate: AppStatus.status.InstallationDate,
+                  Caller: callerClass+":"+callerFunc,
+                  Time: new Date(),
+                },
+                "DummyUUID",
+                "ErrorEvent",
+                codeFileName,
+                funcName,
+                AppStatus.fileUploadCallBack
+              );
+        }
+    }
+    catch(error)
+    {
+        logger.error(codeFileName, funcName, "Failed to reload AppStatus! Caller: "+callerClass+":"+callerFunc+".");
+        await utilities.uploadData(
+            {
+              Message: "Failed to reload AppStatus.",
+              Caller: callerClass+":"+callerFunc,
+              Time: new Date(),
+            },
+            "DummyUUID",
+            "ErrorEvent",
+            codeFileName,
+            funcName,
+            AppStatus.fileUploadCallBack
+          );
+    }
+    return AppStatus.status;
+  }
+
   static async initAppStatus() {
     const funcName = "initAppStatus";
     try {
