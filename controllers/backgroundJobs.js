@@ -157,7 +157,34 @@ async function promptToShareLocation(_appStatus) {
   return _showPrompt;
 }
 
-async function handleSurveyNotAvailableState(_appStatus) {
+function createSurvey(userSettings)
+{
+    const funcName = 'createSurvey';
+
+    const _currentDate = new Date();
+    const _doNotDisturbStartHour = parseInt(userSettings.afterTime.split(":")[0], 10);
+    const _doNotDisturbEndHour = parseInt(userSettings.beforeTime.split(":")[0], 10);
+
+    const _doNotDisturbHours = (_doNotDisturbEndHour+24 - _doNotDisturbStartHour)%24;
+    const _hoursLeft = (_doNotDisturbStartHour + 24 - _currentDate.getHours())%24;
+
+    const _denominator = _hoursLeft- _doNotDisturbHours;
+    const _surveyProb = 1/Math.max(1, _denominator);
+    const _rand = Math.random();
+    const _createSurvey =  _rand <= _surveyProb;
+
+    logger.info(codeFileName, funcName,
+        "Do not disturb window: ("+ userSettings.afterTime+", "+userSettings.beforeTime+"). "+
+                "Current hour of day: "+_currentDate.getHours()+ ", do-not-disturb-hours:" +_doNotDisturbHours + ", hours left: "+ _hoursLeft+
+                ", denominator: "+_denominator+
+                ". Random: "+ _rand+", survey prob: "+_surveyProb+", create survey: "+ _createSurvey+'.'
+    );
+
+    return _createSurvey;
+}
+
+
+async function handleSurveyNotAvailableState(_appStatus, userSettings) {
   /*
         Function to handle when currently no survey is available.
         Depending on the status variables, it will (not) create new surveys.
@@ -217,14 +244,9 @@ async function handleSurveyNotAvailableState(_appStatus) {
       }
 
       // Randomly create a new survey
-      const _createSurvey = (Math.floor(Math.random() * 100) + 1) % 2 === 0;
-      logger.info(
-        codeFileName,
-        funcName,
-        "Randomly creating survey:" + _createSurvey
-      );
+      const _surveyCreated = createSurvey(userSettings);
 
-      if (_createSurvey) {
+      if (_surveyCreated) {
         const _remainingTime = PROMPT_DURATION;
         notificationController.cancelNotifications();
         notificationController.showNotification(
@@ -543,7 +565,7 @@ export async function showPrompt() {
     await resetVariables(_appStatus);
 
     if (_appStatus.SurveyStatus === SURVEY_STATUS.NOT_AVAILABLE) {
-      await handleSurveyNotAvailableState(_appStatus);
+      await handleSurveyNotAvailableState(_appStatus, _userSettingsData);
     } else if (_appStatus.SurveyStatus === SURVEY_STATUS.AVAILABLE) {
       handleSurveyAvailableState(_appStatus);
     } else if (_appStatus.SurveyStatus === SURVEY_STATUS.ONGOING) {
