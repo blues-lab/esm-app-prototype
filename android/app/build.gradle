@@ -153,19 +153,6 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-version-number')
-    implementation project(':react-native-device-info')
-    implementation project(':react-native-permissions')
-    implementation project(':react-native-mail')
-    implementation project(':react-native-android-location-services-dialog-box')
-    implementation project(':react-native-background-fetch')
-    implementation project(':react-native-network-info')
-    implementation project(':react-native-uuid-generator')
-    implementation project(':@react-native-community_async-storage')
-    implementation project(':react-native-vector-icons')
-    implementation project(':react-native-push-notification')
-    implementation project(':react-native-background-job')
-    implementation project(':react-native-fs')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation "com.facebook.react:react-native:+"  // From node_modules
