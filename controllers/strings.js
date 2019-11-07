@@ -257,6 +257,7 @@ export const FINAL_THANK_EXTENDED =
 export const CONTACT_TEXT =
   "If you have any questions or comments, contact us at";
 export const CONTACT_EMAIL = "researchlab@icsi.berkeley.edu";
+export const ERROR_REPORT_TEXT="Send error report"
 
 export const ERROR_MESSAGE_HEADER = "Error";
 export const SAVING_ERROR_MESSAGE =

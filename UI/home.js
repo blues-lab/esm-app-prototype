@@ -673,27 +673,26 @@ export default class HomeScreen extends React.Component {
               marginBottom: 20
             }}
           >
+          
             <View
               style={{ height: 0.5, width: "100%", backgroundColor: "grey" }}
             />
-            <Text style={{ fontSize: 16, margin: 0, textAlign: "center" }}>
-              {strings.CONTACT_TEXT}
-              <Text
-                style={{
-                  color: "blue",
-                  fontSize: 16,
-                  margin: 0,
-                  textDecorationLine: "underline"
-                }}
+            <TouchableHighlight
+              style={[commonStyles.buttonTouchHLStyle, { width: 200, marginTop:10 }]}
+            >
+              <Button
+                title={strings.ERROR_REPORT_TEXT}
+                color="#20B2AA"
                 onPress={() => {
-                  logger.info(codeFileName, "Contact link", "Sending email.");
-                  utilities.sendEmail([strings.CONTACT_EMAIL], "", "");
-                }}
-              >
-                {" "}
-                {strings.CONTACT_EMAIL}
-              </Text>
-            </Text>
+                 logger.info(
+                   codeFileName,
+                   "ErrorReportButton",
+                   "Opening email client for error reporting."
+                 );
+                 utilities.sendEmail([strings.CONTACT_EMAIL], "", "");
+               }}
+              />
+            </TouchableHighlight>
           </View>
 
           <DialogInput
