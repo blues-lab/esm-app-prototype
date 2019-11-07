@@ -66,7 +66,8 @@ class ToolBar extends React.Component {
   }
 
   async initToolbar() {
-    const _appStatus = await AppStatus.getStatus();
+  const funcName="initToolbar";
+    const _appStatus = await AppStatus.getStatus(codeFileName, funcName);
 
     if (this._isMounted) {
       await this.promisedSetState({
@@ -78,7 +79,7 @@ class ToolBar extends React.Component {
 
     await logger.info(
       codeFileName,
-      "initToolbar",
+      funcName,
       "Page:" +
         this.props.title +
         ". Route name: " +
@@ -202,8 +203,9 @@ class ToolBar extends React.Component {
   }
 
   async updateTimeDisplay() {
+    const funcName="updateTimeDisplay";
     if (this._isMounted) {
-      const _appStatus = await AppStatus.getStatus();
+      const _appStatus = await AppStatus.getStatus(codeFileName, funcName);
       // update self survey state
       if (this._isMounted) {
         await this.promisedSetState({ surveyStatus: _appStatus.SurveyStatus });
@@ -214,7 +216,7 @@ class ToolBar extends React.Component {
           //if no survey is ongoing, no point in updating time.
           logger.info(
             codeFileName,
-            "updateTimeDisplay",
+            funcName,
             "Current page:" +
               this.props.navigation.state.routeName +
               ". Expiring survey and clearing timer."
