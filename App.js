@@ -14,7 +14,6 @@ import * as RNFS from "react-native-fs";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import * as Sentry from "@sentry/react-native";
-import { ProgressDialog } from "react-native-simple-dialogs";
 
 import BackgroundJob from "react-native-background-job";
 import BackgroundFetch from "react-native-background-fetch";
@@ -304,22 +303,21 @@ export default class App extends Component {
     const { initialized } = this.state;
     if (initialized) {
       return <AppContainer />;
-    } else {
-      return (
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "lavendar"
-          }}
-        >
-          <Text style={{ color: "orange", fontSize: 40, fontWeight: "bold" }}>
-            Loading...
-          </Text>
-        </View>
-      );
     }
+    return (
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "lavendar"
+        }}
+      >
+        <Text style={{ color: "orange", fontSize: 40, fontWeight: "bold" }}>
+          Loading...
+        </Text>
+      </View>
+    );
   }
 }
