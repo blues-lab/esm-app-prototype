@@ -82,7 +82,7 @@ export default class UserSettingsScreen extends React.Component {
       wifiPermissionDialogVisible: false
     };
 
-    AppStatus.getStatus(codeFileName, 'constructor').then(status => {
+    AppStatus.getStatus(codeFileName, "constructor").then(status => {
       this.state.debug = status.Debug;
       this.state.invitationCode = status.InvitationCode
         ? status.InvitationCode
@@ -356,7 +356,11 @@ export default class UserSettingsScreen extends React.Component {
     logger.info(
       codeFileName,
       "saveSettings",
-      "Saving settings. Do not disturb period: (" + _settings.afterTime + ', '+_settings.beforeTime+')'
+      "Saving settings. Do not disturb period: (" +
+        _settings.afterTime +
+        ", " +
+        _settings.beforeTime +
+        ")"
     );
 
     const _saved = await utilities.writeJSONFile(
@@ -574,7 +578,10 @@ export default class UserSettingsScreen extends React.Component {
                   strings.SURVEY_TIME(60)
                 );
 
-                const _appStatus = await AppStatus.getStatus( codeFileName,"StartSurveyButton");
+                const _appStatus = await AppStatus.getStatus(
+                  codeFileName,
+                  "StartSurveyButton"
+                );
                 const _currentDate = new Date();
                 _appStatus.SurveyCountToday += 1;
                 _appStatus.SurveyStatus = SURVEY_STATUS.AVAILABLE;

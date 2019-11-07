@@ -48,7 +48,6 @@ Sentry.init({
   dsn: SENTRY_DSN
 });
 
-
 const codeFileName = "App.js";
 
 if (Platform.OS === "android") {
@@ -152,8 +151,8 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-             initialized: false
-           }
+      initialized: false
+    };
   }
 
   static async generateInitialFiles() {
@@ -280,15 +279,18 @@ export default class App extends Component {
   }
 
   // eslint-disable-next-line camelcase
-    async UNSAFE_componentWillMount() {
-      logger.info(codeFileName, "componentWillMount", "Initializing app status.");
+  async UNSAFE_componentWillMount() {
+    logger.info(codeFileName, "componentWillMount", "Initializing app status.");
 
-      await AppStatus.initAppStatus();
+    await AppStatus.initAppStatus();
 
-      logger.info(codeFileName, "componentWillMount", "Initializing app status done.");
-      this.setState({ initialized: true });
-
-    }
+    logger.info(
+      codeFileName,
+      "componentWillMount",
+      "Initializing app status done."
+    );
+    this.setState({ initialized: true });
+  }
 
   componentWillUnmount() {
     logger.info(
@@ -300,19 +302,24 @@ export default class App extends Component {
 
   render() {
     const { initialized } = this.state;
-    if (initialized)
-        {
-            return <AppContainer />;
-        }
-    else
-        {
-            return (
-              <View style={{flex:1, flexDirection:'column', alignItems:'center', justifyContent:'center',backgroundColor:'lavendar'}}>
-                <Text style={{ color: 'orange', fontSize: 40, fontWeight: 'bold'}}>
-                  Loading...
-                </Text>
-              </View>
-            );
-        }
+    if (initialized) {
+      return <AppContainer />;
+    } else {
+      return (
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "lavendar"
+          }}
+        >
+          <Text style={{ color: "orange", fontSize: 40, fontWeight: "bold" }}>
+            Loading...
+          </Text>
+        </View>
+      );
+    }
   }
 }

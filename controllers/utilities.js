@@ -132,7 +132,6 @@ export async function readJSONFile(filePath, callerClass, callerFunc) {
 }
 
 async function gatherErrorData(callerClass, callerFunc) {
-
   let _appStatus = "";
 
   try {

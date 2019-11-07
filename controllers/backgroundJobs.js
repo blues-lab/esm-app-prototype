@@ -87,7 +87,7 @@ async function promptToShareLocation(_appStatus) {
   //Return true if prompted for location sharing
   //else return false
 
-  const funcName='promptToShareLocation';
+  const funcName = "promptToShareLocation";
 
   let _showPrompt = false;
   const _locationSharingEnabled = utilities.isLocationSharingEnabled();
@@ -159,32 +159,56 @@ async function promptToShareLocation(_appStatus) {
   return _showPrompt;
 }
 
-function createSurvey(userSettings)
-{
-    const funcName = 'createSurvey';
+function createSurvey(userSettings) {
+  const funcName = "createSurvey";
 
-    const _currentDate = new Date();
-    const _doNotDisturbStartHour = parseInt(userSettings.afterTime.split(":")[0], 10);
-    const _doNotDisturbEndHour = parseInt(userSettings.beforeTime.split(":")[0], 10);
+  const _currentDate = new Date();
+  const _doNotDisturbStartHour = parseInt(
+    userSettings.afterTime.split(":")[0],
+    10
+  );
+  const _doNotDisturbEndHour = parseInt(
+    userSettings.beforeTime.split(":")[0],
+    10
+  );
 
-    const _doNotDisturbHours = (_doNotDisturbEndHour+24 - _doNotDisturbStartHour)%24;
-    const _hoursLeft = (_doNotDisturbStartHour + 24 - _currentDate.getHours())%24;
+  const _doNotDisturbHours =
+    (_doNotDisturbEndHour + 24 - _doNotDisturbStartHour) % 24;
+  const _hoursLeft =
+    (_doNotDisturbStartHour + 24 - _currentDate.getHours()) % 24;
 
-    const _denominator = _hoursLeft- _doNotDisturbHours;
-    const _surveyProb = 1/Math.max(1, _denominator);
-    const _rand = Math.random();
-    const _createSurvey =  _rand <= _surveyProb;
+  const _denominator = _hoursLeft - _doNotDisturbHours;
+  const _surveyProb = 1 / Math.max(1, _denominator);
+  const _rand = Math.random();
+  const _createSurvey = _rand <= _surveyProb;
 
-    logger.info(codeFileName, funcName,
-        "Do not disturb window: ("+ userSettings.afterTime+", "+userSettings.beforeTime+"). "+
-                "Current hour of day: "+_currentDate.getHours()+ ", do-not-disturb-hours:" +_doNotDisturbHours + ", hours left: "+ _hoursLeft+
-                ", denominator: "+_denominator+
-                ". Random: "+ _rand+", survey prob: "+_surveyProb+", create survey: "+ _createSurvey+'.'
-    );
+  logger.info(
+    codeFileName,
+    funcName,
+    "Do not disturb window: (" +
+      userSettings.afterTime +
+      ", " +
+      userSettings.beforeTime +
+      "). " +
+      "Current hour of day: " +
+      _currentDate.getHours() +
+      ", do-not-disturb-hours:" +
+      _doNotDisturbHours +
+      ", hours left: " +
+      _hoursLeft +
+      ", denominator: " +
+      _denominator +
+      ". Random: " +
+      _rand +
+      ", survey prob: " +
+      _surveyProb +
+      ", create survey: " +
+      _createSurvey +
+      "."
+  );
 
-    return _createSurvey;
+  return _createSurvey;
 }
-
 
 async function handleSurveyNotAvailableState(_appStatus, userSettings) {
   /*
@@ -391,11 +415,7 @@ async function handleSurveyAvailableState(_appStatus) {
   );
 
   const _remainingTime = PROMPT_DURATION - _minPassed;
-  logger.info(
-    codeFileName,
-    funcName,
-    "Remaining time " + _remainingTime + "."
-  );
+  logger.info(codeFileName, funcName, "Remaining time " + _remainingTime + ".");
   if (_remainingTime <= 0) {
     //survey expired, remove all existing notification
     logger.info(
@@ -408,24 +428,18 @@ async function handleSurveyAvailableState(_appStatus) {
     const _newStatus = _appStatus;
     _appStatus.SurveyStatus = SURVEY_STATUS.NOT_AVAILABLE;
     await AppStatus.setAppStatus(_newStatus, codeFileName, funcName);
-  }
-  else if (_remainingTime>=15)
-  {
-    logger.info(
-        codeFileName,
-        funcName,
-        "Updating survey prompt."
-    );
+  } else if (_remainingTime >= 15) {
+    logger.info(codeFileName, funcName, "Updating survey prompt.");
 
     notificationController.cancelNotifications();
-     notificationController.showNotification(
-       NEW_SURVEY_AVAILABLE,
-       SURVEY_TIME(_remainingTime)
-     );
+    notificationController.showNotification(
+      NEW_SURVEY_AVAILABLE,
+      SURVEY_TIME(_remainingTime)
+    );
 
-     const _newStatus = _appStatus;
-     _appStatus.LastNotificationTime = new Date();
-     await AppStatus.setAppStatus(_newStatus, codeFileName, funcName);
+    const _newStatus = _appStatus;
+    _appStatus.LastNotificationTime = new Date();
+    await AppStatus.setAppStatus(_newStatus, codeFileName, funcName);
   }
 }
 
@@ -485,56 +499,51 @@ async function handleSurveyOngoingState(_appStatus) {
 }
 
 function fileUploadCallBack(success, error = null, data = null) {
-    //need to move this function in utility
-    if (!success) {
-      logger.error(
+  //need to move this function in utility
+  if (!success) {
+    logger.error(
+      codeFileName,
+      "fileUploadCallBack",
+      `Failed to upload file, error: ${error}.  Saving in file: ${data != null}`
+    );
+    if (data != null) {
+      utilities.writeJSONFile(
+        data,
+        RNFS.DocumentDirectoryPath +
+          "heart--beat--" +
+          Date.now().toString() +
+          ".js",
         codeFileName,
-        "fileUploadCallBack",
-        `Failed to upload file, error: ${error}.  Saving in file: ${data !=
-          null}`
+        "fileUploadCallBack"
       );
-      if (data != null) {
-        utilities.writeJSONFile(
-          data,
-          RNFS.DocumentDirectoryPath +
-            "heart--beat--"+
-            Date.now().toString() +
-            ".js",
-          codeFileName,
-          "fileUploadCallBack"
-        );
-      }
     }
   }
+}
 
-async function sendHeartBeat(appStatus)
-{
-    const funcName= 'sendHeartBeat';
-     await utilities.uploadData(
-        {
-          UUID: appStatus.UUID === null ? "DummyUUID": appStatus.UUID,
-          InstallationDate: appStatus.InstallationDate,
-          Message: "I am alive",
-          Time: new Date(),
-        },
-        appStatus.UUID === null ? "DummyUUID": appStatus.UUID,
-        "HeatBeatEvent",
-        codeFileName,
-        funcName,
-        fileUploadCallBack
-      );
+async function sendHeartBeat(appStatus) {
+  const funcName = "sendHeartBeat";
+  await utilities.uploadData(
+    {
+      UUID: appStatus.UUID === null ? "DummyUUID" : appStatus.UUID,
+      InstallationDate: appStatus.InstallationDate,
+      Message: "I am alive",
+      Time: new Date()
+    },
+    appStatus.UUID === null ? "DummyUUID" : appStatus.UUID,
+    "HeatBeatEvent",
+    codeFileName,
+    funcName,
+    fileUploadCallBack
+  );
 }
 
 export async function showPrompt() {
   const funcName = "showPrompt";
 
   let _appStatus = null;
-  if (AppState.currentState === "background")
-  {
+  if (AppState.currentState === "background") {
     _appStatus = await AppStatus.reloadStatus(codeFileName, funcName);
-  }
-  else
-  {
+  } else {
     _appStatus = await AppStatus.getStatus(codeFileName, funcName);
   }
 
@@ -739,17 +748,17 @@ async function _uploadFiles(_appStatus) {
   );
 
   //upload heartbeat files
-    await logger.info(
-      codeFileName,
-      "uploadFiles",
-      "Attempting to upload heart beat files."
-    );
-    await uploadFilesInDir(
-      RNFS.DocumentDirectoryPath,
-      "heart--beat--",
-      _appStatus,
-      "HeartBeat"
-    );
+  await logger.info(
+    codeFileName,
+    "uploadFiles",
+    "Attempting to upload heart beat files."
+  );
+  await uploadFilesInDir(
+    RNFS.DocumentDirectoryPath,
+    "heart--beat--",
+    _appStatus,
+    "HeartBeat"
+  );
 
   //upload log file
   await logger.info(
@@ -782,19 +791,16 @@ async function _uploadFiles(_appStatus) {
 }
 
 export async function uploadFiles() {
-   const funcName = 'uploadFiles';
+  const funcName = "uploadFiles";
 
   //return if any survey is ongoing
   let _appStatus = null;
-    if (AppState.currentState === "background")
-    {
-      _appStatus = await AppStatus.reloadStatus(codeFileName, funcName);
-    }
-    else
-    {
-      _appStatus = await AppStatus.getStatus(codeFileName, funcName);
-    }
-    
+  if (AppState.currentState === "background") {
+    _appStatus = await AppStatus.reloadStatus(codeFileName, funcName);
+  } else {
+    _appStatus = await AppStatus.getStatus(codeFileName, funcName);
+  }
+
   if (_appStatus.SURVEY_STATUS === SURVEY_STATUS.ONGOING) {
     logger.info(codeFileName, "uploadFiles", "A survey is ongoing. Returning.");
     return;

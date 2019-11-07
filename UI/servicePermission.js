@@ -332,7 +332,7 @@ export default class ServicePermissionScreen extends React.Component {
   }
 
   async saveDataRetentionLengthQuestionResponses() {
-  const funcName="saveDataRetentionLengthQuestionResponses";
+    const funcName = "saveDataRetentionLengthQuestionResponses";
     /*
         Check response validity and save them (if valid) to the questions asking about retention length of conversation transcript.
     */
@@ -419,7 +419,7 @@ export default class ServicePermissionScreen extends React.Component {
   }
 
   async saveResponse() {
-  const funcName="saveResponse";
+    const funcName = "saveResponse";
 
     const _appStatus = await AppStatus.getStatus(codeFileName, funcName);
     if (await utilities.currentSurveyExpired(_appStatus)) {
