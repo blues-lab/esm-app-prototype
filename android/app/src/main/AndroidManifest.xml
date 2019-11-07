@@ -63,16 +63,5 @@
         <!-- </ Only if you're using GCM or localNotificationSchedule() > -->
 
         <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
-
-        <!-- For react-native-android-local-notification 3.0.0 -->
-        <!-- TODO: some of the receivers above are probably obsolete and can be removed -->
-        <receiver android:name="com.staltz.reactnativeandroidlocalnotification.NotificationEventReceiver" />
-        <receiver android:name="com.staltz.reactnativeandroidlocalnotification.NotificationPublisher" />
-        <receiver android:name="com.staltz.reactnativeandroidlocalnotification.SystemBootEventReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
-            </intent-filter>
-        </receiver>
-
     </application>
 </manifest>
