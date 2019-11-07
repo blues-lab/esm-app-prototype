@@ -1,8 +1,23 @@
-package edu.berkeley.cs.blues.alva;
+package edu.berkeley.cs.blues.alva;;
 
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.apsl.versionnumber.RNVersionNumberPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
+import com.chirag.RNMail.RNMail;
+import com.showlocationservicesdialogbox.LocationServicesDialogBoxPackage;
+import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
+import com.pusherman.networkinfo.RNNetworkInfoPackage;
+import io.github.traviskn.rnuuidgenerator.RNUUIDGeneratorPackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+import com.staltz.reactnativeandroidlocalnotification.NotificationPackage;
+import com.pilloxa.backgroundjob.BackgroundJobPackage;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+import com.rnfs.RNFSPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -22,7 +37,22 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage()
+          new MainReactPackage(),
+            new RNVersionNumberPackage(),
+            new RNDeviceInfo(),
+            new RNPermissionsPackage(),
+            new RNMail(),
+            new LocationServicesDialogBoxPackage(),
+            new RNNetworkInfoPackage(),
+            new RNBackgroundFetchPackage(),
+            new RNUUIDGeneratorPackage(),
+            new AsyncStoragePackage(),
+            new NotificationPackage(),
+            new BackgroundJobPackage(),
+            new ReactNativePushNotificationPackage(),
+            new RNFSPackage(),
+            new VectorIconsPackage(),
+            new RNGestureHandlerPackage()
       );
     }
 
