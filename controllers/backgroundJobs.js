@@ -483,8 +483,51 @@ async function handleSurveyOngoingState(_appStatus) {
     }
   }
 }
+
+function fileUploadCallBack(success, error = null, data = null) {
+    //need to move this function in utility
+    if (!success) {
+      logger.error(
+        codeFileName,
+        "fileUploadCallBack",
+        `Failed to upload file, error: ${error}.  Saving in file: ${data !=
+          null}`
+      );
+      if (data != null) {
+        utilities.writeJSONFile(
+          data,
+          RNFS.DocumentDirectoryPath +
+            "heart--beat--"+
+            Date.now().toString() +
+            ".js",
+          codeFileName,
+          "fileUploadCallBack"
+        );
+      }
+    }
+  }
+
+async function sendHeartBeat(appStatus)
+{
+    const funcName= 'sendHeartBeat';
+     await utilities.uploadData(
+        {
+          UUID: appStatus.UUID === null ? "DummyUUID": appStatus.UUID,
+          InstallationDate: appStatus.InstallationDate,
+          Message: "I am alive",
+          Time: new Date(),
+        },
+        appStatus.UUID === null ? "DummyUUID": appStatus.UUID,
+        "HeatBeatEvent",
+        codeFileName,
+        funcName,
+        fileUploadCallBack
+      );
+}
+
 export async function showPrompt() {
   const funcName = "showPrompt";
+
   let _appStatus = null;
   if (AppState.currentState === "background")
   {
@@ -494,6 +537,9 @@ export async function showPrompt() {
   {
     _appStatus = await AppStatus.getStatus(codeFileName, funcName);
   }
+
+  sendHeartBeat(_appStatus);
+
   logger.info(
     codeFileName,
     funcName,
@@ -691,6 +737,19 @@ async function _uploadFiles(_appStatus) {
     _appStatus,
     "SurveyStatusChanged"
   );
+
+  //upload heartbeat files
+    await logger.info(
+      codeFileName,
+      "uploadFiles",
+      "Attempting to upload heart beat files."
+    );
+    await uploadFilesInDir(
+      RNFS.DocumentDirectoryPath,
+      "heart--beat--",
+      _appStatus,
+      "HeartBeat"
+    );
 
   //upload log file
   await logger.info(

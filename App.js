@@ -105,7 +105,7 @@ if (Platform.OS === "android") {
   ////create schedule for the notification
   const notificationScheduleFU = {
     jobKey: "fileUpload",
-    period: 37 * 60 * 1000
+    period: 25 * 60 * 1000
   };
 
   ////schedule the 'schedule'
