@@ -30,6 +30,8 @@ export default class AppStatus {
     EligibleForBonus: true // indicates whether this person is eligible to receive bonus for daily survey
   };
 
+  static safeToAccessStatus = true;
+
   static typeCast(status) {
     const funcName = "typeCast";
     try {
@@ -75,6 +77,13 @@ export default class AppStatus {
 
     const funcName="getStatus";
 
+    while(!AppStatus.safeToAccessStatus)
+    {
+        //wait until it is safe to access status
+    }
+
+    AppStatus.safeToAccessStatus = false;
+
     const _status = AppStatus.status;
     if(_status.UUID===null || _status.InstallationDate ===null)
     {
@@ -102,12 +111,22 @@ export default class AppStatus {
                 "Failed to load app status."
               );
     }
+
+    AppStatus.safeToAccessStatus = true;
+
     return _status;
   }
 
   static async reloadStatus(callerClass, callerFunc)
   {
     const funcName = "reloadStatus";
+
+    while(!AppStatus.safeToAccessStatus)
+    {
+        //wait until it is safe to access status
+    }
+    AppStatus.safeToAccessStatus=false;
+
     try
     {
         const _value = await AsyncStorage.getItem("@AppStatus");
@@ -166,11 +185,20 @@ export default class AppStatus {
             AppStatus.fileUploadCallBack
           );
     }
+
+    AppStatus.safeToAccessStatus=true;
     return AppStatus.status;
   }
 
   static async initAppStatus() {
     const funcName = "initAppStatus";
+
+    while(!AppStatus.safeToAccessStatus)
+    {
+        //wait until it is safe to access status
+    }
+    AppStatus.safeToAccessStatus=false;
+
     try {
       const _value = await AsyncStorage.getItem("@AppStatus");
       if (_value !== null) {
@@ -220,10 +248,19 @@ export default class AppStatus {
         "Failed to get app status in async storage: " + error.message
       );
     }
+
+    AppStatus.safeToAccessStatus=true;
   }
 
   static async setAppStatus(newStatus, callerClass, callerFunc) {
     const funcName = "setAppStatus";
+
+    while(!AppStatus.safeToAccessStatus)
+    {
+        //wait until it is safe to access status
+    }
+    AppStatus.safeToAccessStatus=false;
+
     let _currentStatus = null;
     try {
       const _value = await AsyncStorage.getItem("@AppStatus");
@@ -312,6 +349,8 @@ export default class AppStatus {
       );
 
     }
+
+    AppStatus.safeToAccessStatus=true;
   }
 
   static fileUploadCallBack(success, error = null, data = null) {
