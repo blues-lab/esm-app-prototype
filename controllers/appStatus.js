@@ -321,6 +321,7 @@ export default class AppStatus {
 
       utilities.uploadData(
         {
+          Stage: "AppStatus.setAppStatus",
           CurrentSurveyStatus: _currentStatus.SurveyStatus,
           NewSurveyStatus: newStatus.SurveyStatus,
           CurrentSurveyId: _currentStatus.CurrentSurveyID,
