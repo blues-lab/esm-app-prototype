@@ -162,26 +162,30 @@ async function promptToShareLocation(_appStatus) {
 function createSurvey(userSettings) {
   const funcName = "createSurvey";
 
+  let _createSurvey = false;
+  let _rand = 0;
+
   const _currentDate = new Date();
+  const _currentHour = _currentDate.getHours();
+
   const _doNotDisturbStartHour = parseInt(
     userSettings.afterTime.split(":")[0],
     10
   );
-  const _doNotDisturbEndHour = parseInt(
-    userSettings.beforeTime.split(":")[0],
-    10
-  );
 
-  const _doNotDisturbHours =
-    (_doNotDisturbEndHour + 24 - _doNotDisturbStartHour) % 24;
-  const _hoursLeft =
-    (_doNotDisturbStartHour + 24 - _currentDate.getHours()) % 24;
 
-  const _denominator = _hoursLeft - _doNotDisturbHours;
-  const _surveyProb = 1 / Math.max(1, _denominator);
-  const _rand = Math.random();
-  const _createSurvey = _rand <= _surveyProb;
-
+  const _hoursBeforeNextDisturbCycle = (_doNotDisturbStartHour + 24 - _currentHour)%24;
+  if(_hoursBeforeNextDisturbCycle>3)
+  {
+    _rand = (Math.floor(Math.random() * 100) + 1) % 2;
+    _createSurvey = _rand === 0;
+  }
+  else
+  {
+      const _surveyProb = 1 / _hoursBeforeNextDisturbCycle;
+      _rand = Math.random();
+      const _createSurvey = _rand <= _surveyProb;
+  }
   logger.info(
     codeFileName,
     funcName,
@@ -192,12 +196,8 @@ function createSurvey(userSettings) {
       "). " +
       "Current hour of day: " +
       _currentDate.getHours() +
-      ", do-not-disturb-hours:" +
-      _doNotDisturbHours +
-      ", hours left: " +
-      _hoursLeft +
-      ", denominator: " +
-      _denominator +
+      ", hours left before next do-not-disturb cycle:" +
+      _hoursBeforeNextDisturbCycle +
       ". Random: " +
       _rand +
       ", survey prob: " +
