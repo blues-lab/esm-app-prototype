@@ -661,7 +661,8 @@ export default class HomeScreen extends React.Component {
             </View>
           )}
 
-          <View
+          {this.state.noSurveyDialogVisible &&
+          (<View
             style={{
               flex: 1,
               flexDirection: "column",
@@ -672,7 +673,8 @@ export default class HomeScreen extends React.Component {
               marginBottom: 20
             }}
           >
-            <View
+
+          <View
               style={{ height: 0.5, width: "100%", backgroundColor: "grey" }}
             />
             <TouchableHighlight
@@ -694,7 +696,8 @@ export default class HomeScreen extends React.Component {
                 }}
               />
             </TouchableHighlight>
-          </View>
+          </View>)
+          }
 
           <DialogInput
             isDialogVisible={this.state.invitationCodeDialogVisible}
