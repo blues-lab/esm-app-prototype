@@ -391,7 +391,7 @@ export const SERVICES = [
       { serviceName: "Recommend music, movie, or other media" },
       { serviceName: "Recommend activities/happenings nearby" },
       { serviceName: "Recommend the optimal route for a destination" },
-      { serviceName: "Recommend medication and place to find it" },
+      { serviceName: "Recommend medication or provide health advice" },
       { serviceName: "Recommend dietary plan" }
     ],
     categoryName: "Recommend product/service"
