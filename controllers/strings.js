@@ -257,7 +257,7 @@ export const FINAL_THANK_EXTENDED =
 export const CONTACT_TEXT =
   "If you have any questions or comments, contact us at";
 export const CONTACT_EMAIL = "researchlab@icsi.berkeley.edu";
-export const ERROR_REPORT_TEXT="Send error report"
+export const ERROR_REPORT_TEXT = "Send error report";
 
 export const ERROR_MESSAGE_HEADER = "Error";
 export const SAVING_ERROR_MESSAGE =
@@ -391,7 +391,7 @@ export const SERVICES = [
       { serviceName: "Recommend music, movie, or other media" },
       { serviceName: "Recommend activities/happenings nearby" },
       { serviceName: "Recommend the optimal route for a destination" },
-      { serviceName: "Recommend medication and place to find it" },
+      { serviceName: "Recommend medication or provide health advice" },
       { serviceName: "Recommend dietary plan" }
     ],
     categoryName: "Recommend product/service"

@@ -187,7 +187,7 @@ export default class ExitSurveyScreen extends React.Component {
   }
 
   async saveResponse() {
-  const funcName='saveResponse';
+    const funcName = "saveResponse";
 
     logger.info(codeFileName, "saveResponse", "Saving exit survey response.");
 

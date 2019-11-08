@@ -66,7 +66,7 @@ class ToolBar extends React.Component {
   }
 
   async initToolbar() {
-  const funcName="initToolbar";
+    const funcName = "initToolbar";
     const _appStatus = await AppStatus.getStatus(codeFileName, funcName);
 
     if (this._isMounted) {
@@ -203,7 +203,7 @@ class ToolBar extends React.Component {
   }
 
   async updateTimeDisplay() {
-    const funcName="updateTimeDisplay";
+    const funcName = "updateTimeDisplay";
     if (this._isMounted) {
       const _appStatus = await AppStatus.getStatus(codeFileName, funcName);
       // update self survey state

@@ -145,7 +145,7 @@ export default class HomeScreen extends React.Component {
   }
 
   async hadConversationYes() {
-  const funcName = "hadConversationYes";
+    const funcName = "hadConversationYes";
 
     const _surveyID = "SurveyID-" + Date.now();
     logger.info(
@@ -188,7 +188,7 @@ export default class HomeScreen extends React.Component {
   }
 
   async hadConversationNo() {
-  const funcName="hadConversationNo";
+    const funcName = "hadConversationNo";
     logger.info(
       `${codeFileName}`,
       "'No' to recent conversation",
@@ -234,8 +234,7 @@ export default class HomeScreen extends React.Component {
   };
 
   initApp = async () => {
-
-    const funcName="initApp";
+    const funcName = "initApp";
 
     if (this.props.navigation.state.routeName === "Home") {
       logger.info(
@@ -367,12 +366,12 @@ export default class HomeScreen extends React.Component {
     }
   };
 
-//  // eslint-disable-next-line camelcase
-//  async UNSAFE_componentWillMount() {
-//    logger.info(codeFileName, "componentWillMount", "Initializing app status.");
-//
-//    await AppStatus.initAppStatus();
-//  }
+  //  // eslint-disable-next-line camelcase
+  //  async UNSAFE_componentWillMount() {
+  //    logger.info(codeFileName, "componentWillMount", "Initializing app status.");
+  //
+  //    await AppStatus.initAppStatus();
+  //  }
 
   async componentDidMount() {
     logger.info(codeFileName, "componentDidMount", "Components mounted.");
@@ -673,24 +672,26 @@ export default class HomeScreen extends React.Component {
               marginBottom: 20
             }}
           >
-          
             <View
               style={{ height: 0.5, width: "100%", backgroundColor: "grey" }}
             />
             <TouchableHighlight
-              style={[commonStyles.buttonTouchHLStyle, { width: 200, marginTop:10 }]}
+              style={[
+                commonStyles.buttonTouchHLStyle,
+                { width: 200, marginTop: 10 }
+              ]}
             >
               <Button
                 title={strings.ERROR_REPORT_TEXT}
                 color="#20B2AA"
                 onPress={() => {
-                 logger.info(
-                   codeFileName,
-                   "ErrorReportButton",
-                   "Opening email client for error reporting."
-                 );
-                 utilities.sendEmail([strings.CONTACT_EMAIL], "", "");
-               }}
+                  logger.info(
+                    codeFileName,
+                    "ErrorReportButton",
+                    "Opening email client for error reporting."
+                  );
+                  utilities.sendEmail([strings.CONTACT_EMAIL], "", "");
+                }}
               />
             </TouchableHighlight>
           </View>
@@ -724,7 +725,10 @@ export default class HomeScreen extends React.Component {
                   try {
                     await AsyncStorage.setItem("@HAS_LAUNCHED", "true");
 
-                    const _appStatus = await AppStatus.getStatus(codeFileName,'invitationCodeDialog');
+                    const _appStatus = await AppStatus.getStatus(
+                      codeFileName,
+                      "invitationCodeDialog"
+                    );
 
                     _appStatus.InvitationCode = _code;
 

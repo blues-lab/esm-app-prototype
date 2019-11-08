@@ -164,7 +164,10 @@ export default class AlvaPromptScreen extends React.Component {
                 title={strings.IMAGINE_NEXT}
                 color="#20B2AA"
                 onPress={async () => {
-                  const _appStatus = await AppStatus.getStatus(codeFileName, "NextButtonPress");
+                  const _appStatus = await AppStatus.getStatus(
+                    codeFileName,
+                    "NextButtonPress"
+                  );
                   if (await utilities.currentSurveyExpired(_appStatus)) {
                     await this.expireSurvey(_appStatus);
                   } else {

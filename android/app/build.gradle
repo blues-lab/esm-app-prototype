@@ -111,8 +111,8 @@ android {
         applicationId "edu.berkeley.cs.blues.alva"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 51
-        versionName "2019.11.07"
+        versionCode 53
+        versionName "2019.11.07.2"
     }
     signingConfigs {
         release {
@@ -153,6 +153,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-gesture-handler')
     implementation project(':react-native-version-number')
     implementation project(':react-native-device-info')
     implementation project(':react-native-permissions')
@@ -164,9 +165,7 @@ dependencies {
     implementation project(':@react-native-community_async-storage')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-push-notification')
-    implementation project(':react-native-gesture-handler')
     implementation project(':react-native-background-job')
-    implementation project(':react-native-android-local-notification')
     implementation project(':react-native-fs')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.0.0'
