@@ -111,8 +111,8 @@ android {
         applicationId "edu.berkeley.cs.blues.alva"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 55
-        versionName "2019.11.08.1"
+        versionCode 56
+        versionName "2019.11.08.2"
     }
     signingConfigs {
         release {
