@@ -181,7 +181,7 @@ function createSurvey(userSettings) {
   } else {
     const _surveyProb = 1 / _hoursBeforeNextDisturbCycle;
     _rand = Math.random();
-    const _createSurvey = _rand <= _surveyProb;
+    _createSurvey = _rand <= _surveyProb;
   }
   logger.info(
     codeFileName,
