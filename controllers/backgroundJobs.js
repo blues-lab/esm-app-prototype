@@ -173,13 +173,14 @@ function createSurvey(userSettings) {
     10
   );
 
+  let _surveyProb = 0.5;
   const _hoursBeforeNextDisturbCycle =
     (_doNotDisturbStartHour + 24 - _currentHour) % 24;
   if (_hoursBeforeNextDisturbCycle > 3) {
     _rand = (Math.floor(Math.random() * 100) + 1) % 2;
     _createSurvey = _rand === 0;
   } else {
-    const _surveyProb = 1 / _hoursBeforeNextDisturbCycle;
+    _surveyProb = 1 / _hoursBeforeNextDisturbCycle;
     _rand = Math.random();
     _createSurvey = _rand <= _surveyProb;
   }
