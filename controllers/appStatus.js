@@ -76,9 +76,8 @@ export default class AppStatus {
   static async getStatus(callerClass, callerFunc) {
     const funcName = "getStatus";
 
-    while(!AppStatus.safeToAccessStatus)
-    {
-        //wait until it is safe to access status
+    while (!AppStatus.safeToAccessStatus) {
+      //wait until it is safe to access status
     }
     AppStatus.safeToAccessStatus = false;
 
@@ -125,87 +124,105 @@ export default class AppStatus {
     return _status;
   }
 
-   static async reloadStatus(callerClass, callerFunc)
-    {
-      const funcName = "reloadStatus";
+  static async reloadStatus(callerClass, callerFunc) {
+    const funcName = "reloadStatus";
 
-      while(!AppStatus.safeToAccessStatus)
-      {
-          //wait until it is safe to access status
-      }
-      AppStatus.safeToAccessStatus = false;
-
-      try
-      {
-          const _value = await AsyncStorage.getItem("@AppStatus");
-          if(_value===null)
-          {
-              logger.error(codeFileName, funcName, "AppStatus is null! Caller: "+callerClass+":"+callerFunc+".");
-
-               await utilities.uploadData(
-                  {
-                    Message: "AppStatus is null",
-                    Caller: callerClass+":"+callerFunc,
-                    Time: new Date(),
-                  },
-                  "DummyUUID",
-                  "ErrorEvent",
-                  codeFileName,
-                  funcName,
-                  AppStatus.fileUploadCallBack
-                );
-          }
-          AppStatus.status = AppStatus.typeCast(JSON.parse(_value));
-          if(AppStatus.status.InstallationDate===null || AppStatus.status.UUID===null)
-          {
-              logger.error(codeFileName, "getStatus", 'UUID or InstallationDate is null!'+
-                  'UUID: '+ AppStatus.status.UUID+', InstallationDate: '+ AppStatus.status.InstallationDate+
-                  ', caller: '+callerClass+":"+callerFunc+".");
-
-               await utilities.uploadData(
-                  {
-                    UUID: AppStatus.status.UUID,
-                    InstallationDate: AppStatus.status.InstallationDate,
-                    Caller: callerClass+":"+callerFunc,
-                    Time: new Date(),
-                  },
-                  "DummyUUID",
-                  "ErrorEvent",
-                  codeFileName,
-                  funcName,
-                  AppStatus.fileUploadCallBack
-                );
-          }
-      }
-      catch(error)
-      {
-          logger.error(codeFileName, funcName, "Failed to reload AppStatus! Caller: "+callerClass+":"+callerFunc+".");
-          await utilities.uploadData(
-              {
-                Message: "Failed to reload AppStatus.",
-                Caller: callerClass+":"+callerFunc,
-                Time: new Date(),
-              },
-              "DummyUUID",
-              "ErrorEvent",
-              codeFileName,
-              funcName,
-              AppStatus.fileUploadCallBack
-            );
-      }
-
-      AppStatus.safeToAccessStatus=true;
-      return AppStatus.status;
+    while (!AppStatus.safeToAccessStatus) {
+      //wait until it is safe to access status
     }
+    AppStatus.safeToAccessStatus = false;
+
+    try {
+      const _value = await AsyncStorage.getItem("@AppStatus");
+      if (_value === null) {
+        logger.error(
+          codeFileName,
+          funcName,
+          "AppStatus is null! Caller: " + callerClass + ":" + callerFunc + "."
+        );
+
+        await utilities.uploadData(
+          {
+            Message: "AppStatus is null",
+            Caller: callerClass + ":" + callerFunc,
+            Time: new Date()
+          },
+          "DummyUUID",
+          "ErrorEvent",
+          codeFileName,
+          funcName,
+          AppStatus.fileUploadCallBack
+        );
+      }
+      AppStatus.status = AppStatus.typeCast(JSON.parse(_value));
+      if (
+        AppStatus.status.InstallationDate === null ||
+        AppStatus.status.UUID === null
+      ) {
+        logger.error(
+          codeFileName,
+          "getStatus",
+          "UUID or InstallationDate is null!" +
+            "UUID: " +
+            AppStatus.status.UUID +
+            ", InstallationDate: " +
+            AppStatus.status.InstallationDate +
+            ", caller: " +
+            callerClass +
+            ":" +
+            callerFunc +
+            "."
+        );
+
+        await utilities.uploadData(
+          {
+            UUID: AppStatus.status.UUID,
+            InstallationDate: AppStatus.status.InstallationDate,
+            Caller: callerClass + ":" + callerFunc,
+            Time: new Date()
+          },
+          "DummyUUID",
+          "ErrorEvent",
+          codeFileName,
+          funcName,
+          AppStatus.fileUploadCallBack
+        );
+      }
+    } catch (error) {
+      logger.error(
+        codeFileName,
+        funcName,
+        "Failed to reload AppStatus! Caller: " +
+          callerClass +
+          ":" +
+          callerFunc +
+          "."
+      );
+      await utilities.uploadData(
+        {
+          Message: "Failed to reload AppStatus.",
+          Caller: callerClass + ":" + callerFunc,
+          Time: new Date()
+        },
+        "DummyUUID",
+        "ErrorEvent",
+        codeFileName,
+        funcName,
+        AppStatus.fileUploadCallBack
+      );
+    }
+
+    AppStatus.safeToAccessStatus = true;
+    return AppStatus.status;
+  }
 
   static async initAppStatus() {
     const funcName = "initAppStatus";
 
-    while(!AppStatus.safeToAccessStatus)
-    {
-        //wait until it is safe to access status
+    while (!AppStatus.safeToAccessStatus) {
+      //wait until it is safe to access status
     }
-    AppStatus.safeToAccessStatus=false;
+    AppStatus.safeToAccessStatus = false;
 
     try {
       const _value = await AsyncStorage.getItem("@AppStatus");
@@ -261,17 +278,16 @@ export default class AppStatus {
       );
     }
 
-    AppStatus.safeToAccessStatus=true;
+    AppStatus.safeToAccessStatus = true;
   }
 
   static async setAppStatus(newStatus, callerClass, callerFunc) {
     const funcName = "setAppStatus";
 
-    while(!AppStatus.safeToAccessStatus)
-    {
-        //wait until it is safe to access status
+    while (!AppStatus.safeToAccessStatus) {
+      //wait until it is safe to access status
     }
-    AppStatus.safeToAccessStatus=false;
+    AppStatus.safeToAccessStatus = false;
 
     let _currentStatus = null;
     try {
@@ -362,7 +378,7 @@ export default class AppStatus {
       );
     }
 
-    AppStatus.safeToAccessStatus=true;
+    AppStatus.safeToAccessStatus = true;
   }
 
   static fileUploadCallBack(success, error = null, data = null) {

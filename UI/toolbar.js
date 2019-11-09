@@ -349,18 +349,20 @@ class ToolBar extends React.Component {
               alignItems: "center"
             }}
           >
-            {this.state.minRemaining!==null && this.state.secRemaining!==null &&
-             this.state.minRemaining <= 15 && this.state.minRemaining >= 0 && (
-              <Text style={{ fontSize: 20 }}>
-                {this.state.minRemaining > 9
-                  ? this.state.minRemaining
-                  : "0" + this.state.minRemaining}
-                :
-                {this.state.secRemaining > 9
-                  ? this.state.secRemaining
-                  : "0" + this.state.secRemaining}
-              </Text>
-            )}
+            {this.state.minRemaining !== null &&
+              this.state.secRemaining !== null &&
+              this.state.minRemaining <= 15 &&
+              this.state.minRemaining >= 0 && (
+                <Text style={{ fontSize: 20 }}>
+                  {this.state.minRemaining > 9
+                    ? this.state.minRemaining
+                    : "0" + this.state.minRemaining}
+                  :
+                  {this.state.secRemaining > 9
+                    ? this.state.secRemaining
+                    : "0" + this.state.secRemaining}
+                </Text>
+              )}
 
             <ProgressBarAnimated
               width={120}

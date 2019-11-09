@@ -661,43 +661,42 @@ export default class HomeScreen extends React.Component {
             </View>
           )}
 
-          {this.state.noSurveyDialogVisible &&
-          (<View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              margin: 10,
-              marginTop: 5,
-              marginBottom: 20
-            }}
-          >
-
-          <View
-              style={{ height: 0.5, width: "100%", backgroundColor: "grey" }}
-            />
-            <TouchableHighlight
-              style={[
-                commonStyles.buttonTouchHLStyle,
-                { width: 200, marginTop: 10 }
-              ]}
+          {this.state.noSurveyDialogVisible && (
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "column",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                margin: 10,
+                marginTop: 5,
+                marginBottom: 20
+              }}
             >
-              <Button
-                title={strings.ERROR_REPORT_TEXT}
-                color="#20B2AA"
-                onPress={() => {
-                  logger.info(
-                    codeFileName,
-                    "ErrorReportButton",
-                    "Opening email client for error reporting."
-                  );
-                  utilities.sendEmail([strings.CONTACT_EMAIL], "", "");
-                }}
+              <View
+                style={{ height: 0.5, width: "100%", backgroundColor: "grey" }}
               />
-            </TouchableHighlight>
-          </View>)
-          }
+              <TouchableHighlight
+                style={[
+                  commonStyles.buttonTouchHLStyle,
+                  { width: 200, marginTop: 10 }
+                ]}
+              >
+                <Button
+                  title={strings.ERROR_REPORT_TEXT}
+                  color="#20B2AA"
+                  onPress={() => {
+                    logger.info(
+                      codeFileName,
+                      "ErrorReportButton",
+                      "Opening email client for error reporting."
+                    );
+                    utilities.sendEmail([strings.CONTACT_EMAIL], "", "");
+                  }}
+                />
+              </TouchableHighlight>
+            </View>
+          )}
 
           <DialogInput
             isDialogVisible={this.state.invitationCodeDialogVisible}
