@@ -12,7 +12,6 @@ import {
   PROMPT_DURATION,
   LOG_FILE_PATH,
   APP_STATUS_FILE_PATH,
-  USER_SETTINGS_FILE_PATH,
   SURVEY_STATUS
 } from "./constants";
 

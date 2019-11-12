@@ -1,12 +1,11 @@
 /* eslint-disable no-await-in-loop */
 import * as RNFS from "react-native-fs";
 import AsyncStorage from "@react-native-community/async-storage";
-import * as Sentry from "@sentry/react-native";
 import UUIDGenerator from "react-native-uuid-generator";
 
 import logger from "./logger";
 import * as utilities from "./utilities";
-import { SURVEY_STATUS, APP_STATUS_FILE_PATH } from "./constants";
+import { SURVEY_STATUS } from "./constants";
 
 const codeFileName = "appStatus.js";
 
