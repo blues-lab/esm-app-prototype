@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import * as RNFS from "react-native-fs";
 import AsyncStorage from "@react-native-community/async-storage";
 import * as Sentry from "@sentry/react-native";
@@ -8,6 +9,9 @@ import * as utilities from "./utilities";
 import { SURVEY_STATUS, APP_STATUS_FILE_PATH } from "./constants";
 
 const codeFileName = "appStatus.js";
+
+/** How long (in milliseconds) to wait for the status to change, if it is currently locked */
+const WAIT_FOR_STATUS = 100;
 
 export default class AppStatus {
   static status = {
@@ -78,6 +82,7 @@ export default class AppStatus {
 
     while (!AppStatus.safeToAccessStatus) {
       //wait until it is safe to access status
+      await utilities.sleep(WAIT_FOR_STATUS);
     }
     AppStatus.safeToAccessStatus = false;
 
@@ -129,6 +134,7 @@ export default class AppStatus {
 
     while (!AppStatus.safeToAccessStatus) {
       //wait until it is safe to access status
+      await utilities.sleep(WAIT_FOR_STATUS);
     }
     AppStatus.safeToAccessStatus = false;
 
@@ -221,6 +227,7 @@ export default class AppStatus {
 
     while (!AppStatus.safeToAccessStatus) {
       //wait until it is safe to access status
+      await utilities.sleep(WAIT_FOR_STATUS);
     }
     AppStatus.safeToAccessStatus = false;
 
@@ -286,6 +293,7 @@ export default class AppStatus {
 
     while (!AppStatus.safeToAccessStatus) {
       //wait until it is safe to access status
+      await utilities.sleep(WAIT_FOR_STATUS);
     }
     AppStatus.safeToAccessStatus = false;
 

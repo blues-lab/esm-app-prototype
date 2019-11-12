@@ -524,3 +524,11 @@ export async function isLocationSharingEnabled() {
   );
   return _locationSharingEnabled;
 }
+
+/**
+ * Sleep for the given number of milliseconds
+ * @param {number} milliseconds
+ */
+export function sleep(milliseconds) {
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
