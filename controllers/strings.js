@@ -245,6 +245,9 @@ export const BOTH_MODEL_2 = format(
 export const EXPLAIN_WHY_NO_SERVICES =
   "Please explain in a few sentences why you did not find any services relevant";
 
+
+export const INVALID_MODEL_PRICE = "Please enter valid positive number for model price.";
+
 export const EXIT_SURVEY_DONE_HEADER = "Congratulations!";
 export const EXIT_SURVEY_DONE = "You have earned $1!";
 

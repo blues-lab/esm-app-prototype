@@ -367,7 +367,8 @@ export default class ExitSurveyScreen extends React.Component {
       if (
         this.state.priceCondition === 0 &&
         (this.state.model1Price.trim().length === 0 ||
-          !utilities.isNumeric(this.state.model1Price))
+          !utilities.isNumeric(this.state.model1Price))||
+          parseFloat(this.state.model1Price)<0
       ) {
         logger.warn(
           codeFileName,
@@ -376,13 +377,14 @@ export default class ExitSurveyScreen extends React.Component {
             this.state.model1Price +
             ". Showing error message"
         );
-        Alert.alert("Error", "Please enter a valid numeric value to continue.");
+        Alert.alert("Error", strings.INVALID_MODEL_PRICE);
         return;
       }
       if (
         this.state.priceCondition === 1 &&
         (this.state.model2Price.trim().length === 0 ||
-          !utilities.isNumeric(this.state.model2Price))
+          !utilities.isNumeric(this.state.model2Price)) ||
+          parseFloat(this.state.model2Price)<0
       ) {
         logger.warn(
           codeFileName,
@@ -391,15 +393,17 @@ export default class ExitSurveyScreen extends React.Component {
             this.state.model2Price +
             ". Showing error message"
         );
-        Alert.alert("Error", "Please enter a valid numeric value to continue.");
+        Alert.alert("Error", strings.INVALID_MODEL_PRICE);
         return;
       }
       if (
         this.state.priceCondition === 2 &&
         (this.state.model1Price.trim().length === 0 ||
           !utilities.isNumeric(this.state.model1Price) ||
+          parseFloat(this.state.model1Price)<0 ||
           this.state.model2Price.trim().length === 0 ||
-          !utilities.isNumeric(this.state.model2Price))
+          !utilities.isNumeric(this.state.model2Price)) ||
+          parseFloat(this.state.model2Price)<0
       ) {
         logger.warn(
           codeFileName,
@@ -410,10 +414,7 @@ export default class ExitSurveyScreen extends React.Component {
             this.state.model2Price +
             ". Showing error message"
         );
-        Alert.alert(
-          "Error",
-          "Please enter a valid numeric values to continue."
-        );
+        Alert.alert("Error", strings.INVALID_MODEL_PRICE);
         return;
       }
 
