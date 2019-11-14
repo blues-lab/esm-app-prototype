@@ -396,4 +396,9 @@ export const SERVICES = [
     ],
     categoryName: "Recommend product/service"
   }
+  ,
+  {
+    categoryName:"Other",
+    services:[]
+  }
 ];

@@ -128,9 +128,13 @@ export default class ServiceMenuScreen extends React.Component {
   };
 
   async parseService(_fullJsonObj) {
+
+  const funcName="parseService";
     //parse json data
     const _serviceCategoriesJS = _fullJsonObj;
     let _serviceCategories = [];
+
+    let _otherServiceCategory=null;
 
     for (let i = 0; i < _serviceCategoriesJS.length; i++) {
       const _servicesJS = _serviceCategoriesJS[i].services;
@@ -142,13 +146,23 @@ export default class ServiceMenuScreen extends React.Component {
           selected: false
         });
       }
-      _serviceCategories.push({
-        id: _serviceCategoriesJS[i].categoryName,
-        name: _serviceCategoriesJS[i].categoryName,
-        selectedServiceNames: new Set([]),
-        renderStyle: commonStyles.listItemStyle,
-        services: _services
-      });
+
+      const _serviceEntry = {
+                                id: _serviceCategoriesJS[i].categoryName,
+                                name: _serviceCategoriesJS[i].categoryName,
+                                selectedServiceNames: new Set([]),
+                                renderStyle: commonStyles.listItemStyle,
+                                services: _services
+                             }
+
+      if(_serviceCategoriesJS[i].categoryName !== 'Other')
+      {
+        _serviceCategories.push(_serviceEntry);
+      }
+      else
+      {
+        _otherServiceCategory = _serviceEntry; // separately store 'Other' category so that it can be added as the last item.
+      }
     }
 
     await logger.info(
@@ -165,16 +179,14 @@ export default class ServiceMenuScreen extends React.Component {
         "First time loading. Shuffling service categories."
       );
       _serviceCategories = utilities.shuffleArray(_serviceCategories);
-      _serviceCategories.push(
-        //Add 'Other'
-        {
-          id: "Other",
-          name: "Other",
-          selectedServiceNames: new Set([]),
-          renderStyle: commonStyles.listItemStyle,
-          services: []
-        }
-      );
+      if(_otherServiceCategory !== null)
+      {
+        _serviceCategories.push(_otherServiceCategory);
+      }
+      else
+      {
+        logger.error(codeFileName, funcName, "'Other' service category not found!");
+      }
 
       _serviceCategories.push(
         //Add 'No relevant service'
