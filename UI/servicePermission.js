@@ -372,7 +372,7 @@ export default class ServicePermissionScreen extends React.Component {
     logger.info(
       codeFileName,
       "saveResponse",
-      "Uploading partial response and going to ContextualQuestion page."
+      "Uploading partial response and going to ContextualQuestion page. Response: "+JSON.stringify(this.state.surveyResponseJS)
     );
 
     await this.promisedSetState({ saveWaitVisible: true });
