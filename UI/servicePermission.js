@@ -236,10 +236,10 @@ export default class ServicePermissionScreen extends React.Component {
         .categoryName,
       ServiceName: this.state.services[this.state.currentServiceIdx]
         .serviceName,
-      Sharing: this.state.sharingDecision,
-      PartsToRedact: this.state.partsToRedact,
-      WhyPartShare: this.state.whyPartShare,
-      WhyNoShare: this.state.whyNoShare
+      Sharing: this.state.sharingDecision.length > 0 ? this.state.sharingDecision: strings.EMPTY_STR,
+      PartsToRedact: this.state.partsToRedact.length >0 ? this.state.partsToRedact: strings.EMPTY_STR,
+      WhyPartShare: this.state.whyPartShare.length >0 ? this.state.whyPartShare: strings.EMPTY_STR,
+      WhyNoShare: this.state.whyNoShare.length>0 ? this.state.whyNoShare : strings.EMPTY_STR
     };
 
     const _permissionResponses = this.state.permissionResponses;
@@ -313,9 +313,9 @@ export default class ServicePermissionScreen extends React.Component {
     await this.promisedSetState(prevState => {
       const _surveyResponseJS = prevState.surveyResponseJS;
       _surveyResponseJS.dataRetentionTranscriptDecision =
-        prevState.dataRetentionTranscriptDecision;
+        prevState.dataRetentionTranscriptDecision.length>0? prevState.dataRetentionTranscriptDecision : strings.EMPTY_STR;
       _surveyResponseJS.dataRetentionTranscriptOtherText =
-        prevState.dataRetentionTranscriptOtherText;
+        prevState.dataRetentionTranscriptOtherText.length>0 ? prevState.dataRetentionTranscriptOtherText: strings.EMPTY_STR;
 
       return { surveyResponseJS: _surveyResponseJS };
     });
@@ -359,11 +359,11 @@ export default class ServicePermissionScreen extends React.Component {
     await this.promisedSetState(prevState => {
       const _surveyResponseJS = prevState.surveyResponseJS;
       _surveyResponseJS.dataRetentionLengthDecision =
-        prevState.dataRetentionLengthDecision;
+        prevState.dataRetentionLengthDecision.length > 0 ? prevState.dataRetentionLengthDecision: strings.EMPTY_STR;
       _surveyResponseJS.dataRetentionLengthSpecificText =
-        prevState.dataRetentionLengthSpecificText;
+        prevState.dataRetentionLengthSpecificText.length > 0 ? prevState.dataRetentionLengthSpecificText : strings.EMPTY_STR;
       _surveyResponseJS.dataRetentionLengthOtherText =
-        prevState.dataRetentionLengthOtherText;
+        prevState.dataRetentionLengthOtherText.length >0? prevState.dataRetentionLengthOtherText: strings.EMPTY_STR;
 
       return { surveyResponseJS: _surveyResponseJS };
     });
@@ -372,7 +372,7 @@ export default class ServicePermissionScreen extends React.Component {
     logger.info(
       codeFileName,
       "saveResponse",
-      "Uploading partial response and going to ContextualQuestion page. Response: "+JSON.stringify(this.state.surveyResponseJS)
+      "Uploading partial response and going to ContextualQuestion page."
     );
 
     await this.promisedSetState({ saveWaitVisible: true });

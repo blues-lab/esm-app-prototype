@@ -14,6 +14,8 @@ export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
 
 export const NEXT_BUTTON = "Next";
 
+export const EMPTY_STR = "EMPTY";
+
 /* Permissions */
 
 export const LOCATION_SHARE_PROMPT =
