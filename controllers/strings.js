@@ -14,7 +14,7 @@ export const ANSWER_TO_CONTINUE = "Please answer all questions to continue.";
 
 export const NEXT_BUTTON = "Next";
 
-export const EMPTY_STR = "EMPTY";
+export const EMPTY_STR = "<NA>";
 
 /* Permissions */
 
@@ -247,8 +247,8 @@ export const BOTH_MODEL_2 = format(
 export const EXPLAIN_WHY_NO_SERVICES =
   "Please explain in a few sentences why you did not find any services relevant";
 
-
-export const INVALID_MODEL_PRICE = "Please enter valid positive number for model price.";
+export const INVALID_MODEL_PRICE =
+  "Please enter valid positive number for model price.";
 
 export const EXIT_SURVEY_DONE_HEADER = "Congratulations!";
 export const EXIT_SURVEY_DONE = "You have earned $1!";
@@ -400,10 +400,9 @@ export const SERVICES = [
       { serviceName: "Recommend dietary plan" }
     ],
     categoryName: "Recommend product/service"
-  }
-  ,
+  },
   {
-    categoryName:"Other",
-    services:[]
+    categoryName: "Other",
+    services: []
   }
 ];
