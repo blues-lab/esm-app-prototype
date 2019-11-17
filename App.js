@@ -160,7 +160,7 @@ export default class App extends Component {
       //write default settings
       const _settings = {
         homeWifi: "",
-        askWifi: true,
+        previousSSIDs:[],
         afterTime: "23:59",
         beforeTime: "00:01"
       };

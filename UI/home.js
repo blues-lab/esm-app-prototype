@@ -305,9 +305,10 @@ export default class HomeScreen extends React.Component {
               logger.info(
                 codeFileName,
                 "initApp",
-                "Home Wifi not set. Navigating to settings page."
+                "Home Wifi not set. Returning."
               );
-              this.props.navigation.navigate("UserSettings");
+              return;
+              //this.props.navigation.navigate("UserSettings");
             } else if (
               _appStatus.SurveyStatus === SURVEY_STATUS.AVAILABLE ||
               _appStatus.SurveyStatus === SURVEY_STATUS.ONGOING

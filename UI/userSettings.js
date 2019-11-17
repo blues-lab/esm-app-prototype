@@ -72,14 +72,15 @@ export default class UserSettingsScreen extends React.Component {
 
     this.state = {
       homeWifi: "",
-      askWifi: true,
+      previousSSIDs: [],
       isDateTimePickerVisible: false,
       stateSaved: true,
       afterTimeSelected: true, //indicates if the 'after' or 'before' time was selected
       afterTime: "23:59",
       beforeTime: "00:01",
       backCallBack: null, // a callback function sent by Home screen
-      wifiPermissionDialogVisible: false
+      wifiPermissionDialogVisible: false,
+      currentSSID:'' //currently connected ssid
     };
 
     AppStatus.getStatus(codeFileName, "constructor").then(status => {
@@ -142,6 +143,7 @@ export default class UserSettingsScreen extends React.Component {
   }
 
   async getHomeSSID() {
+  this.setState({currentSSID: ""});
     try {
       const _ssid = await NetworkInfo.getSSID();
       logger.info(
@@ -151,11 +153,25 @@ export default class UserSettingsScreen extends React.Component {
       );
 
       if (_ssid !== null && _ssid.length > 0 && _ssid !== "<unknown ssid>") {
+
+           this.setState({currentSSID: _ssid});
+
+        if(this.state.previousSSIDs.includes(_ssid))
+        {
+            logger.info(
+                      codeFileName,
+                      "getHomeSSID",
+                      "Connected to WiFi, but the SSID is not new. Returning."
+                    );
+            return;
+        }
+
         logger.info(
-          codeFileName,
-          "getHomeSSID",
-          "Connected to WiFi. Asking if this the is Home WiFi."
-        );
+                  codeFileName,
+                  "getHomeSSID",
+                  "Connected to a new SSID. Asking if this the is the Home WiFi."
+                );
+
         Alert.alert(
           "Home WiFi",
           strings.HOME_WIFI_PROMPT(_ssid),
@@ -167,8 +183,16 @@ export default class UserSettingsScreen extends React.Component {
                 logger.info(
                   codeFileName,
                   "getHomeSSID",
-                  "Not connected to home WiFi. Will ask again."
+                  "The connected SSID is not the home WiFi. Saving this ssid, will ask again."
                 );
+
+                this.setState(prevState => {
+                              const _prevSSIDs =  prevState.previousSSIDs;
+                              _prevSSIDs.push(_ssid);
+                              return {
+                                previousSSIDs: _prevSSIDs
+                              };
+                            });
               }
             },
             {
@@ -249,7 +273,7 @@ export default class UserSettingsScreen extends React.Component {
         homeWifi: _userSettingsData.homeWifi,
         afterTime: _userSettingsData.afterTime,
         beforeTime: _userSettingsData.beforeTime,
-        askWifi: _userSettingsData.askWifi
+        previousSSIDs: _userSettingsData.previousSSIDs
       });
 
       if (this.state.homeWifi.length === 0) {
@@ -348,7 +372,7 @@ export default class UserSettingsScreen extends React.Component {
   async saveSettings() {
     const _settings = {
       homeWifi: this.state.homeWifi,
-      askWifi: this.state.askWifi,
+      previousSSIDs: this.state.previousSSIDs,
       afterTime: this.state.afterTime,
       beforeTime: this.state.beforeTime
     };
@@ -668,6 +692,49 @@ export default class UserSettingsScreen extends React.Component {
             <Text>{"\n"}</Text>
           </Text>
         )}
+                {(this.state.homeWifi.length === 0) && (this.state.currentSSID.length>0) && (
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      borderBottomColor: "black",
+                      borderBottomWidth: StyleSheet.hairlineWidth,
+                      color: "black",
+                      marginTop: 10,
+                      marginBottom: 10,
+                      fontSize: 20,
+                      width: Math.floor(Dimensions.get("window").width * 0.9)
+                    }}
+                  >
+                    <Text style={{ marginBottom: 10, fontSize: 16, paddingBottom: 10 }}>
+                      {" "}
+                      Current WiFi:{" "}
+                    </Text>
+                    <Text style={{ fontSize: 20, margin: 0 }}>
+                      {this.state.currentSSID}
+                    </Text>
+                    <Text>{"\n"}</Text>
+                    <Text
+                      style={{
+                        color: "blue",
+                        fontSize: 16,
+                        margin: 0,
+                        textDecorationLine: "underline"
+                      }}
+                      onPress={async()=>{
+                           await this.promisedSetState(prevState => {
+                           const _currentSSID=prevState.currentSSID;
+                                                      return {
+                                                        homeWifi: _currentSSID
+                                                      };
+                                                    });
+                           await this.saveSettings();
+                      }}
+                    >
+                      Set this as Home WiFi
+                    </Text>
+                    <Text>{"\n"}</Text>
+                  </Text>
+                )}
 
         <Text
           style={{
