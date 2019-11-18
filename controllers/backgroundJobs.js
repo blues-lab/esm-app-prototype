@@ -871,9 +871,7 @@ export async function checkHomeWifi()
             "Home wifi not set. Checking if currently connected to a valid ssid. (_ssid === null): " +
               (_ssid === null) +
               ", (_ssid ==<unknown ssid>): " +
-              (_ssid === "<unknown ssid>") +
-              ", (ssid.length)>0): " +
-              (_ssid.length > 0)
+              (_ssid === "<unknown ssid>")
           );
 
           if((_ssid !== null) && (_ssid !== "<unknown ssid>") && (_ssid.length > 0))
