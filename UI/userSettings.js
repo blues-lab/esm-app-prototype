@@ -178,7 +178,7 @@ export default class UserSettingsScreen extends React.Component {
           [
             {
               text: "NO",
-              onPress: () => {
+              onPress: async() => {
                 Alert.alert("Home WiFi", strings.NOT_HOME_WIFI);
                 logger.info(
                   codeFileName,
@@ -186,13 +186,14 @@ export default class UserSettingsScreen extends React.Component {
                   "The connected SSID is not the home WiFi. Saving this ssid, will ask again."
                 );
 
-                this.setState(prevState => {
+                await this.promisedSetState(prevState => {
                               const _prevSSIDs =  prevState.previousSSIDs;
                               _prevSSIDs.push(_ssid);
                               return {
                                 previousSSIDs: _prevSSIDs
                               };
                             });
+                await this.saveSettings();
               }
             },
             {
@@ -692,9 +693,9 @@ export default class UserSettingsScreen extends React.Component {
             <Text>{"\n"}</Text>
           </Text>
         )}
-                {(this.state.homeWifi.length === 0) && (this.state.currentSSID.length>0) && (
-                  <Text
-                    style={{
+        {(this.state.homeWifi.length === 0) && (this.state.currentSSID.length>0) && (
+        <Text
+          style={{
                       textAlign: "center",
                       borderBottomColor: "black",
                       borderBottomWidth: StyleSheet.hairlineWidth,
@@ -704,23 +705,23 @@ export default class UserSettingsScreen extends React.Component {
                       fontSize: 20,
                       width: Math.floor(Dimensions.get("window").width * 0.9)
                     }}
-                  >
-                    <Text style={{ marginBottom: 10, fontSize: 16, paddingBottom: 10 }}>
-                      {" "}
+        >
+          <Text style={{ marginBottom: 10, fontSize: 16, paddingBottom: 10 }}>
+            {" "}
                       Current WiFi:{" "}
-                    </Text>
-                    <Text style={{ fontSize: 20, margin: 0 }}>
-                      {this.state.currentSSID}
-                    </Text>
-                    <Text>{"\n"}</Text>
-                    <Text
-                      style={{
+          </Text>
+          <Text style={{ fontSize: 20, margin: 0 }}>
+            {this.state.currentSSID}
+          </Text>
+          <Text>{"\n"}</Text>
+          <Text
+            style={{
                         color: "blue",
                         fontSize: 16,
                         margin: 0,
                         textDecorationLine: "underline"
                       }}
-                      onPress={async()=>{
+            onPress={async()=>{
                            await this.promisedSetState(prevState => {
                            const _currentSSID=prevState.currentSSID;
                                                       return {
@@ -729,11 +730,11 @@ export default class UserSettingsScreen extends React.Component {
                                                     });
                            await this.saveSettings();
                       }}
-                    >
+          >
                       Set this as Home WiFi
-                    </Text>
-                    <Text>{"\n"}</Text>
-                  </Text>
+          </Text>
+          <Text>{"\n"}</Text>
+        </Text>
                 )}
 
         <Text
