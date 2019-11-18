@@ -65,7 +65,7 @@ if (Platform.OS === "android") {
   ////create schedule for the notification
   const notificationSchedulePrompt = {
     jobKey: "showNotification",
-    period: 45 * 60 * 1000
+    period: 15 * 60 * 1000
   };
 
   ////schedule the 'schedule'
@@ -142,8 +142,7 @@ if (Platform.OS === "android") {
     ////create schedule for the notification
     const notificationScheduleWiFi = {
       jobKey: "homeWifi",
-      period: 15 * 60 * 1000 // every two hours
-      //period: 2* 60 * 60 * 1000 // every two hours
+      period: 2* 60 * 60 * 1000 // every two hours
     };
 
     ////schedule the 'schedule'
