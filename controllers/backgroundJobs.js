@@ -181,7 +181,7 @@ function createSurvey(userSettings) {
     _rand = (Math.floor(Math.random() * 100) + 1) % 2;
     _createSurvey = _rand === 0;
   } else {
-    _surveyProb = 1 / _hoursBeforeNextDisturbCycle;
+    _surveyProb = 1 / Math.max(1, _hoursBeforeNextDisturbCycle); //ensure no divide-by-zero
     _rand = Math.random();
     _createSurvey = _rand <= _surveyProb;
   }
