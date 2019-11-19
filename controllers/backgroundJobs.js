@@ -529,7 +529,7 @@ async function sendHeartBeat(appStatus) {
       Time: new Date()
     },
     appStatus.UUID === null ? "DummyUUID" : appStatus.UUID,
-    "HeatBeatEvent",
+    "HeartBeatEvent",
     codeFileName,
     funcName,
     fileUploadCallBack
