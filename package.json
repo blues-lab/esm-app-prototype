@@ -7,12 +7,12 @@
     "test": "jest"
   },
   "dependencies": {
-    "@react-native-community/async-storage": "^1.6.2",
-    "@sentry/react-native": "^1.0.9",
+    "@react-native-community/async-storage": "^1.6.3",
+    "@sentry/react-native": "^1.1.0",
     "file-exists": "^5.0.1",
     "node-fetch": "^2.6.0",
     "prop-types": "^15.7.2",
-    "react": "16.11.0",
+    "react": "16.12.0",
     "react-native": "0.61.4",
     "react-native-android-location-services-dialog-box": "^2.8.2",
     "react-native-background-fetch": "^2.7.1",
@@ -44,21 +44,21 @@
     "babel-jest": "^24.8.0",
     "eslint": "6.6.0",
     "eslint-config-airbnb": "18.0.1",
-    "eslint-config-prettier": "^6.5.0",
+    "eslint-config-prettier": "^6.6.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.16.0",
-    "eslint-plugin-react-hooks": "^2.2.0",
+    "eslint-plugin-react-hooks": "^2.3.0",
     "eslint-plugin-react-native": "^3.8.1",
-    "husky": "^3.0.9",
+    "husky": "^3.1.0",
     "jest": "^24.8.0",
     "jetifier": "^1.6.4",
-    "lint-staged": "^9.4.2",
+    "lint-staged": "^9.4.3",
     "metro-react-native-babel-preset": "^0.57.0",
     "prettier": "^1.19.1",
-    "react-test-renderer": "16.11.0"
+    "react-test-renderer": "16.12.0"
   },
   "jest": {
     "preset": "react-native"
