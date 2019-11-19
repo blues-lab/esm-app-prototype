@@ -23,7 +23,11 @@ import {
   RESULTS
 } from "react-native-permissions";
 import logger from "./controllers/logger";
-import { showPrompt, uploadFiles, checkHomeWifi } from "./controllers/backgroundJobs";
+import {
+  showPrompt,
+  uploadFiles,
+  checkHomeWifi
+} from "./controllers/backgroundJobs";
 //Import UI files
 import HomeScreen from "./UI/home";
 import SurveyStartScreen from "./UI/startsurvey";
@@ -125,44 +129,43 @@ if (Platform.OS === "android") {
 
   //----- set up job for periodic file upload --------//
 
+  //----- set up job for home wifi check --------//
 
-    //----- set up job for home wifi check --------//
+  //// define the job
+  const backgroundJobWiFi = {
+    jobKey: "homeWifi",
+    job: () => {
+      checkHomeWifi();
+    }
+  };
 
-    //// define the job
-    const backgroundJobWiFi = {
-      jobKey: "homeWifi",
-      job: () => {
-        checkHomeWifi();
-      }
-    };
+  ////register the job
+  BackgroundJob.register(backgroundJobWiFi);
 
-    ////register the job
-    BackgroundJob.register(backgroundJobWiFi);
+  ////create schedule for the notification
+  const notificationScheduleWiFi = {
+    jobKey: "homeWifi",
+    period: 2 * 60 * 60 * 1000 // every two hours
+  };
 
-    ////create schedule for the notification
-    const notificationScheduleWiFi = {
-      jobKey: "homeWifi",
-      period: 2* 60 * 60 * 1000 // every two hours
-    };
-
-    ////schedule the 'schedule'
-    BackgroundJob.schedule(notificationScheduleWiFi)
-      .then(() =>
-        logger.info(
-          `${codeFileName}`,
-          "Global",
-          "Successfully scheduled background job for checking home wifi."
-        )
+  ////schedule the 'schedule'
+  BackgroundJob.schedule(notificationScheduleWiFi)
+    .then(() =>
+      logger.info(
+        `${codeFileName}`,
+        "Global",
+        "Successfully scheduled background job for checking home wifi."
       )
-      .catch(err =>
-        logger.error(
-          `${codeFileName}`,
-          "Global",
-          "Error in scheduling job for checking home wifi:" + err.message
-        )
-      );
+    )
+    .catch(err =>
+      logger.error(
+        `${codeFileName}`,
+        "Global",
+        "Error in scheduling job for checking home wifi:" + err.message
+      )
+    );
 
-    //----- set up job for home wifi check --------//
+  //----- set up job for home wifi check --------//
 }
 
 //The main navigation controller
@@ -199,7 +202,7 @@ export default class App extends Component {
       //write default settings
       const _settings = {
         homeWifi: "",
-        previousSSIDs:[],
+        previousSSIDs: [],
         afterTime: "23:59",
         beforeTime: "00:01"
       };

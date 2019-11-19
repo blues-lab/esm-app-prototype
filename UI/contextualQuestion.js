@@ -94,7 +94,11 @@ export default class ContextualQuestionScreen extends React.Component {
     const { navigation } = this.props;
     const _surveyResponseJS = navigation.getParam("surveyResponseJS", null);
 
-    logger.info(codeFileName, "componentDidMount", "Response: "+JSON.stringify(_surveyResponseJS));
+    logger.info(
+      codeFileName,
+      "componentDidMount",
+      "Response: " + JSON.stringify(_surveyResponseJS)
+    );
 
     this.setState({
       surveyResponseJS: _surveyResponseJS,
@@ -194,7 +198,8 @@ export default class ContextualQuestionScreen extends React.Component {
     logger.info(
       codeFileName,
       "saveResponse",
-      "Uploading survey response to the server. Response: "+ JSON.stringify(_surveyResponseJS)
+      "Uploading survey response to the server. Response: " +
+        JSON.stringify(_surveyResponseJS)
     );
 
     const _uploaded = await utilities.uploadData(

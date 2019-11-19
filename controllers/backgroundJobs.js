@@ -837,64 +837,65 @@ export async function uploadFiles() {
   }
 }
 
+export async function checkHomeWifi() {
+  const funcName = "checkHomeWifi";
 
-export async function checkHomeWifi()
-{
-    const funcName = "checkHomeWifi";
+  const _userSettingsData = await utilities.readJSONFile(
+    USER_SETTINGS_FILE_PATH,
+    codeFileName,
+    funcName
+  );
+  if (_userSettingsData === null) {
+    logger.error(
+      codeFileName,
+      funcName,
+      "Fatal error: user settings data is null!"
+    );
+    return;
+  }
 
-    const _userSettingsData = await utilities.readJSONFile(
-        USER_SETTINGS_FILE_PATH,
-        codeFileName,
-        funcName
-      );
-      if (_userSettingsData === null) {
-        logger.error(
+  logger.info(
+    codeFileName,
+    funcName,
+    "_userSettingsData:" + JSON.stringify(_userSettingsData)
+  );
+
+  if (
+    _userSettingsData.homeWifi === null ||
+    _userSettingsData.homeWifi.length === 0
+  ) {
+    const _ssid = await NetworkInfo.getSSID();
+    logger.info(
+      codeFileName,
+      funcName,
+      "Home wifi not set. Checking if currently connected to a valid ssid. (_ssid === null): " +
+        (_ssid === null) +
+        ", (_ssid ==<unknown ssid>): " +
+        (_ssid === "<unknown ssid>")
+    );
+
+    if (_ssid !== null && _ssid !== "<unknown ssid>" && _ssid.length > 0) {
+      if (_userSettingsData.previousSSIDs.includes(_ssid) === true) {
+        logger.info(
           codeFileName,
           funcName,
-          "Fatal error: user settings data is null!"
+          "Connected to WiFi, but the SSID is not new. Returning."
         );
         return;
       }
 
       logger.info(
-                                                codeFileName,
-                                                funcName,
-                                                "_userSettingsData:"+JSON.stringify(_userSettingsData)
-                                              );
+        codeFileName,
+        funcName,
+        "Showing notification to set home wifi."
+      );
 
-      if(_userSettingsData.homeWifi===null || _userSettingsData.homeWifi.length===0)
-      {
-        const _ssid = await NetworkInfo.getSSID();
-          logger.info(
-            codeFileName,
-            funcName,
-            "Home wifi not set. Checking if currently connected to a valid ssid. (_ssid === null): " +
-              (_ssid === null) +
-              ", (_ssid ==<unknown ssid>): " +
-              (_ssid === "<unknown ssid>")
-          );
+      notificationController.showNotification(
+        "Home WiFi",
+        HOME_WIFI_PROMPT(_ssid)
+      );
+    }
+  }
 
-          if((_ssid !== null) && (_ssid !== "<unknown ssid>") && (_ssid.length > 0))
-          {
-
-             if(_userSettingsData.previousSSIDs.includes(_ssid) === true)
-              {
-                  logger.info(
-                            codeFileName,
-                            funcName,
-                            "Connected to WiFi, but the SSID is not new. Returning."
-                          );
-                  return;
-              }
-
-              logger.info(codeFileName, funcName, 'Showing notification to set home wifi.');
-
-              notificationController.showNotification(
-                "Home WiFi",
-                HOME_WIFI_PROMPT(_ssid)
-              );
-          }
-      }
-
-      logger.info(codeFileName, funcName, "Exiting.");
+  logger.info(codeFileName, funcName, "Exiting.");
 }

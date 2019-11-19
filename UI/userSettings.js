@@ -80,7 +80,7 @@ export default class UserSettingsScreen extends React.Component {
       beforeTime: "00:01",
       backCallBack: null, // a callback function sent by Home screen
       wifiPermissionDialogVisible: false,
-      currentSSID:'' //currently connected ssid
+      currentSSID: "" //currently connected ssid
     };
 
     AppStatus.getStatus(codeFileName, "constructor").then(status => {
@@ -143,7 +143,7 @@ export default class UserSettingsScreen extends React.Component {
   }
 
   async getHomeSSID() {
-  this.setState({currentSSID: ""});
+    this.setState({ currentSSID: "" });
     try {
       const _ssid = await NetworkInfo.getSSID();
       logger.info(
@@ -153,24 +153,22 @@ export default class UserSettingsScreen extends React.Component {
       );
 
       if (_ssid !== null && _ssid.length > 0 && _ssid !== "<unknown ssid>") {
+        this.setState({ currentSSID: _ssid });
 
-           this.setState({currentSSID: _ssid});
-
-        if(this.state.previousSSIDs.includes(_ssid))
-        {
-            logger.info(
-                      codeFileName,
-                      "getHomeSSID",
-                      "Connected to WiFi, but the SSID is not new. Returning."
-                    );
-            return;
+        if (this.state.previousSSIDs.includes(_ssid)) {
+          logger.info(
+            codeFileName,
+            "getHomeSSID",
+            "Connected to WiFi, but the SSID is not new. Returning."
+          );
+          return;
         }
 
         logger.info(
-                  codeFileName,
-                  "getHomeSSID",
-                  "Connected to a new SSID. Asking if this the is the Home WiFi."
-                );
+          codeFileName,
+          "getHomeSSID",
+          "Connected to a new SSID. Asking if this the is the Home WiFi."
+        );
 
         Alert.alert(
           "Home WiFi",
@@ -178,7 +176,7 @@ export default class UserSettingsScreen extends React.Component {
           [
             {
               text: "NO",
-              onPress: async() => {
+              onPress: async () => {
                 Alert.alert("Home WiFi", strings.NOT_HOME_WIFI);
                 logger.info(
                   codeFileName,
@@ -187,12 +185,12 @@ export default class UserSettingsScreen extends React.Component {
                 );
 
                 await this.promisedSetState(prevState => {
-                              const _prevSSIDs =  prevState.previousSSIDs;
-                              _prevSSIDs.push(_ssid);
-                              return {
-                                previousSSIDs: _prevSSIDs
-                              };
-                            });
+                  const _prevSSIDs = prevState.previousSSIDs;
+                  _prevSSIDs.push(_ssid);
+                  return {
+                    previousSSIDs: _prevSSIDs
+                  };
+                });
                 await this.saveSettings();
               }
             },
@@ -693,49 +691,49 @@ export default class UserSettingsScreen extends React.Component {
             <Text>{"\n"}</Text>
           </Text>
         )}
-        {(this.state.homeWifi.length === 0) && (this.state.currentSSID.length>0) && (
-        <Text
-          style={{
-                      textAlign: "center",
-                      borderBottomColor: "black",
-                      borderBottomWidth: StyleSheet.hairlineWidth,
-                      color: "black",
-                      marginTop: 10,
-                      marginBottom: 10,
-                      fontSize: 20,
-                      width: Math.floor(Dimensions.get("window").width * 0.9)
-                    }}
-        >
-          <Text style={{ marginBottom: 10, fontSize: 16, paddingBottom: 10 }}>
-            {" "}
-                      Current WiFi:{" "}
-          </Text>
-          <Text style={{ fontSize: 20, margin: 0 }}>
-            {this.state.currentSSID}
-          </Text>
-          <Text>{"\n"}</Text>
+        {this.state.homeWifi.length === 0 && this.state.currentSSID.length > 0 && (
           <Text
             style={{
-                        color: "blue",
-                        fontSize: 16,
-                        margin: 0,
-                        textDecorationLine: "underline"
-                      }}
-            onPress={async()=>{
-                           await this.promisedSetState(prevState => {
-                           const _currentSSID=prevState.currentSSID;
-                                                      return {
-                                                        homeWifi: _currentSSID
-                                                      };
-                                                    });
-                           await this.saveSettings();
-                      }}
+              textAlign: "center",
+              borderBottomColor: "black",
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              color: "black",
+              marginTop: 10,
+              marginBottom: 10,
+              fontSize: 20,
+              width: Math.floor(Dimensions.get("window").width * 0.9)
+            }}
           >
-                      Set this as Home WiFi
+            <Text style={{ marginBottom: 10, fontSize: 16, paddingBottom: 10 }}>
+              {" "}
+              Current WiFi:{" "}
+            </Text>
+            <Text style={{ fontSize: 20, margin: 0 }}>
+              {this.state.currentSSID}
+            </Text>
+            <Text>{"\n"}</Text>
+            <Text
+              style={{
+                color: "blue",
+                fontSize: 16,
+                margin: 0,
+                textDecorationLine: "underline"
+              }}
+              onPress={async () => {
+                await this.promisedSetState(prevState => {
+                  const _currentSSID = prevState.currentSSID;
+                  return {
+                    homeWifi: _currentSSID
+                  };
+                });
+                await this.saveSettings();
+              }}
+            >
+              Set this as Home WiFi
+            </Text>
+            <Text>{"\n"}</Text>
           </Text>
-          <Text>{"\n"}</Text>
-        </Text>
-                )}
+        )}
 
         <Text
           style={{
