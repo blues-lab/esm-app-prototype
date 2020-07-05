@@ -3,6 +3,8 @@ package edu.berkeley.cs.blues.alva;;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.sentry.RNSentryPackage;
+import com.swmansion.rnscreens.RNScreensPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.apsl.versionnumber.RNVersionNumberPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
@@ -38,6 +40,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNSentryPackage(),
+            new RNScreensPackage(),
             new RNGestureHandlerPackage(),
             new RNVersionNumberPackage(),
             new RNDeviceInfo(),

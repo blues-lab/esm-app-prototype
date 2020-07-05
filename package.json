@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.6.3",
-    "@sentry/react-native": "^1.1.0",
+    "@sentry/react-native": "^1.5.0",
     "file-exists": "^5.0.1",
     "node-fetch": "^2.6.0",
     "prop-types": "^15.7.2",
@@ -29,6 +29,7 @@
     "react-native-permissions": "^2.0.3",
     "react-native-progress-bar-animated": "^1.0.6",
     "react-native-push-notification": "^3.1.3",
+    "react-native-screens": "^2.9.0",
     "react-native-select-multiple": "^2.1.0",
     "react-native-simple-dialogs": "^1.1.0",
     "react-native-uuid-generator": "^6.0.0",
